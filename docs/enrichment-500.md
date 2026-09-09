@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 215 / 500 shipped (batches 1–29, in order) · Sections 1–5 complete ✅
+## Progress — 223 / 500 shipped (batches 1–30, in order) · Sections 1–5 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -227,6 +227,14 @@ names, behaviours and where they plug into the existing pages.
 | 213 | Icon line-weight lab | [/lab#icon-line-weight-lab](/lab#icon-line-weight-lab) |
 | 214 | Logo-drift preview lab | [/lab#logo-drift-preview](/lab#logo-drift-preview) |
 | 215 | Diff viewer lab | [/lab#diff-viewer](/lab#diff-viewer) |
+| 216 | Course rail — variant gallery | [/components/aurora-veil#variant-gallery](/components/aurora-veil#variant-gallery) |
+| 217 | Course rail — usage recipe | [/components/aurora-veil#usage-recipe](/components/aurora-veil#usage-recipe) |
+| 218 | Course rail — theming example | [/components/aurora-veil#theming-example](/components/aurora-veil#theming-example) |
+| 219 | Course rail — performance note | [/components/aurora-veil#perf-note](/components/aurora-veil#perf-note) |
+| 220 | Course rail — browser support strip | [/components/aurora-veil#browser-support](/components/aurora-veil#browser-support) |
+| 221 | Course rail — reduced-motion fallback note | [/components/aurora-veil#reduced-motion-note](/components/aurora-veil#reduced-motion-note) |
+| 222 | Course rail — keyboard walk demo | [/components/aurora-veil#keyboard-walk](/components/aurora-veil#keyboard-walk) |
+| 223 | Course rail — composition map + related essays | [/components/aurora-veil#composition-map](/components/aurora-veil#composition-map) |
 
 
 ---
@@ -509,20 +517,20 @@ names, behaviours and where they plug into the existing pages.
 
 ## 6. Detail pages — 30 ways to make every asset a course (currently: preview + code + notes)
 
-- **Variant gallery**: 3–5 rendered variants per component (tone, density, accent) as live mini-stages.
+- **Variant gallery** ✅ (`variant-gallery`): 3–5 rendered variants per component (tone, density, accent) as live mini-stages.
 - **Prop explorer**: every prop as a live control (already on list pages — give it to the detail hero).
 - **Playground on the detail page**: the asset's Lab controls embedded above the code, not just linked.
 - **Copy-format tabs**: React / HTML+CSS / Vue views of the same snippet with dependency badges.
-- **Usage recipe**: a 90-second "where this fits" story, not just "why/skip" bullets.
-- **Composition map**: which library assets combine well with this one (auto-suggested links).
-- **Theming example**: same component re-skinned in two token themes side-by-side.
+- **Usage recipe** ✅ (`usage-recipe`): a 90-second "where this fits" story, not just "why/skip" bullets.
+- **Composition map** ✅ (`composition-map`): which library assets combine well with this one (auto-suggested links).
+- **Theming example** ✅ (`theming-example`): same component re-skinned in two token themes side-by-side.
 - **Sizing system**: 3 text/layout densities with code for each.
-- **Performance note per asset**: paint cost, bundle estimate, and the cheaper alternative.
+- **Performance note per asset** ✅ (`perf-note`): paint cost, bundle estimate, and the cheaper alternative.
 - **a11y report card**: what the automated audit checks for this asset, with fixes.
-- **Browser support strip**: which modern features it needs (backdrop-filter, view-timeline…).
-- **Reduced-motion fallback note**: what the asset does when motion is off.
-- **Keyboard walk demo**: pressable step-through of the component's focus flow.
-- **Related Learn essays**: the guides that teach the technique behind this asset.
+- **Browser support strip** ✅ (`browser-support`): which modern features it needs (backdrop-filter, view-timeline…).
+- **Reduced-motion fallback note** ✅ (`reduced-motion-note`): what the asset does when motion is off.
+- **Keyboard walk demo** ✅ (`keyboard-walk`): pressable step-through of the component's focus flow.
+- **Related Learn essays** ✅ (in `composition-map`): the guides that teach the technique behind this asset.
 - **Inspiration context**: one original micro-case of the pattern in the wild (written, not screenshotted).
 - **Changelog per asset**: every version of this component with what changed and why.
 - **Copy history count**: "copied 2.1k times" with a sparkline of the last 30 days.

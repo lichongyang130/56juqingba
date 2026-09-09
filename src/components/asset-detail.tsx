@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { DemoView } from "@/components/demos/Demo";
 import { AssetCard, CopyCount, Stage } from "@/components/cards";
+import CourseRail from "@/components/course-rail";
 import { accentCss, COMPONENTS, KIND_META } from "@/lib/data";
 import type { Asset } from "@/lib/types";
 
@@ -2600,6 +2601,9 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
           </div>
         </aside>
       </div>
+
+      {/* course rail — every asset is a small course */}
+      <CourseRail asset={asset} />
 
       {/* related */}
       <div className="mt-16">
