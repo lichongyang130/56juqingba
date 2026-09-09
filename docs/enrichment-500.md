@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 117 / 500 shipped (batches 1–15, in order) · Sections 1–2 complete ✅
+## Progress — 125 / 500 shipped (batches 1–16, in order) · Sections 1–2 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -129,6 +129,14 @@ names, behaviours and where they plug into the existing pages.
 | 115 | Recruiting studio prompt | [/prompts/recruiting-studio-culture](/prompts/recruiting-studio-culture) |
 | 116 | Industrial design prompt | [/prompts/industrial-design-process](/prompts/industrial-design-process) |
 | 117 | Coaching practice prompt | [/prompts/coaching-practice-outcomes](/prompts/coaching-practice-outcomes) |
+| 118 | Translation agency prompt | [/prompts/translation-agency-pairs](/prompts/translation-agency-pairs) |
+| 119 | Interior design studio prompt | [/prompts/interior-design-studio-before-after](/prompts/interior-design-studio-before-after) |
+| 120 | Financial advisor prompt | [/prompts/financial-advisor-fiduciary](/prompts/financial-advisor-fiduciary) |
+| 121 | Literary agency prompt | [/prompts/literary-agency-submissions](/prompts/literary-agency-submissions) |
+| 122 | Record label prompt | [/prompts/record-label-release-calendar](/prompts/record-label-release-calendar) |
+| 123 | Community theatre prompt | [/prompts/community-theatre-season](/prompts/community-theatre-season) |
+| 124 | Design conference prompt | [/prompts/design-conference-schedule](/prompts/design-conference-schedule) |
+| 125 | Food hall prompt | [/prompts/food-hall-vendor-map](/prompts/food-hall-vendor-map) |
 
 
 ---
@@ -249,7 +257,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 3. Prompt library — 50 next prompts across industries (24 → 74; 46 shipped so far)
+## 3. Prompt library — 50 next prompts across industries (24 → 74; 54 shipped so far)
 
 ### Growth industries
 - **SaaS onboarding flow prompt** ✅ (`saas-activation-onboarding`): signup → plan → invite → success, in one prompt.
@@ -280,16 +288,16 @@ names, behaviours and where they plug into the existing pages.
 - **Recruiting studio prompt** ✅ (`recruiting-studio-culture`): open roles, culture evidence, referral promise.
 - **Industrial design firm prompt** ✅ (`industrial-design-process`): process photos, material library, ISO mentions.
 - **Coaching practice prompt** ✅ (`coaching-practice-outcomes`): outcome stories, method steps, session formats.
-- **Translation agency prompt**: language pairs, quality checks, quote form.
-- **Interior design studio prompt**: before/after slider, style quiz teaser.
-- **Financial advisor prompt**: fiduciary language, fee schedule, meeting booking.
+- **Translation agency prompt** ✅ (`translation-agency-pairs`): language pairs, quality checks, quote form.
+- **Interior design studio prompt** ✅ (`interior-design-studio-before-after`): before/after slider, style quiz teaser.
+- **Financial advisor prompt** ✅ (`financial-advisor-fiduciary`): fiduciary language, fee schedule, meeting booking.
 
 ### Media, arts & events
-- **Literary agency prompt**: submissions policy, authors list, representation FAQ.
-- **Record label prompt**: release calendar, artist roster cards, press kit section.
-- **Community theatre prompt**: season lineup, ticket tiers, volunteer call.
-- **Design conference prompt**: speaker grid, schedule by track, travel tips.
-- **Food hall prompt**: vendor map, dietary icons, opening hours.
+- **Literary agency prompt** ✅ (`literary-agency-submissions`): submissions policy, authors list, representation FAQ.
+- **Record label prompt** ✅ (`record-label-release-calendar`): release calendar, artist roster cards, press kit section.
+- **Community theatre prompt** ✅ (`community-theatre-season`): season lineup, ticket tiers, volunteer call.
+- **Design conference prompt** ✅ (`design-conference-schedule`): speaker grid, schedule by track, travel tips.
+- **Food hall prompt** ✅ (`food-hall-vendor-map`): vendor map, dietary icons, opening hours.
 - **Birding club prompt**: sighting log, field-guide resources, trip signups.
 - **Photography workshop prompt**: curriculum, dates, portfolio expectations.
 
