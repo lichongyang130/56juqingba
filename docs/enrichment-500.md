@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 133 / 500 shipped (batches 1–17, in order) · Sections 1–2 complete ✅
+## Progress — 141 / 500 shipped (batches 1–18, in order) · Sections 1–2 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -145,6 +145,14 @@ names, behaviours and where they plug into the existing pages.
 | 131 | Civic tech project prompt | [/prompts/civic-tech-transparency](/prompts/civic-tech-transparency) |
 | 132 | Robotics lab prompt | [/prompts/robotics-lab-research](/prompts/robotics-lab-research) |
 | 133 | Counselling directory prompt | [/prompts/counselling-directory-specialisms](/prompts/counselling-directory-specialisms) |
+| 134 | Nutrition coaching prompt | [/prompts/nutrition-coaching-sample-week](/prompts/nutrition-coaching-sample-week) |
+| 135 | Language school prompt | [/prompts/language-school-level-paths](/prompts/language-school-level-paths) |
+| 136 | Kids' coding club prompt | [/prompts/kids-coding-club-term](/prompts/kids-coding-club-term) |
+| 137 | Ceramics studio prompt | [/prompts/ceramics-studio-kiln-schedule](/prompts/ceramics-studio-kiln-schedule) |
+| 138 | Plant nursery prompt | [/prompts/plant-nursery-care-guides](/prompts/plant-nursery-care-guides) |
+| 139 | Slow-travel agency prompt | [/prompts/slow-travel-agency-routes](/prompts/slow-travel-agency-routes) |
+| 140 | Dark-mode-first prompt variant | [/prompts/dark-mode-first-page](/prompts/dark-mode-first-page) |
+| 141 | Whitespace-maximal prompt variant | [/prompts/whitespace-maximal-page](/prompts/whitespace-maximal-page) |
 
 
 ---
@@ -265,7 +273,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 3. Prompt library — 50 next prompts across industries (24 → 74; 62 shipped so far)
+## 3. Prompt library — 50 next prompts across industries (24 → 74; 70 shipped so far)
 
 ### Growth industries
 - **SaaS onboarding flow prompt** ✅ (`saas-activation-onboarding`): signup → plan → invite → success, in one prompt.
@@ -318,16 +326,16 @@ names, behaviours and where they plug into the existing pages.
 
 ### Health, education & lifestyle
 - **Counselling directory prompt** ✅ (`counselling-directory-specialisms`): therapist cards by specialism with availability.
-- **Nutrition coaching prompt**: sample week, no-shame copy, cancellation policy.
-- **Language school prompt**: level paths, teacher accents map, trial lesson.
-- **Kids' coding club prompt**: term calendar, parent FAQ, showcase projects.
-- **Ceramics studio prompt**: kiln-schedule, class tiers, gallery of student work.
-- **Plant nursery prompt**: care guides per species, delivery windows.
-- **Slow-travel agency prompt**: itineraries, local-host notes, carbon honesty.
+- **Nutrition coaching prompt** ✅ (`nutrition-coaching-sample-week`): sample week, no-shame copy, cancellation policy.
+- **Language school prompt** ✅ (`language-school-level-paths`): level paths, teacher accents map, trial lesson.
+- **Kids' coding club prompt** ✅ (`kids-coding-club-term`): term calendar, parent FAQ, showcase projects.
+- **Ceramics studio prompt** ✅ (`ceramics-studio-kiln-schedule`): kiln-schedule, class tiers, gallery of student work.
+- **Plant nursery prompt** ✅ (`plant-nursery-care-guides`): care guides per species, delivery windows.
+- **Slow-travel agency prompt** ✅ (`slow-travel-agency-routes`): itineraries, local-host notes, carbon honesty.
 
 ### Prompt-form experiments (any industry)
-- **Dark-mode-first prompt variant**: same brief, delivered for dark surfaces.
-- **Whitespace-maximal prompt**: ≤ 3 colours, one typeface, no gradients.
+- **Dark-mode-first prompt variant** ✅ (`dark-mode-first-page`): same brief, delivered for dark surfaces.
+- **Whitespace-maximal prompt** ✅ (`whitespace-maximal-page`): ≤ 3 colours, one typeface, no gradients.
 - **Print-inspired web prompt**: editorial layout that works like a magazine spread.
 - **A11y-strict prompt**: WCAG AA as a hard requirement list in the brief.
 - **Multi-language prompt**: the same page brief in three languages with i18n notes.
