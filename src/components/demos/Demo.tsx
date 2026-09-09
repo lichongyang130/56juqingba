@@ -287,6 +287,8 @@ function OrbitDeck({ radius = 190, orbit = 14 }: DemoProps) {
   );
 }
 
+const COUNTER_TARGETS = [12400, 318, 94, 148200];
+
 const MOTES = Array.from({ length: 90 }).map((_, i) => ({
   x: (i * 137.5) % 100,
   y: (i * 61.8) % 100,
@@ -626,6 +628,310 @@ function BgInk() {
   );
 }
 
+/* ------------------------------ RICH PASS (2026-09) ------------------------------ */
+
+function MorphBlob({ speed = 9, hueA = 258, hueB = 192 }: DemoProps) {
+  const sp = typeof speed === "number" ? speed : 9;
+  const ha = typeof hueA === "number" ? hueA : 258;
+  const hb = typeof hueB === "number" ? hueB : 192;
+  const blobs = [
+    { hue: ha, d: "0s", x: "-8%", y: "-22%", s: 420 },
+    { hue: hb, d: "-4s", x: "52%", y: "-10%", s: 360 },
+    { hue: (ha + 60) % 360, d: "-7s", x: "22%", y: "34%", s: 380 },
+  ];
+  return (
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#05060b]">
+      {blobs.map((b, i) => (
+        <span
+          key={i}
+          className="absolute"
+          style={{
+            left: b.x, top: b.y,
+            width: b.s, height: b.s,
+            background: `radial-gradient(circle at 42% 38%, hsl(${b.hue} 88% 62% / 0.55), hsl(${(b.hue + 40) % 360} 85% 45% / 0.18) 60%, transparent 75%)`,
+            filter: "blur(28px) saturate(1.25)",
+            borderRadius: "58% 42% 63% 37% / 44% 55% 45% 56%",
+            animation: `mf-blobmorph ${sp}s ease-in-out ${b.d} infinite alternate, mf-blobdrift ${sp * 1.6}s ease-in-out ${b.d} infinite alternate`,
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes mf-blobmorph {
+          0%   { border-radius: 58% 42% 63% 37% / 44% 55% 45% 56%; }
+          35%  { border-radius: 46% 54% 38% 62% / 60% 38% 62% 40%; }
+          70%  { border-radius: 62% 38% 55% 45% / 40% 62% 38% 60%; }
+          100% { border-radius: 50% 50% 44% 56% / 55% 45% 60% 40%; }
+        }
+        @keyframes mf-blobdrift {
+          from { transform: translate3d(-3%, -2%, 0) scale(0.92) rotate(-4deg); }
+          to   { transform: translate3d(3%, 4%, 0) scale(1.1) rotate(5deg); }
+        }
+      `}</style>
+      <div className="relative z-10 text-center">
+        <div className="text-[10px] font-bold uppercase tracking-[0.34em] text-white/45">Ambient brand mark</div>
+        <div className="mt-2 bg-gradient-to-b from-white to-white/55 bg-clip-text text-3xl font-black tracking-tight text-transparent md:text-5xl">
+          Always liquid.
+        </div>
+        <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/6 px-3 py-1 text-[11px] text-white/65 backdrop-blur">
+          <span className="h-1.5 w-1.5 rounded-full bg-mint" /> CSS border-radius morph · 0 JS
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ConicLoader({ size = 96, speed = 1 }: DemoProps) {
+  const s = typeof size === "number" ? size : 96;
+  const sp = typeof speed === "number" ? speed : 1;
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 bg-[#080a11]">
+      <div className="relative flex items-center justify-center">
+        <span
+          className="block rounded-full"
+          style={{
+            width: s, height: s,
+            background: "conic-gradient(from 0deg, transparent 0 25%, #8b5cf6 50%, #22d3ee 75%, transparent 80% 100%)",
+            WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 9px), black calc(100% - 8px))",
+            mask: "radial-gradient(farthest-side, transparent calc(100% - 9px), black calc(100% - 8px))",
+            animation: `mf-conicspin ${sp}s linear infinite`,
+          }}
+        />
+        <span
+          className="absolute rounded-full bg-white"
+          style={{
+            width: 8, height: 8,
+            boxShadow: "0 0 18px rgba(167,139,250,0.9)",
+            animation: "mf-glow 1.6s ease-in-out infinite",
+          }}
+        />
+      </div>
+      <style>{`@keyframes mf-conicspin { to { transform: rotate(360deg) } }`}</style>
+      <div className="text-center">
+        <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-ink-faint">Saving your scene…</div>
+        <div className="mt-1 text-[11px] text-ink-faint">conic ring · 0.9 KB · respects reduced motion</div>
+      </div>
+    </div>
+  );
+}
+
+function GlassPricing({ tiers = 3, heroGlow = true }: DemoProps) {
+  const n = typeof tiers === "number" ? Math.max(2, Math.min(4, Math.round(tiers))) : 3;
+  const glow = heroGlow !== false;
+  const plans = [
+    { name: "Starter", price: "$0", desc: "For side projects", feats: ["3 projects", "Community support", "MIT assets"] },
+    { name: "Pro", price: "$19", desc: "For client work", feats: ["Unlimited projects", "Prompt test reports", "Template packs"], hero: true },
+    { name: "Studio", price: "$49", desc: "For teams", feats: ["Shared brand kits", "Team seats", "API access"] },
+    { name: "Scale", price: "$120", desc: "For product orgs", feats: ["SSO", "Dedicated SLAs", "Custom audits"] },
+  ].slice(0, n);
+  return (
+    <div className="flex h-full w-full items-center justify-center gap-3 bg-[radial-gradient(70%_90%_at_50%_0%,#111527,transparent_60%),#07080d] px-5">
+      {plans.map((p) => (
+        <div
+          key={p.name}
+          className="relative flex w-full max-w-[180px] flex-col rounded-2xl border border-white/14 bg-white/8 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_24px_48px_-24px_rgba(0,0,0,0.8)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1.5"
+        >
+          {(p as { hero?: boolean }).hero && glow && (
+            <>
+              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 px-2.5 py-0.5 text-[8px] font-extrabold uppercase tracking-widest text-white">
+                Most picked
+              </span>
+              <span className="pointer-events-none absolute -inset-px rounded-2xl opacity-70" style={{ boxShadow: "0 0 46px -6px rgba(139,92,246,0.55)" }} aria-hidden />
+            </>
+          )}
+          <div className="text-[10px] font-bold uppercase tracking-widest text-white/55">{p.name}</div>
+          <div className="mt-1 text-xl font-black tracking-tight text-white">{p.price}<span className="text-[9px] font-medium text-white/45">/mo</span></div>
+          <div className="mt-0.5 text-[9px] text-white/50">{p.desc}</div>
+          <ul className="mt-2.5 space-y-1 border-t border-white/10 pt-2.5">
+            {p.feats.map((f) => (
+              <li key={f} className="flex items-center gap-1.5 text-[9px] text-white/70">
+                <span className="text-emerald-300">✓</span>{f}
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            className={`mt-3 w-full rounded-lg py-1.5 text-[10px] font-bold transition-colors ${
+              (p as { hero?: boolean }).hero && glow
+                ? "bg-gradient-to-r from-violet-500 to-indigo-400 text-white"
+                : "border border-white/20 bg-white/6 text-white/85 hover:bg-white/12"
+            }`}
+          >
+            Choose
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WipeReveal({ loop = true, speed = 1.1 }: DemoProps) {
+  const sp = typeof speed === "number" ? speed : 1.1;
+  const repeat = loop !== false ? "infinite" : "1 forwards";
+  const line = "Made to feel alive";
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[radial-gradient(60%_80%_at_50%_110%,rgba(139,92,246,0.22),transparent_65%),#07080d] px-6">
+      <style>{`
+        @keyframes mf-wipe { 0% { background-position: -220% 0; } 100% { background-position: 220% 0; } }
+      `}</style>
+      <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/40">Headline system</div>
+      <div className="relative mt-3 w-full max-w-lg select-none">
+        <h3 className="text-center text-4xl font-black tracking-tight text-white/14 md:text-6xl">{line}</h3>
+        <h3
+          aria-hidden
+          className="absolute inset-0 text-center text-4xl font-black tracking-tight text-transparent md:text-6xl"
+          style={{
+            backgroundImage: "linear-gradient(100deg, rgba(255,255,255,0.05) 42%, #c4b5fd 48%, #67e8f9 52%, rgba(255,255,255,0.05) 58%)",
+            backgroundSize: "260% 100%",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            animation: `mf-wipe ${sp * 2.2}s cubic-bezier(.6,.05,.25,1) ${repeat}`,
+            animationDelay: "0.4s",
+          }}
+        >
+          {line}
+        </h3>
+      </div>
+      <p className="mt-4 text-center text-[11px] text-white/45">A light edge travels the headline once — then it’s just typography.</p>
+    </div>
+  );
+}
+
+function CounterStats({ duration = 1400 }: DemoProps) {
+  const dur = typeof duration === "number" ? duration : 1400;
+  const ref = useRef<HTMLDivElement>(null);
+  const [started, setStarted] = useState(false);
+  const [vals, setVals] = useState([0, 0, 0, 0]);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || started) return;
+    const obs = new IntersectionObserver(
+      (e) => {
+        if (e[0].isIntersecting) {
+          setStarted(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.4 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [started]);
+  useEffect(() => {
+    if (!started) return;
+    const t0 = performance.now();
+    let raf: number;
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setVals(COUNTER_TARGETS.map((t) => Math.round(t * eased)));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [started, dur]);
+  const labels = ["Sites shipped", "Verified prompts", "Avg fidelity %", "Copies (30d)"];
+  const fmt = (v: number, i: number) => (i === 3 ? `${(v / 1000).toFixed(1)}k` : v.toLocaleString());
+  return (
+    <div ref={ref} className="flex h-full w-full flex-col justify-center bg-[#0a0c12] px-6">
+      <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-ink-faint">By the numbers — counts once, on view</div>
+      <div className="mt-5 grid grid-cols-4 divide-x divide-white/8">
+        {COUNTER_TARGETS.map((t, i) => (
+          <div key={labels[i]} className="px-3 first:pl-0">
+            <div className="text-lg font-black tabular-nums tracking-tight text-white md:text-3xl">
+              {fmt(vals[i], i)}
+              {i === 2 && <span className="text-mint">%</span>}
+            </div>
+            <div className="mt-1.5 text-[9px] font-semibold uppercase tracking-widest text-ink-faint">{labels[i]}</div>
+            <div className="mt-2 h-0.5 w-6 rounded-full" style={{ background: `hsl(${200 + i * 45} 90% 65%)` }} />
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 text-[10px] text-ink-faint">hairline ledger · count-up on entry · <span className="text-ink-dim">{dur}ms default</span></p>
+    </div>
+  );
+}
+
+const DOT_PALETTES: Record<string, [number, number]> = {
+  violet: [258, 198],
+  cyan: [192, 152],
+  sunset: [22, 320],
+  mono: [0, 0],
+};
+
+function DotDraw({ resolution = 18, palette = "violet" }: DemoProps) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [fill, setFill] = useState<Record<number, number>>({});
+  const timers = useRef<Record<number, number>>({});
+  const res = typeof resolution === "number" ? Math.max(6, Math.min(40, resolution)) : 18;
+  const pal = DOT_PALETTES[String(palette)] ?? DOT_PALETTES.violet;
+  const cols = 26;
+  const rows = 12;
+  const onMove = (e: React.PointerEvent) => {
+    const box = boxRef.current;
+    if (!box) return;
+    const r = box.getBoundingClientRect();
+    const col = Math.max(0, Math.min(cols - 1, Math.floor(((e.clientX - r.left) / r.width) * cols)));
+    setFill((prev) => {
+      const next = { ...prev };
+      next[col] = rows; // full raise
+      return next;
+    });
+    if (timers.current[col]) window.clearTimeout(timers.current[col]);
+    timers.current[col] = window.setTimeout(() => {
+      setFill((prev) => {
+        const next = { ...prev };
+        next[col] = 0;
+        return next;
+      });
+      delete timers.current[col];
+    }, 900);
+  };
+  useEffect(() => () => { Object.values(timers.current).forEach((t) => window.clearTimeout(t)); }, []);
+  const mono = pal[0] === 0 && pal[1] === 0;
+  return (
+    <div className="flex h-full w-full items-center gap-6 bg-[#07080c] px-6">
+      <div
+        ref={boxRef}
+        onPointerMove={onMove}
+        onPointerLeave={() => setFill({})}
+        className="h-full max-h-40 flex-1 cursor-crosshair overflow-hidden rounded-2xl border border-white/8 bg-black/30"
+      >
+        <div className="grid h-full w-full" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, gridTemplateRows: `repeat(${rows}, 1fr)` }}>
+          {Array.from({ length: cols * rows }).map((_, i) => {
+            const c = i % cols;
+            const row = Math.floor(i / cols);
+            const lit = (fill[c] ?? 0) > row;
+            const hue = mono ? 0 : pal[0] + (row * 5 + c * 3) % 120;
+            const depth = (fill[c] ?? 0) - row;
+            return (
+              <span
+                key={i}
+                className="mx-auto my-auto rounded-full transition-[opacity,transform] duration-200"
+                style={{
+                  width: Math.max(3, 30 / res + 2),
+                  height: Math.max(3, 30 / res + 2),
+                  transform: lit ? "scale(1)" : "scale(0.6)",
+                  opacity: lit ? Math.min(1, 0.35 + depth * 0.16) : 0.14,
+                  background: mono ? "#fff" : `hsl(${hue} 90% ${55 + depth * 5}%)`,
+                  boxShadow: lit && !mono ? `0 0 ${6 + depth}px hsl(${hue} 90% 60% / 0.8)` : undefined,
+                  transitionDelay: lit ? `${(rows - row) * 16}ms` : "0ms",
+                }}
+              />
+            );
+          })}
+        </div>
+      </div>
+      <div className="hidden max-w-[150px] sm:block">
+        <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-ink-faint">Dot Draw</div>
+        <div className="mt-2 text-lg font-black leading-tight text-white">Sweep your pointer</div>
+        <p className="mt-2 text-[10px] leading-relaxed text-ink-dim">
+          Columns raise like a seismograph, then settle. Pointer theatre that costs ~5 KB.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 export const DEMO_KEYS = [
@@ -633,6 +939,7 @@ export const DEMO_KEYS = [
   "aurora-veil", "halo-trail", "orbit-deck", "star-motes", "scramble-text", "tilt-card",
   "hero-aurora", "bento-studio", "marquee-logos", "faq-orbit",
   "glass", "noise", "grid", "sorbet", "halftone", "ink",
+  "morph-blob", "conic-loader", "glass-pricing", "wipe-reveal", "counter-stats", "dot-draw",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -659,6 +966,12 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "sorbet": return <BgSorbet />;
     case "halftone": return <BgHalftone />;
     case "ink": return <BgInk />;
+    case "morph-blob": return <MorphBlob {...props} />;
+    case "conic-loader": return <ConicLoader {...props} />;
+    case "glass-pricing": return <GlassPricing {...props} />;
+    case "wipe-reveal": return <WipeReveal {...props} />;
+    case "counter-stats": return <CounterStats {...props} />;
+    case "dot-draw": return <DotDraw {...props} />;
     default: return null;
   }
 }

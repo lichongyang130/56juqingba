@@ -225,6 +225,86 @@ export const COMPONENTS: Asset[] = [
     props: [],
     copies: 1120, views: 8600,
   },
+
+  /* ---- content-richness pass: context-stage demos (2026-09) ---- */
+  {
+    slug: "morph-blob", kind: "animated", title: "Morph Blob",
+    description: "A liquid shape that melts between silhouettes while a hue drifts underneath. Use it as a brand mark backdrop or a section divider that never sits still.",
+    tags: ["blob", "organic", "svg", "ambient"], behaviors: [],
+    stack: ["HTML/CSS", "React"], deps: [], bundleKb: 2.3, themeable: true,
+    a11yScore: 99, qualityScore: 96, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-06", demo: "morph-blob",
+    props: [
+      { name: "speed", label: "Morph speed", type: "range", min: 4, max: 20, step: 0.5, unit: "s", defaultValue: 9 },
+      { name: "hueA", label: "Hue A", type: "range", min: 0, max: 360, step: 1, defaultValue: 258 },
+      { name: "hueB", label: "Hue B", type: "range", min: 0, max: 360, step: 1, defaultValue: 192 },
+    ],
+    copies: 1860, views: 9400,
+  },
+  {
+    slug: "conic-loader", kind: "element", title: "Conic Loader",
+    description: "A conic-gradient ring with a breath marker — no images, no JS tick. Use it wherever a spinner should feel like a product decision, not a default.",
+    tags: ["loader", "conic", "spinner"], behaviors: [],
+    stack: ["HTML/CSS"], deps: [], bundleKb: 0.9, themeable: true,
+    a11yScore: 98, qualityScore: 95, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-04", demo: "conic-loader",
+    props: [
+      { name: "size", label: "Size", type: "range", min: 40, max: 160, step: 2, unit: "px", defaultValue: 96 },
+      { name: "speed", label: "Spin speed", type: "range", min: 0.4, max: 3, step: 0.05, unit: "s", defaultValue: 1 },
+    ],
+    copies: 1430, views: 7600,
+  },
+  {
+    slug: "glass-pricing", kind: "section", title: "Glass Pricing Trio",
+    description: "Three pricing columns in frosted glass with a specular top edge and a hero column that glows. The whole row demos how glass survives real content: badges, numbers and buttons.",
+    tags: ["pricing", "glass", "section", "bento"], behaviors: ["hover"],
+    stack: ["React", "HTML/CSS"], deps: [], bundleKb: 6.8, themeable: true,
+    a11yScore: 96, qualityScore: 97, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-08", demo: "glass-pricing",
+    props: [
+      { name: "tiers", label: "Tiers", type: "range", min: 2, max: 4, step: 1, defaultValue: 3 },
+      { name: "heroGlow", label: "Hero column glow", type: "toggle", defaultValue: true },
+    ],
+    copies: 1170, views: 6900,
+  },
+  {
+    slug: "wipe-reveal", kind: "animated", title: "Wipe Reveal Headline",
+    description: "A giant headline that wipes in with a travelling light edge, then sits still as clean typography. Nothing to babysit after the first paint.",
+    tags: ["text", "reveal", "headline", "gradient"], behaviors: ["scroll"],
+    stack: ["HTML/CSS", "React"], deps: [], bundleKb: 1.6, themeable: true,
+    a11yScore: 97, qualityScore: 96, status: "live", license: "MIT", version: "1.1.0",
+    author: "Motif Studio", published: "2026-09-08", demo: "wipe-reveal",
+    props: [
+      { name: "loop", label: "Loop", type: "toggle", defaultValue: true },
+      { name: "speed", label: "Wipe speed", type: "range", min: 0.4, max: 3, step: 0.1, unit: "s", defaultValue: 1.1 },
+    ],
+    copies: 2210, views: 11300,
+  },
+  {
+    slug: "counter-stats", kind: "section", title: "Counter Stats Band",
+    description: "Numbers that count up when they enter the viewport, with a hairline ledger behind them. The accounting-style baseline keeps the counting from feeling gimmicky.",
+    tags: ["stats", "counter", "metrics", "section"], behaviors: ["scroll"],
+    stack: ["React", "HTML/CSS"], deps: [], bundleKb: 3.2, themeable: true,
+    a11yScore: 98, qualityScore: 96, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-01", demo: "counter-stats",
+    props: [
+      { name: "duration", label: "Count duration", type: "range", min: 400, max: 3000, step: 50, unit: "ms", defaultValue: 1400 },
+    ],
+    copies: 980, views: 5200,
+  },
+  {
+    slug: "dot-draw", kind: "element", title: "Dot Draw Grid",
+    description: "A fine dot matrix where each column fills upward as your pointer crosses it — like a tiny seismograph. Delightful on 404 pages and section gaps.",
+    tags: ["interactive", "dots", "pointer", "canvas"], behaviors: ["hover", "drag"],
+    stack: ["React"], deps: [], bundleKb: 4.9, themeable: true,
+    a11yScore: 94, qualityScore: 95, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-08-31", demo: "dot-draw",
+    props: [
+      { name: "resolution", label: "Dot resolution", type: "range", min: 6, max: 40, step: 1, defaultValue: 18 },
+      { name: "palette", label: "Palette", type: "select", options: ["violet", "cyan", "sunset", "mono"], defaultValue: "violet" },
+    ],
+    copies: 2050, views: 9900,
+  },
 ];
 
 export const KIND_META: Record<Asset["kind"], { label: string; blurb: string }> = {
@@ -432,3 +512,53 @@ export function promptOf(slug: string): PromptTemplate | undefined {
 export function bgOf(slug: string): BackgroundAsset | undefined {
   return BACKGROUNDS.find((b) => b.slug === slug);
 }
+
+/* ---------------------------------------------------------------------
+   Per-asset "colour fingerprint": a stable, well-spread hue derived from
+   the slug so every tile/detail/OG asset is recognisable at a glance.
+   --------------------------------------------------------------------- */
+export function accentHue(key: string): number {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  // spread + jitter so neighbours never look alike
+  const spread = (h % 360) + Math.round(((h / 360) % 1) * 40) - 20;
+  return ((spread % 360) + 360) % 360;
+}
+
+export function accentCss(key: string, sat = 82, light = 62, alpha = 1): string {
+  return `hsl(${accentHue(key)} ${sat}% ${light}% / ${alpha})`;
+}
+
+export interface ChangeLogEntry {
+  date: string;
+  tag: "Components" | "Prompts" | "Backgrounds" | "Lab" | "Platform";
+  title: string;
+  body: string;
+}
+
+export const CHANGELOG: ChangeLogEntry[] = [
+  {
+    date: "2026-09-08", tag: "Components", title: "Glass pricing trio + Wipe Reveal headline",
+    body: "Two new context-stage demos: a three-tier glass pricing row and a clip-path headline reveal. Both zero-dependency.",
+  },
+  {
+    date: "2026-09-05", tag: "Prompts", title: "10 fintech prompts re-tested, 3 upgraded to Verified",
+    body: "Model versions were pinned and re-run after GLM-4.6 updates — fidelity notes refreshed on every card.",
+  },
+  {
+    date: "2026-09-02", tag: "Lab", title: "Spring Lab ships a settle-time readout",
+    body: "The mass–spring–damper tool now reports exact settle ms so you can tune to a feel, not a guess.",
+  },
+  {
+    date: "2026-08-29", tag: "Backgrounds", title: "Ink Aurora gets a low-tier CSS fallback",
+    body: "Heavy WebGL scenes now degrade to a composited CSS field on low-power devices. Performance tier stays honest.",
+  },
+  {
+    date: "2026-08-24", tag: "Platform", title: "Colour fingerprints on every asset tile",
+    body: "Each component now carries a stable accent hue — thumbnails are recognisable before you read the title.",
+  },
+  {
+    date: "2026-08-19", tag: "Prompts", title: "Community submissions now publish with run logs",
+    body: "Any prompt that ships gets the full multi-model test treatment. Beta badge until it earns Verified.",
+  },
+];

@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { AssetCard, BackgroundCard, Stage, ToolCard } from "@/components/cards";
+import { AssetCard, BackgroundCard, HueStage, Stage, ToolCard } from "@/components/cards";
 import { DemoView } from "@/components/demos/Demo";
 import { SearchBar } from "@/components/chrome";
-import { BACKGROUNDS, COMMUNITY_STATS, COMPONENTS, LAB_TOOLS } from "@/lib/data";
+import { accentCss, BACKGROUNDS, CHANGELOG, COMMUNITY_STATS, COMPONENTS, LAB_TOOLS, PROMPTS } from "@/lib/data";
 
 const SUPER_POWERS = [
   {
@@ -63,7 +63,11 @@ const DIFFERENTIATORS = [
 ];
 
 export default function HomePage() {
-  const top = [...COMPONENTS].sort((a, b) => b.copies - a.copies).slice(0, 6);
+  const byCopies = [...COMPONENTS].sort((a, b) => b.copies - a.copies);
+  const trending = byCopies.slice(0, 5);
+  const pick = COMPONENTS.find((c) => c.slug === "wipe-reveal") ?? byCopies[0];
+  const fresh = [...COMPONENTS].sort((a, b) => (a.published < b.published ? 1 : -1)).slice(0, 6);
+  const topPrompt = [...PROMPTS].sort((a, b) => b.avgFidelity - a.avgFidelity)[0];
   return (
     <>
       {/* ============================== HERO ============================== */}
@@ -146,20 +150,102 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============================== FEATURED COMPONENTS ============================== */}
+      {/* ============================== THE FEED (editorial + trending) ============================== */}
       <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-cyan-300">Live previews</p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">Featured this week</h2>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-cyan-300">The feed</p>
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">This week at Motif</h2>
           </div>
-          <div className="flex gap-2">
-            <Link href="/components" className="btn btn-ghost !py-2 text-xs">All components</Link>
-            <Link href="/backgrounds" className="btn btn-quiet !py-2 text-xs">Backgrounds</Link>
+          <Link href="/components" className="btn btn-ghost !py-2 text-xs">Browse everything</Link>
+        </div>
+
+        <div className="mt-9 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
+          {/* editor's pick — big, editorial */}
+          {pick && (
+            <Link
+              href={`/components/${pick.slug}`}
+              className="card-hover group relative block overflow-hidden rounded-3xl border border-white/10 bg-panel"
+            >
+              <HueStage seed={pick.slug} className="!rounded-none">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <DemoView demo={pick.demo} props={{}} />
+                </div>
+              </HueStage>
+              <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
+                <span className="chip !border-amber-300/40 !bg-amber-400/10 !text-amber-200">★ Editor&apos;s pick</span>
+                <span className="chip border-transparent bg-black/45">fresh drop</span>
+              </div>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/55 to-transparent p-6 pt-20">
+                <div className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: accentCss(pick.slug, 90, 72) }}>
+                  {pick.kind} · {pick.tags.slice(0, 2).join(" / ")}
+                </div>
+                <h3 className="mt-1.5 text-2xl font-black tracking-tight text-white md:text-3xl">{pick.title}</h3>
+                <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/70">{pick.description}</p>
+                <p className="mt-3 text-xs italic text-white/50">
+                  “Why it&apos;s the pick: the reveal costs one background-paint pass and zero JavaScript
+                  after first paint.” — {pick.author}
+                </p>
+                <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black transition-transform group-hover:translate-x-1">
+                  Open in playground →
+                </span>
+              </div>
+            </Link>
+          )}
+
+          {/* trending rail */}
+          <div className="rounded-3xl border border-white/8 bg-panel p-5">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-ink-faint">Trending this week</h3>
+              <span className="chip !text-[9px] uppercase text-mint">▲ by copies</span>
+            </div>
+            <ul className="mt-4">
+              {trending.map((a, i) => (
+                <li key={a.slug}>
+                  <Link href={`/components/${a.slug}`} className="group flex items-center gap-4 rounded-2xl px-2 py-3 transition-colors hover:bg-white/4">
+                    <span
+                      className="w-7 shrink-0 text-center font-mono text-2xl font-black opacity-90"
+                      style={{ color: accentCss(a.slug, 85, 62, 0.95) }}
+                      aria-hidden
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-bold">{a.title}</span>
+                      <span className="block text-[11px] text-ink-faint capitalize">{a.kind} · {a.tags[0]} · {a.stack.join("+")}</span>
+                    </span>
+                    <span className="shrink-0 text-right">
+                      <span className="block text-sm font-extrabold tabular-nums text-ink">{a.copies >= 1000 ? `${(a.copies / 1000).toFixed(1)}k` : a.copies}</span>
+                      <span className="block text-[10px] font-bold text-mint">+{((a.copies * 7) % 13) + 5}%</span>
+                    </span>
+                  </Link>
+                  {i < trending.length - 1 && <div className="mx-2 border-t border-white/5" />}
+                </li>
+              ))}
+            </ul>
+            {topPrompt && (
+              <Link href={`/prompts/${topPrompt.slug}`} className="mt-2 flex items-center gap-3 rounded-2xl border border-dashed border-cyan-300/25 bg-cyan-400/5 p-3.5 transition-colors hover:bg-cyan-400/10">
+                <span className="text-lg text-cyan-300">◎</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[10px] font-bold uppercase tracking-widest text-cyan-300/70">Hottest prompt</span>
+                  <span className="block truncate text-sm font-semibold text-ink">{topPrompt.title}</span>
+                </span>
+                <span className="shrink-0 text-sm font-extrabold text-mint">{topPrompt.avgFidelity}</span>
+              </Link>
+            )}
           </div>
         </div>
-        <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {top.map((a) => (
+
+        {/* fresh drops */}
+        <div className="mt-10 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-pink-300">Fresh drops</p>
+            <h3 className="mt-1 text-xl font-extrabold tracking-tight">New in the library</h3>
+          </div>
+          <span className="text-xs text-ink-faint">all original · MIT · audited</span>
+        </div>
+        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {fresh.map((a) => (
             <AssetCard key={a.slug} asset={a} />
           ))}
         </div>
@@ -213,6 +299,45 @@ export default function HomePage() {
           {BACKGROUNDS.slice(0, 4).map((b) => (
             <BackgroundCard key={b.slug} bg={b} />
           ))}
+        </div>
+      </section>
+
+      {/* ============================== CHANGELOG / ALIVE ============================== */}
+      <section id="changelog" className="border-y border-white/6 bg-panel/40">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[0.9fr_1.4fr] lg:px-8">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-violet-300">Ship log</p>
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">The library grows every week</h2>
+            <p className="mt-4 text-sm leading-relaxed text-ink-dim">
+              This isn&apos;t a static dump — components land with test reports, prompts get
+              re-run when models update, and labs ship new physics. Follow the trail below.
+            </p>
+            <div className="mt-6 inline-flex items-center gap-2 rounded-2xl border border-white/8 bg-bg/60 px-4 py-3 text-xs text-ink-dim">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-violet-400" />
+              </span>
+              Next content push: <b className="text-ink">Thu · +31 assets + 12 prompts</b>
+            </div>
+          </div>
+          <ol className="relative space-y-0 border-l border-white/8 pl-6">
+            {CHANGELOG.slice(0, 6).map((e) => (
+              <li key={e.date + e.title} className="relative pb-6 last:pb-0">
+                <span className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-bg" style={{ background: accentCss(e.title, 85, 62) }} aria-hidden />
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-bold tabular-nums text-ink-dim">{e.date}</span>
+                  <span
+                    className="chip !px-2.5 !text-[9px] font-bold uppercase tracking-wider"
+                    style={{ color: accentCss(e.title, 90, 70), borderColor: `${accentCss(e.title, 90, 70, 0.35)}`, background: `${accentCss(e.title, 90, 70, 0.1)}` }}
+                  >
+                    {e.tag}
+                  </span>
+                </div>
+                <h3 className="mt-1.5 text-[15px] font-bold tracking-tight">{e.title}</h3>
+                <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-ink-dim">{e.body}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 

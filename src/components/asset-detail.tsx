@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { DemoView } from "@/components/demos/Demo";
 import { AssetCard, CopyCount, Stage } from "@/components/cards";
-import { COMPONENTS, KIND_META } from "@/lib/data";
+import { accentCss, COMPONENTS, KIND_META } from "@/lib/data";
 import type { Asset } from "@/lib/types";
 
 /* Original code snippets shown in the detail page (hand-written for the MVP). */
@@ -108,6 +108,142 @@ import { OrbitDeck } from "@motifui/orbit-deck";
   animation: mf-spin var(--orbit, 14s) linear infinite reverse;
 }`,
   },
+  "morph-blob": {
+    react: `// React
+import { MorphBlob } from "@motifui/morph-blob";
+
+<section className="relative h-[420px] overflow-hidden">
+  <MorphBlob hueA={258} hueB={192} speed={9} />
+  <h1 className="relative z-10">Always liquid.</h1>
+</section>`,
+    css: `/* one div, two animations — radius morphs, position drifts */
+.blob {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle at 42% 38%,
+              hsl(258 88% 62% / .55), hsl(298 85% 45% / .18) 60%, transparent 75%);
+  filter: blur(28px) saturate(1.25);
+  border-radius: 58% 42% 63% 37% / 44% 55% 45% 56%;
+  animation: blob-morph 9s ease-in-out infinite alternate,
+             blob-drift 14s ease-in-out infinite alternate;
+}
+@keyframes blob-morph {
+  0%   { border-radius: 58% 42% 63% 37% / 44% 55% 45% 56%; }
+  50%  { border-radius: 46% 54% 38% 62% / 60% 38% 62% 40%; }
+  100% { border-radius: 62% 38% 55% 45% / 40% 62% 38% 60%; }
+}`,
+  },
+  "conic-loader": {
+    react: `// React
+export function Saving() {
+  return (
+    <div role="status" aria-live="polite" className="h-24 w-24 rounded-full"
+         style={{
+           background: "conic-gradient(from 0deg, transparent 0 25%, #8b5cf6 50%, #22d3ee 75%, transparent 80%)",
+           WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 8px))",
+           animation: "conic-spin 1s linear infinite",
+         }} />
+  );
+}`,
+    css: `/* pure CSS: conic-gradient + radial mask = zero-image spinner */
+.loader {
+  width: 96px; aspect-ratio: 1;
+  background: conic-gradient(from 0deg, transparent 0 25%, #8b5cf6 50%,
+              #22d3ee 75%, transparent 80% 100%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 8px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 8px));
+  animation: conic-spin 1s linear infinite;
+}
+@keyframes conic-spin { to { transform: rotate(1turn) } }
+@media (prefers-reduced-motion: reduce) { .loader { animation-duration: 2.4s; } }`,
+  },
+  "glass-pricing": {
+    react: `// React + Tailwind — one column of the trio
+export function PlanCard({ name, price, hero }: Plan) {
+  return (
+    <div className={
+      "relative w-full rounded-2xl border border-white/15 bg-white/10 p-5 " +
+      "shadow-[inset_0_1px_0_rgba(255,255,255,.28)] backdrop-blur-xl " +
+      (hero ? "shadow-[0_0_46px_-6px_rgba(139,92,246,.55)]" : "")
+    }>
+      <h3 className="text-xs font-bold uppercase tracking-widest text-white/60">{name}</h3>
+      <p className="mt-1 text-3xl font-black text-white">{price}<span className="text-xs text-white/40">/mo</span></p>
+      {/* feature list + CTA */}
+    </div>
+  );
+}`,
+    css: `/* the trick is three surfaces: border, inner specular, blur */
+.glass-col {
+  background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.04));
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 24px 48px -24px rgba(0,0,0,.8);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+/* glow only on the hero column — restraint is the design */
+.glass-col--hero { box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 0 60px -10px rgba(139,92,246,.55); }`,
+  },
+  "wipe-reveal": {
+    react: `// React — the travelling light edge is one background-paint pass
+export function WipeHeadline({ children }: { children: React.ReactNode }) {
+  return (
+    <h1 className="relative inline-block">
+      <span aria-hidden className="opacity-15">{children}</span>
+      <span aria-hidden
+        className="absolute inset-0 bg-clip-text text-transparent"
+        style={{
+          backgroundImage: "linear-gradient(100deg, transparent 42%, #c4b5fd 48%, #67e8f9 52%, transparent 58%)",
+          backgroundSize: "260% 100%",
+          animation: "wipe-sweep 2.2s cubic-bezier(.6,.05,.25,1) 0.4s both",
+        }}>
+        {children}
+      </span>
+      <span className="sr-only">{children}</span>
+    </h1>
+  );
+}`,
+    css: `@keyframes wipe-sweep {
+  from { background-position: -220% 0; }
+  to   { background-position: 220% 0; }
+}`,
+  },
+  "counter-stats": {
+    react: `// React — count once, when 40% of the band is visible
+const TARGETS = [12400, 318, 94, 148200];
+useEffect(() => {
+  const obs = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    obs.disconnect();
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / 1400);
+      setVals(TARGETS.map((v) => Math.round(v * (1 - Math.pow(1 - p, 3)))));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, { threshold: 0.4 });
+  obs.observe(ref.current!);
+  return () => obs.disconnect();
+}, []);`,
+    css: `/* no CSS needed for the count — the ledger look is just hairlines */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+.stats-grid > * + * { border-left: 1px solid rgba(255,255,255,.08); }
+.stats-num { font-variant-numeric: tabular-nums; }`,
+  },
+  "dot-draw": {
+    react: `// React — one pointermove, one state map of column fills
+const onMove = (e: React.PointerEvent) => {
+  const r = box.getBoundingClientRect();
+  const col = Math.floor(((e.clientX - r.left) / r.width) * COLS);
+  setFill(f => ({ ...f, [col]: ROWS }));     // raise the column
+  clearTimeout(timers[col]);
+  timers[col] = setTimeout(() =>
+    setFill(f => ({ ...f, [col]: 0 })), 900); // let it settle
+};`,
+    css: `/* every dot is a span; lit dots scale up and glow */
+.dot { border-radius: 50%; transition: opacity .2s, transform .2s; }
+.dot--lit { transform: scale(1); }
+.dot--lit[data-mono="false"] { box-shadow: 0 0 10px hsl(var(--dot-hue) 90% 60% / .8); }`,
+  },
 };
 
 const FALLBACK = {
@@ -121,6 +257,44 @@ export function Demo() {
 }`,
   css: `/* Grab the fully-written CSS from the "HTML/CSS" view,
    or install with:  npx motifui add {slug}  */`,
+};
+
+/** Editorial voice — what it's for → the idea → when to skip it.
+ *  Keeps the library from reading like a pile of tags. */
+const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }> = {
+  "wipe-reveal": {
+    why: "Hero headlines that sit dead on the fold read as templates. One travelling light edge gives the whole brand a 'just rendered' energy for the cost of a single background-paint pass.",
+    idea: "The wipe layer is clipped to the text itself (background-clip: text), so the effect can never spill outside the type.",
+    skip: "Skip it for paragraph-length copy or anything under 28px — the sweep needs size to read as a sweep, not a shimmer bug.",
+  },
+  "glass-pricing": {
+    why: "Glass pricing pages fail when every column shouts. The hero column is the only one allowed a glow; everyone else earns contrast from the specular top edge.",
+    skip: "On light themes glass reads as dirty frosted plastic — pair it with a dark canvas or switch to the solid-token variant.",
+  },
+  "morph-blob": {
+    why: "A brand-mark backdrop that sits still feels like a logo. Three blobs that melt on offset clocks keep a whole hero alive with zero JS.",
+    skip: "Don't stack it behind dense copy — blur fields eat text contrast. Give it its own band or keep copy on a scrim.",
+  },
+  "dot-draw": {
+    why: "404 pages and section gaps are the only places where pure pointer theatre is still a delight. The column-raises-like-a-seismograph motion reads instantly.",
+    skip: "Not for anything with a real task nearby — it's ambient. Respect reduced-motion by dropping the glow pass.",
+  },
+  "counter-stats": {
+    why: "Stats bands count because they're honest: numbers arrive once, eased, on a hairline ledger that mirrors accounting rather than arcade.",
+    skip: "If your numbers are marketing fluff, the count-up makes them *more* suspicious. Keep it for hard, verifiable metrics.",
+  },
+  "conic-loader": {
+    why: "A spinner is a product decision. The conic ring with a breathing marker says 'saving' without the default spinny-circle tax.",
+    skip: "For any operation under ~300ms show nothing — a spinner that appears instantly is worse than none.",
+  },
+  "tilt-card": {
+    why: "The light-spot tracks the cursor so the card feels lit from where you look, not from a fixed lamp. That's the whole trick.",
+    skip: "On touch devices there is no hover — make sure the tilt is also the drag affordance, or gate it to fine pointers only.",
+  },
+  "aurora-veil": {
+    why: "Three radial gradients drifting on a 16–20s clock with a grain pass on top. GPU-composited, zero JS, and the drift speed is slow enough to feel expensive.",
+    skip: "Don't run full-page aurora behind content on every section — reserve it for one hero and fade it out by 60vh.",
+  },
 };
 
 function CodeBlock({ title, code, onCopy }: { title: string; code: string; onCopy: () => void }) {
@@ -160,6 +334,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
     if (s.css.includes("{slug}")) out.css = s.css.replaceAll("{slug}", asset.slug);
     return out;
   }, [asset]);
+  const accentColor = accentCss(asset.slug, 85, 68);
 
   const copy = async (label: string, text: string) => {
     try {
@@ -273,6 +448,25 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
               code={snippet[tab]}
               onCopy={() => copy(tab, snippet[tab])}
             />
+            {DESIGN_NOTES[asset.slug] && (
+              <div className="mt-3 rounded-2xl border border-white/8 bg-panel p-5">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-ink-faint">
+                  <span className="text-base leading-none" style={{ color: accentColor }}>✎</span>
+                  Design notes from the studio
+                </div>
+                <p className="mt-3 text-[13px] leading-relaxed text-ink-dim">
+                  <b className="text-ink">Why it works — </b>{DESIGN_NOTES[asset.slug].why}
+                </p>
+                {DESIGN_NOTES[asset.slug].idea && (
+                  <p className="mt-2 text-[13px] leading-relaxed text-ink-dim">
+                    <b className="text-ink">The idea — </b>{DESIGN_NOTES[asset.slug].idea}
+                  </p>
+                )}
+                <p className="mt-2 rounded-xl border border-amber-300/15 bg-amber-400/5 px-3.5 py-2.5 text-[13px] leading-relaxed text-amber-100/85">
+                  <b>When to skip it — </b>{DESIGN_NOTES[asset.slug].skip}
+                </p>
+              </div>
+            )}
             <div className="mt-3 rounded-2xl border border-violet-300/15 bg-violet-400/5 px-4 py-3 text-xs leading-relaxed text-violet-100/80">
               <b className="text-violet-200">Dependency-aware copy:</b> {asset.deps.length === 0
                 ? "zero packages to install — paste and run."

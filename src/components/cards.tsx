@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { DemoView, KeyframesStyle } from "@/components/demos/Demo";
-import { KIND_META, fidelityColor, promptStatusMeta } from "@/lib/data";
+import { accentCss, accentHue, KIND_META, fidelityColor, promptStatusMeta } from "@/lib/data";
 import type { Asset, BackgroundAsset, LabTool, PromptTemplate } from "@/lib/types";
 
 export { KeyframesStyle };
@@ -16,6 +16,46 @@ export function Stage({ children, className = "" }: { children: React.ReactNode;
       style={{ aspectRatio: "16 / 9" }}
     >
       {children}
+    </div>
+  );
+}
+
+/** Colour-fingerprint backdrop behind a live preview: a per-asset hue wash
+ *  plus two drifting glow blobs so every tile reads differently at a glance. */
+export function HueStage({
+  seed,
+  children,
+  className = "",
+  ambience = 0.16,
+}: {
+  seed: string;
+  children: React.ReactNode;
+  className?: string;
+  ambience?: number;
+}) {
+  const hue = accentHue(seed);
+  return (
+    <div className={`relative overflow-hidden rounded-2xl ${className}`} style={{ aspectRatio: "16 / 9" }}>
+      {/* fingerprint wash */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(120% 130% at 12% -8%, hsl(${hue} 60% 22% / ${ambience + 0.1}), transparent 55%),
+             radial-gradient(90% 100% at 90% 108%, hsl(${(hue + 90) % 360} 70% 26% / ${ambience}), transparent 60%)`,
+        }}
+      />
+      {/* drifting glow blobs */}
+      <span
+        className="pointer-events-none absolute -left-8 -top-8 h-32 w-32 rounded-full blur-2xl animate-drift"
+        style={{ background: accentCss(seed, 85, 58, 0.3) }}
+        aria-hidden
+      />
+      <span
+        className="pointer-events-none absolute -bottom-10 right-2 h-36 w-36 rounded-full blur-3xl animate-drift"
+        style={{ background: accentCss(seed + "-2", 80, 55, 0.22), animationDelay: "-6s" }}
+        aria-hidden
+      />
+      <div className="relative h-full w-full">{children}</div>
     </div>
   );
 }
@@ -48,9 +88,11 @@ export function AssetCard({ asset }: { asset: Asset }) {
       className="card-hover group block overflow-hidden rounded-2xl border border-white/8 bg-panel"
     >
       <div className="relative">
-        <Stage className="rounded-none border-0">
-          <DemoView demo={asset.demo} props={{}} />
-        </Stage>
+        <HueStage seed={asset.slug}>
+          <div className="absolute inset-0 flex items-center justify-center p-0">
+            <DemoView demo={asset.demo} props={{}} />
+          </div>
+        </HueStage>
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
           <KindPill kind={asset.kind} />
           <span className="chip border-transparent bg-black/40 text-[10px] uppercase tracking-wider">
