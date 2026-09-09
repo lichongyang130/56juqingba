@@ -7,6 +7,7 @@ import { AssetCard, CopyCount, Stage } from "@/components/cards";
 import CourseRail from "@/components/course-rail";
 import CourseRailMore from "@/components/course-rail-2";
 import CourseRailThree from "@/components/course-rail-3";
+import { CourseRailFinal } from "@/components/course-rail-3";
 import { accentCss, COMPONENTS, KIND_META } from "@/lib/data";
 import type { Asset } from "@/lib/types";
 
@@ -2633,6 +2634,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
       <CourseRail asset={asset} />
       <CourseRailMore asset={asset} reactCode={snippet.react} cssCode={snippet.css} />
       <CourseRailThree asset={asset} cssCode={snippet.css} reactCode={snippet.react} />
+      <CourseRailFinal asset={asset} />
 
       {/* related */}
       <div className="mt-16">

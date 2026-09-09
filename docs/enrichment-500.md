@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 239 / 500 shipped (batches 1–32, in order) · Sections 1–5 complete ✅
+## Progress — 244 / 500 shipped (batches 1–33, in order) · Sections 1–6 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -251,6 +251,11 @@ names, behaviours and where they plug into the existing pages.
 | 237 | Course rail — code line walk | [/components/aurora-veil#code-line-walk](/components/aurora-veil#code-line-walk) |
 | 238 | Course rail — size vs quality slider | [/components/aurora-veil#size-quality-slider](/components/aurora-veil#size-quality-slider) |
 | 239 | Course rail — stack-switch cost note | [/components/aurora-veil#stack-switch-cost](/components/aurora-veil#stack-switch-cost) |
+| 240 | Course rail — prop explorer verified | [/components/aurora-veil](/components/aurora-veil) |
+| 241 | Course rail — embedded playground verified | [/components/aurora-veil](/components/aurora-veil) |
+| 242 | Course rail — design rationale panel verified | [/components/aurora-veil](/components/aurora-veil) |
+| 243 | Course rail — tag synonyms | [/components/aurora-veil#tag-synonyms](/components/aurora-veil#tag-synonyms) |
+| 244 | Course rail — sibling comparison | [/components/aurora-veil#sibling-comparison](/components/aurora-veil#sibling-comparison) |
 
 
 ---
@@ -531,11 +536,11 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 6. Detail pages — 30 ways to make every asset a course (currently: preview + code + notes)
+## 6. Detail pages — 30 ways to make every asset a course (currently: preview + code + notes) ✅ complete — course rail live on every component detail page
 
 - **Variant gallery** ✅ (`variant-gallery`): 3–5 rendered variants per component (tone, density, accent) as live mini-stages.
-- **Prop explorer**: every prop as a live control (already on list pages — give it to the detail hero).
-- **Playground on the detail page**: the asset's Lab controls embedded above the code, not just linked.
+- **Prop explorer** ✅ (live controls beside the playground on every detail page): every prop as a live control.
+- **Playground on the detail page** ✅ (embedded above the code with ambience + prop controls): the asset's Lab controls embedded above the code, not just linked.
 - **Copy-format tabs** ✅ (React / HTML+CSS / Vue SFC): views of the same snippet with dependency badges.
 - **Usage recipe** ✅ (`usage-recipe`): a 90-second "where this fits" story, not just "why/skip" bullets.
 - **Composition map** ✅ (`composition-map`): which library assets combine well with this one (auto-suggested links).
@@ -557,12 +562,12 @@ names, behaviours and where they plug into the existing pages.
 - **Export as single file** ✅ (`single-file-export`): one `.tsx` or `.html` download button.
 - **Open in CodeSandbox-style sandbox** ✅ (`sandbox-open`): a real runnable copy with the library's CSS injected.
 - **Tutorial transcript** ✅ (`tutorial-transcript`): if the asset ever gets a video, host the written version here.
-- **Design rationale panel**: the "why we made the default the default" note.
+- **Design rationale panel** ✅ ("Design notes from the studio" on every detail page): the "why we made the default the default" note.
 - **Code line walk** ✅ (`code-line-walk`): annotated key lines of the snippet (why this line matters).
 - **Size vs. quality trade-off slider** ✅ (`size-quality-slider`): compare the 4KB version and the 12KB "pro" version.
 - **Stack-switch cost note** ✅ (`stack-switch-cost`): what changes if you take the HTML version into React.
-- **Tag synonyms**: discoverability terms ("dropdown", "select", "picker" → same asset).
-- **Sibling comparison**: two similar assets side-by-side with a "when to pick which" table.
+- **Tag synonyms** ✅ (`tag-synonyms`): discoverability terms ("dropdown", "select", "picker" → same asset).
+- **Sibling comparison** ✅ (`sibling-comparison`): two similar assets side-by-side with a "when to pick which" table.
 
 ---
 

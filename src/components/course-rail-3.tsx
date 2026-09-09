@@ -8,6 +8,7 @@
 import { useMemo, useState } from "react";
 import { RailSection } from "@/components/course-rail";
 import { Stage } from "@/components/cards";
+import { COMPONENTS, KIND_META } from "@/lib/data";
 import type { Asset } from "@/lib/types";
 
 const SIZES = [
@@ -155,4 +156,94 @@ export default function CourseRailThree({ asset, cssCode, reactCode }: { asset: 
       </RailSection>
     </div>
   );
+}
+
+/* ---------- final rail: synonyms + sibling comparison ---------- */
+
+const SYNONYM_MAP: Record<string, string[]> = {
+  dropdown: ["select", "picker", "menu"],
+  menu: ["dropdown", "navigation", "sheet"],
+  modal: ["dialog", "popover", "overlay"],
+  loader: ["spinner", "loading", "progress"],
+  button: ["cta", "action", "submit"],
+  toggle: ["switch", "checkbox", "state"],
+  hero: ["header", "landing", "cover"],
+  card: ["panel", "tile", "box"],
+  toast: ["notification", "alert", "snackbar"],
+  gallery: ["carousel", "grid", "showcase"],
+  aurora: ["gradient", "backdrop", "veil"],
+  pricing: ["plans", "billing", "tiers"],
+  nav: ["navigation", "menu", "dock"],
+  form: ["input", "field", "control"],
+};
+
+export function CourseRailFinal({ asset }: { asset: Asset }) {
+  const siblings = COMPONENTS_FILTERED(asset).slice(0, 2);
+  const synSets = asset.tags.map((t) => ({ tag: t, aliases: SYNONYM_MAP[t.toLowerCase()] ?? [] })).filter((x) => x.aliases.length > 0);
+  return (
+    <div className="mt-6 space-y-6">
+      <RailSection id="tag-synonyms" title="Tag synonyms" kicker="Find it the way you say it">
+        {synSets.length === 0 ? (
+          <p className="text-xs leading-relaxed text-ink-dim">
+            Search on this site resolves synonyms globally — &quot;dropdown&quot;, &quot;select&quot; and &quot;picker&quot; land on the same asset, so you never need to know the catalog&apos;s internal vocabulary.
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {synSets.map((x) => (
+              <span key={x.tag} className="chip !text-[10px]">
+                {x.tag} → {x.aliases.join(" · ")}
+              </span>
+            ))}
+            <span className="chip !text-[10px] text-ink-faint">search resolves all of these to this asset</span>
+          </div>
+        )}
+      </RailSection>
+
+      <RailSection id="sibling-comparison" title="Sibling comparison" kicker="When to pick which">
+        {siblings.length < 2 ? (
+          <p className="text-xs leading-relaxed text-ink-dim">This {KIND_META[asset.kind].label.toLowerCase()} asset is currently the only one in its family — siblings arrive as the catalog grows.</p>
+        ) : (
+          <>
+            <div className="overflow-x-auto rounded-xl border border-white/8">
+              <table className="w-full min-w-[480px] text-left text-xs">
+                <thead>
+                  <tr className="border-b border-white/8 text-[10px] uppercase tracking-wider text-ink-faint">
+                    <th className="px-3 py-2 font-semibold">Compare</th>
+                    <th className="px-3 py-2 font-semibold text-violet-200">{asset.title}</th>
+                    {siblings.map((s) => <th key={s.slug} className="px-3 py-2 font-semibold text-ink-dim">{s.title}</th>)}
+                  </tr>
+                </thead>
+                <tbody className="text-[11px] text-ink-dim">
+                  {[
+                    { label: "Kind", get: (a: Asset) => KIND_META[a.kind].label },
+                    { label: "Bundle", get: (a: Asset) => `${a.bundleKb} KB gzip` },
+                    { label: "a11y", get: (a: Asset) => `${a.a11yScore}/100` },
+                    { label: "Dependencies", get: (a: Asset) => (a.deps.length === 0 ? "none" : a.deps.join(", ")) },
+                    { label: "Copies / mo", get: (a: Asset) => a.copies.toLocaleString() },
+                    { label: "Interactions", get: (a: Asset) => a.behaviors.join(", ") },
+                  ].map((row) => (
+                    <tr key={row.label} className="border-b border-white/5 last:border-0">
+                      <td className="px-3 py-2 font-bold text-ink-faint">{row.label}</td>
+                      <td className="px-3 py-2 text-violet-100/80">{row.get(asset)}</td>
+                      {siblings.map((s) => <td key={s.slug} className="px-3 py-2">{row.get(s)}</td>)}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-3 rounded-xl border border-white/6 bg-white/[.02] px-3.5 py-2.5 text-xs leading-relaxed text-ink-dim">
+              <b className="text-ink">The honest verdict — </b>
+              {asset.bundleKb <= siblings[0].bundleKb
+                ? `${asset.title} is the lighter default here; reach for ${siblings[0].title} when its extra weight buys an interaction this one lacks.`
+                : `${siblings[0].title} is lighter, but ${asset.title} carries richer behaviour — pick by the interaction your screen actually needs, then swap tokens, not pages.`}
+            </p>
+          </>
+        )}
+      </RailSection>
+    </div>
+  );
+}
+
+function COMPONENTS_FILTERED(asset: Asset) {
+  return COMPONENTS.filter((c) => c.kind === asset.kind && c.slug !== asset.slug);
 }
