@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 195 / 500 shipped (batches 1–26, in order) · Sections 1–4 complete ✅
+## Progress — 203 / 500 shipped (batches 1–27, in order) · Sections 1–4 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -207,6 +207,14 @@ names, behaviours and where they plug into the existing pages.
 | 193 | Animated storytelling for non-profits essay | [/learn/animated-storytelling-for-nonprofits](/learn/animated-storytelling-for-nonprofits) |
 | 194 | Dark mode is a design system essay | [/learn/dark-mode-is-a-design-system](/learn/dark-mode-is-a-design-system) |
 | 195 | Naming is design essay | [/learn/naming-is-design](/learn/naming-is-design) |
+| 196 | Timing-chart composer lab | [/lab#timing-composer](/lab#timing-composer) |
+| 197 | Stagger calculator lab | [/lab#stagger-calculator](/lab#stagger-calculator) |
+| 198 | Background-position painter lab | [/lab#bg-position-painter](/lab#bg-position-painter) |
+| 199 | Text-animation lab | [/lab#text-animation-lab](/lab#text-animation-lab) |
+| 200 | Colour-ramp checker lab | [/lab#colour-ramp-checker](/lab#colour-ramp-checker) |
+| 201 | Border-radius playground lab | [/lab#radius-playground](/lab#radius-playground) |
+| 202 | Shadow stacker lab | [/lab#shadow-stacker](/lab#shadow-stacker) |
+| 203 | Filter (blur/brightness) lab | [/lab#filter-lab](/lab#filter-lab) |
 
 
 ---
@@ -464,14 +472,14 @@ names, behaviours and where they plug into the existing pages.
 
 ## 5. Lab tools — 20 additions (currently 8)
 
-- **Timing-chart composer**: visually author a keyframe timeline (enter/dwell/exit) and export CSS.
-- **Stagger calculator**: input N items and read the per-item delay offsets for a wave.
-- **Background-position painter**: drag gradient stops on a canvas and export CSS.
-- **Text-animation lab**: pick scramble/typewriter/wipe on your copy and compare.
-- **Colour-ramp checker**: build an accessible ramp with AA/AAA markers per step.
-- **Border-radius playground**: asymmetric radii with live preview and Tailwind output.
-- **Shadow stacker**: add shadow layers, tune blur/spread, export a layered value.
-- **Filter (blur/brightness) lab**: live single-filter previews on a test image.
+- **Timing-chart composer** ✅ (`timing-composer`): visually author a keyframe timeline (enter/dwell/exit) and export CSS.
+- **Stagger calculator** ✅ (`stagger-calculator`): input N items and read the per-item delay offsets for a wave.
+- **Background-position painter** ✅ (`bg-position-painter`): drag gradient stops on a canvas and export CSS.
+- **Text-animation lab** ✅ (`text-animation-lab`): pick scramble/typewriter/wipe on your copy and compare.
+- **Colour-ramp checker** ✅ (`colour-ramp-checker`): build an accessible ramp with AA/AAA markers per step.
+- **Border-radius playground** ✅ (`radius-playground`): asymmetric radii with live preview and Tailwind output.
+- **Shadow stacker** ✅ (`shadow-stacker`): add shadow layers, tune blur/spread, export a layered value.
+- **Filter (blur/brightness) lab** ✅ (`filter-lab`): live single-filter previews on a test image.
 - **Hue-shift simulator**: preview brand hue rotation across surfaces.
 - **Breakpoint inspector**: resize a component demo through container widths.
 - **Motion-preference preview**: toggle reduced-motion and watch scenes adapt.

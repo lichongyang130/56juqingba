@@ -1,4 +1,5 @@
 import { EasingLab, GradientForge, ScrollLab, SpringLab } from "@/components/lab-tools";
+import { BackgroundPainter, ColourRampChecker, FilterLab, RadiusPlayground, ShadowStacker, StaggerCalculator, TextAnimationLab, TimingComposer } from "@/components/lab-additions";
 import { ToolCard } from "@/components/cards";
 import { LAB_TOOLS } from "@/lib/data";
 
@@ -23,6 +24,22 @@ export default function LabPage() {
         <SpringLab />
         <ScrollLab />
         <GradientForge />
+      </div>
+
+      {/* lab additions — batch 1 */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-extrabold tracking-tight">New this week</h2>
+        <p className="mt-1 text-sm text-ink-dim">Smaller tools for the decisions that surround motion: stagger math, radius shapes, shadow stacks, filter checks.</p>
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <TimingComposer />
+          <StaggerCalculator />
+          <BackgroundPainter />
+          <TextAnimationLab />
+          <ColourRampChecker />
+          <RadiusPlayground />
+          <ShadowStacker />
+          <FilterLab />
+        </div>
       </div>
 
       {/* more tools */}
