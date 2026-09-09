@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 244 / 500 shipped (batches 1–33, in order) · Sections 1–6 complete ✅
+## Progress — 252 / 500 shipped (batches 1–34, in order) · Sections 1–6 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -256,6 +256,14 @@ names, behaviours and where they plug into the existing pages.
 | 242 | Course rail — design rationale panel verified | [/components/aurora-veil](/components/aurora-veil) |
 | 243 | Course rail — tag synonyms | [/components/aurora-veil#tag-synonyms](/components/aurora-veil#tag-synonyms) |
 | 244 | Course rail — sibling comparison | [/components/aurora-veil#sibling-comparison](/components/aurora-veil#sibling-comparison) |
+| 245 | Template kit — provenance tags | [/components/template-landing-saas#template-provenance](/components/template-landing-saas#template-provenance) |
+| 246 | Template kit — time-to-build meter | [/components/template-landing-saas#time-to-build](/components/template-landing-saas#time-to-build) |
+| 247 | Template kit — case-study numbers | [/components/template-landing-saas#case-study-numbers](/components/template-landing-saas#case-study-numbers) |
+| 248 | Template kit — rebrand playbacks | [/components/template-landing-saas#rebrand-playback](/components/template-landing-saas#rebrand-playback) |
+| 249 | Template kit — dark/light twins | [/components/template-landing-saas#dark-light-twins](/components/template-landing-saas#dark-light-twins) |
+| 250 | Template kit — section swap explorer | [/components/template-landing-saas#section-swap-explorer](/components/template-landing-saas#section-swap-explorer) |
+| 251 | Template kit — blank-canvas pack | [/components/template-landing-saas#blank-canvas-pack](/components/template-landing-saas#blank-canvas-pack) |
+| 252 | Template kit — JSON build spec export | [/components/template-landing-saas#build-spec-export](/components/template-landing-saas#build-spec-export) |
 
 
 ---
@@ -580,14 +588,14 @@ names, behaviours and where they plug into the existing pages.
 - **Template gallery filtering**: filter templates by mood, stack or section count.
 - **Community template submissions**: accept and moderate template builds (ties to the queue).
 - **Template bundle downloads**: a zip of assets + README for offline use.
-- **Time-to-build meter**: "this template assembles in ~6 copies" — honest effort cues.
-- **Rebrand playbacks**: swap the demo template into two token themes live.
-- **Case-study numbers**: what each sample build's page weights and how many requests.
-- **Blank-canvas pack**: start-your-own template with a section checklist.
-- **Section swap explorer**: swap the hero/pricing section of a template to compare pairings.
-- **Dark/light template twins**: two sample builds of the same template in both modes.
-- **Template provenance tags**: original studio, date, and audit badges per template.
-- **Copy entire build**: a JSON "build spec" export you could paste into a future CLI.
+- **Time-to-build meter** ✅ (`time-to-build`): "this template assembles in ~6 copies" — honest effort cues.
+- **Rebrand playbacks** ✅ (`rebrand-playback`): swap the demo template into two token themes live.
+- **Case-study numbers** ✅ (`case-study-numbers`): what each sample build's page weights and how many requests.
+- **Blank-canvas pack** ✅ (`blank-canvas-pack`): start-your-own template with a section checklist.
+- **Section swap explorer** ✅ (`section-swap-explorer`): swap the hero/pricing section of a template to compare pairings.
+- **Dark/light template twins** ✅ (`dark-light-twins`): two sample builds of the same template in both modes.
+- **Template provenance tags** ✅ (`template-provenance`): original studio, date, and audit badges per template.
+- **Copy entire build** ✅ (`build-spec-export`): a JSON "build spec" export you could paste into a future CLI.
 
 ---
 
