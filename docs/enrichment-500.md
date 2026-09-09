@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 203 / 500 shipped (batches 1–27, in order) · Sections 1–4 complete ✅
+## Progress — 211 / 500 shipped (batches 1–28, in order) · Sections 1–4 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -215,6 +215,14 @@ names, behaviours and where they plug into the existing pages.
 | 201 | Border-radius playground lab | [/lab#radius-playground](/lab#radius-playground) |
 | 202 | Shadow stacker lab | [/lab#shadow-stacker](/lab#shadow-stacker) |
 | 203 | Filter (blur/brightness) lab | [/lab#filter-lab](/lab#filter-lab) |
+| 204 | Hue-shift simulator lab | [/lab#hue-shift-simulator](/lab#hue-shift-simulator) |
+| 205 | Breakpoint inspector lab | [/lab#breakpoint-inspector](/lab#breakpoint-inspector) |
+| 206 | Motion-preference preview lab | [/lab#motion-preference-preview](/lab#motion-preference-preview) |
+| 207 | Export clipboard lab | [/lab#export-clipboard](/lab#export-clipboard) |
+| 208 | Perf meter lab | [/lab#perf-meter](/lab#perf-meter) |
+| 209 | URL state for labs | [/lab#url-state-labs](/lab#url-state-labs) |
+| 210 | Favourite recipes lab | [/lab#favourite-recipes](/lab#favourite-recipes) |
+| 211 | Random inspiration button lab | [/lab#random-inspiration](/lab#random-inspiration) |
 
 
 ---
@@ -480,14 +488,14 @@ names, behaviours and where they plug into the existing pages.
 - **Border-radius playground** ✅ (`radius-playground`): asymmetric radii with live preview and Tailwind output.
 - **Shadow stacker** ✅ (`shadow-stacker`): add shadow layers, tune blur/spread, export a layered value.
 - **Filter (blur/brightness) lab** ✅ (`filter-lab`): live single-filter previews on a test image.
-- **Hue-shift simulator**: preview brand hue rotation across surfaces.
-- **Breakpoint inspector**: resize a component demo through container widths.
-- **Motion-preference preview**: toggle reduced-motion and watch scenes adapt.
-- **Export clipboard**: one-click "copy Tailwind / CSS / React" from any lab.
-- **Perf meter**: each lab shows a paint/transform badge and estimated cost.
-- **URL state for labs**: shareable lab configurations via query params.
-- **Favourite recipes**: save tuned outputs to localStorage with names.
-- **Random inspiration button**: shuffle presets when the blank canvas stares back.
+- **Hue-shift simulator** ✅ (`hue-shift-simulator`): preview brand hue rotation across surfaces.
+- **Breakpoint inspector** ✅ (`breakpoint-inspector`): resize a component demo through container widths.
+- **Motion-preference preview** ✅ (`motion-preference-preview`): toggle reduced-motion and watch scenes adapt.
+- **Export clipboard** ✅ (`export-clipboard`): one-click "copy Tailwind / CSS / React" from any lab.
+- **Perf meter** ✅ (`perf-meter`): each lab shows a paint/transform badge and estimated cost.
+- **URL state for labs** ✅ (`url-state-labs`): shareable lab configurations via query params.
+- **Favourite recipes** ✅ (`favourite-recipes`): save tuned outputs to localStorage with names.
+- **Random inspiration button** ✅ (`random-inspiration`): shuffle presets when the blank canvas stares back.
 - **Typing-speed meter**: calibrate the typewriter demo to your copy length.
 - **Icon line-weight lab**: stroke width/roundness adjustments across the icon set.
 - **Logo-drift preview**: preview logo animation ideas with safe-zone guides.

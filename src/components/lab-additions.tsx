@@ -11,7 +11,7 @@ import { useRef, useState } from "react";
 
 /* ---------- shared primitives ---------- */
 
-function Frame({ id, title, blurb, children }: { id: string; title: string; blurb: string; children: React.ReactNode }) {
+export function Frame({ id, title, blurb, children }: { id: string; title: string; blurb: string; children: React.ReactNode }) {
   return (
     <section id={id} className="scroll-mt-24 rounded-3xl border border-white/8 bg-panel p-6">
       <h3 className="text-lg font-extrabold tracking-tight">{title}</h3>
@@ -21,7 +21,7 @@ function Frame({ id, title, blurb, children }: { id: string; title: string; blur
   );
 }
 
-function Range({
+export function Range({
   label, value, min, max, step = 1, onChange, unit = "", display,
 }: {
   label: string; value: number; min: number; max: number; step?: number;
@@ -43,7 +43,7 @@ function Range({
   );
 }
 
-function CopyBox({ label, text }: { label: string; text: string }) {
+export function CopyBox({ label, text }: { label: string; text: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <div className="mt-4 overflow-hidden rounded-xl border border-white/8 bg-[#07090f]">
