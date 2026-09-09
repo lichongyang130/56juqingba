@@ -55,6 +55,16 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-3">
+          <Link
+            href="/search"
+            aria-label="Search the library"
+            className="hidden h-9 w-9 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-ink-dim transition-colors hover:border-white/20 hover:text-ink xl:flex"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" strokeLinecap="round" />
+            </svg>
+          </Link>
           <Link href="/admin" className="hidden text-xs font-medium text-ink-faint hover:text-ink-dim sm:block">
             Admin ↗
           </Link>
@@ -91,7 +101,7 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        router.push(`/components?q=${encodeURIComponent(q)}`);
+        router.push(`/search?q=${encodeURIComponent(q)}`);
       }}
       className={`relative ${compact ? "" : "w-full max-w-xl"}`}
       role="search"
