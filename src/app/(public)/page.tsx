@@ -64,7 +64,7 @@ const SAMPLE_BUILDS = [
 ];
 
 const HERO_TICKER = [
-  "44 original assets",
+  `${COMPONENTS.length} original assets`,
   "24 run-tested prompts",
   "React · HTML/CSS · Vue",
   "MIT licensed",
