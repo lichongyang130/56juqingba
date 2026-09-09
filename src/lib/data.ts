@@ -556,7 +556,7 @@ export const PROMPTS: PromptTemplate[] = [
   {
     slug: "restaurant-digital-menu",
     title: "Digital menu for a chef-led restaurant",
-    industry: "Food", vibe: "minimal, appetising", stacks: ["HTML", "React"],
+    industry: "Restaurant", vibe: "minimal, appetising", stacks: ["HTML", "React"],
     blocks: ["Hero", "Menu sections", "Dish cards", "Reservation"],
     status: "beta", avgFidelity: 86, bestModel: "GLM-4.6 (CN)",
     runs: [
@@ -648,6 +648,30 @@ export interface ChangeLogEntry {
   title: string;
   body: string;
 }
+
+/** Sample marketing copy used by the per-prompt "concept poster" renders.
+ *  Short, concrete, and styled the way the prompt tells the model to write. */
+export const INDUSTRY_SAMPLES: Record<string, { kicker: string; title: string; sub: string; cta: string }> = {
+  SaaS:        { kicker: "SAAS / LAUNCH",   title: "Ship faster\nthan your roadmap", sub: "Aurora hero · bento features · toggle pricing", cta: "Start free" },
+  Portfolio:   { kicker: "PORTFOLIO",       title: "I make\nthe web move",          sub: "Orbit case cards · scramble reveals",         cta: "See the work" },
+  Fintech:     { kicker: "FINTECH / TRUST", title: "Security you\ncan actually read", sub: "Paper UI · restraint over hype",              cta: "Explore platform" },
+  Wellness:    { kicker: "WELLNESS",        title: "Feel like\nmorning light",       sub: "Serif headline · organic blobs · spa pace",   cta: "Begin" },
+  Ecommerce:   { kicker: "DROP 004",        title: "The 003 drops\nFriday, 9am",    sub: "Countdown · 3D spin · size pills",           cta: "Notify me" },
+  Agency:      { kicker: "SELECTED WORKS",  title: "Annual report\nenergy online",   sub: "Index numerals · editorial grid",            cta: "View index" },
+  AI:          { kicker: "DEV TOOL",        title: "Your stack,\nnow intelligent",   sub: "Terminal demo · usage slider",               cta: "npm i" },
+  Travel:      { kicker: "WANDER GUIDE",    title: "Seven days,\none mountain spine", sub: "Full-bleed photos · route spine",            cta: "Read the guide" },
+  Healthcare:  { kicker: "CLINIC / NEW",    title: "Calm is\nthe feature",          sub: "Ice blue · warm wood · booking pills",        cta: "Book a visit" },
+  Food:        { kicker: "CEREAL CO.",      title: "Breakfast, but\nmake it bounce", sub: "Mascot sticker · recipe wiggles",            cta: "Taste it" },
+  Education:   { kicker: "COURSE 04",       title: "Ship your first\nreal product",  sub: "Syllabus accordion · warm teacher energy",    cta: "Enroll now" },
+  "Real Estate": { kicker: "RESIDENCE 9F",  title: "A quiet building,\nloud light",  sub: "Brass accents · floor-plan toggle",           cta: "Book viewing" },
+  Restaurant:  { kicker: "SEASONAL MENU",   title: "Changed weekly,\non purpose",    sub: "Chef's name · dish cards · reserve",          cta: "Reserve a table" },
+};
+export const INDUSTRY_SAMPLE_FALLBACK = {
+  kicker: "MOTIF / CONCEPT",
+  title: "Designed to\nbe copied well",
+  sub: "Original scene · themeable tokens · audited",
+  cta: "Get the prompt",
+};
 
 export const CHANGELOG: ChangeLogEntry[] = [
   {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { PromptCard } from "@/components/cards";
+import { PromptCard, PromptPoster } from "@/components/cards";
 import { PROMPTS, fidelityColor, promptStatusMeta } from "@/lib/data";
 import type { PromptTemplate } from "@/lib/types";
 
@@ -31,6 +31,13 @@ export default function PromptDetail({ prompt }: { prompt: PromptTemplate }) {
         <span>/</span>
         <span className="text-ink-dim">{prompt.title}</span>
       </nav>
+
+      <div className="mt-5 overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
+        <PromptPoster prompt={prompt} hero />
+      </div>
+      <p className="mt-2 text-right text-[10px] text-ink-faint">
+        Concept render — composed live from this prompt&apos;s palette & layout. Reproducible with the library, not a stock screenshot.
+      </p>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
         <div>

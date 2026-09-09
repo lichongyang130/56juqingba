@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { DemoView, KeyframesStyle } from "@/components/demos/Demo";
-import { accentCss, accentHue, KIND_META, fidelityColor, promptStatusMeta } from "@/lib/data";
+import {
+  accentCss,
+  accentHue,
+  INDUSTRY_SAMPLE_FALLBACK,
+  INDUSTRY_SAMPLES,
+  KIND_META,
+  fidelityColor,
+  promptStatusMeta,
+} from "@/lib/data";
 import type { Asset, BackgroundAsset, LabTool, PromptTemplate } from "@/lib/types";
 
 export { KeyframesStyle };
@@ -125,46 +133,225 @@ export function AssetCard({ asset }: { asset: Asset }) {
   );
 }
 
+/* ---------------- prompt concept poster ----------------
+   A "concept render" for each AI prompt, built live from the same
+   style engine as the rest of the library: the prompt's industry copy,
+   its colour fingerprint and one of several ambient scenes. Unlike a
+   stock AI screenshot, every colour and layout here is reproducible. */
+
+const POSTER_SCENES = ["aurora-veil", "morph-blob", "star-motes", "grid", "glass"] as const;
+
+function hashSeed(key: string) {
+  let h = 7;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+function FakeBars({ seed, n = 6, hue }: { seed: string; n?: number; hue: number }) {
+  return (
+    <div className="flex items-end gap-1">
+      {Array.from({ length: n }).map((_, i) => {
+        const h = 22 + ((hashSeed(seed + i) % 70));
+        return (
+          <span
+            key={i}
+            className="flex-1 rounded-sm"
+            style={{
+              height: h,
+              background: `linear-gradient(180deg, hsl(${(hue + i * 30) % 360} 80% 70% / .9), hsl(${(hue + i * 30) % 360} 70% 45% / .6))`,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate; hero?: boolean }) {
+  const hue = accentHue(prompt.slug);
+  const h = hashSeed(prompt.slug);
+  const scene = POSTER_SCENES[h % POSTER_SCENES.length];
+  const layout = h % 3;
+  const sample = INDUSTRY_SAMPLES[prompt.industry] ?? INDUSTRY_SAMPLE_FALLBACK;
+  const [l1, l2 = ""] = sample.title.split("\n");
+  const titleLines = [l1, l2];
+  const sub = sample.sub;
+  const meta = promptStatusMeta(prompt.status);
+
+  let sceneProps: Record<string, number> = {};
+  if (scene === "aurora-veil") sceneProps = { hueA: hue, hueB: (hue + 80) % 360, speed: 18 };
+  if (scene === "morph-blob") sceneProps = { hueA: hue, hueB: (hue + 70) % 360, speed: 9 };
+
+  return (
+    <div
+      className="relative overflow-hidden"
+      style={{ aspectRatio: hero ? "21 / 8" : "16 / 10" }}
+    >
+      {/* ambient scene, cropped-in so self-labels stay out of frame */}
+      <div className="absolute -inset-[38%]" aria-hidden>
+        <DemoView demo={scene} props={sceneProps} />
+      </div>
+      {/* legibility scrims */}
+      <div className="absolute inset-0" style={{ background: `linear-gradient(120deg, rgba(5,6,10,0.72) 0%, rgba(5,6,10,0.32) 55%, rgba(5,6,10,0.6) 100%)` }} aria-hidden />
+      <div className="absolute inset-0" style={{ background: `radial-gradient(120% 140% at 12% 0%, hsl(${hue} 60% 30% / 0.32), transparent 55%)` }} aria-hidden />
+
+      {/* status + fidelity badges */}
+      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
+        <span className={`chip border bg-black/45 ${meta.cls}`}>{meta.label}</span>
+        <span className="chip border-transparent bg-black/45 text-[10px]">
+          <span
+            className="font-bold"
+            style={{ color: prompt.avgFidelity >= 90 ? "#34d399" : prompt.avgFidelity >= 85 ? "#fcd34d" : "#f87171" }}
+          >
+            {prompt.avgFidelity} avg fidelity
+          </span>
+          · concept render
+        </span>
+      </div>
+
+      {/* ------- fake page scaffold inside the scene ------- */}
+      <div className={`absolute inset-0 ${hero ? "px-12" : "px-5"} py-4 ${hero ? "md:py-7" : ""}`}>
+        {/* faux navbar */}
+        <div className="flex items-center gap-3" style={{ opacity: hero ? 1 : 0.9 }}>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full" style={{ background: `hsl(${hue} 90% 65%)`, boxShadow: `0 0 8px hsl(${hue} 90% 65% / .8)` }} />
+            <span className="text-[10px] font-black tracking-[0.18em] text-white/80">MOTIF</span>
+          </span>
+          <span className="ml-3 hidden items-center gap-2 text-[8px] font-semibold uppercase tracking-wider text-white/45 sm:flex">
+            {["Work", "Pricing", "Journal"].map((n) => (
+              <span key={n} className="rounded-full px-2 py-0.5 hover:text-white/80">{n}</span>
+            ))}
+          </span>
+          <span className="ml-auto rounded-md px-2.5 py-1 text-[9px] font-black text-black" style={{ background: `hsl(${hue} 90% 68%)` }}>
+            {sample.cta}
+          </span>
+        </div>
+
+        {/* ------- layout variants ------- */}
+        {layout === 0 && (
+          <div className="mt-3 flex h-[calc(100%-3.4rem)] flex-col items-center justify-center text-center md:mt-4">
+            <span className="chip !text-[8px] uppercase tracking-[0.3em]" style={{ color: `hsl(${hue} 90% 70%)`, borderColor: `hsl(${hue} 90% 65% / .35)`, background: `hsl(${hue} 90% 60% / .1)` }}>
+              {sample.kicker}
+            </span>
+            <h4 className="mt-1.5 text-xl font-black leading-[1.05] tracking-tight text-white drop-shadow md:text-3xl">
+              {titleLines.map((l) => <span key={l} className="block">{l}</span>)}
+            </h4>
+            <p className="mt-1 max-w-xs text-[8px] leading-relaxed text-white/60 md:text-[10px]">{sub}</p>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="rounded-lg px-3 py-1 text-[9px] font-black text-black" style={{ background: `hsl(${hue} 90% 68%)` }}>{sample.cta}</span>
+              <span className="rounded-lg border border-white/25 px-3 py-1 text-[9px] font-bold text-white/85">See it live</span>
+            </div>
+          </div>
+        )}
+
+        {layout === 1 && (
+          <div className="mt-3 flex h-[calc(100%-3rem)] items-center gap-4 md:mt-4 md:gap-8">
+            <div className="min-w-0 flex-1">
+              <span className="chip !text-[8px] uppercase tracking-[0.3em]" style={{ color: `hsl(${hue} 90% 70%)`, borderColor: `hsl(${hue} 90% 65% / .35)`, background: `hsl(${hue} 90% 60% / .1)` }}>
+                {sample.kicker}
+              </span>
+              <h4 className="mt-1.5 text-lg font-black leading-[1.06] tracking-tight text-white drop-shadow md:text-2xl">
+                {titleLines.map((l) => <span key={l} className="block">{l}</span>)}
+              </h4>
+              <p className="mt-1 line-clamp-2 max-w-[24ch] text-[8px] leading-relaxed text-white/60 md:text-[9px]">{sub}</p>
+              <div className="mt-2 w-fit rounded-lg px-2.5 py-1 text-[9px] font-black text-black" style={{ background: `hsl(${hue} 90% 68%)` }}>
+                {sample.cta} →
+              </div>
+            </div>
+            {/* right column: fake content cards */}
+            <div className="hidden w-[38%] shrink-0 gap-2 sm:flex sm:flex-col">
+              {[0, 1, 2].map((c) => (
+                <div key={c} className="rounded-xl border border-white/12 bg-white/6 p-2.5 backdrop-blur-md" style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,.18)" }}>
+                  <div className="flex items-center justify-between">
+                    <span className="h-1.5 w-12 rounded-full bg-white/25" />
+                    <span className="h-1.5 w-6 rounded-full" style={{ background: `hsl(${(hue + c * 90) % 360} 90% 68% / .8)` }} />
+                  </div>
+                  <div className="mt-2"><FakeBars seed={prompt.slug + c} n={5} hue={(hue + c * 45) % 360} /></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {layout === 2 && (
+          <div className="mt-2 flex h-[calc(100%-3rem)] flex-col justify-center md:mt-3">
+            <div className="flex items-end justify-between gap-4">
+              <div className="min-w-0">
+                <span className="chip !text-[8px] uppercase tracking-[0.3em]" style={{ color: `hsl(${hue} 90% 70%)`, borderColor: `hsl(${hue} 90% 65% / .35)`, background: `hsl(${hue} 90% 60% / .1)` }}>
+                  {sample.kicker}
+                </span>
+                <h4 className="mt-1 text-xl font-black leading-[1.05] tracking-tight text-white drop-shadow md:text-3xl">
+                  {titleLines.map((l) => <span key={l} className="block">{l}</span>)}
+                </h4>
+              </div>
+              <span className="hidden shrink-0 rounded-lg px-3 py-1 text-[9px] font-black text-black sm:block" style={{ background: `hsl(${hue} 90% 68%)` }}>
+                {sample.cta}
+              </span>
+            </div>
+            <p className="mt-1.5 text-[8px] text-white/55 md:text-[9px]">{sub}</p>
+            <div className="mt-3 grid max-w-md grid-cols-3 gap-2">
+              {[0, 1, 2].map((c) => (
+                <div key={c} className="rounded-lg border border-white/12 bg-white/6 p-2 backdrop-blur-md">
+                  <div className="text-sm font-black text-white" style={{ textShadow: `0 0 14px hsl(${(hue + c * 90) % 360} 90% 65% / .6)` }}>
+                    {[8400, 21, 97][c]}{c === 0 ? "k" : c === 1 ? "%" : "%"}
+                  </div>
+                  <div className="mt-0.5 text-[7px] uppercase tracking-wider text-white/50">metric {c + 1}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* bottom corner: blocks used */}
+      <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-1" style={{ maxWidth: "72%" }}>
+          {prompt.blocks.slice(0, hero ? 6 : 4).map((b) => (
+            <span key={b} className="rounded-md bg-black/45 px-1.5 py-0.5 text-[7px] font-semibold uppercase tracking-wider text-white/55 backdrop-blur-sm">
+              {b}
+            </span>
+          ))}
+        </div>
+        <span className="shrink-0 text-[7px] font-semibold uppercase tracking-widest text-white/40">
+          {prompt.stacks.join(" · ")}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ---------------- prompt card ---------------- */
 
 export function PromptCard({ prompt }: { prompt: PromptTemplate }) {
-  const meta = promptStatusMeta(prompt.status);
   return (
     <Link
       href={`/prompts/${prompt.slug}`}
-      className="card-hover group flex h-full flex-col rounded-2xl border border-white/8 bg-panel p-5"
+      className="card-hover group flex h-full flex-col overflow-hidden rounded-2xl border border-white/8 bg-panel"
     >
-      <div className="flex items-center justify-between gap-2">
-        <span className="chip">{prompt.industry}</span>
-        <span className={`chip border ${meta.cls}`}>{meta.label}</span>
-      </div>
-      <h3 className="mt-3 text-[15px] font-bold leading-snug tracking-tight">{prompt.title}</h3>
-      <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-ink-dim">{prompt.vibe}</p>
-
-      <div className="mt-4 grid grid-cols-3 gap-2 rounded-xl border border-white/6 bg-black/25 p-2.5 text-center">
-        <div>
-          <div className={`text-sm font-extrabold ${fidelityColor(prompt.avgFidelity)}`}>{prompt.avgFidelity}</div>
-          <div className="text-[9px] uppercase tracking-wider text-ink-faint">Avg fidelity</div>
-        </div>
-        <div className="border-x border-white/6">
-          <div className="text-sm font-extrabold text-ink">{prompt.runs.length}</div>
-          <div className="text-[9px] uppercase tracking-wider text-ink-faint">Models run</div>
-        </div>
-        <div>
-          <div className="truncate text-sm font-extrabold text-ink" title={prompt.bestModel}>{prompt.bestModel.split(" ")[0]}</div>
-          <div className="text-[9px] uppercase tracking-wider text-ink-faint">Best model</div>
+      <div className="relative border-b border-white/6">
+        <PromptPoster prompt={prompt} />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 items-center justify-center opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <span className="rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black shadow-xl">Open prompt →</span>
         </div>
       </div>
-
-      <div className="mt-auto flex items-center justify-between pt-4">
-        <div className="flex gap-1">
-          {prompt.stacks.map((s) => (
-            <span key={s} className="chip !text-[10px]">{s}</span>
-          ))}
+      <div className="flex flex-1 flex-col p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="text-[15px] font-bold leading-snug tracking-tight group-hover:text-white">{prompt.title}</h3>
+            <p className="mt-1 line-clamp-1 text-xs text-ink-faint">{prompt.vibe}</p>
+          </div>
         </div>
-        <span className="text-xs font-semibold text-ink-dim transition-colors group-hover:text-ink">
-          View run log →
-        </span>
+        <div className="mt-auto flex items-center justify-between gap-2 pt-3.5">
+          <div className="flex gap-1 overflow-hidden">
+            {prompt.stacks.map((s) => (
+              <span key={s} className="chip !text-[9px]">{s}</span>
+            ))}
+          </div>
+          <span className={`text-xs font-extrabold ${fidelityColor(prompt.avgFidelity)}`} title={`Average fidelity across ${prompt.runs.length} models`}>
+            {prompt.avgFidelity}
+            <span className="ml-0.5 text-[9px] font-semibold text-ink-faint">/100 · {prompt.runs.length} runs</span>
+          </span>
+        </div>
       </div>
     </Link>
   );

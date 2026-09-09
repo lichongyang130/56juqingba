@@ -45,7 +45,9 @@ export default function PromptsPage() {
           <p className="mt-3 max-w-2xl text-sm text-ink-dim">
             Unlike screenshot galleries, every prompt here is executed against multiple frontier
             models — Claude, Codex and GLM-4.6 — scored for fidelity, and published with the
-            screenshots and failure notes attached.
+            screenshots and failure notes attached. Each card opens with a{" "}
+            <span className="text-ink">concept render</span> in the prompt&apos;s palette: a live
+            style preview you can actually reproduce, not a stock mock.
           </p>
         </div>
         <div className="flex gap-3">
