@@ -305,6 +305,77 @@ export const COMPONENTS: Asset[] = [
     ],
     copies: 2050, views: 9900,
   },
+
+  /* ---- context pass 2: 6 more original scenes (2026-09-09) ---- */
+  {
+    slug: "text-cycle", kind: "animated", title: "Text Cycle Hero Line",
+    description: "A headline that swaps its second line between rotating phrases with a smooth vertical roll and progress dots. The pattern that makes SaaS heroes feel alive without autoplay video.",
+    tags: ["text", "headline", "rotation", "hero"], behaviors: [],
+    stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.4, themeable: true,
+    a11yScore: 99, qualityScore: 96, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-09", demo: "text-cycle",
+    props: [],
+    copies: 940, views: 6100,
+  },
+  {
+    slug: "tab-morph", kind: "element", title: "Tab Morph Pill",
+    description: "Four tabs under a pill header where the active thumb slides on a spring curve — each label can mount a completely different panel without breaking the rhythm.",
+    tags: ["tabs", "navigation", "slider"], behaviors: ["click"],
+    stack: ["HTML/CSS", "React"], deps: [], bundleKb: 2.0, themeable: true,
+    a11yScore: 97, qualityScore: 95, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-09", demo: "tab-morph",
+    props: [
+      { name: "count", label: "Tabs", type: "range", min: 2, max: 6, step: 1, defaultValue: 4 },
+    ],
+    copies: 830, views: 5400,
+  },
+  {
+    slug: "flip-card", kind: "animated", title: "Flip Card Duo",
+    description: "A 3D card that turns on click or tap (not hover) — the interaction model survives touch. Front for the promise, back for the details.",
+    tags: ["3d", "flip", "card", "interactive"], behaviors: ["click"],
+    stack: ["HTML/CSS", "React"], deps: [], bundleKb: 1.7, themeable: true,
+    a11yScore: 96, qualityScore: 96, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-08", demo: "flip-card",
+    props: [],
+    copies: 1160, views: 7200,
+  },
+  {
+    slug: "skeleton-shimmer", kind: "element", title: "Skeleton Profile Feed",
+    description: "A profile-card skeleton with a directional shimmer sweep and staggered line widths — the loading state people actually see, designed instead of defaulted.",
+    tags: ["skeleton", "loading", "shimmer", "context"], behaviors: [],
+    stack: ["HTML/CSS", "React"], deps: [], bundleKb: 1.9, themeable: true,
+    a11yScore: 99, qualityScore: 94, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-07", demo: "skeleton-shimmer",
+    props: [
+      { name: "speed", label: "Shimmer speed", type: "range", min: 0.6, max: 4, step: 0.1, unit: "s", defaultValue: 1.8 },
+    ],
+    copies: 750, views: 4800,
+  },
+  {
+    slug: "chart-card", kind: "section", title: "Momentum Chart Card",
+    description: "A live-feeling analytics card: bars rise on entry with per-bar stagger, legend explains the two series, and the whole card stays legible at 300px wide.",
+    tags: ["chart", "analytics", "stats", "dashboard"], behaviors: ["scroll"],
+    stack: ["React", "HTML/CSS"], deps: [], bundleKb: 3.6, themeable: true,
+    a11yScore: 96, qualityScore: 95, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-06", demo: "chart-card",
+    props: [
+      { name: "bars", label: "Bars", type: "range", min: 6, max: 16, step: 1, defaultValue: 12 },
+    ],
+    copies: 890, views: 5700,
+  },
+  {
+    slug: "avatar-stack", kind: "element", title: "Avatar Crowd Stack",
+    description: "Overlapping avatars that part like a crowd when you hover a face — then settle back. The social-proof classic, minus the static feel.",
+    tags: ["avatar", "stack", "social", "hover"], behaviors: ["hover"],
+    stack: ["React"], deps: [], bundleKb: 3.0, themeable: true,
+    a11yScore: 95, qualityScore: 96, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-05", demo: "avatar-stack",
+    props: [
+      { name: "count", label: "Avatars", type: "range", min: 2, max: 8, step: 1, defaultValue: 5 },
+      { name: "size", label: "Size", type: "range", min: 28, max: 72, step: 2, unit: "px", defaultValue: 40 },
+    ],
+    copies: 1320, views: 8100,
+  },
 ];
 
 export const KIND_META: Record<Asset["kind"], { label: string; blurb: string }> = {
@@ -454,6 +525,48 @@ export const PROMPTS: PromptTemplate[] = [
     promptBody: `A cereal brand page that bounces.\n• Bright pastel mint + butter yellow + coral; thick rounded type.\n• Hero: mascot sticker character waving (CSS/SVG only), product below with a "pour" animation on scroll.\n• Recipe cards that wiggle slightly on hover.\n• Store locator band with a fake map pin drop.\n• Fun facts marquee between sections. Keep it fast — no heavy libs.`,
     author: "Motif Studio", published: "2026-08-14",
   },
+  {
+    slug: "course-platform-warm",
+    title: "Online course landing with syllabus story",
+    industry: "Education", vibe: "warm, focused, credible", stacks: ["HTML", "Next.js"],
+    blocks: ["Hero", "Syllabus accordion", "Instructor", "Pricing"],
+    status: "verified", avgFidelity: 89, bestModel: "Claude 4.6 Sonnet",
+    runs: [
+      { model: "Claude 4.6 Sonnet", date: "2026-09-06", fidelity: 92, buildError: false, notes: "Syllabus accordion typography was outstanding." },
+      { model: "GLM-4.6 (CN)", date: "2026-09-06", fidelity: 89, buildError: false, notes: "Very close; instructor card needed a warmer photo treatment pass." },
+      { model: "Codex", date: "2026-09-07", fidelity: 87, buildError: false, notes: "Solid. Price card contrast flagged by auto-audit, fixed on pass." },
+    ],
+    promptBody: `An online course landing that earns enrollment.\n• Paper-white + ink; one warm terracotta accent for 'human teacher' energy.\n• Hero: headline = outcome ('ship your first real product'), not a feature list. Instructor photo + one-line credo beside.\n• Syllabus as an accordion: week number, module title, 'you will have built' outcome line. Open state animates height.\n• Two pricing cards (self-paced / cohort) with a money-back microcopy line.\n• No autoplay; motion = accordion + scroll reveals only.\n• Keep quotes real-feeling, not buzzword soup.`,
+    author: "Motif Studio", published: "2026-09-06",
+  },
+  {
+    slug: "realestate-listing-moderne",
+    title: "Modern real-estate listing page",
+    industry: "Real Estate", vibe: "clean, premium, confident", stacks: ["Next.js", "HTML"],
+    blocks: ["Hero listing", "Photo gallery", "Details", "Contact"],
+    status: "verified", avgFidelity: 90, bestModel: "Codex",
+    runs: [
+      { model: "Codex", date: "2026-09-04", fidelity: 92, buildError: false, notes: "Gallery lightbox and floor-plan reveal worked first pass." },
+      { model: "Claude 4.6 Sonnet", date: "2026-09-04", fidelity: 90, buildError: false, notes: "Excellent spacing; asked for fewer decorative gradients." },
+      { model: "GLM-4.6 (CN)", date: "2026-09-05", fidelity: 89, buildError: false, notes: "Near-identical; image ratio handling needed one tweak." },
+    ],
+    promptBody: `A single-listing page for a modern apartment — premium, not glossy.\n• Off-white + charcoal; brass accent; architectural-grid feel.\n• Hero: full-bleed photo with price + address as oversized type over a scrim.\n• Gallery: 1 large + 3 thumbnails that swap with a crossfade; lightbox optional.\n• Details: floor plan SVG toggled beside a feature list; key specs in a ledger row.\n• Sticky bottom bar: price + 'Book viewing' that appears after 40% scroll.\n• Realistic copy: neighborhoods, sqm, transit minutes — write like you know the city.`,
+    author: "Motif Studio", published: "2026-09-04",
+  },
+  {
+    slug: "restaurant-digital-menu",
+    title: "Digital menu for a chef-led restaurant",
+    industry: "Food", vibe: "minimal, appetising", stacks: ["HTML", "React"],
+    blocks: ["Hero", "Menu sections", "Dish cards", "Reservation"],
+    status: "beta", avgFidelity: 86, bestModel: "GLM-4.6 (CN)",
+    runs: [
+      { model: "GLM-4.6 (CN)", date: "2026-09-02", fidelity: 88, buildError: false, notes: "Dish photography treatment guidance was excellent." },
+      { model: "Claude 4.6 Sonnet", date: "2026-09-02", fidelity: 86, buildError: false, notes: "Typographically strong; menu items slightly cramped on mobile." },
+      { model: "Codex", date: "2026-09-03", fidelity: 84, buildError: true, notes: "Accordion a11y attribute missing; fix shipped as note." },
+    ],
+    promptBody: `A single-page digital menu that makes you hungry.\n• Warm paper (#faf6ef), ink text, one appetite accent (tomato/olive).\n• Hero: chef's name + 'seasonal menu, changed weekly' in quiet serif.\n• Sections (starters / mains / dessert) as sticky-tab quick nav.\n• Dish cards: name, description in one line, price right-aligned; dietary marks as tiny glyphs.\n• Photographs: top-lit, 4:5, consistent warm grade — describe the look so any image model can match.\n• Reservation band with date/time pills. Fast, zero animation bloat.`,
+    author: "Motif Studio", published: "2026-09-02",
+  },
 ];
 
 export const BACKGROUNDS: BackgroundAsset[] = [
@@ -537,6 +650,14 @@ export interface ChangeLogEntry {
 }
 
 export const CHANGELOG: ChangeLogEntry[] = [
+  {
+    date: "2026-09-09", tag: "Components", title: "Six new context-stage scenes",
+    body: "Text Cycle, Tab Morph, Flip Card, Skeleton Profile Feed, Momentum Chart and Avatar Crowd Stack land — each demo now shows a realistic context, not an isolated widget.",
+  },
+  {
+    date: "2026-09-09", tag: "Prompts", title: "Education, Real Estate & Restaurant prompts go live",
+    body: "Three new industries join the scoreboard with full run logs — course landing, modern listing page and a chef-led digital menu.",
+  },
   {
     date: "2026-09-08", tag: "Components", title: "Glass pricing trio + Wipe Reveal headline",
     body: "Two new context-stage demos: a three-tier glass pricing row and a clip-path headline reveal. Both zero-dependency.",

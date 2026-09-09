@@ -932,6 +932,260 @@ function DotDraw({ resolution = 18, palette = "violet" }: DemoProps) {
   );
 }
 
+/* ------------------------------ CONTEXT PASS 2 (2026-09) ------------------------------ */
+
+function TextCycle() {
+  const words = ["ship faster.", "feel alive.", "convert better.", "stand apart."];
+  const [i, setI] = useState(0);
+  const total = words.length;
+  useEffect(() => {
+    const t = setInterval(() => setI((v) => (v + 1) % total), 2600);
+    return () => clearInterval(t);
+  }, [total]);
+  return (
+    <div className="flex h-full w-full flex-col justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(34,211,238,0.16),transparent_60%),#07080d] px-7">
+      <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-200/60">Headline rotation</div>
+      <div className="mt-2 text-3xl font-black leading-tight tracking-tight text-white md:text-5xl">
+        Build pages that
+      </div>
+      <div className="relative mt-1 h-[1.4em] overflow-hidden" aria-live="polite">
+        <span
+          className="text-gradient block text-3xl font-black leading-[1.35] tracking-tight md:text-5xl"
+          style={{ transform: `translateY(-${i * 100}%)`, transition: "transform 0.5s cubic-bezier(.65,0,.25,1)" }}
+        >
+          {words.map((w) => (
+            <span key={w} className="block">{w}</span>
+          ))}
+        </span>
+      </div>
+      <div className="mt-3 flex items-center gap-1.5">
+        {words.map((_, d) => (
+          <span key={d} className="h-1 rounded-full bg-white/20 transition-all" style={{ width: d === i ? 22 : 8, background: d === i ? "linear-gradient(90deg,#8b5cf6,#22d3ee)" : undefined }} />
+        ))}
+        <span className="ml-2 text-[10px] text-ink-faint">word swap · 2.6s cadence · reduced-motion safe</span>
+      </div>
+    </div>
+  );
+}
+
+function TabMorph({ count = 4 }: DemoProps) {
+  const all = ["Overview", "Design", "Motion", "Code", "Settings", "Team"];
+  const n = typeof count === "number" ? Math.max(2, Math.min(6, Math.round(count))) : 4;
+  const tabs = all.slice(0, n);
+  const [active, setActive] = useState(Math.min(1, n - 1));
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(60%_80%_at_50%_100%,rgba(139,92,246,0.18),transparent_65%),#08090f] px-6">
+      <div className="relative w-full max-w-md">
+        <div className="relative grid rounded-2xl border border-white/10 bg-white/5 p-1.5 backdrop-blur-md" style={{ gridTemplateColumns: `repeat(${n}, minmax(0,1fr))` }}>
+          <span
+            className="absolute bottom-1.5 top-1.5 rounded-xl border border-white/15 bg-white/12 shadow-[0_0_18px_rgba(139,92,246,0.25)]"
+            style={{ width: `calc((100% - 12px) / ${n})`, left: `calc(6px + ${active} * (100% - 12px) / ${n})`, transition: "left .35s cubic-bezier(.65,0,.25,1)" }}
+            aria-hidden
+          />
+          {tabs.map((t, idx) => (
+            <button
+              key={t} type="button"
+              onClick={() => setActive(idx)}
+              aria-pressed={active === idx}
+              className={`relative z-10 rounded-xl py-3 text-sm font-bold transition-colors ${active === idx ? "text-white" : "text-ink-dim hover:text-ink"}`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+        <div className="mt-4 flex items-center justify-between px-1 text-[11px] text-ink-faint">
+          <span>The active thumb slides on a spring-like curve — tab content can crossfade below.</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FlipCard() {
+  const [flipped, setFlipped] = useState(false);
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[#07080d] px-8">
+      <div
+        className="relative h-56 w-full max-w-xs cursor-pointer select-none"
+        style={{ perspective: "1100px" }}
+        onClick={() => setFlipped((f) => !f)}
+        role="button"
+        tabIndex={0}
+        aria-label="Flip card demo — press Enter to flip"
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setFlipped((f) => !f); } }}
+      >
+        <div
+          className="relative h-full w-full transition-transform duration-700"
+          style={{ transformStyle: "preserve-3d", transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
+        >
+          {/* front */}
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center rounded-3xl border border-white/12 bg-gradient-to-br from-violet-500/30 via-indigo-500/15 to-cyan-400/20 p-6 text-center shadow-2xl backdrop-blur-sm"
+            style={{ backfaceVisibility: "hidden" }}
+          >
+            <span className="text-5xl">◈</span>
+            <div className="mt-3 text-lg font-black tracking-tight text-white">A card with two faces</div>
+            <div className="mt-1 text-[11px] text-white/55">hover? no — click or tap</div>
+            <div className="mt-3 text-[10px] font-bold uppercase tracking-widest text-white/40">pure 3D CSS · zero deps</div>
+          </div>
+          {/* back */}
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center rounded-3xl border border-white/12 bg-gradient-to-br from-cyan-400/25 via-sky-500/10 to-violet-500/20 p-6 text-center backdrop-blur-sm"
+            style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+          >
+            <div className="text-lg font-black tracking-tight text-white">…and a smarter back</div>
+            <p className="mt-2 text-[11px] leading-relaxed text-white/65">
+              Use it for flip-to-reveal pricing details, collectibles or study cards.
+            </p>
+            <span className="mt-3 rounded-full bg-white/12 px-3.5 py-1.5 text-[10px] font-bold text-white">Flip again</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SkeletonShimmer({ speed = 1.8 }: DemoProps) {
+  const sp = typeof speed === "number" ? speed : 1.8;
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[#0a0c13] px-8">
+      <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-white/8 bg-white/4 p-5 shadow-2xl">
+        <div className="flex items-center gap-4">
+          <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-white/8">
+            <Shimmer speed={sp} />
+          </span>
+          <div className="flex-1 space-y-2">
+            <div className="relative h-3 w-3/5 overflow-hidden rounded-full bg-white/8"><Shimmer speed={sp} /></div>
+            <div className="relative h-2.5 w-2/5 overflow-hidden rounded-full bg-white/6"><Shimmer speed={sp} /></div>
+          </div>
+        </div>
+        <div className="relative mt-5 h-3 w-full overflow-hidden rounded-full bg-white/6"><Shimmer speed={sp} /></div>
+        <div className="relative mt-2.5 h-3 w-11/12 overflow-hidden rounded-full bg-white/6"><Shimmer speed={sp} /></div>
+        <div className="relative mt-2.5 h-3 w-2/3 overflow-hidden rounded-full bg-white/6"><Shimmer speed={sp} /></div>
+        <div className="relative mt-5 h-9 w-28 overflow-hidden rounded-xl bg-white/8"><Shimmer speed={sp} /></div>
+        <style>{`@keyframes mf-shimmer { from { transform: translateX(-100%) } to { transform: translateX(240%) } }`}</style>
+        <div className="mt-4 text-center text-[10px] uppercase tracking-[0.25em] text-ink-faint">profile feed · loading…</div>
+      </div>
+    </div>
+  );
+}
+
+function Shimmer({ speed = 1.8 }: { speed?: number }) {
+  return (
+    <span
+      className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/14 to-transparent"
+      style={{ animation: `mf-shimmer ${speed}s ease-in-out infinite` }}
+      aria-hidden
+    />
+  );
+}
+
+function ChartCard({ bars = 12 }: DemoProps) {
+  const n = typeof bars === "number" ? Math.max(6, Math.min(16, Math.round(bars))) : 12;
+  const heights = [38, 62, 45, 78, 58, 92, 66, 84, 50, 72, 96, 88, 54, 70, 61, 90].slice(0, n);
+  const ref = useRef<HTMLDivElement>(null);
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setOn(true); obs.disconnect(); }
+    }, { threshold: 0.35 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return (
+    <div ref={ref} className="flex h-full w-full items-center justify-center bg-[radial-gradient(80%_100%_at_50%_0%,rgba(52,211,153,0.13),transparent_60%),#0a0c12] px-8">
+      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/4 p-5 shadow-2xl backdrop-blur-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Weekly activity</div>
+            <div className="mt-1 text-xl font-black tracking-tight text-white">Build momentum</div>
+          </div>
+          <span className="chip !border-mint/30 !bg-mint/10 !text-mint">▲ 18.4%</span>
+        </div>
+        <div className="mt-5 flex h-24 items-end gap-1.5">
+          {heights.map((h, i) => (
+            <span
+              key={i}
+              className="flex-1 rounded-t-md"
+              style={{
+                height: on ? `${h}%` : "4%",
+                background: i % 3 === 2 ? "linear-gradient(180deg,#34d399,#0d9488)" : "linear-gradient(180deg,#a78bfa,#5b21b6)",
+                transition: `height .9s cubic-bezier(.3,1,.4,1) ${i * 60}ms`,
+                opacity: 0.45 + (h / 110),
+              }}
+            />
+          ))}
+        </div>
+        <div className="mt-3 flex items-center justify-between text-[10px] text-ink-faint">
+          <span>Mon</span><span>Wed</span><span>Fri</span><span>Sun</span>
+          <span className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-violet-400" /> pushes</span>
+          <span className="flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-mint" /> deploys</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const AVATAR_PEOPLE = [
+  { n: "Lena K.", hue: 258 },
+  { n: "Marco T.", hue: 192 },
+  { n: "Aiko S.", hue: 330 },
+  { n: "Dev R.", hue: 152 },
+  { n: "Noa P.", hue: 28 },
+  { n: "Ivy L.", hue: 210 },
+];
+
+function AvatarStack({ count = 5, size = 40 }: DemoProps) {
+  const n = typeof count === "number" ? Math.max(2, Math.min(8, Math.round(count))) : 5;
+  const s = typeof size === "number" ? Math.max(28, Math.min(72, size)) : 40;
+  const people = AVATAR_PEOPLE.slice(0, n);
+  const [hot, setHot] = useState<number | null>(null);
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[#080a11] px-6">
+      <div className="flex items-center pl-4" onMouseLeave={() => setHot(null)}>
+        {people.map((p, i) => {
+          const spread = hot !== null && i >= hot ? 1 : 0;
+          return (
+            <div
+              key={p.n}
+              className="group relative -ml-3 flex items-center"
+              onMouseEnter={() => setHot(i)}
+              style={{
+                marginLeft: i === 0 ? 0 : -12,
+                transform: `translateX(${spread * (i - hot!) * 8}px)`,
+                transition: "transform .3s cubic-bezier(.34,1.56,.64,1)",
+                zIndex: hot === i ? 20 : people.length - i,
+              }}
+            >
+              <span
+                className="flex items-center justify-center rounded-full border-2 border-[#0a0b10] font-bold text-white shadow-lg"
+                style={{
+                  width: s, height: s, fontSize: s * 0.36,
+                  background: `linear-gradient(135deg, hsl(${p.hue} 85% 60%), hsl(${(p.hue + 45) % 360} 80% 45%))`,
+                  boxShadow: hot === i ? `0 0 0 3px rgba(255,255,255,.12), 0 0 22px hsl(${p.hue} 90% 60% / .5)` : undefined,
+                }}
+              >
+                {p.n.split(" ")[1]?.[0] ?? p.n[0]}
+              </span>
+              <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-white px-2.5 py-1 text-[10px] font-bold text-black opacity-0 shadow-xl transition-opacity group-hover:opacity-100">
+                {p.n}
+              </span>
+            </div>
+          );
+        })}
+        <span className="relative -ml-3 flex items-center justify-center rounded-full border-2 border-[#0a0b10] bg-white/10 font-bold text-ink-dim backdrop-blur" style={{ width: s, height: s, fontSize: s * 0.32 }}>
+          +{214}
+        </span>
+      </div>
+      <p className="text-center text-[11px] text-ink-faint">
+        hover a face — the stack parts like a crowd · then settle back
+      </p>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 export const DEMO_KEYS = [
@@ -940,6 +1194,7 @@ export const DEMO_KEYS = [
   "hero-aurora", "bento-studio", "marquee-logos", "faq-orbit",
   "glass", "noise", "grid", "sorbet", "halftone", "ink",
   "morph-blob", "conic-loader", "glass-pricing", "wipe-reveal", "counter-stats", "dot-draw",
+  "text-cycle", "tab-morph", "flip-card", "skeleton-shimmer", "chart-card", "avatar-stack",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -972,6 +1227,12 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "wipe-reveal": return <WipeReveal {...props} />;
     case "counter-stats": return <CounterStats {...props} />;
     case "dot-draw": return <DotDraw {...props} />;
+    case "text-cycle": return <TextCycle />;
+    case "tab-morph": return <TabMorph />;
+    case "flip-card": return <FlipCard />;
+    case "skeleton-shimmer": return <SkeletonShimmer />;
+    case "chart-card": return <ChartCard />;
+    case "avatar-stack": return <AvatarStack {...props} />;
     default: return null;
   }
 }

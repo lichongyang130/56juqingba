@@ -244,6 +244,119 @@ const onMove = (e: React.PointerEvent) => {
 .dot--lit { transform: scale(1); }
 .dot--lit[data-mono="false"] { box-shadow: 0 0 10px hsl(var(--dot-hue) 90% 60% / .8); }`,
   },
+  "text-cycle": {
+    react: `// React — index state + interval; the roll is pure transform
+const WORDS = ["ship faster.", "feel alive.", "convert better."];
+const [i, setI] = useState(0);
+useEffect(() => {
+  const t = setInterval(() => setI(v => (v + 1) % WORDS.length), 2600);
+  return () => clearInterval(t);
+}, []);
+
+<div className="relative h-[1.4em] overflow-hidden" aria-live="polite">
+  <span style={{ transform: \`translateY(-\${i * 100}%)\`,
+                 transition: "transform .5s cubic-bezier(.65,0,.25,1)" }}>
+    {WORDS.map(w => <span key={w} className="block">{w}</span>)}
+  </span>
+</div>`,
+    css: `/* .cycle-line animates a column of lines; the window is overflow-hidden */
+.cycle-line { display: block; transition: transform .5s cubic-bezier(.65,0,.25,1); }
+@media (prefers-reduced-motion: reduce) {
+  .cycle-line { transition: none; }
+}`,
+  },
+  "tab-morph": {
+    react: `// React — one absolutely-positioned thumb, measured in %s
+const [active, setActive] = useState(1);
+<div className="relative grid rounded-2xl p-1.5" style={{ gridTemplateColumns: \`repeat(\${tabs.length}, 1fr)\` }}>
+  <span className="absolute" style={{
+    width: \`calc((100% - 12px) / \${tabs.length})\`,
+    left: \`calc(6px + \${active} * (100% - 12px) / \${tabs.length})\`,
+    transition: "left .35s cubic-bezier(.65,0,.25,1)",
+  }} />
+  {tabs.map((t, i) => <button key={t} onClick={() => setActive(i)}>{t}</button>)}
+</div>`,
+    css: `/* thumb: absolute, width = one cell, left = animated */
+.tab-thumb { position: absolute; top: 6px; bottom: 6px;
+  width: calc((100% - 12px) / var(--n, 4));
+  left: calc(6px + var(--active, 0) * (100% - 12px) / var(--n, 4));
+  transition: left .35s cubic-bezier(.65,0,.25,1); }`,
+  },
+  "flip-card": {
+    react: `// React — click/tap to flip, not hover (touch-friendly)
+<div style={{ perspective: "1100px" }} onClick={() => setFlip(f => !f)}
+     role="button" tabIndex={0} aria-label="Flip card">
+  <div style={{ transformStyle: "preserve-3d",
+                transform: flip ? "rotateY(180deg)" : "none",
+                transition: "transform .7s" }}>
+    <div style={{ backfaceVisibility: "hidden" }}> {/* front */} </div>
+    <div style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}> {/* back */} </div>
+  </div>
+</div>`,
+    css: `/* both faces need backface-visibility: hidden */
+.scene { perspective: 1100px; }
+.card3d { transform-style: preserve-3d; transition: transform .7s cubic-bezier(.4,.2,.2,1); }
+.card3d.is-flipped { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.face--back { transform: rotateY(180deg); }`,
+  },
+  "skeleton-shimmer": {
+    react: `// React — one shared shimmer span per bone
+function Bone({ className }) {
+  return (
+    <div className={className + " relative overflow-hidden"}>
+      <span aria-hidden
+        className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+        style={{ animation: "shimmer 1.8s ease-in-out infinite" }} />
+    </div>
+  );
+}`,
+    css: `/* direction comes from the gradient, not the element — cheap */
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(240%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton [aria-hidden] { animation: none; opacity: .4; }
+}`,
+  },
+  "chart-card": {
+    react: `// React — bars animate on entry; stagger = delay * index
+<IntersectionObserver once threshold={0.35}>
+  {heights.map((h, i) => (
+    <span key={i} style={{
+      height: on ? h + "%" : "4%",
+      transition: "height .9s cubic-bezier(.3,1,.4,1) " + (i * 60) + "ms",
+    }} />
+  ))}
+</IntersectionObserver>`,
+    css: `/* .bar rises because height transitions from 4% to target */
+.bar { transform-origin: bottom; }
+.chart[data-live="false"] .bar { height: 4%; }
+@media (prefers-reduced-motion: reduce) {
+  .bar { transition: none !important; height: var(--h) !important; }
+}`,
+  },
+  "avatar-stack": {
+    react: `// React — the crowd parts by translating everyone right of the hovered face
+<div className="flex">
+  {people.map((p, i) => (
+    <span key={p.name}
+      onMouseEnter={() => setHot(i)}
+      style={{
+        marginLeft: i === 0 ? 0 : -12,
+        transform: hot !== null && i > hot ? "translateX(" + (i - hot) * 8 + "px)" : "none",
+        transition: "transform .3s cubic-bezier(.34,1.56,.64,1)",
+        zIndex: hot === i ? 20 : people.length - i,
+      }}>
+      {initials(p.name)}
+    </span>
+  ))}
+</div>`,
+    css: `/* .face sits in a row with negative margins; .stack[data-hot] nudges the tail */
+.face { transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+.stack:hover .face { transform: translateX(var(--nudge, 0)); }`,
+  },
 };
 
 const FALLBACK = {
@@ -294,6 +407,32 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
   "aurora-veil": {
     why: "Three radial gradients drifting on a 16–20s clock with a grain pass on top. GPU-composited, zero JS, and the drift speed is slow enough to feel expensive.",
     skip: "Don't run full-page aurora behind content on every section — reserve it for one hero and fade it out by 60vh.",
+  },
+  "text-cycle": {
+    why: "Autoplay video in heroes is a bandwidth tax. A rotating second line gives the same 'alive' signal in ~1.4 KB and never steals the scroll.",
+    idea: "The window is overflow-hidden and the whole column translates — one style change per swap, no per-word recalc.",
+    skip: "Keep every phrase short and parallel in rhythm ('ship faster.', 'feel alive.'). Mismatched lengths make the roll look broken.",
+  },
+  "tab-morph": {
+    why: "A sliding thumb tells users 'the panel moved' without a full re-layout. The spring curve is what keeps it from feeling mechanical.",
+    skip: "For 6+ tabs the thumb loses meaning — switch to underline-only tabs or a menu.",
+  },
+  "flip-card": {
+    why: "Flip on click, not hover: hover can't exist on touch, so flip-on-hover cards are secretly broken on phones. Click is the honest interaction.",
+    skip: "Don't flip important pricing or legal content — anything below the fold must stay readable at all times.",
+  },
+  "skeleton-shimmer": {
+    why: "Loading states are the most-seen UI on slow networks, yet they're always an afterthought. A designed skeleton sets the tone before the real card arrives.",
+    idea: "Shimmer is one gradient sweeping on a clipped parent — the same trick for every bone, so it costs almost nothing.",
+    skip: "Under ~300ms of load, show nothing. Skeletons that pop in and vanish in a blink feel more broken than a blank space.",
+  },
+  "chart-card": {
+    why: "Numbers alone are inert; a card that 'draws itself' on entry turns a static dashboard into a story about momentum.",
+    skip: "Don't animate real-time data you don't own — if values change every second, the bar chart should feel live, not theatrical.",
+  },
+  "avatar-stack": {
+    why: "The classic social-proof stack is static; parting like a crowd on hover adds a beat of personality and gives each face room to be a person.",
+    skip: "On touch there's no hover to part the crowd — make the last avatar a tappable '+N' or the whole stack a link to the team page.",
   },
 };
 
@@ -399,29 +538,54 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
               </span>
               <span className="chip !text-[10px]">sandboxed preview</span>
             </div>
-            <Stage className="rounded-2xl" >
+            <Stage className="rounded-2xl">
+              <DemoView demo={asset.demo} props={props} />
               <div
-                className="absolute inset-0 flex items-center justify-center"
-                style={{ ["--tone" as string]: themeHue }}
-              >
-                <DemoView demo={asset.demo} props={props} />
-              </div>
+                aria-hidden
+                className="pointer-events-none absolute inset-0 mix-blend-soft-light"
+                style={{
+                  background: `radial-gradient(85% 95% at 18% 8%, hsl(${themeHue} 90% 62% / 1), transparent 65%)`,
+                  opacity: 0.5,
+                }}
+              />
             </Stage>
-            <div className="mt-3 flex items-center justify-between gap-4 px-2 pb-1">
-              <div className="flex items-center gap-2 text-xs text-ink-dim">
-                <span>Theme tone</span>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 px-2 pb-1">
+              <div className="flex min-w-0 items-center gap-2 text-xs text-ink-dim">
+                <span className="shrink-0">Ambience</span>
                 <input
                   type="range" min={0} max={360} value={themeHue}
                   onChange={(e) => setThemeHue(Number(e.target.value))}
-                  className="w-40"
-                  aria-label="Theme tone"
+                  className="w-36 md:w-44"
+                  aria-label="Ambience hue"
                 />
-                <span className="font-mono text-[11px]">hsl({themeHue})</span>
+                <span className="hidden font-mono text-[11px] sm:inline">hsl({themeHue})</span>
               </div>
-              <span className="text-[11px] text-ink-faint">
-                All colours remap through design tokens
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="mr-1 text-[10px] uppercase tracking-wider text-ink-faint">vibes</span>
+                {[
+                  { label: "Violet", h: 262 },
+                  { label: "Cyan", h: 192 },
+                  { label: "Rose", h: 330 },
+                  { label: "Lime", h: 152 },
+                  { label: "Amber", h: 40 },
+                ].map((v) => (
+                  <button
+                    key={v.label}
+                    type="button"
+                    onClick={() => setThemeHue(v.h)}
+                    aria-label={`${v.label} ambience`}
+                    title={v.label}
+                    className={`h-5 w-5 rounded-full border transition-transform hover:scale-110 ${
+                      themeHue === v.h ? "border-white ring-2 ring-white/30" : "border-white/20"
+                    }`}
+                    style={{ background: `linear-gradient(135deg, hsl(${v.h} 85% 60%), hsl(${(v.h + 60) % 360} 85% 55%))` }}
+                  />
+                ))}
+              </div>
             </div>
+            <p className="px-2 pb-1 text-[10px] text-ink-faint">
+              Ambience is a live light wash over the preview. Full palette re-theming of every demo arrives with Theme Studio (Pro).
+            </p>
           </div>
 
           {/* code */}

@@ -39,6 +39,30 @@ const SUPER_POWERS = [
   },
 ];
 
+const SAMPLE_BUILDS = [
+  {
+    title: "Launchpad — SaaS waitlist",
+    by: "linnea.dev",
+    used: ["wipe-reveal", "halo-button", "tilt-card", "marquee-logos", "conic-loader"],
+    kb: 41,
+    note: "Wipe headline over a tilt signup card; the loader doubles as the 'saving' state. Five assets, one coherent dark product.",
+  },
+  {
+    title: "Nightfolio — 3D portfolio",
+    by: "mikef.builds",
+    used: ["orbit-deck", "scramble-text", "star-motes", "flip-card"],
+    kb: 34,
+    note: "Orbit ring of case cards above a starfield; scramble reveals on scroll. Flip cards tuck the case notes out of sight.",
+  },
+  {
+    title: "Wavelength — dev-tool landing",
+    by: "studio.noir",
+    used: ["morph-blob", "tab-morph", "chart-card", "counter-stats"],
+    kb: 27,
+    note: "Morph backdrop behind a tab-morph product tour; the momentum chart does the convincing where copy would oversell.",
+  },
+];
+
 const DIFFERENTIATORS = [
   {
     them: "Screenshot-only prompt galleries",
@@ -338,6 +362,60 @@ export default function HomePage() {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* ============================== MADE WITH MOTIF ============================== */}
+      <section className="mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">Made with Motif</p>
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">
+              Real pages, assembled from the library
+            </h2>
+          </div>
+          <Link href="/components" className="text-sm font-semibold text-ink-dim hover:text-ink">
+            Start your own build →
+          </Link>
+        </div>
+        <p className="mt-3 max-w-2xl text-sm text-ink-dim">
+          Sample builds show the pattern: pick a scene, drop in your copy, re-theme with tokens.
+          Tap any chip to open the asset it used.
+        </p>
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {SAMPLE_BUILDS.map((b, i) => (
+            <div key={b.title} className="card-hover group flex flex-col rounded-3xl border border-white/8 bg-panel p-6">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-faint">
+                  {b.by} · sample #{i + 1}
+                </span>
+                <span className="chip !text-[10px]">{b.used.length} assets · ~{b.kb} KB</span>
+              </div>
+              <h3 className="mt-4 text-lg font-extrabold tracking-tight">{b.title}</h3>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-ink-dim">{b.note}</p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {b.used.map((slug) => {
+                  const a = COMPONENTS.find((c) => c.slug === slug);
+                  return a ? (
+                    <Link
+                      key={slug}
+                      href={`/components/${slug}`}
+                      className="chip !cursor-pointer !text-[10px] transition-colors hover:!border-white/30 hover:!text-ink"
+                    >
+                      <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full" style={{ background: accentCss(slug, 90, 65) }} />
+                      {a.title}
+                    </Link>
+                  ) : null;
+                })}
+              </div>
+              <Link
+                href={`/components/${b.used[0]}`}
+                className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-ink-dim transition-colors group-hover:text-ink"
+              >
+                Open the recipe <span className="transition-transform group-hover:translate-x-1">→</span>
+              </Link>
+            </div>
+          ))}
         </div>
       </section>
 

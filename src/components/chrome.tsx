@@ -106,7 +106,7 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="Search 600+ assets, prompts, backgrounds…"
+        placeholder="Search 900+ assets, prompts, backgrounds…"
         className="input !rounded-full !py-2.5 !pl-10 !text-sm"
         aria-label="Search the library"
       />
