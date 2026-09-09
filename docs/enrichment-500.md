@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 86 / 500 shipped (batches 1–11, in order) · Section 1 (component library) complete ✅
+## Progress — 95 / 500 shipped (batches 1–12, in order) · Sections 1–2 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -98,6 +98,15 @@ names, behaviours and where they plug into the existing pages.
 | 84 | Carbon fibre weave | `carbon-fibre` on [/backgrounds](/backgrounds) |
 | 85 | Water ripple ring | `water-ripple` on [/backgrounds](/backgrounds) |
 | 86 | Ink on wet paper | `ink-bloom` on [/backgrounds](/backgrounds) |
+| 87 | Aurora band | `aurora-band` on [/backgrounds](/backgrounds) |
+| 88 | Noise storm | `noise-storm` on [/backgrounds](/backgrounds) |
+| 89 | Glass distortion | `glass-distortion` on [/backgrounds](/backgrounds) |
+| 90 | Ember rise | `ember-rise` on [/backgrounds](/backgrounds) |
+| 91 | Checkerboard fade | `checkerboard-fade` on [/backgrounds](/backgrounds) |
+| 92 | Plaid weave | `plaid-weave` on [/backgrounds](/backgrounds) |
+| 93 | Halftone burst | `halftone-burst` on [/backgrounds](/backgrounds) |
+| 94 | Cloud layer drift | `cloud-drift` on [/backgrounds](/backgrounds) |
+| 95 | Sunset horizon strip | `sunset-horizon` on [/backgrounds](/backgrounds) |
 
 
 ---
@@ -188,7 +197,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 2. Backgrounds & textures — 25 additions (8 → 33; 24/25 shipped so far)
+## 2. Backgrounds & textures ✅ complete (8 → 33; 33/33 live)
 
 - **Topographic contour lines** ✅ (`topographic-contours`): SVG contour map motif with a quiet animated current.
 - **Blueprint grid** ✅ (`blueprint-grid`): engineering-paper grid with crosshairs for architecture/atelier vibes.
@@ -206,15 +215,15 @@ names, behaviours and where they plug into the existing pages.
 - **Carbon fibre weave** ✅ (`carbon-fibre`): quiet repeating weave for dashboards/tech.
 - **Water ripple ring** ✅ (`water-ripple`): expanding rings from a point, mouse-triggered.
 - **Ink on wet paper** ✅ (`ink-bloom`): soft radial ink blooms that pulse gently.
-- **Aurora band**: horizontal aurora ribbons instead of the current radial version.
-- **Noise storm**: animated TV-static grain at 3–5% opacity with a flicker toggle.
-- **Glass distortion**: a real backdrop-blur refraction demo on a moving photo layer.
-- **Ember rise**: tiny rising embers for fireplace/retro vibes.
-- **Checkerboard fade**: an engineering checker that fades to transparent diagonally.
-- **Plaid weave**: warm plaid texture for lifestyle brands.
-- **Halftone burst**: radial halftone from a focal point for poster moments.
-- **Cloud layer drift**: soft translucent cloud bands drifting horizontally.
-- **Sunset horizon strip**: a two-stop gradient with a light-source dot that drifts.
+- **Aurora band** ✅ (`aurora-band`): horizontal aurora ribbons instead of the current radial version.
+- **Noise storm** ✅ (`noise-storm`): animated TV-static grain at 3–5% opacity with a flicker toggle.
+- **Glass distortion** ✅ (`glass-distortion`): a real backdrop-blur refraction demo over moving colour fields.
+- **Ember rise** ✅ (`ember-rise`): tiny rising embers for fireplace/retro vibes.
+- **Checkerboard fade** ✅ (`checkerboard-fade`): an engineering checker that fades to transparent diagonally.
+- **Plaid weave** ✅ (`plaid-weave`): warm plaid texture for lifestyle brands.
+- **Halftone burst** ✅ (`halftone-burst`): radial halftone from a focal point for poster moments.
+- **Cloud layer drift** ✅ (`cloud-drift`): soft translucent cloud bands drifting horizontally.
+- **Sunset horizon strip** ✅ (`sunset-horizon`): a two-stop gradient with a light-source dot that drifts.
 
 ---
 

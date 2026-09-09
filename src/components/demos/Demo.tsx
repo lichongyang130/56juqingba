@@ -6973,6 +6973,257 @@ function InkBloom() {
   );
 }
 
+/* ---------------- backgrounds: batch #87-95 (section 2 complete) ---------------- */
+
+function auroraBandPath(base: number, amp: number, phase: number, len = 1600): string {
+  const pts: string[] = [];
+  for (let x = 0; x <= len; x += 10) {
+    const y =
+      base +
+      Math.sin((x * Math.PI * 2) / 500 + phase) * amp * 0.5 +
+      Math.sin((x * Math.PI * 2) / 240 + phase * 1.7) * amp * 0.5;
+    pts.push(`${x},${y.toFixed(1)}`);
+  }
+  return `M0,${base} L${pts.join(" L")} L${len},80 L0,80 Z`;
+}
+
+const AB_BANDS = [
+  { top: "-8%", h: "34%", c1: "rgba(74,222,128,.4)", c2: "rgba(16,185,129,.08)", d: 20, a: 16, p: 0.4, bl: "16px", dur: 22, delay: 0 },
+  { top: "6%", h: "30%", c1: "rgba(139,92,246,.42)", c2: "rgba(99,102,241,.1)", d: 26, a: 14, p: 2.1, bl: "14px", dur: 28, delay: -6 },
+  { top: "24%", h: "30%", c1: "rgba(34,211,238,.38)", c2: "rgba(56,189,248,.08)", d: 22, a: 12, p: 3.8, bl: "12px", dur: 24, delay: -12 },
+  { top: "46%", h: "34%", c1: "rgba(244,114,182,.26)", c2: "rgba(192,132,252,.06)", d: 18, a: 10, p: 5.1, bl: "18px", dur: 30, delay: -18 },
+] as const;
+
+function AuroraBand() {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[linear-gradient(180deg,#030509,#0a1128_55%,#0d1633)]">
+      {[3, 11, 19, 27, 35].map((l, i) => (
+        <span key={i} aria-hidden className="absolute rounded-full bg-white" style={{ left: `${(l * 17) % 96}%`, top: `${(i * 13) % 46}%`, width: 1.4, height: 1.4, opacity: 0.5, animation: `mf-ab-tw ${2 + i * 0.7}s ease-in-out ${i * 0.9}s infinite alternate` }} />
+      ))}
+      {AB_BANDS.map((b, i) => (
+        <div key={i} aria-hidden className="absolute inset-x-0 overflow-hidden" style={{ top: b.top, height: b.h }}>
+          <div style={{ width: "200%", height: "100%", animation: `mf-ab-drift ${b.dur}s linear ${b.delay}s infinite` }}>
+            <svg viewBox="0 0 1600 80" preserveAspectRatio="none" style={{ width: "50%", height: "100%" }}>
+              <defs>
+                <linearGradient id={`abg${i}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={b.c1} />
+                  <stop offset="100%" stopColor={b.c2} />
+                </linearGradient>
+              </defs>
+              <path d={auroraBandPath(b.d, b.a, b.p)} fill={`url(#abg${i})`} />
+            </svg>
+            <svg viewBox="0 0 1600 80" preserveAspectRatio="none" style={{ width: "50%", height: "100%", marginLeft: "-4px" }}>
+              <path d={auroraBandPath(b.d, b.a, b.p)} fill={`url(#abg${i})`} />
+            </svg>
+          </div>
+        </div>
+      ))}
+      <style>{`@keyframes mf-ab-drift { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+@keyframes mf-ab-tw { from { opacity: .12 } to { opacity: .8 } }
+@media (prefers-reduced-motion: reduce) { .ab-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function NoiseStorm() {
+  const [flick, setFlick] = useState(true);
+  return (
+    <div className="ns-root relative h-full w-full overflow-hidden bg-[#0b0b0e]">
+      <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n1'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n1)' opacity='0.9'/%3E%3C/svg%3E\")", backgroundSize: "140px 140px", opacity: 0.05, animation: "mf-ns-a .16s steps(3) infinite", mixBlendMode: "screen" }} />
+      <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='190' height='190'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='190' height='190' filter='url(%23n2)' opacity='0.8'/%3E%3C/svg%3E\")", backgroundSize: "190px 190px", opacity: 0.04, animation: "mf-ns-b .3s steps(4) infinite", mixBlendMode: "screen" }} />
+      <div aria-hidden className={`absolute inset-0 ${flick ? "ns-flick" : ""}`} style={{ background: "radial-gradient(120% 100% at 50% 40%, rgba(120,130,160,.1), transparent 60%)" }} />
+      <button
+        type="button"
+        aria-pressed={flick}
+        onClick={() => setFlick((f) => !f)}
+        className="absolute bottom-2 right-2 rounded-md border border-white/10 bg-black/50 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.16em] text-white/70 backdrop-blur hover:bg-black/70"
+      >
+        {flick ? "flicker ✓" : "flicker"}
+      </button>
+      <style>{`@keyframes mf-ns-a { 0% { background-position: 0 0 } 50% { background-position: 42px -27px } 100% { background-position: -35px 33px } }
+@keyframes mf-ns-b { 0% { background-position: 0 0 } 33% { background-position: -70px 24px } 66% { background-position: 50px -40px } 100% { background-position: 0 0 } }
+@keyframes mf-ns-flick { 0%,100% { opacity: 1 } 3% { opacity: .55 } 6% { opacity: 1 } 40% { opacity: .8 } 43% { opacity: 1 } 80% { opacity: .7 } 83% { opacity: 1 } }
+.ns-flick { animation: mf-ns-flick 2.4s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .ns-root > div { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function GlassDistortion() {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#07090f]">
+      <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(135deg,#120c24,#06202a 55%,#1a0e20)" }}>
+        <span className="absolute rounded-full" style={{ left: "-10%", top: "6%", width: 180, height: 180, background: "radial-gradient(circle at 40% 35%, rgba(34,211,238,.8), transparent 68%)", filter: "blur(26px)", animation: "mf-gd-a 13s ease-in-out infinite alternate" }} />
+        <span className="absolute rounded-full" style={{ right: "-8%", top: "34%", width: 150, height: 150, background: "radial-gradient(circle at 45% 40%, rgba(236,72,153,.75), transparent 66%)", filter: "blur(24px)", animation: "mf-gd-b 17s ease-in-out -6s infinite alternate" }} />
+        <span className="absolute rounded-full" style={{ left: "28%", bottom: "-12%", width: 200, height: 200, background: "radial-gradient(circle at 40% 35%, rgba(250,204,21,.55), transparent 68%)", filter: "blur(30px)", animation: "mf-gd-a 20s ease-in-out -11s infinite alternate" }} />
+      </div>
+      <div aria-hidden className="absolute inset-y-0 left-[26%] w-[34%]" style={{ transform: "skewX(-8deg)", backdropFilter: "blur(9px) brightness(1.45) saturate(1.35)", background: "linear-gradient(115deg, rgba(255,255,255,.06), rgba(255,255,255,.01) 45%, rgba(255,255,255,.07))", borderRight: "1px solid rgba(255,255,255,.22)", boxShadow: "inset 0 1px 0 rgba(255,255,255,.25), 18px 0 40px rgba(0,0,0,.25)", animation: "mf-gd-pane 15s ease-in-out infinite alternate" }} />
+      <div aria-hidden className="absolute inset-y-0 left-[62%] w-[24%]" style={{ transform: "skewX(10deg)", backdropFilter: "blur(5px) brightness(1.3) saturate(1.2)", background: "linear-gradient(115deg, rgba(255,255,255,.05), transparent 50%, rgba(255,255,255,.04))", borderLeft: "1px solid rgba(255,255,255,.14)", boxShadow: "10px 0 30px rgba(0,0,0,.2)" }} />
+      <style>{`@keyframes mf-gd-a { from { transform: translate3d(0,0,0) scale(1) } to { transform: translate3d(70px,34px,0) scale(1.25) } }
+@keyframes mf-gd-b { from { transform: translate3d(0,0,0) scale(1.1) } to { transform: translate3d(-60px,-30px,0) scale(.9) } }
+@keyframes mf-gd-pane { from { left: 20% } to { left: 36% } }
+@media (prefers-reduced-motion: reduce) { .gd-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function EmberRise() {
+  const embers = Array.from({ length: 26 }, (_, i) => {
+    const h = Math.sin(i * 127.1 + 3) * 0.5 + 0.5;
+    const v = Math.sin(i * 269.5 + 11) * 0.5 + 0.5;
+    return {
+      left: 12 + h * 76,
+      dur: 5.4 + v * 4.6,
+      delay: -v * 8,
+      size: 1.6 + h * 2.4,
+      hot: v > 0.82,
+      late: h > 0.75,
+    };
+  });
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[linear-gradient(180deg,#080503,#160a05_60%,#0b0604)]">
+      <div aria-hidden className="absolute inset-x-0 bottom-0 h-24" style={{ background: "radial-gradient(60% 100% at 50% 110%, rgba(255,120,30,.5), transparent 70%)", filter: "blur(10px)", animation: "mf-er-glow 2.2s ease-in-out infinite alternate" }} />
+      {embers.map((e, i) => (
+        <span
+          key={i}
+          aria-hidden
+          className="absolute rounded-full"
+          style={{
+            left: `${e.left}%`,
+            top: "104%",
+            width: e.size,
+            height: e.size,
+            background: e.hot ? "#fff7ed" : e.late ? "#fcd34d" : "#fb923c",
+            boxShadow: e.hot ? "0 0 8px rgba(254,243,199,.9)" : "0 0 6px rgba(251,146,60,.8)",
+            animation: `mf-er-rise ${e.dur}s linear ${e.delay}s infinite`,
+          }}
+        />
+      ))}
+      <style>{`@keyframes mf-er-rise { 0% { top: 104%; opacity: 0 } 8% { opacity: .95 } 92% { opacity: .7 } 100% { top: -6%; opacity: 0 } }
+@keyframes mf-er-glow { from { opacity: .6; transform: scaleY(1) } to { opacity: 1; transform: scaleY(1.2) } }
+@media (prefers-reduced-motion: reduce) { .er-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function CheckerboardFade() {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#111318]">
+      <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "repeating-conic-gradient(rgba(230,235,245,.09) 0% 25%, transparent 0% 50%)", backgroundSize: "26px 26px", maskImage: "linear-gradient(135deg, #000 8%, transparent 74%)", WebkitMaskImage: "linear-gradient(135deg, #000 8%, transparent 74%)" }} />
+      <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "repeating-conic-gradient(rgba(230,235,245,.05) 0% 25%, transparent 0% 50%)", backgroundSize: "26px 26px", maskImage: "linear-gradient(-45deg, #000 4%, transparent 70%)", WebkitMaskImage: "linear-gradient(-45deg, #000 4%, transparent 70%)" }} />
+      <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(250,204,21,.12), transparent 40%), radial-gradient(80% 90% at 78% 14%, rgba(34,211,238,.08), transparent 55%)" }} />
+      <span aria-hidden className="absolute left-2 top-2 font-mono text-[8px] tracking-[0.2em] text-white/30">CHK 01 — 26px</span>
+      <span aria-hidden className="absolute bottom-2 right-2 font-mono text-[8px] tracking-[0.2em] text-white/30">DIAG 135°</span>
+      <style>{`@media (prefers-reduced-motion: reduce) { .ck-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function PlaidWeave() {
+  return (
+    <div className="relative h-full w-full overflow-hidden" style={{ background: "#e9dcc3" }}>
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(90deg, transparent 0 38px, rgba(146,56,40,.55) 38px 50px, transparent 50px 142px, rgba(146,56,40,.3) 142px 152px, transparent 152px 236px, rgba(146,56,40,.5) 236px 246px, transparent 246px), linear-gradient(0deg, transparent 0 22px, rgba(44,84,74,.5) 22px 30px, transparent 30px 96px, rgba(44,84,74,.35) 96px 103px, transparent 103px 172px, rgba(146,56,40,.18) 172px 178px, transparent 178px), linear-gradient(90deg, rgba(146,56,40,.12) 0 4px, transparent 4px 8px), linear-gradient(0deg, rgba(44,84,74,.16) 0 3px, transparent 3px 6px)",
+          backgroundSize: "256px 200px, 200px 200px, 8px 8px, 6px 6px",
+        }}
+      />
+      <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(120% 100% at 50% 40%, transparent 55%, rgba(60,36,12,.28))" }} />
+      <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='pl'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23pl)' opacity='0.5'/%3E%3C/svg%3E\")", backgroundSize: "120px 120px", mixBlendMode: "multiply", opacity: 0.18 }} />
+      <style>{`@media (prefers-reduced-motion: reduce) { .pl-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+const HB_RINGS = (() => {
+  const out: { r: number; dash: number; gap: number; rot: number }[] = [];
+  let k = 1;
+  while (true) {
+    const r = 5 + 1.35 * k * k;
+    if (r > 148) break;
+    const C = 2 * Math.PI * r;
+    const n = Math.max(8, Math.round(C / 16));
+    out.push({ r: Math.round(r * 10) / 10, dash: Math.round((C / n) * 10) / 10, gap: Math.round((C / n) * 1.1 * 10) / 10, rot: (k * 37) % 360 });
+    k += 1;
+  }
+  return out;
+})();
+
+function HalftoneBurst() {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#f3ead6]">
+      <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full" aria-hidden>
+        {HB_RINGS.map((ring, i) => (
+          <circle
+            key={i}
+            cx="160"
+            cy="86"
+            r={ring.r}
+            fill="none"
+            stroke="#26201c"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray={`${ring.dash} ${ring.gap}`}
+            opacity={0.85}
+            transform={`rotate(${ring.rot} 160 86)`}
+          />
+        ))}
+        <circle cx="160" cy="86" r="5" fill="#26201c" opacity="0.9" />
+        <circle cx="160" cy="86" r="1.6" fill="#f3ead6" />
+      </svg>
+      <span aria-hidden className="absolute left-3 top-2 font-mono text-[8px] uppercase tracking-[0.22em] text-[#26201c]/50">poster plate · halftone burst</span>
+      <style>{`@keyframes mf-hb-rot { to { transform: rotate(360deg) } }
+@media (prefers-reduced-motion: reduce) { .hb-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+const CD_BANDS = [
+  { top: "14%", speed: 26, opacity: 0.5, scale: 1, blur: 10 },
+  { top: "34%", speed: 34, opacity: 0.36, scale: 0.8, blur: 13 },
+  { top: "56%", speed: 22, opacity: 0.28, scale: 1.15, blur: 16 },
+] as const;
+
+function CloudDrift() {
+  const cloud = (i: number, s: number) => (
+    <span key={i} aria-hidden className="absolute rounded-full" style={{ left: `${(i * 26 + (i % 3) * 7) % 90}%`, top: `${(i * 17) % 45}%`, width: 130 * s, height: 34 * s, background: "radial-gradient(ellipse 60% 50% at 40% 40%, rgba(235,245,255,.9), rgba(235,245,255,.15) 70%, transparent)" }} />
+  );
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[linear-gradient(180deg,#0b1222,#16233d_60%,#1d2f4d)]">
+      <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(60% 40% at 30% 16%, rgba(148,197,255,.14), transparent 60%)" }} />
+      <div className="absolute inset-0 overflow-hidden" style={{ maskImage: "linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent)" }}>
+        {CD_BANDS.map((b, bi) => (
+          <div key={bi} className="absolute inset-x-0 h-10" style={{ top: b.top, opacity: b.opacity, filter: `blur(${b.blur}px)` }}>
+            <div className="relative flex h-full w-[200%]" style={{ animation: `mf-cd-drift ${b.speed}s linear infinite` }}>
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((c) => cloud(c, b.scale))}
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((c) => cloud(c, b.scale))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <style>{`@keyframes mf-cd-drift { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+@media (prefers-reduced-motion: reduce) { .cd-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function SunsetHorizon() {
+  return (
+    <div className="relative h-full w-full overflow-hidden">
+      <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, #151033 0%, #5b2566 42%, #b8405a 66%, #ff9a4a 86%, #ffd27a 100%)" }} />
+      <span aria-hidden className="absolute rounded-full" style={{ left: "8%", top: "34%", width: 90, height: 90, background: "radial-gradient(circle, rgba(255,214,150,.7), transparent 70%)", filter: "blur(2px)", animation: "mf-sh-drift 34s ease-in-out infinite alternate" }} />
+      <span aria-hidden className="absolute" style={{ left: "8%", top: "58%", width: 90, height: 90, background: "radial-gradient(circle at 50% 100%, rgba(255,120,40,.85), transparent 70%)", filter: "blur(6px)", animation: "mf-sh-drift 34s ease-in-out infinite alternate" }} />
+      <div aria-hidden className="absolute inset-x-0 bottom-[14%] h-24 opacity-50" style={{ background: "repeating-linear-gradient(180deg, rgba(120,40,60,.5) 0 2px, transparent 2px 7px)", maskImage: "linear-gradient(180deg, transparent, #000 40%)", WebkitMaskImage: "linear-gradient(180deg, transparent, #000 40%)" }} />
+      <div aria-hidden className="absolute inset-x-0 bottom-0 h-6 bg-[#1b0e12]" />
+      <style>{`@keyframes mf-sh-drift { from { transform: translateX(0) } to { transform: translateX(150px) } }
+@media (prefers-reduced-motion: reduce) { .sh-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 
@@ -7011,6 +7262,8 @@ export const DEMO_KEYS = [
   "glass-shards", "lava-lamp-blobs", "paper-grain", "silk-wave",
   "star-field-parallax", "scanline-crt", "liquid-mesh", "dot-matrix",
   "brushed-metal", "carbon-fibre", "water-ripple", "ink-bloom",
+  "aurora-band", "noise-storm", "glass-distortion", "ember-rise",
+  "checkerboard-fade", "plaid-weave", "halftone-burst", "cloud-drift", "sunset-horizon",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -7144,6 +7397,15 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "carbon-fibre": return <CarbonFibre />;
     case "water-ripple": return <WaterRipple />;
     case "ink-bloom": return <InkBloom />;
+    case "aurora-band": return <AuroraBand />;
+    case "noise-storm": return <NoiseStorm />;
+    case "glass-distortion": return <GlassDistortion />;
+    case "ember-rise": return <EmberRise />;
+    case "checkerboard-fade": return <CheckerboardFade />;
+    case "plaid-weave": return <PlaidWeave />;
+    case "halftone-burst": return <HalftoneBurst />;
+    case "cloud-drift": return <CloudDrift />;
+    case "sunset-horizon": return <SunsetHorizon />;
     default: return null;
   }
 }
