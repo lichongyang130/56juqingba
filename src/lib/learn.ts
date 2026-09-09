@@ -2933,6 +2933,95 @@ show the outcome moving    fake urgency
       },
     ],
   },
+  {
+    slug: "dark-mode-is-a-design-system",
+    kicker: "Career & process",
+    title: "Dark mode is a design system",
+    deck: "Dark mode is not a filter you flip — it is a second system with its own luminance logic, elevation language and colour roles. The differences that break naive implementations, and the token architecture that makes dark a first-class citizen.",
+    minutes: 11,
+    level: "Intermediate",
+    tags: ["dark mode", "theming", "tokens", "design systems"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Why the filter fails",
+        body: [
+          "The naive dark mode inverts the colours and calls it done. It fails in the same four places every time: shadows (a dark surface cannot cast a convincing dark shadow — elevation must be expressed as *lighter* surfaces, not deeper ones), saturation (brand colours that glow on light become neon on dark), text contrast (the 'muted grey' that passed on white dies on near-black), and imagery (photos shot for light backgrounds arrive as glowing rectangles). Dark mode is not the same design with a colour swap; it is a different physical metaphor — light on dark is a screen emitting light, and the system must be designed for that physics.",
+        ],
+        code: {
+          title: "elevation-flips.md",
+          lang: "text",
+          text: `Light mode:  surface rises = DARKER + shadow
+             --surface-1: #fff    --surface-2: #f6f6f4
+             shadow: 0 2px 8px rgb(0 0 0 / .10)
+
+Dark mode:   surface rises = LIGHTER + border
+             --surface-1: #121318  --surface-2: #1a1c23
+             border: 1px solid rgb(255 255 255 / .08)
+             (shadow becomes almost useless; the border
+              does the separating)`,
+        },
+      },
+      {
+        h: "The token architecture that survives",
+        bullets: [
+          "Role tokens, not colour tokens: --surface-1, --text-primary, --text-dim, --border — components reference roles, and the theme provides the values; a component that references --ink directly has already broken in one of the two themes.",
+          "Dark is a luminance problem first: text hierarchy in dark mode comes from luminance steps, not opacity alone — 'dim' text needs to be a lighter grey with a *defined* ratio, because opacity-on-dark compounds differently than opacity-on-light.",
+          "Saturation discipline: the dark palette desaturates brand colours 15–25% — the same hue at full saturation on near-black vibrates; the dark theme's brand is the brand, tuned for its medium.",
+          "Semantic tokens carry the system: --danger, --success, --focus-ring are the same roles in both themes with different values — the component never knows which theme it is in, which is exactly the point.",
+        ],
+      },
+      {
+        h: "The second-system checklist",
+        body: [
+          "A dark mode done as a system ships with its own audit: contrast pairs recomputed (not inherited — a pair that passed on light can fail on dark), imagery strategy decided (dark-mode imagery, or a scrim treatment for light photos), reduced-motion respected in both themes, and the switch itself saved and system-aware (prefers-color-scheme as the default, manual override on top). The tell of a real system: a designer can theme a new component in both modes from the token sheet alone, without asking what the dark 'version' of a colour should be — because there is no dark version. There is one component and two themes.",
+        ],
+        links: [{ label: "Contrast on brand colours", href: "/learn/contrast-on-brand-colours" }],
+      },
+    ],
+  },
+  {
+    slug: "naming-is-design",
+    kicker: "Career & process",
+    title: "Naming is design",
+    deck: "Component names are the API of your design system — and most names are lies. The discipline of naming by job: names that make the right usage feel inevitable and the wrong usage feel wrong.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["naming", "components", "api", "design systems"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "A name is a usage contract",
+        body: [
+          "A component name is the first documentation anyone reads, and it is read at the exact moment of decision: 'which component do I use for this?'. A name that describes what the component *is* ('Card', 'Panel', 'Box') says nothing about what it is *for* — so it gets used for everything, and the system rots into a pile of interchangeable rectangles. A name that describes the job ('DisclosureList', 'ConfirmButton', 'EmptyState') makes the right usage feel obvious and the wrong usage feel like a category error — which is precisely what an API is for.",
+        ],
+        bullets: [
+          "Name the job, not the anatomy: 'ToastStack' says where it lives and what it does; 'Notification' says what it kind of is and forces a decision every use. When the name ends in the component's shape ('Box', 'Row'), the system is naming furniture, not functions.",
+          "Name the state it manages: 'SegmentedControl' names the state (one of N); 'TabMorph' names a visual effect — the first teaches the system's logic, the second teaches a party trick.",
+          "Names should disagree with misuse: the test of a name is whether using it for the wrong job feels wrong — 'ConfirmButton' on a routine submit should make the developer pause and reach for 'SubmitButton' instead.",
+          "Rename early, rename loudly: the cost of a bad name compounds with every use, so the rename is cheapest in the first month — and a changelog entry ('Card → Panel: it is a surface, not a container') is the documentation the rename deserves.",
+        ],
+        code: {
+          title: "naming-checklist.md",
+          lang: "text",
+          text: `Ask of every component name:
+[ ] Does it say what it is FOR, not what it is MADE of?
+[ ] Does the wrong usage feel wrong?
+[ ] Does it name the state or behaviour it owns?
+[ ] Can a new developer pick it for the right job
+    from the name alone, without reading the docs?
+[ ] Would you search for it by this name?`,
+        },
+      },
+      {
+        h: "The system is an API",
+        body: [
+          "A design system with good names is a pleasure to build with; one with bad names is a place where every task starts with archaeology. The discipline is cheap and the payoff is compounding: names are the interface between the design's intent and the developer's daily decisions, and an interface that tells the truth is the whole game. Naming is not the last step of building a component — it is the design review that happens every time someone reaches for the catalog.",
+        ],
+        links: [{ label: "A library where every name is a page", href: "/components" }],
+      },
+    ],
+  },
 ];
 
 export function learnArticleOf(slug: string): LearnArticle | undefined {
