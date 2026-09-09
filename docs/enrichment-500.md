@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 161 / 500 shipped (batches 1–21, in order) · Sections 1–3 complete ✅
+## Progress — 169 / 500 shipped (batches 1–22, in order) · Sections 1–3 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -173,6 +173,14 @@ names, behaviours and where they plug into the existing pages.
 | 159 | Fluid type without magic numbers essay | [/learn/fluid-type-without-magic-numbers](/learn/fluid-type-without-magic-numbers) |
 | 160 | CSS nesting now essay | [/learn/css-nesting-now](/learn/css-nesting-now) |
 | 161 | Container queries cookbook essay | [/learn/container-queries-cookbook](/learn/container-queries-cookbook) |
+| 162 | :has() finally useful essay | [/learn/has-is-finally-useful](/learn/has-is-finally-useful) |
+| 163 | scroll-timeline, honestly essay | [/learn/scroll-timeline-honestly](/learn/scroll-timeline-honestly) |
+| 164 | In defence of the button essay | [/learn/in-defence-of-the-button](/learn/in-defence-of-the-button) |
+| 165 | Colour contrast you can compute essay | [/learn/colour-contrast-you-can-compute](/learn/colour-contrast-you-can-compute) |
+| 166 | Writing a brief the model can't ignore essay | [/learn/brief-the-model-cant-ignore](/learn/brief-the-model-cant-ignore) |
+| 167 | The retry loop essay | [/learn/the-retry-loop](/learn/the-retry-loop) |
+| 168 | One palette, three moods essay | [/learn/one-palette-three-moods](/learn/one-palette-three-moods) |
+| 169 | When to say no gradients in a prompt essay | [/learn/when-to-say-no-gradients-in-a-prompt](/learn/when-to-say-no-gradients-in-a-prompt) |
 
 
 ---
@@ -364,7 +372,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 4. Learn — 50 more essays & formats (currently 10 → 26 live)
+## 4. Learn — 50 more essays & formats (currently 10 → 34 live)
 
 ### Motion & animation theory
 - **Easing cheatsheet deep-dive** ✅ (`easing-cheatsheet-deep-dive`): compare the 8 named curves side-by-side with the Lab embeds.
@@ -385,16 +393,16 @@ names, behaviours and where they plug into the existing pages.
 - **Fluid type without magic numbers** ✅ (`fluid-type-without-magic-numbers`): clamp() math you can explain in a tweet.
 - **CSS nesting now** ✅ (`css-nesting-now`): writing cleaner cascade with native nesting.
 - **Container queries cookbook** ✅ (`container-queries-cookbook`): component-first responsive that isn't viewport-sized.
-- **has() is finally useful**: three parent-selector patterns that survive production.
-- **scroll-timeline, honestly**: what scroll-driven animations can and can't do today.
-- **In defence of the button**: states, semantics and the one you always forget.
-- **Colour contrast you can compute**: relative luminance without the calculator.
+- **has() is finally useful** ✅ (`has-is-finally-useful`): three parent-selector patterns that survive production.
+- **scroll-timeline, honestly** ✅ (`scroll-timeline-honestly`): what scroll-driven animations can and can't do today.
+- **In defence of the button** ✅ (`in-defence-of-the-button`): states, semantics and the one you always forget.
+- **Colour contrast you can compute** ✅ (`colour-contrast-you-can-compute`): relative luminance without the calculator.
 
 ### Prompt engineering for websites
-- **Writing a brief the model can't ignore**: anatomy of Motif's own prompt format.
-- **The retry loop**: what to change between run 1 and run 2 when fidelity is 84.
-- **One palette, three moods**: how prompt colour direction phrases change output.
-- **When to say "no gradients" in a prompt**: and when it backfires.
+- **Writing a brief the model can't ignore** ✅ (`brief-the-model-cant-ignore`): anatomy of Motif's own prompt format.
+- **The retry loop** ✅ (`the-retry-loop`): what to change between run 1 and run 2 when fidelity is 84.
+- **One palette, three moods** ✅ (`one-palette-three-moods`): how prompt colour direction phrases change output.
+- **When to say "no gradients" in a prompt** ✅ (`when-to-say-no-gradients-in-a-prompt`): and when it backfires.
 - **Model personality drift**: same prompt on three models — what actually differs.
 - **Design tokens inside prompts**: making output restyleable after generation.
 - **Prompting for reduced motion**: baking a11y constraints into the brief.

@@ -1498,6 +1498,404 @@ clamp(16px, calc(0.435vw + 14.43px), 20px)
       },
     ],
   },
+  {
+    slug: "has-is-finally-useful",
+    kicker: "Craft & CSS",
+    title: ":has() is finally useful",
+    deck: "The parent selector that CSS refused us for twenty years shipped, and then the internet used it to write card hacks. Three :has() patterns that survive production, plus the performance reflex that keeps them cheap.",
+    minutes: 9,
+    level: "Advanced",
+    tags: ["css", "has", "selectors", "modern css"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "What :has() actually gives you",
+        body: [
+          ":has() lets a selector test its own descendants and siblings — the parent selector, the previous-sibling selector, the container-aware selector. .card:has(img) matches a card only if it contains an image. That single capability collapses dozens of JavaScript class-toggling rituals into declarative CSS: form states, card variants, layout adjustments driven by content.",
+        ],
+        code: {
+          title: "the-three-patterns.css",
+          lang: "css",
+          text: `/* 1 — container adapts to its content */
+.stats-grid > .panel:has(.sparkline) { grid-column: span 2; }
+
+/* 2 — state travels to the parent */
+.field:has(input:user-invalid) {
+  border-color: var(--danger);
+}
+.field:has(input:focus-visible) {
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+/* 3 — sibling reacts to sibling */
+.tabs > .tab:has(:checked) {
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}`,
+        },
+      },
+      {
+        h: "The patterns that earn their keep",
+        bullets: [
+          "Form validation without JS: .field:has(:user-invalid) styles the whole field group when its input fails — the message, the border, the icon, all in one rule, updated live by the browser.",
+          "Content-driven layout: a panel that widens when it contains a table, a card that drops its media row when the media is missing — layout responds to what is actually in the box.",
+          "Focus-within that means it: :has(:focus-visible) reaches every descendant, not just direct children — the container glows when any control inside it is focused.",
+          "The navigation current-state: a nav item that styles itself when it contains the current link — no server-side class to keep in sync.",
+        ],
+        callout: {
+          type: "warn",
+          title: "The performance reflex",
+          text: ":has() is powerful and the browser has to work for it — a :has() selector in a hot path (a selector applied to thousands of elements, or one that queries deep into a huge DOM) can cost real time. The reflex: scope it tightly (start from a class, not *) and keep the inner selector shallow. If a page has 5,000 rows each running :has(), measure before you celebrate.",
+        },
+      },
+      {
+        h: "Where it stays a party trick",
+        body: [
+          "The famous :has() card hacks — counting stars, styling the third child — are fun and useless. The pattern that matters is state that lives in the DOM (checked, invalid, focused, present) expressing itself on ancestors. If you find yourself toggling a class in JavaScript because 'the parent needs to know', stop and ask whether :has() already knows.",
+        ],
+        links: [{ label: "Forms that fail kindly", href: "/learn/forms-that-fail-kindly" }],
+      },
+    ],
+  },
+  {
+    slug: "scroll-timeline-honestly",
+    kicker: "Craft & CSS",
+    title: "scroll-timeline, honestly",
+    deck: "Scroll-driven animations in pure CSS — progress bars that fill with the scroll, sections that animate as they pass. What scroll-timeline can do today, where it still breaks, and the fallback that keeps your content honest.",
+    minutes: 10,
+    level: "Advanced",
+    tags: ["scroll", "scroll-timeline", "animation", "css"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The two timelines",
+        body: [
+          "Scroll-driven animation comes in two flavours. The scroll progress timeline: the animation is bound to how far the scroller has travelled (a reading progress bar, a hero that compresses as you leave). The view progress timeline: the animation is bound to how far an element has travelled through the viewport (a section title that reveals as it enters). Both are declarative — no rAF loop, no scroll listener, no layout-thrash opportunity — which is the real gift.",
+        ],
+        code: {
+          title: "scroll-timeline.css",
+          lang: "css",
+          text: `/* reading progress: bound to the scroller */
+@keyframes fill { from { scale: 0 1; } to { scale: 1 1; } }
+.progress {
+  transform-origin: left;
+  animation: fill linear both;
+  animation-timeline: scroll(root);
+}
+
+/* section title: reveals as it crosses the viewport */
+@keyframes rise { from { opacity: 0; translate: 0 24px; } }
+.section h2 {
+  animation: rise linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 40%;
+}`,
+        },
+      },
+      {
+        h: "What it cannot do — today",
+        bullets: [
+          "No scroll-linked easing curves: the animation follows the scroll linearly; you cannot make a section feel 'spring-loaded' against the scroll position without JavaScript sampling scroll velocity.",
+          "No scrubbing other properties cheaply: animating anything except transform and opacity still runs layout/paint per scroll frame — the same GPU rule as every other animation applies.",
+          "Timeline units and ranges are new and verbose; animation-range syntax (entry, exit, contain) still trips people, and browser prefixes have not fully settled.",
+          "Fallbacks matter: in browsers without support the animation never runs — content stays visible only if you write the 'from' state as the resting state, which is exactly the honest pattern: no support means no animation, never no content.",
+        ],
+        callout: {
+          type: "pro",
+          title: "The support pattern",
+          text: "Write the resting state first (content fully visible, progress at zero). Then layer the scroll-driven animation on top with @supports (animation-timeline: scroll()). No support = clean static page. Support = the enhancement. Scroll-driven motion must never be the only way content appears.",
+        },
+      },
+      {
+        h: "Where it genuinely beats JavaScript",
+        body: [
+          "A reading progress bar, a scroll-vignette that deepens as you leave the hero, an image that settles into place as it enters — these are one-liners in scroll-timeline and hundreds of lines of fragile listener code by hand. The bar is also perfectly synced by the browser: no rAF drift, no scroll-position rounding, no jank from a listener fighting the compositor. For atmosphere that tracks the scroll, the platform finally has the primitive.",
+        ],
+        links: [{ label: "Progress that tracks reading honestly", href: "/components/scroll-progress" }],
+      },
+    ],
+  },
+  {
+    slug: "in-defence-of-the-button",
+    kicker: "Craft & CSS",
+    title: "In defence of the button",
+    deck: "Every framework ships a Button component, and every designer has opinions about it. States, semantics, and the disabled attribute everyone gets wrong — a field guide to the most important 24 pixels in your product.",
+    minutes: 8,
+    level: "Beginner",
+    tags: ["buttons", "forms", "a11y", "components"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The button is a promise with states",
+        body: [
+          "A button has five states and each is a promise: rest (this will do something), hover (it knows you are here), active/pressed (it has heard you), focus (the keyboard can reach it), and disabled (it cannot — and here is the promise most products break). Users do not read documentation; they read states. A button whose states lie is a button that teaches users to distrust the whole product.",
+        ],
+        bullets: [
+          "Rest: the label is a verb that names the outcome — 'Save changes', never 'Submit'. 'OK' is what a dialog says when it has given up explaining.",
+          "Hover: the change must be legible at a glance — background shift, slight lift — and must not be the only affordance on a touchscreen that has no hover.",
+          "Pressed: instant visual response (scale to 0.97, fill change) inside 60ms. The press state is the product saying 'I heard you' before the network says anything.",
+          "Focus: a visible ring that appears on keyboard focus and does not vanish on mouse click — and never, ever outline: none without a replacement.",
+          "Disabled: here is the rule — if the button is disabled because the form is incomplete, say what is missing instead of disabling. Disable only when the action is genuinely impossible right now (already saving, nothing selected), and always explain why, next to the button, in text.",
+        ],
+      },
+      {
+        h: "Semantics are the API",
+        code: {
+          title: "button-semantics.html",
+          lang: "html",
+          text: `<button type="button">            <!-- click, no form submit -->
+<button type="submit">           <!-- the form's action -->
+<button disabled>                <!-- genuinely unavailable -->
+<a role="button" tabindex="0">   <!-- only if it navigates; else a <button> -->
+<!-- A <div onClick> is a button that lost its keyboard,
+     its focus ring, its screen-reader role, and its dignity. -->`,
+        },
+        callout: {
+          type: "warn",
+          title: "The one you always forget",
+          text: "A button with no type attribute inside a form defaults to type='submit'. The 'settings' button that submits the search form and navigates away is a debugging classic — declare type='button' on every button that is not the submitter, and your users will stop losing their work.",
+        },
+      },
+      {
+        h: "The craft details",
+        body: [
+          "A button's padding is its hit area: the tap target needs 44×44px even when the visual is smaller, via padding or an invisible hit-slot. Its corners should match the product's radius scale, not the nearest trend. Its label should never wrap mid-phrase ('Save all' is fine; 'Save all changes to the current draft and' is a sentence wearing a button's clothes). And when the action is destructive, the button says what it will do — 'Delete comment', with the confirm as a second step, never a surprise.",
+        ],
+        links: [{ label: "Buttons that answer the click window", href: "/learn/the-200ms-click-window" }],
+      },
+    ],
+  },
+  {
+    slug: "colour-contrast-you-can-compute",
+    kicker: "Craft & CSS",
+    title: "Colour contrast you can compute",
+    deck: "Relative luminance is a formula, not a vibe. The maths that turns 'does this pass AA?' into a number you can compute on a napkin — and the three contrast facts that explain most design-review arguments.",
+    minutes: 10,
+    level: "Intermediate",
+    tags: ["colour", "contrast", "accessibility", "math"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Contrast ratio is a ratio of luminances",
+        body: [
+          "The WCAG contrast ratio is (L1 + 0.05) / (L2 + 0.05) where L1 is the lighter colour's relative luminance and L2 the darker's — nothing more. Relative luminance is where the maths lives: each RGB channel is linearized (divide by 255, then the sRGB curve) and weighted 0.2126 red, 0.7152 green, 0.0722 blue. Green dominates because the eye is most sensitive there — which is why two colours that 'look' equally bright on your monitor can fail contrast while a surprising pair passes.",
+        ],
+        code: {
+          title: "luminance.ts",
+          lang: "ts",
+          text: `function channel(c: number) {           // 0..255 -> linear
+  const s = c / 255;
+  return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+}
+function luminance(r: number, g: number, b: number) {
+  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}
+function ratio(a: number, b: number) {
+  const [hi, lo] = a > b ? [a, b] : [b, a];
+  return (hi + 0.05) / (lo + 0.05);   // >= 4.5 passes AA text
+}`,
+        },
+      },
+      {
+        h: "Three facts that settle arguments",
+        bullets: [
+          "White on near-black is ~15.8:1 — the ceiling you are always aiming under, and the reason pure black text on pure white (21:1) is not 'more accessible' than a well-chosen dark grey; it is just harsher.",
+          "Grey text on white fails long before it looks faint: #999 on white is 2.8:1 (fails AA for everything); #767676 is 4.54:1 (passes). The 'muted' text in most products is failing silently — the design review argument is really a luminance argument.",
+          "Brand colours almost never pass for text: most logo blues and reds land between 3:1 and 4.4:1 on white — fine for large type and UI components (3:1 AA), failing for body copy. The professional move is a text-ink variant of the brand colour, tuned darker, used for words.",
+        ],
+      },
+      {
+        h: "The napkin workflow",
+        body: [
+          "When a palette arrives, compute three ratios before anything else: body text on background (needs 4.5), large text and UI icons on background (needs 3), and the brand accent as text on background (needs 4.5 or a darker variant). Failures get fixed in the token layer — a --text-muted token, a --brand-ink token — so the design system encodes the maths instead of re-arguing it per screen.",
+        ],
+        links: [{ label: "AA as a hard requirement", href: "/learn/a11y-before-you-copy" }],
+      },
+    ],
+  },
+  {
+    slug: "brief-the-model-cant-ignore",
+    kicker: "Prompt engineering",
+    title: "Writing a brief the model can't ignore",
+    deck: "The anatomy of Motif's own prompt format, dissected: why the structure exists, which lines do the actual work, and the three sentences that separate a brief that reproduces from a wish.",
+    minutes: 10,
+    level: "Intermediate",
+    tags: ["prompts", "briefs", "ai", "process"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The anatomy of a brief that reproduces",
+        body: [
+          "A brief that reproduces has four layers, and each answers a question the model cannot avoid. Context: what is this page for, and who is it for? Constraints: what is forbidden (no gradients, no stock copy, English only)? Structure: what blocks exist, in what order, with what content obligations? Fidelity markers: what would a great version include that a lazy version would skip?",
+          "Motif's format encodes all four in every prompt, and the run logs bear it out: briefs with an explicit block list reproduce structure at 90%+ fidelity; briefs that describe 'a modern, clean landing page' reproduce a genre, not a design.",
+        ],
+        bullets: [
+          "The context line names the industry and the audience in one breath: 'a bike shop page where the service menu reads like a menu a mechanic would stand behind' — the metaphor does the work a paragraph of adjectives cannot.",
+          "The block list is a contract: '• Service tiers: three named tiers as cards, each listing what is actually done' — the model now has a checklist it can be scored against, and scoring is what makes the next iteration possible.",
+          "The constraint list is negative space: 'never from $X with no date', 'no stock sunset photography' — models fill constraints with surprising creativity; they fill vague praise with clichés.",
+          "The palette line is a decision pre-made: 'workshop grey, safety orange accent, honest grease on the cards' — colour direction is where vague briefs collapse into generic gradients.",
+        ],
+      },
+      {
+        h: "The three sentences that matter most",
+        body: [
+          "In every brief there are three sentences the model treats as load-bearing. The first line (what the page is) sets the genre. The first bullet of the first block (the hero's job) sets the hierarchy. And the last line (the palette or the restraint rule) sets the taste ceiling. Rewrite those three and you can keep the other 90% identical while changing the output completely — which is exactly what the retry loop exploits.",
+        ],
+        callout: {
+          type: "pro",
+          title: "Write the brief you would hand a human",
+          text: "The test for any prompt: would a thoughtful contractor deliver the right page from these instructions alone, without asking a single question? If the answer is 'they would ask about the budget' or 'they would ask what the CTA is', the brief is missing its obligations — add them before you pay the model.",
+        },
+        links: [{ label: "A brief built this way, end to end", href: "/prompts/bike-shop-service-tiers" }],
+      },
+    ],
+  },
+  {
+    slug: "the-retry-loop",
+    kicker: "Prompt engineering",
+    title: "The retry loop: from fidelity 84 to 92",
+    deck: "A run at fidelity 84 is not a failure — it is a diagnosis. The discipline of changing one thing at a time between run 1 and run 2, and the five most common fixes in Motif's own iteration log.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["prompts", "iteration", "ai", "workflow"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Fidelity 84 is a specific sentence",
+        body: [
+          "A low fidelity score is not 'the model failed' — it is a diagnosis with a location. The Motif rubric scores structure (blocks present, in order), content (copy is specific, not generic), and craft (details that make it feel designed). An 84 usually fails one of those three, and the fix is different for each. Structure failure means the brief's block list was ambiguous. Content failure means the copy obligations were too loose — the model filled space with filler. Craft failure means the constraint layer was missing — no palette line, no restraint rule, no 'never' list.",
+        ],
+        code: {
+          title: "retry-log.md",
+          lang: "text",
+          text: `Run 1  fid 84   blocks present, but hero copy is generic
+       ("Elevate your brand" energy)
+Fix    tightened the copy obligation: name the product,
+       the user, and the one verb of the hero.
+Run 2  fid 91   hero specific; now the footer is filler
+Fix    added footer obligation + a 'no stock phrases' list.
+Run 3  fid 93   shipping.`,
+        },
+      },
+      {
+        h: "The five fixes that recur",
+        bullets: [
+          "Add a 'never' list: models default to the most generic version of a brief; 'never show a stock sunset', 'no fake testimonials', 'no 3-colour-overload' costs three lines and removes an entire failure class.",
+          "Name the content: a block that says 'pricing cards' produces lorem prices; 'three tiers with names, real figures, and what each includes' produces a pricing section a designer could defend.",
+          "Give the palette a job: 'calm paper, ink, one trustworthy blue' is a taste ceiling; without it the model picks its own default gradient.",
+          "Specify the first screen: the hero is where fidelity dies most often — describe what is in it, in order, including what is NOT in it.",
+          "Change one thing per retry: change three things between run 1 and run 2 and you will not know which one fixed it — the loop only compounds when each run is a single-variable experiment.",
+        ],
+      },
+      {
+        h: "When to stop retrying",
+        body: [
+          "The loop has a natural end: when the remaining gap is craft judgment (spacing rhythm, type scale, a specific composition), a third retry costs more than ten minutes of hand-tuning the generated page. Motif's own guidance: two prompt retries max, then the generated page becomes a component you refine by hand — the retry loop improves briefs, and hand-tuning improves pages, and confusing the two is how people spend an afternoon on run 7.",
+        ],
+        links: [{ label: "A run log you can learn from", href: "/prompts/easing-cheatsheet-deep-dive" }],
+      },
+    ],
+  },
+  {
+    slug: "one-palette-three-moods",
+    kicker: "Prompt engineering",
+    title: "One palette, three moods",
+    deck: "The same layout, the same palette, three different prompts — and three pages that feel like different products. How colour-direction phrasing steers model output, with the exact phrases that work.",
+    minutes: 8,
+    level: "Intermediate",
+    tags: ["prompts", "colour", "direction", "ai"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Colour words are the fastest steering wheel",
+        body: [
+          "Models generate from probability, and the probability of a 'premium tech' gradient sky is enormous unless the brief steers. Colour direction is the cheapest steering there is: two lines about palette change the entire output distribution — the layout can stay constant while the mood flips from fintech to editorial to playful.",
+        ],
+        code: {
+          title: "three-moods.md",
+          lang: "text",
+          text: `Same layout, same product (a focus timer):
+
+MOOD 1 - calm professional
+"Palette: deep ink, warm paper, one measured green used
+ only for the running state. Nothing louder than a ledger."
+
+MOOD 2 - playful energy
+"Palette: paper white, one saturated coral, black type.
+ Colour is allowed to be loud, but only one colour at a time."
+
+MOOD 3 - editorial luxury
+"Palette: near-black, bone, one metallic accent on the
+ primary action only. Generous margins, magazine scale."`,
+        },
+      },
+      {
+        h: "The phrases that actually move output",
+        bullets: [
+          "Job-words over colour-words: 'a green used only for the running state' beats 'mint green' — the model can now place the colour with intent instead of decorating.",
+          "Restraint as a directive: 'nothing louder than a ledger', 'one colour at a time', 'accent reserved for the primary action' — models respond to a rule about quantity better than a rule about hue.",
+          "Material metaphors: 'workshop grey', 'book cloth', 'newsprint' — concrete materials produce richer palettes than abstract names because they carry texture and context, not just a hex.",
+          "Negative colour: 'no gradients, no purple, nothing neon' — the never-list prunes the model's default taste, which is the actual enemy of a directed palette.",
+        ],
+      },
+      {
+        h: "The audit",
+        body: [
+          "After generation, check the page against the brief's own palette line before judging layout. If the palette line said 'one saturated accent' and the page arrived with four, the failure is constraint-enforcement, and the fix is in the never-list, not the hue names. If the page arrived monochrome when the brief promised warmth, the palette line lacked a dominant tone — name the colour that should fill the most area. Colour direction is a loop, like everything else in prompting.",
+        ],
+        links: [{ label: "When the never-list backfires", href: "/learn/when-to-say-no-gradients-in-a-prompt" }],
+      },
+    ],
+  },
+  {
+    slug: "when-to-say-no-gradients-in-a-prompt",
+    kicker: "Prompt engineering",
+    title: "When to say 'no gradients' in a prompt",
+    deck: "'No gradients' is the most common constraint in Motif's briefs and the most misunderstood. When the rule produces cleaner work, when it backfires into flatness, and the gradient vocabulary that lets you use the effect without being used by it.",
+    minutes: 8,
+    level: "Intermediate",
+    tags: ["prompts", "gradients", "constraints", "ai"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Why the rule exists",
+        body: [
+          "Models love a gradient the way a teenager loves eyeliner: as the default answer to 'make it look designed'. A prompt without a gradient rule reliably produces the purple-blue hero fade, the glassy button sheen, the text gradient on the headline — all at once, all unearned. The rule exists to force the model to design with structure and type instead of reaching for the cheapest form of depth.",
+        ],
+        bullets: [
+          "Say it when the product is information-dense: dashboards, docs, data products — gradients compete with data, and flat colour with strong type reads calmer and faster.",
+          "Say it when the brand is already loud: a saturated brand needs flat application, not another layer of drama underneath it.",
+          "Say it when you want the model to prove hierarchy: 'no gradients — depth must come from spacing, rules and shadow' forces the layout to do the work.",
+          "Skip the rule when the product is atmospheric by nature: hero-grade motion pieces, abstract brand pages, generative backdrops — a disciplined gradient (one, slow, directional) is the right tool and the rule would fight the brief.",
+        ],
+      },
+      {
+        h: "When the rule backfires",
+        body: [
+          "The backfire is flatness-as-punishment: some models respond to 'no gradients' by flattening everything until the page has no depth language at all — no elevation, no scrims, no light. The fix is to replace the negative with a positive depth vocabulary: 'no gradients; use layered panels, subtle shadows and a scrim for the hero' — the model needs a permitted path to depth, or it will take the nearest one, which is none.",
+        ],
+        code: {
+          title: "gradient-vocabulary.md",
+          lang: "text",
+          text: `Instead of a blanket ban, name the allowed depth:
+- "one slow radial glow behind the headline, nothing else"
+- "flat panels; elevation via shadow only"
+- "a single 2-stop tint on the hero, clipped to the text"
+- "no gradients on UI surfaces — imagery may carry colour"
+
+A directed gradient beats a banned gradient:
+the first is a decision, the second is a void.`,
+        },
+      },
+      {
+        h: "The decision rule",
+        body: [
+          "Ask what the gradient is for. If the answer is 'to make it feel less plain', ban it — plainness is a layout problem. If the answer is 'to make the light believable' (a glow behind a headline, a sky in a hero image, a sheen on glass that already exists), keep it and constrain it to one. The constraint that works is not 'no gradients'; it is 'one gradient, with a job, and the model must name it in the brief'.",
+        ],
+        links: [{ label: "One palette, three moods", href: "/learn/one-palette-three-moods" }],
+      },
+    ],
+  },
 ];
 
 export function learnArticleOf(slug: string): LearnArticle | undefined {
