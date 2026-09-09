@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 145 / 500 shipped (batches 1–19, in order) · Sections 1–3 complete ✅
+## Progress — 153 / 500 shipped (batches 1–20, in order) · Sections 1–3 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -157,6 +157,14 @@ names, behaviours and where they plug into the existing pages.
 | 143 | A11y-strict prompt variant | [/prompts/accessibility-strict-page](/prompts/accessibility-strict-page) |
 | 144 | Multi-language prompt variant | [/prompts/multilanguage-i18n-page](/prompts/multilanguage-i18n-page) |
 | 145 | Motion-spec prompt variant | [/prompts/motion-spec-only](/prompts/motion-spec-only) |
+| 146 | Easing cheatsheet deep-dive essay | [/learn/easing-cheatsheet-deep-dive](/learn/easing-cheatsheet-deep-dive) |
+| 147 | Springs are not easings essay | [/learn/springs-are-not-easings](/learn/springs-are-not-easings) |
+| 148 | The choreography question essay | [/learn/choreography-question](/learn/choreography-question) |
+| 149 | Micro-interactions that pay rent essay | [/learn/micro-interactions-pay-rent](/learn/micro-interactions-pay-rent) |
+| 150 | Will-change is a promise essay | [/learn/will-change-is-a-promise](/learn/will-change-is-a-promise) |
+| 151 | Why 60fps feels like 24fps essay | [/learn/why-60fps-feels-like-24fps](/learn/why-60fps-feels-like-24fps) |
+| 152 | GPU animation explained plainly essay | [/learn/gpu-animating-without-asking](/learn/gpu-animating-without-asking) |
+| 153 | Scroll speed is a type choice essay | [/learn/scroll-speed-is-a-type-choice](/learn/scroll-speed-is-a-type-choice) |
 
 
 ---
@@ -348,17 +356,17 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 4. Learn — 50 more essays & formats (currently 10)
+## 4. Learn — 50 more essays & formats (currently 10 → 18 live)
 
 ### Motion & animation theory
-- **Easing cheatsheet deep-dive**: compare the 8 named curves side-by-side with the Lab embeds.
-- **Springs are not easings**: when to reach for spring physics instead of cubic-bezier.
-- **The choreography question**: is this motion telling the story or decorating it?
-- **Micro-interactions that pay rent**: 20 tiny motions with a measurable UX job.
-- **Will-change is a promise**: when it helps, when it leaks memory, how to clean up.
-- **Why 60fps feels like 24fps**: perceived smoothness, frame pacing and jank perception.
-- **Animating on the GPU without asking**: transform/opacity and the compositor explained plainly.
-- **Scroll speed is a type choice**: mapping reading rhythm to reveal timing.
+- **Easing cheatsheet deep-dive** ✅ (`easing-cheatsheet-deep-dive`): compare the 8 named curves side-by-side with the Lab embeds.
+- **Springs are not easings** ✅ (`springs-are-not-easings`): when to reach for spring physics instead of cubic-bezier.
+- **The choreography question** ✅ (`choreography-question`): is this motion telling the story or decorating it?
+- **Micro-interactions that pay rent** ✅ (`micro-interactions-pay-rent`): 20 tiny motions with a measurable UX job.
+- **Will-change is a promise** ✅ (`will-change-is-a-promise`): when it helps, when it leaks memory, how to clean up.
+- **Why 60fps feels like 24fps** ✅ (`why-60fps-feels-like-24fps`): perceived smoothness, frame pacing and jank perception.
+- **Animating on the GPU without asking** ✅ (`gpu-animating-without-asking`): transform/opacity and the compositor explained plainly.
+- **Scroll speed is a type choice** ✅ (`scroll-speed-is-a-type-choice`): mapping reading rhythm to reveal timing.
 - **The 200ms click window**: how click-to-action motion shapes perceived latency.
 - **Reduced motion beyond the switch**: designing a second, calmer experience not a stripped one.
 

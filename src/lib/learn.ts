@@ -662,6 +662,441 @@ Try creating one            Create 'Q3 launch'
       },
     ],
   },
+  {
+    slug: "easing-cheatsheet-deep-dive",
+    kicker: "Motion theory",
+    title: "Easing cheatsheet, deep dive",
+    deck: "Eight named curves, one screen. Which ease belongs to an entrance, which to an exit, and which one you should stop using today — with the exact cubic-beziers Motif's own components ship with.",
+    minutes: 11,
+    level: "Intermediate",
+    tags: ["easing", "motion", "curves", "animation"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The eight curves and their personalities",
+        body: [
+          "Every named ease is a personality, and personalities have jobs. Linear is a metronome: no accent, no lies, useful only for continuous loops and marquees. ease-in starts slow and lands fast — it reads as something falling or being dismissed. ease-out starts fast and lands slow — it reads as something arriving and settling. ease-in-out splits the difference and is the safest default for anything that both enters and exits.",
+          "The problem with the CSS keywords is that they are fixed. ease-in-out's actual curve is gentle, but for UI it is usually too slow in the middle and not decisive enough at the ends. That is why every serious motion system ends up with bespoke beziers named after their job, not their shape.",
+        ],
+        callout: {
+          type: "tip",
+          title: "The two curves Motif ships most",
+          text: "entrance: cubic-bezier(.16, 1, .3, 1) — fast out of the gate, glides to rest. exit: cubic-bezier(.55, 0, 1, .45) — quick start, then commits to leaving. Copy these two and you have solved 80% of UI motion.",
+        },
+      },
+      {
+        h: "Entrances settle, exits commit",
+        body: [
+          "Read that line twice, because it is the entire cheatsheet in six words. An entrance should feel like a thing arriving and settling into its layout position — so it accelerates early (the eye catches it) and decelerates at the end (the eye can follow it to rest). An exit should feel decided — it commits and leaves, so it accelerates out and never slows down halfway out of the door.",
+          "Swap the two and the UI feels wrong in a way users describe as 'laggy' or 'jumpy' without ever naming the curve.",
+        ],
+        code: {
+          title: "the two-workhorse.css",
+          lang: "css",
+          text: `.ease-entrance { transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+.ease-exit     { transition: opacity .3s cubic-bezier(.55, 0, 1, .45); }
+/* entrance: arrives and settles · exit: decides and leaves */`,
+        },
+      },
+      {
+        h: "The full table, with jobs",
+        bullets: [
+          "linear — loops only: spinners, marquees, indeterminate progress. Anywhere motion must never imply arrival.",
+          "ease-in (accelerate) — dismissal. Modals leaving, alerts collapsing. Short durations only; long ease-in feels like waiting.",
+          "ease-out (decelerate) — arrival. Cards entering, dropdowns opening, toasts arriving. The workhorse keyword when you cannot write a bezier.",
+          "ease-in-out — reversible UI: accordions, theme toggles, hover that must feel symmetrical. Never use it for a one-way entrance; you are paying for a middle you do not need.",
+          "ease-out-quart / expo-style out — the 'premium' entrance. Big motion, hero reveals, full-bleed panels. Overused it becomes exhausting — reserve for moments that should feel expensive.",
+          "springs — see the companion essay: springs are physics, not curves; use them for drag, toss, and anything under a finger.",
+        ],
+        links: [{ label: "Springs are not easings", href: "/learn/springs-are-not-easings" }],
+      },
+      {
+        h: "Why durations and curves must be tuned together",
+        body: [
+          "A curve without a duration is half a sentence. The same cubic-bezier(.16, 1, .3, 1) reads as 'snappy' at 240ms, 'confident' at 450ms, and 'slow' at 700ms. Motif's audit rule: entrances for small elements 150–250ms, panels and modals 300–500ms, hero-scale moments 600–900ms. If you must pick one mistake to fix first, it is the 500ms entrance on a 40px tooltip — the duration is telling a bigger story than the element.",
+        ],
+        code: {
+          title: "duration-by-mass.md",
+          lang: "text",
+          text: `Element mass        Duration        Curve
+-----------------  ------------    ----------------------------
+tooltip, badge     120-160ms       ease-out
+card, dropdown     180-260ms       cubic-bezier(.16, 1, .3, 1)
+modal, sheet       300-450ms       cubic-bezier(.16, 1, .3, 1)
+hero reveal        600-900ms       cubic-bezier(.16, 1, .3, 1)
+dismissal (any)    150-300ms       cubic-bezier(.55, 0, 1, .45)
+loop               600-1400ms      linear (opacity pulse)`,
+        },
+      },
+      {
+        h: "The audit pass",
+        body: [
+          "Open any Motif component page and look at its entrance with the Easing Lab open beside it. Feel the curve, then drag the lab's handles to the keyword default and feel the difference. That comparison — bespoke settle vs. CSS keyword — is the entire argument for owning your curves instead of borrowing the browser's.",
+          "And when you copy an ease from a library, copy the *intent*: note what job the motion is doing (arrive, dismiss, loop, follow), then pick your own curve for that job. Easing is a language; the cheatsheet just gives you the words.",
+        ],
+        links: [{ label: "Tune these curves in the Easing Lab", href: "/lab" }],
+      },
+    ],
+  },
+  {
+    slug: "springs-are-not-easings",
+    kicker: "Motion theory",
+    title: "Springs are not easings",
+    deck: "A spring is physics pretending to be a curve: mass, stiffness and damping describe a system, not a path. Here is when to reach for one, how to read the three knobs, and why your button hover should probably stay a bezier.",
+    minutes: 12,
+    level: "Intermediate",
+    tags: ["springs", "physics", "motion", "gesture"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The difference is the question it answers",
+        body: [
+          "An easing answers 'where is it, at time t?'. A spring answers 'what happens when something with mass gets pushed?'. The spring does not compute a path from A to B — it simulates a mass on a damped spring and lets the motion overshoot, wobble or glide depending on how hard you push and how stiff the system is.",
+          "That is why a spring is the right tool for anything that feels physical: drag-and-drop, pull-to-refresh, list reordering, a card you fling away. It is the wrong tool for most entrances — an entrance has no physical cause, so a spring's overshoot reads as indecision.",
+        ],
+        callout: {
+          type: "pro",
+          title: "Spring physics, in one paragraph",
+          text: "Mass makes things heavier (higher mass = lazier start, longer tail). Stiffness makes things snappier (higher stiffness = less travel, faster return). Damping makes things stop (low damping = oscillation, high damping = no overshoot at all). You never tune a spring to a duration; you tune it to a feel, and the duration is whatever it ends up being.",
+        },
+      },
+      {
+        h: "Reading the three knobs",
+        bullets: [
+          "stiffness (or tension): how strongly the spring pulls back. Raise it and motion feels crisp and small; lower it and motion feels loose and floaty. UI springs typically sit high — snappy, not bouncy.",
+          "damping (or friction): how quickly energy leaves the system. Low damping gives the overshoot-wobble that makes physics fun; too low and it reads as rubber, which users read as broken.",
+          "mass: rarely worth touching in UI — it scales the whole response. If motion feels too slow, raise stiffness first; if it feels jittery, raise damping first.",
+        ],
+        code: {
+          title: "reading-a-spring.md",
+          lang: "text",
+          text: `Feeling                Fix
+--------------------   ----------------------------
+too bouncy / rubbery   raise damping
+too floaty / slow      raise stiffness
+too stiff / dead       lower stiffness slightly
+overshoot feels late   raise stiffness AND damping`,
+        },
+      },
+      {
+        h: "When springs earn their keep",
+        body: [
+          "The rule of thumb: if a finger caused the motion, consider a spring. Drag a card and release it — a bezier cannot answer 'how fast was it going when I let go?', but a spring can, because you feed it the release velocity. Reorder a list, dismiss a notification with a swipe, snap a sheet open partway — these are physical events with a velocity at the moment of release.",
+          "The other honest case for springs is when a fixed duration would feel wrong at multiple sizes: a spring gives the same *feel* across different distances, where a bezier gives the same *time* and therefore different feels.",
+        ],
+      },
+      {
+        h: "When to stay on bezier",
+        body: [
+          "Entrances and exits are not physical events — nothing pushed the modal, it simply should appear. Give it the settle curve and a duration and be done. Springs there add overshoot to things that should land once, and they make choreographed sequences (hero, then headline, then CTA) nearly impossible to align, because spring timing is a side effect, not a schedule.",
+          "Motif's rule: springs for manipulation, beziers for presentation. If a motion does not need to respond to a human hand mid-flight, it does not need physics.",
+        ],
+        links: [{ label: "Feel a real spring in the Lab", href: "/lab" }],
+      },
+    ],
+  },
+  {
+    slug: "choreography-question",
+    kicker: "Motion theory",
+    title: "The choreography question: story or decoration?",
+    deck: "Before you animate anything, ask whether the motion tells the story of what changed — or just decorates the fact that something moved. A question that saves more design reviews than any style guide.",
+    minutes: 8,
+    level: "Beginner",
+    tags: ["motion", "choreography", "ux", "principles"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Every transition is an answer to 'what happened?'",
+        body: [
+          "When state changes, the user's brain asks a question. Items got reordered: did my item move, and where did it go? A panel opened: where did it come from and where is the close? The list refreshed: what is new? Motion is how the interface answers — and decoration is motion that answers a question nobody asked.",
+          "The choreography question is brutally simple: does this motion explain the change it accompanies? If you cannot say what the user now understands that they did not understand before the animation, the animation is decoration — and decoration is the first thing to cut.",
+        ],
+        callout: {
+          type: "warn",
+          title: "The delete test",
+          text: "For every animation on the page, ask: if I delete it, does the user lose information about what changed? If the answer is no, the motion is not carrying its weight. Keep only the animations that pass — everything else is either decoration or an answer in search of a question.",
+        },
+      },
+      {
+        h: "Three questions that make choreography concrete",
+        bullets: [
+          "Continuity — does the moving thing look like the same object before and after? A card that expands into a detail view must come from the card's position, or the brain treats it as a new object appearing.",
+          "Direction — does motion point at the cause? A toast for an error you made should arrive from the element you touched, not drift in from the void.",
+          "Priority — does only one thing move like the star? Choreography is casting: one lead, supporting players, everyone else holds still.",
+        ],
+        code: {
+          title: "choreography-checklist.md",
+          lang: "text",
+          text: `Before shipping a transition, answer:
+[ ] What changed?  (one sentence)
+[ ] Does the motion show WHAT changed?
+[ ] Does it show WHERE it came from / went?
+[ ] Is ONE element the star?
+[ ] Would deleting it lose information?`,
+        },
+      },
+      {
+        h: "The supporting cast rule",
+        body: [
+          "A layout that animates everything at once reads as chaos; a layout that animates only the changed thing reads as calm. Motif's staggered entrances exist precisely for this: when a grid of cards appears, the *reason* they appear (a filter applied, a tab switched) is the story, and the stagger is the punctuation that keeps the eye from drowning. Sequence is how you make many motions read as one story instead of many decorations.",
+        ],
+        links: [{ label: "See a stagger done right", href: "/components/staggered-list-entrance" }],
+      },
+    ],
+  },
+  {
+    slug: "micro-interactions-pay-rent",
+    kicker: "Motion theory",
+    title: "Micro-interactions that pay rent",
+    deck: "Twenty tiny motions, each with a measurable UX job: confirm, guide, correct, or reward. If a micro-interaction cannot name its job, it is just wiggle.",
+    minutes: 9,
+    level: "Beginner",
+    tags: ["micro-interactions", "feedback", "ux", "motion"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The four jobs every micro-interaction can have",
+        body: [
+          "A micro-interaction pays rent when it does one of four things. Confirm: the system heard you (button press, checkbox tick). Guide: the system shows what is next (focus ring, suggested chip). Correct: the system catches a mistake before it costs you (field shake, inline error). Reward: the system marks a milestone (counter roll, confetti at a real achievement).",
+          "The test is the same as choreography: name the job. 'It feels nice' is not a job — it is a decoration with good posture.",
+        ],
+        bullets: [
+          "Button press: 0.1–0.15s scale to 0.97 with immediate visual response — confirms the tap landed before the action resolves.",
+          "Toggle: a thumb that travels with the state change and a background that recolors in the same frame — the state and the motion must never disagree.",
+          "Copy button: text swap to '✓ Copied' inside the button, not a toast from across the screen — the confirmation lives where the action happened.",
+          "Number change: odometer roll only for the changed digits — rolling every digit on 1,998 → 1,999 makes the eye read three changes that did not happen.",
+          "Field error: a 4px horizontal shake on the field plus a message in the live region — motion draws the eye, the message carries the meaning.",
+          "Focus: a visible ring with a 120ms fade-in — never an instant pop, never a slow bloom; focus is a promise the keyboard made.",
+          "Scroll anchor: the scroll-progress bar fills in step with the actual scroll, not a timer — it must never lie about position.",
+          "Drag: the dragged element goes 0.95 scale and shadows up — it is now 'in hand', visually separated from the page.",
+          "Drop target: the target outline brightens as the dragged item approaches, not on hover-over-anywhere — proximity is the cue.",
+          "List reorder: displaced items glide aside with a spring — the user must see where their item will land before releasing.",
+          "Delete: a two-step confirm where the first click visibly arms the button ('Delete?' turns red) — the state change is the feedback.",
+          "Loading: skeleton shimmer fills the shape of what is coming — it answers 'where will my content be?' instead of 'wait'.",
+          "Pull-to-refresh: a spinner that only starts once the pull passes the threshold, and snaps back if it does not — the threshold is the rule.",
+          "Empty drop: the file-drop zone pulses once when a file is rejected with a reason — rejection must never be silent.",
+          "Command palette: results re-rank as you type and the active row moves with the arrow keys — selection motion tracks the keys 1:1.",
+          "Swipe to dismiss: the card follows the finger and the delete affordance reveals underneath — the finger is the physics.",
+          "Notification bell: the badge appears with a one-beat pop and the bell nudges 8° — two cues, same message, neither spammy.",
+          "Infinite scroll: the sentinel row shows a 3-dot leader while fetching, then new cards settle in — loading is named, arrival is calm.",
+          "Save indicator: 'Saved' fades to 'Saved 2m ago' — the motion confirms, then the text ages honestly.",
+          "Theme switch: the background cross-fades while text stays put — the light change is the story, text legibility is never compromised.",
+        ],
+      },
+      {
+        h: "Rent is paid in attention, not pixels",
+        body: [
+          "A micro-interaction that fires every time will be tuned out by the brain inside a week. The ones that keep paying rent are the ones that fire only when they carry news: the odometer rolls on the number that matters, the shake fires on the mistake, the confetti fires on the milestone. Frequency is a design decision — spend motion where the user is deciding, and keep it silent where they are cruising.",
+        ],
+        links: [{ label: "Micro-feedback pieces in the library", href: "/components/toast-stack" }],
+      },
+    ],
+  },
+  {
+    slug: "will-change-is-a-promise",
+    kicker: "Performance",
+    title: "Will-change is a promise — keep it or break it",
+    deck: "The will-change property tells the browser to prepare a compositor layer before it is needed. Useful, yes. But every promise has a cost: layer memory, and the jank you create when you break the promise by never using the layer.",
+    minutes: 10,
+    level: "Advanced",
+    tags: ["performance", "css", "compositing", "will-change"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "What the property actually does",
+        body: [
+          "will-change: transform tells the browser 'this element is about to animate its transform — promote it to its own compositor layer now, so the animation does not have to do the promotion on the first frame.' That first-frame promotion is exactly where stutter comes from, so the promise removes it.",
+          "The cost: a compositor layer is a texture in GPU memory. Ten elements with will-change are ten textures. A hundred — a scroll-linked hero, a staggered grid, every card in a bento — and you have traded first-frame stutter for a memory bill and, ironically, slower scrolling as the GPU fights to keep all those layers alive.",
+        ],
+        callout: {
+          type: "warn",
+          title: "The broken promise",
+          text: "The classic bug is will-change: transform on a hover target that never animates, or left on after the animation ends. The browser keeps the layer alive indefinitely, and the page quietly pays for layers that do nothing. will-change is a promise: when the animation finishes, you must revoke it — or the browser keeps reserving the table for a guest who left.",
+        },
+      },
+      {
+        h: "The rules that keep the promise honest",
+        bullets: [
+          "Apply will-change in JavaScript right before the animation starts, and remove it in the animationend / finished handler. CSS-only: use it on the :hover state or a class that toggles with the animation.",
+          "Limit it to transform and opacity — the two properties that animate on the compositor. will-change: all is a panic attack, not a strategy.",
+          "Never apply it to more than a handful of elements. If you need dozens of layers, the problem is the layout, not the promotion.",
+          "Never put it on a resting state that does not animate — that is the promise with no event.",
+          "Prefer the browser's own judgment for one-off entrances: most modern engines promote at animation start fast enough that will-change is only needed for long or heavy animations.",
+        ],
+        code: {
+          title: "honest-will-change.ts",
+          lang: "ts",
+          text: `el.addEventListener("mouseenter", () => {
+  el.style.willChange = "transform";      // promise made
+  el.animate([{ transform: "scale(1.06)" }], { duration: 180 });
+});
+el.addEventListener("animationend", () => {
+  el.style.willChange = "auto";           // promise kept & released
+});`,
+        },
+      },
+      {
+        h: "When it genuinely pays",
+        body: [
+          "Three cases earn their keep. Long-running animations: a drifting aurora band or a continuous marquee that will animate for seconds, where a missed frame at any point is visible. Scroll-linked effects: an element that must already be a layer when the scroll handler starts writing to it. And many elements transforming simultaneously — a full grid stagger — where the browser would otherwise promote fifty layers in one frame.",
+          "Everywhere else, measure first. If the entrance is one card, let the browser do its job. will-change is an optimization you apply to a problem you have measured, not a garnish you sprinkle for luck.",
+        ],
+        links: [{ label: "A long-running layer done right", href: "/components/aurora-veil" }],
+      },
+    ],
+  },
+  {
+    slug: "why-60fps-feels-like-24fps",
+    kicker: "Performance",
+    title: "Why 60fps feels like 24fps",
+    deck: "Smoothness is not frame rate — it is frame pacing. A steady 24 feels calm; a stuttery 60 feels broken. What jank actually is, why the eye forgives slow but not uneven, and how to measure the difference.",
+    minutes: 11,
+    level: "Intermediate",
+    tags: ["performance", "fps", "jank", "browser"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The eye forgives slow. It does not forgive uneven.",
+        body: [
+          "Film has run at 24 frames per second for a century and nobody calls it janky, because every frame arrives exactly when expected — 41.7ms apart, no exceptions. A web animation at a steady 30fps reads as smooth but slightly dreamy. The same animation averaging 30fps with frames arriving at 8ms, 40ms, 12ms, 55ms reads as broken — because the brain does not perceive frame rate, it perceives *gaps*.",
+          "Jank is not 'low fps'. Jank is a frame that arrives late, especially after a run of on-time frames. The eye has a rhythm detector, and a single late frame is a skipped heartbeat.",
+        ],
+        callout: {
+          type: "tip",
+          title: "The useful metric: longest frame, not average",
+          text: "DevTools performance traces show a bar per frame; the ones over 16.7ms that cluster are your jank. The average can say 55fps while one 90ms frame breaks the animation's spine. Hunt the worst frame, not the mean.",
+        },
+      },
+      {
+        h: "Where the gaps come from",
+        bullets: [
+          "Main-thread work: layout and paint are the usual suspects — animating width or top forces layout every frame, and layout takes whatever time the DOM gives it.",
+          "Compositor interruptions: a layer is promoted mid-animation, or a new layer appears (a dropdown opening under the animation) and the GPU re-composites.",
+          "Garbage collection: a rAF loop that allocates objects every frame (strings, arrays) makes the GC pause the main thread unpredictably.",
+          "Background tabs waking up, extension work, or a font swap that triggers a reflow mid-sequence — the classic invisible jank.",
+          "Scroll-handler pileup: a scroll listener that writes layout (reads offsetTop, then writes style) forces synchronous reflow on every scroll event.",
+        ],
+        code: {
+          title: "frame-budget.md",
+          lang: "text",
+          text: `16.7ms  total budget at 60fps (one frame)
+ 8ms    style + layout          <- keep tiny
+ 3ms    paint
+ 4ms    compositor
+ 1ms    JavaScript
+-----
+Keep JS under 4-5ms per frame and the
+rest of the budget survives real devices.`,
+        },
+      },
+      {
+        h: "Why the fix is usually fewer moving parts",
+        body: [
+          "The cheapest way to a steady 60 is to animate only transform and opacity (compositor-only, no layout, no paint) and to promote long-running layers explicitly with will-change. But the deeper fix is humility: a page where four things animate at once will fight for the budget forever. Cut the animation to the one that tells the story, and steady frames come back — because the fastest frame is the one you did not ask for.",
+        ],
+        links: [
+          { label: "Will-change is a promise", href: "/learn/will-change-is-a-promise" },
+          { label: "GPU animation, explained plainly", href: "/learn/gpu-animating-without-asking" },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "gpu-animating-without-asking",
+    kicker: "Performance",
+    title: "Animating on the GPU without asking",
+    deck: "transform and opacity are the only properties that animate on the compositor without touching layout or paint. Here is the pipeline, plain: what the browser does each frame, why those two properties skip the expensive steps, and the traps that sneak layout back in.",
+    minutes: 12,
+    level: "Advanced",
+    tags: ["performance", "compositor", "transform", "browser"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The three-stage pipeline, named",
+        body: [
+          "Every frame the browser runs a pipeline: style, layout, paint, composite. Style resolves your CSS. Layout computes geometry — where every box sits, and it is the expensive one because one change can cascade through the whole document. Paint turns boxes into pixels. Composite stitches the layers together on the GPU.",
+          "Animate width and the browser must redo layout (everything around the element moves), then repaint, then composite. Animate transform and the browser skips straight to composite: the element's pixels are already painted on their own layer, and the GPU just moves that texture. Same for opacity, which only blends layers. That is the whole secret — those two properties are cheap because they are the only ones that never invalidate the earlier stages.",
+        ],
+        code: {
+          title: "pipeline.md",
+          lang: "text",
+          text: `Animating width / height / top / left:
+  style -> LAYOUT -> PAINT -> composite   (all three, every frame)
+
+Animating transform / opacity:
+  style -> composite                      (layout + paint skipped)`,
+        },
+      },
+      {
+        h: "The traps that sneak layout back in",
+        bullets: [
+          "Animating transform, then reading offsetWidth in the same frame: the read forces a synchronous layout flush — the 'layout thrash' that silently defeats the compositor.",
+          "A transform animation on an element whose ancestor resizes in the same frame: the ancestor's layout change re-lays-out the transformed element's layer anyway.",
+          "filter, box-shadow, and border-radius animate on the main thread — shadow and radius changes repaint the layer every frame. A moving card with a big blur shadow is a paint-heavy card.",
+          "clip-path and mask are compositor-adjacent but vary wildly by browser; test before trusting.",
+          "Content inside a transformed element that reflows (text wrapping, image decode) forces the layer to repaint mid-animation.",
+        ],
+        callout: {
+          type: "pro",
+          title: "The safe recipe",
+          text: "Move with transform. Fade with opacity. Keep shadows and gradients still while things move. If an element must move AND glow, put the glow on a separate still layer beneath the moving one — the GPU composites the pair for the price of one moving texture.",
+        },
+      },
+      {
+        h: "How to check you actually got the fast path",
+        body: [
+          "Open the performance panel, record the animation, and look for green 'Layer tree' activity with no tall yellow layout blocks. Then open the rendering panel and turn on 'Layer borders': composited layers show a border, and a healthy animation shows the moving element on its own layer while the page around it stays still. If the whole page repaints every frame, the animation did not make it to the GPU — it is doing layout and paint, and no amount of easing will make that smooth.",
+        ],
+        links: [{ label: "Why 60fps can still feel like 24fps", href: "/learn/why-60fps-feels-like-24fps" }],
+      },
+    ],
+  },
+  {
+    slug: "scroll-speed-is-a-type-choice",
+    kicker: "Motion theory",
+    title: "Scroll speed is a type choice",
+    deck: "Reveal timing is typography in time: the same paragraph reads differently revealed fast or slow, and the right speed changes with the length of the line, the density of the page and the patience of the reader.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["scroll", "reveal", "reading", "motion"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Reading has a rhythm, and motion can break it",
+        body: [
+          "When someone scrolls a page, they are reading at their own pace — scanning, pausing, backtracking. A reveal animation that is slower than the reader's pace turns every paragraph into a wait. A reveal that is faster than the eye can register is invisible noise. The reveal speed is effectively a typographic decision: it sets the pace at which the reader is allowed to receive the text.",
+          "The mismatch is why long-form pages with aggressive reveals feel exhausting: the reader wants to skim, and the page keeps demanding they wait for the next block. Reads like a conversation with someone who pauses after every word.",
+        ],
+      },
+      {
+        h: "Tuning reveals to content density",
+        bullets: [
+          "Dense paragraphs (long-form, docs): reveal whole blocks at 300–450ms or do not reveal at all — the reader needs the text now, and the motion is a tax.",
+          "Sparse statements (landing pages, one line per section): slower reveals at 500–700ms build anticipation — each line is an event, so it can take a beat.",
+          "Headlines: fast settle (200–300ms) with a slight upward travel — a headline that takes too long to become readable makes the reader wait for the sentence to start.",
+          "Lists and grids: stagger at 60–90ms per item — the stagger should read as one wave, not a queue. Over 120ms per item and the eye is waiting at the end of the row.",
+          "Images: reveal with a 150–250ms scale from 1.02 rather than a slide — images reward a settle, not a journey.",
+        ],
+        code: {
+          title: "reveal-by-content.md",
+          lang: "text",
+          text: `Paragraph, long-form    300-450ms   opacity + 8px rise
+Landing statement       500-700ms   opacity + 16px rise
+Headline                200-300ms   opacity + 4px rise
+Grid item stagger        60-90ms    per item, one wave
+Image                   150-250ms   scale 1.02 -> 1, no travel`,
+        },
+      },
+      {
+        h: "Scroll-linked vs. scroll-triggered",
+        body: [
+          "Scroll-triggered (element enters viewport, plays once) is the right default for text: it respects the reader's pace because it only plays when the reader arrives. Scroll-linked (progress bar, parallax — motion bound to scroll position) is right for atmosphere: a hero gradient that shifts as you leave, a progress bar that tracks reading. The failure is using scroll-linked motion for content the reader is trying to read — text that moves with the scroll fights the eye's own tracking.",
+          "One rule ties it together: if the reader is reading, trigger it once and let it rest. If the reader is moving through atmosphere, link it to the scroll. Reading rhythm and atmosphere are different users of the same scroll.",
+        ],
+        links: [{ label: "Progress that tracks reading honestly", href: "/components/scroll-progress" }],
+      },
+    ],
+  },
 ];
 
 export function learnArticleOf(slug: string): LearnArticle | undefined {
