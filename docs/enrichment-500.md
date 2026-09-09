@@ -270,16 +270,16 @@ names, behaviours and where they plug into the existing pages.
 ### Hospitality & local
 - **Boutique hotel prompt** ✅ (`boutique-hotel-amenities`): room gallery with real-amenity chips.
 - **Craft brewery taproom prompt** ✅ (`brewery-taproom-taps`): tap list with ABV meter and food-pairing rows.
-- **Bike shop prompt**: service tiers with turnaround honesty.
-- **Yoga studio prompt**: class schedule with teacher bios and first-class invite.
-- **Dog-walking service prompt**: GPS-route visuals, insured badges, sitter faces.
-- **Bookshop café prompt**: staff picks shelf and events calendar.
+- **Bike shop prompt** ✅ (`bike-shop-service-tiers`): service tiers with turnaround honesty.
+- **Yoga studio prompt** ✅ (`yoga-studio-first-class`): class schedule with teacher bios and first-class invite.
+- **Dog-walking service prompt** ✅ (`dog-walking-service-trust`): GPS-route visuals, insured badges, sitter faces.
+- **Bookshop café prompt** ✅ (`bookshop-cafe-staff-picks`): staff picks shelf and events calendar.
 
 ### Professional services
-- **Accounting firm prompt**: services explained in plain language with fee cards.
-- **Recruiting studio prompt**: open roles, culture evidence, referral promise.
-- **Industrial design firm prompt**: process photos, material library, ISO mentions.
-- **Coaching practice prompt**: outcome stories, method steps, session formats.
+- **Accounting firm prompt** ✅ (`accounting-firm-plain-language`): services explained in plain language with fee cards.
+- **Recruiting studio prompt** ✅ (`recruiting-studio-culture`): open roles, culture evidence, referral promise.
+- **Industrial design firm prompt** ✅ (`industrial-design-process`): process photos, material library, ISO mentions.
+- **Coaching practice prompt** ✅ (`coaching-practice-outcomes`): outcome stories, method steps, session formats.
 - **Translation agency prompt**: language pairs, quality checks, quote form.
 - **Interior design studio prompt**: before/after slider, style quiz teaser.
 - **Financial advisor prompt**: fiduciary language, fee schedule, meeting booking.
