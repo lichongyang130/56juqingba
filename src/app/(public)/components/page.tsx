@@ -61,20 +61,24 @@ function LibraryInner() {
       </div>
 
       {/* filter bar */}
-      <div className="sticky top-16 z-30 -mx-1 mt-8 rounded-2xl border border-white/8 bg-bg/85 px-3 py-3 backdrop-blur-xl">
+      <div className="sticky top-[104px] z-30 -mx-1 mt-8 rounded-2xl border border-white/8 bg-bg/85 px-3 py-3 shadow-[0_18px_50px_-24px_rgba(0,0,0,.9)] backdrop-blur-xl md:top-16">
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex rounded-xl border border-white/8 bg-black/30 p-1">
+          <div className="no-scrollbar flex max-w-full items-center gap-0.5 overflow-x-auto rounded-xl border border-white/8 bg-black/30 p-1" role="tablist" aria-label="Filter by kind">
             {KINDS.map((k) => (
               <button
                 key={k}
                 type="button"
+                role="tab"
+                aria-selected={kind === k}
                 onClick={() => setKind(k)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  kind === k ? "bg-white/10 text-ink shadow-sm" : "text-ink-dim hover:text-ink"
+                className={`shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  kind === k
+                    ? "bg-gradient-to-b from-white/14 to-white/6 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,.18),0_4px_10px_-4px_rgba(0,0,0,.6)]"
+                    : "text-ink-dim hover:text-ink"
                 }`}
               >
                 {k === "all" ? "All" : KIND_META[k].label}
-                <span className="ml-1 text-[10px] opacity-60">
+                <span className={`ml-1.5 ${kind === k ? "text-violet-300" : "opacity-50"}`}>
                   {k === "all" ? COMPONENTS.length : COMPONENTS.filter((c) => c.kind === k).length}
                 </span>
               </button>

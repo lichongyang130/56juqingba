@@ -63,6 +63,17 @@ const SAMPLE_BUILDS = [
   },
 ];
 
+const HERO_TICKER = [
+  "44 original assets",
+  "20 run-tested prompts",
+  "React · HTML/CSS · Vue",
+  "MIT licensed",
+  "a11y & size audited",
+  "Variable fonts, live",
+  "Zero-dependency scenes",
+  "Scroll-lab exports",
+];
+
 const DIFFERENTIATORS = [
   {
     them: "Screenshot-only prompt galleries",
@@ -147,6 +158,23 @@ export default function HomePage() {
             ))}
           </dl>
         </div>
+
+        {/* full-bleed ticker — the library at a glance */}
+        <div className="relative border-t border-white/6 bg-black/20 py-3.5" aria-hidden>
+          <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
+            <div className="flex w-max animate-marquee">
+              {[...HERO_TICKER, ...HERO_TICKER].map((t, i) => (
+                <span
+                  key={`${t}-${i}`}
+                  className="mr-12 flex items-center gap-3 whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.22em] text-ink-faint"
+                >
+                  {t}
+                  <span className="h-1 w-1 rounded-full bg-violet-400/70" aria-hidden />
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ============================== SUPER POWERS ============================== */}
@@ -192,7 +220,7 @@ export default function HomePage() {
           <Link href="/components" className="btn btn-ghost !py-2 text-xs">Browse everything</Link>
         </div>
 
-        <div className="mt-9 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
+        <div className="mt-9 grid gap-6 [&>*]:min-w-0 lg:grid-cols-[1.3fr_1fr]">
           {/* editor's pick — big, editorial */}
           {pick && (
             <Link

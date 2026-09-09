@@ -31,7 +31,7 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-8 px-5 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
           <LogoMark />
-          <span className="text-[17px] font-extrabold tracking-tight">
+          <span className="font-display text-[17px] font-extrabold tracking-tight">
             {SITE.name.split(" ")[0]}
             <span className="text-gradient"> {SITE.name.split(" ").slice(1).join(" ") || "UI"}</span>
           </span>
@@ -67,7 +67,7 @@ export function Header() {
         </div>
       </div>
       {/* mobile nav */}
-      <nav className="flex gap-1 overflow-x-auto px-4 pb-2 md:hidden">
+      <nav className="no-scrollbar flex gap-1 overflow-x-auto px-4 pb-2 md:hidden">
         {NAV.map((n) => (
           <Link
             key={n.href}
