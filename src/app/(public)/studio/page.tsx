@@ -1,23 +1,24 @@
 "use client";
 
 // Theme Studio (demo) — Section 10, batches. Real token editor, diff view,
-// palette presets, accent rotation, radius explorer, type-scale calculator
-// and density presets. All original copy; no external token libraries.
+// palette presets, accent rotation, radius explorer, type-scale calculator,
+// density presets (batches 41) plus export formats, contrast guardrail,
+// preview gallery + colour-blind simulation, saved themes & share links,
+// default-trio case study and a real-component recipe (batch 42).
+// All original copy; every ratio and count is computed live — no fake scores.
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { accentHue, COMPONENTS } from "@/lib/data";
-
-const hsl = (h: number, s: number, l: number, a = 1) => `hsl(${h} ${s}% ${l}% / ${a})`;
-
-interface Tokens {
-  hue: number;
-  sat: number;
-  radius: number;
-  mode: "dark" | "light";
-}
-
-const DEFAULT_TOKENS: Tokens = { hue: 262, sat: 82, radius: 12, mode: "dark" };
+import { DEFAULT_TOKENS, hsl, type Tokens } from "@/lib/studio-utils";
+import {
+  DefaultsCasePanel,
+  ExportPanel,
+  GuardrailPanel,
+  RecipePanel,
+  SavedThemesPanel,
+  ThemePreviewPanel,
+} from "@/components/studio-panels";
 
 const PRESETS: (Tokens & { id: string; label: string; note: string })[] = [
   { id: "violet", label: "Motif Violet", hue: 262, sat: 82, radius: 12, mode: "dark", note: "the house default — calm, generative" },
@@ -66,16 +67,49 @@ function TokenStudio() {
   const [typeBase, setTypeBase] = useState(16);
   const [typeRatio, setTypeRatio] = useState(1.25);
   const [saved, setSaved] = useState<string | null>(null);
+  const [fromLink, setFromLink] = useState(false);
 
   const apply = (patch: Partial<Tokens>) => {
     setPrev(tokens);
     setTokens((t) => ({ ...t, ...patch }));
   };
 
+  const applyTokens = (t: Tokens) => {
+    setPrev(tokens);
+    setTokens(t);
+  };
+
   const applyPreset = (p: (typeof PRESETS)[number]) => {
     setPrev(tokens);
     setTokens({ hue: p.hue, sat: p.sat, radius: p.radius, mode: p.mode });
   };
+
+  /* share-link load: ?hue=&sat=&radius=&mode= — applied once at mount */
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      const p = new URLSearchParams(window.location.search);
+      const hue = Number(p.get("hue"));
+      const sat = Number(p.get("sat"));
+      const radius = Number(p.get("radius"));
+      const mode = p.get("mode");
+      if (
+        Number.isFinite(hue) &&
+        Number.isFinite(sat) &&
+        Number.isFinite(radius) &&
+        (mode === "dark" || mode === "light") &&
+        hue >= 0 &&
+        hue < 360 &&
+        sat >= 0 &&
+        sat <= 100 &&
+        radius >= 0 &&
+        radius <= 24
+      ) {
+        setTokens({ hue, sat, radius, mode });
+        setFromLink(true);
+      }
+    });
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   /* accent rotation sweep — interval-driven, stops on user edit */
   useEffect(() => {
@@ -169,6 +203,11 @@ function TokenStudio() {
         </div>
       </div>
       {saved && <p className="mt-2 text-xs font-semibold text-emerald-300">{saved}</p>}
+      {fromLink && (
+        <p className="mt-2 text-xs font-semibold text-emerald-300">
+          Shared theme loaded from the link — hue {tokens.hue}°, sat {tokens.sat}%, radius {tokens.radius}px, {tokens.mode}. Keep editing from here.
+        </p>
+      )}
 
       {/* live token editor */}
       <div className="mt-10 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
@@ -340,14 +379,25 @@ function TokenStudio() {
         </div>
       </div>
 
+      {/* batch 42 — export, guardrail, gallery + colour-blind sim, saved themes, default trio, component recipe */}
+      <div className="mt-8 space-y-8">
+        <ExportPanel tokens={tokens} />
+        <GuardrailPanel tokens={tokens} />
+        <ThemePreviewPanel tokens={tokens} />
+        <SavedThemesPanel tokens={tokens} onApply={applyTokens} />
+        <DefaultsCasePanel />
+        <RecipePanel tokens={tokens} />
+      </div>
+
       {/* token export line */}
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-white/8 bg-panel p-6">
         <div className="max-w-xl">
           <p className="text-sm font-extrabold">Where these tokens go</p>
           <p className="mt-1 text-xs leading-relaxed text-ink-dim">
             Every asset in the library already reads <code className="font-mono">accentCss(slug)</code> from the same
-            hue space — so the shift above is the same math a real theme build would apply catalog-wide.
-            Export formats (Tailwind config, CSS vars, JSON, design-token spec) land in the next studio drop.
+            hue space — so the shift above is the same math a real theme build would apply catalog-wide. The panels
+            above turn those same tokens into export files, WCAG-check them, preview them across pages and under
+            colour-blind filters, and save or share them as URLs.
           </p>
         </div>
         <Link href="/lab" className="btn btn-ghost !py-2 text-xs">Back to the Lab</Link>
