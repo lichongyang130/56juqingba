@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 259 / 500 shipped (batches 1–35, in order) · Sections 1–7 complete ✅
+## Progress — 267 / 500 shipped (batches 1–36, in order) · Sections 1–7 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -271,6 +271,15 @@ names, behaviours and where they plug into the existing pages.
 | 257 | Template gallery — mood & stack filtering | [/templates#template-gallery-filters](/templates#template-gallery-filters) |
 | 258 | Template kit — community submissions flow | [/components/template-landing-saas#community-submissions](/components/template-landing-saas#community-submissions) |
 | 259 | Template kit — offline bundle zip download | [/components/template-landing-saas#template-bundle-downloads](/components/template-landing-saas#template-bundle-downloads) |
+| 260 | Search — saved searches | [/search#saved-searches](/search#saved-searches) |
+| 261 | Search — type-scoped tabs | [/search#scope-tabs](/search#scope-tabs) |
+| 262 | Search — fuzzy typo tolerance | [/search?q=glss](/search?q=glss) |
+| 263 | Search — matched-term highlighting | [/search?q=glass](/search?q=glass) |
+| 264 | Search — per-asset aliases | [/search?q=dropdown](/search?q=dropdown) |
+| 265 | Search — result meta chips | [/search?q=glass](/search?q=glass) |
+| 266 | Search — keyboard-first results | [/search](/search) |
+| 267 | Search — URL-synced filters | [/search?type=components&sort=newest](/search?type=components&sort=newest) |
+
 
 
 
@@ -609,14 +618,14 @@ names, behaviours and where they plug into the existing pages.
 
 ## 8. Discovery, search & browsing — 20 refinements
 
-- **Save searches**: persist recent queries as chips on /search (localStorage).
-- **Search scoped by type**: tab the results into Components/Prompts/Guides before typing.
-- **Fuzzy typo tolerance**: "glss" still finds glass via edit-distance matching.
-- **Highlight matched terms** in result titles and descriptions.
-- **Per-asset aliases**: search "dropdown" finds the sheet menu etc.
-- **Result meta chips**: show kind, stack and size right in search rows.
-- **Keyboard-first search**: ↑/↓ to move, Enter to open the highlighted result.
-- **URL-synced filters**: every kind/stack/sort filter lands in the query string for shareable links.
+- **Save searches** ✅ (`/search#saved-searches`): persist recent queries as chips on /search (localStorage).
+- **Search scoped by type** ✅ (`/search#scope-tabs`): tab the results into Components/Prompts/Guides before typing.
+- **Fuzzy typo tolerance** ✅ (`?q=glss` finds glass): "glss" still finds glass via edit-distance matching.
+- **Highlight matched terms** ✅ (`<mark>`): in result titles and descriptions.
+- **Per-asset aliases** ✅ (`?q=dropdown`): search "dropdown" finds the sheet menu etc.
+- **Result meta chips** ✅ (kind · stack · KB · copies): show kind, stack and size right in search rows.
+- **Keyboard-first search** ✅ (↑/↓ + Enter): ↑/↓ to move, Enter to open the highlighted result.
+- **URL-synced filters** ✅ (q · type · sort · stack): every kind/stack/sort filter lands in the query string for shareable links.
 - **Save a component set**: multi-select cards into a "stack" you can share as a build recipe.
 - **Browse by collection**: editorial lists ("Landing heroes", "Dark SaaS", "Under 5KB").
 - **Counts everywhere**: totals shown per filter chip, updated live (started on /components).

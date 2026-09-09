@@ -31,6 +31,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "halo-button", kind: "element", title: "Halo Button",
+    aliases: ["cta", "call to action", "primary button", "glow button"],
     description: "Primary button with a mouse-tracking halo, press ripple and a springy scale. Ships as React + Tailwind or dependency-free HTML/CSS.",
     tags: ["button", "magnetic", "hover", "cursor"], behaviors: ["hover", "click", "drag"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 2.1, themeable: true,
@@ -44,6 +45,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "pulse-loader", kind: "element", title: "Pulse Loader",
+    aliases: ["spinner", "loading", "loader", "dots"],
     description: "Three-note loader with staggered radial pulse and optional progress text. Reduced-motion safe and tiny — 0.8 KB gzipped.",
     tags: ["loader", "loading", "spinner"], behaviors: [],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 0.8, themeable: true,
@@ -57,6 +59,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "nav-dock", kind: "element", title: "Nav Dock",
+    aliases: ["navbar", "navigation bar", "top nav", "site nav"],
     description: "MacOS-style magnification dock rebuilt with spring easing, keyboard support and zero external deps. Resizes neighbours smoothly on hover.",
     tags: ["dock", "navigation", "spring"], behaviors: ["hover"],
     stack: ["React"], deps: [], bundleKb: 4.4, themeable: true,
@@ -128,6 +131,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "scramble-text", kind: "animated", title: "Scramble Text",
+    aliases: ["glitch text", "decrypt text"],
     description: "Headline that decodes from noise glyphs to final copy on view and re-scrambles per hover. Great for portfolio keywords; respects reduced motion.",
     tags: ["text", "reveal", "type"], behaviors: ["scroll", "hover"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 3.1, themeable: true,
@@ -156,6 +160,7 @@ export const COMPONENTS: Asset[] = [
   // ------------------------------ SECTIONS ------------------------------
   {
     slug: "hero-aurora", kind: "section", title: "Aurora Hero Section",
+    aliases: ["aurora hero", "landing hero", "page hero"],
     description: "Full-viewport hero: aurora veil backdrop, scramble headline, dual CTAs and a floating product chip — the section most Prompt users ask for first.",
     tags: ["hero", "section", "landing"], behaviors: ["scroll", "hover"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 6.2, themeable: true,
@@ -181,6 +186,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "marquee-logos", kind: "section", title: "Marquee Logo Belt",
+    aliases: ["logo marquee", "logo carousel", "logo cloud", "trusted by"],
     description: "Edgeless infinite logo belt with pause-on-hover and direction props. Ships with a 12-logo placeholder set you can swap via one array.",
     tags: ["marquee", "logos", "social-proof"], behaviors: ["hover"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.8, themeable: true,
@@ -243,6 +249,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "conic-loader", kind: "element", title: "Conic Loader",
+    aliases: ["spinner", "loading ring", "progress loader"],
     description: "A conic-gradient ring with a breath marker — no images, no JS tick. Use it wherever a spinner should feel like a product decision, not a default.",
     tags: ["loader", "conic", "spinner"], behaviors: [],
     stack: ["HTML/CSS"], deps: [], bundleKb: 0.9, themeable: true,
@@ -256,6 +263,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "glass-pricing", kind: "section", title: "Glass Pricing Trio",
+    aliases: ["pricing cards", "glass cards"],
     description: "Three pricing columns in frosted glass with a specular top edge and a hero column that glows. The whole row demos how glass survives real content: badges, numbers and buttons.",
     tags: ["pricing", "glass", "section", "bento"], behaviors: ["hover"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 6.8, themeable: true,
@@ -269,6 +277,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "wipe-reveal", kind: "animated", title: "Wipe Reveal Headline",
+    aliases: ["reveal", "curtain reveal", "image wipe"],
     description: "A giant headline that wipes in with a travelling light edge, then sits still as clean typography. Nothing to babysit after the first paint.",
     tags: ["text", "reveal", "headline", "gradient"], behaviors: ["scroll"],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 1.6, themeable: true,
@@ -282,6 +291,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "counter-stats", kind: "section", title: "Counter Stats Band",
+    aliases: ["stat counters", "number counters", "odometer band"],
     description: "Numbers that count up when they enter the viewport, with a hairline ledger behind them. The accounting-style baseline keeps the counting from feeling gimmicky.",
     tags: ["stats", "counter", "metrics", "section"], behaviors: ["scroll"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 3.2, themeable: true,
@@ -309,6 +319,7 @@ export const COMPONENTS: Asset[] = [
   /* ---- context pass 2: 6 more original scenes (2026-09-09) ---- */
   {
     slug: "text-cycle", kind: "animated", title: "Text Cycle Hero Line",
+    aliases: ["typewriter", "rotating text", "word rotator"],
     description: "A headline that swaps its second line between rotating phrases with a smooth vertical roll and progress dots. The pattern that makes SaaS heroes feel alive without autoplay video.",
     tags: ["text", "headline", "rotation", "hero"], behaviors: [],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.4, themeable: true,
@@ -341,6 +352,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "skeleton-shimmer", kind: "element", title: "Skeleton Profile Feed",
+    aliases: ["skeleton", "shimmer", "content placeholder"],
     description: "A profile-card skeleton with a directional shimmer sweep and staggered line widths — the loading state people actually see, designed instead of defaulted.",
     tags: ["skeleton", "loading", "shimmer", "context"], behaviors: [],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 1.9, themeable: true,
@@ -353,6 +365,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "chart-card", kind: "section", title: "Momentum Chart Card",
+    aliases: ["chart", "graph", "analytics card", "metrics card"],
     description: "A live-feeling analytics card: bars rise on entry with per-bar stagger, legend explains the two series, and the whole card stays legible at 300px wide.",
     tags: ["chart", "analytics", "stats", "dashboard"], behaviors: ["scroll"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 3.6, themeable: true,
@@ -365,6 +378,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "avatar-stack", kind: "element", title: "Avatar Crowd Stack",
+    aliases: ["avatars", "profile pictures", "face pile"],
     description: "Overlapping avatars that part like a crowd when you hover a face — then settle back. The social-proof classic, minus the static feel.",
     tags: ["avatar", "stack", "social", "hover"], behaviors: ["hover"],
     stack: ["React"], deps: [], bundleKb: 3.0, themeable: true,
@@ -378,6 +392,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "command-palette", kind: "element", title: "Command Palette",
+    aliases: ["cmd-k", "spotlight", "command menu", "quick search", "palette"],
     description: "A ⌘K-style overlay that searches the real catalog — every component, prompt, Learn guide and admin route — in one grouped, arrow-key navigable list that never drifts from what is actually on the site.",
     tags: ["command", "palette", "search", "overlay", "kbd", "catalog"], behaviors: ["click", "keyboard"],
     stack: ["React"], deps: [], bundleKb: 6.8, themeable: true,
@@ -388,6 +403,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "toast-stack", kind: "animated", title: "Toast Queue",
+    aliases: ["toast", "notification", "snackbar"],
     description: "Accessible toasts that slide in over the corner with per-message auto-dismiss countdown bars, a per-toast dismiss control, an undo action and a batch cap of three on screen. Test it: ping a few in a row.",
     tags: ["toast", "queue", "notification", "feedback", "undo", "overlay"], behaviors: ["click"],
     stack: ["React"], deps: [], bundleKb: 4.8, themeable: true,
@@ -400,6 +416,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "sheet-menu", kind: "element", title: "Mobile Sheet Menu",
+    aliases: ["dropdown", "menu", "bottom sheet", "action sheet", "drawer"],
     description: "A bottom-sheet navigation for touch: springy rise, draggable-handle affordance and a dismissible backdrop. The mobile menu pattern that doesn't feel bolted on.",
     tags: ["menu", "mobile", "sheet", "navigation"], behaviors: ["click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 3.4, themeable: true,
@@ -410,6 +427,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "segmented-control", kind: "element", title: "Segmented Control",
+    aliases: ["segmented", "pill tabs", "ios control"],
     description: "A pricing/period segmented control with a sliding thumb and per-option press feedback. The little toggle that makes billing pages feel engineered.",
     tags: ["segmented", "toggle", "billing", "control"], behaviors: ["click"],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 1.6, themeable: true,
@@ -422,6 +440,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "notification-bell", kind: "element", title: "Notification Bell",
+    aliases: ["bell", "alerts", "notifications"],
     description: "A bell with an unread badge, an anchored dropdown and mark-all-read — complete with the aria-expanded wiring people usually forget.",
     tags: ["notification", "dropdown", "badge", "overlay"], behaviors: ["click"],
     stack: ["React"], deps: [], bundleKb: 4.6, themeable: true,
@@ -432,6 +451,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "scroll-progress", kind: "animated", title: "Scroll Progress Rail",
+    aliases: ["reading progress", "scroll bar", "progress bar"],
     description: "A reading-progress line pinned to the top of a scroll container, with a side gauge for long pages. Barely code, instantly useful on docs and articles.",
     tags: ["scroll", "progress", "reading", "rail"], behaviors: ["scroll"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.8, themeable: true,
@@ -444,6 +464,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "testimonial-rotator", kind: "section", title: "Testimonial Rotator",
+    aliases: ["quotes", "testimonials", "review cards"],
     description: "A centered quote rotator with star row, staggered caption reveal, auto-advance and keyboard-able arrows. Social proof that doesn't feel like a slide deck.",
     tags: ["testimonial", "quotes", "social-proof", "section"], behaviors: ["click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 3.9, themeable: true,
@@ -456,6 +477,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "countdown-drop", kind: "section", title: "Countdown Drop Band",
+    aliases: ["countdown", "launch timer", "coming soon"],
     description: "A live ticking countdown with flip-in digit changes — built for drops, launches and deadline urgency without a single dependency.",
     tags: ["countdown", "drop", "urgency", "ecommerce"], behaviors: [],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 2.4, themeable: true,
@@ -466,6 +488,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "terminal-hero", kind: "section", title: "Terminal Story Hero",
+    aliases: ["terminal", "code hero", "developer hero"],
     description: "A self-typing terminal that narrates your dev workflow — the AI-tool landing motif, shipped as typed DOM instead of a video file.",
     tags: ["terminal", "hero", "typing", "developer"], behaviors: [],
     stack: ["React"], deps: [], bundleKb: 5.5, themeable: true,
@@ -500,6 +523,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "combo-box", kind: "element", title: "Combo Box",
+    aliases: ["dropdown", "select", "combobox", "autocomplete", "typeahead"],
     description: "A text input with a live-filtered option list, full keyboard navigation (arrows, enter, escape) and an honest no-match row. The filter control that belongs on every catalog page.",
     tags: ["combobox", "select", "filter", "keyboard", "search"], behaviors: ["type", "click", "keyboard"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 2.1, themeable: true,
@@ -522,6 +546,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "star-rating", kind: "element", title: "Star Rating Input",
+    aliases: ["rating", "stars", "review rating"],
     description: "Five-star interactive rating with half-star precision, hover preview, clear-reset and arrow-key nudging. A slider in disguise that everyone already knows how to use.",
     tags: ["rating", "stars", "feedback", "input"], behaviors: ["click", "hover", "keyboard"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.3, themeable: true,
@@ -532,6 +557,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "tag-input", kind: "element", title: "Tag Input",
+    aliases: ["tags", "chips input", "token input"],
     description: "Type a word, press Enter, it becomes a chip; backspace removes the last one. Duplicate-safe, limit-aware and touch-friendly with suggested tags to speed things up.",
     tags: ["tags", "chips", "input", "filter", "labels"], behaviors: ["type", "keyboard", "click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.8, themeable: true,
@@ -544,6 +570,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "slider-ticks", kind: "element", title: "Slider with Live Ticks",
+    aliases: ["range slider", "slider", "tick marks"],
     description: "A range slider with quarter-step tick marks, a value bubble that rides the thumb while dragging, and honest min/max labels. Built on a native input so it stays keyboard-accessible.",
     tags: ["slider", "range", "ticks", "control"], behaviors: ["drag", "keyboard"],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 1.1, themeable: true,
@@ -566,6 +593,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "quantity-stepper", kind: "element", title: "Quantity Stepper",
+    aliases: ["quantity", "qty", "incrementer", "counter input"],
     description: "A −/+ stepper with long-press repeat for carts and ticket seats. Pointer and keyboard both work, bounds disable themselves, and the subtotal updates live so the math is never hidden.",
     tags: ["stepper", "quantity", "counter", "cart"], behaviors: ["click", "hold", "keyboard"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.6, themeable: true,
@@ -602,6 +630,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "date-presets", kind: "element", title: "Date Presets Picker",
+    aliases: ["date picker", "calendar", "date range"],
     description: "Today / 7d / 30d / 90d pill row for dashboards, with a custom-range mode that drops in two native date inputs. The range text and sparkline update live so the window is never a mystery.",
     tags: ["date", "presets", "range", "dashboard", "filter"], behaviors: ["click"],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 2.2, themeable: true,
@@ -612,6 +641,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "file-drop-zone", kind: "element", title: "File Drop Zone",
+    aliases: ["upload", "dropzone", "drag and drop", "file upload"],
     description: "A dashed drop target that lights up on drag-over, takes real drops or a browse click, then uploads with honest progress and a clean done state. Client-side only — no server needed for the demo.",
     tags: ["upload", "dropzone", "drag", "file"], behaviors: ["drag", "click", "keyboard"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 2.6, themeable: true,
@@ -642,6 +672,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "split-button-menu", kind: "element", title: "Split Button Menu",
+    aliases: ["dropdown", "split button", "menu button", "caret menu"],
     description: "A primary button whose caret half opens a menu of secondary actions — preview, staging, rollback — with aria-haspopup wiring and a live status readout after every action.",
     tags: ["button", "menu", "split", "dropdown", "actions"], behaviors: ["click", "keyboard"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.9, themeable: true,
@@ -652,6 +683,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "breadcrumb-trail", kind: "element", title: "Breadcrumb Trail",
+    aliases: ["breadcrumbs", "path nav", "page path"],
     description: "Separator-aware breadcrumbs with an ellipsis that collapses the middle of long trails and expands it back — so deep pages stay scannable on every width.",
     tags: ["breadcrumb", "nav", "trail", "wayfinding"], behaviors: ["click"],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 1.1, themeable: true,
@@ -662,6 +694,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "pagination-ellipsis", kind: "element", title: "Pagination with Ellipsis",
+    aliases: ["pager", "page numbers", "prev next"],
     description: "Page buttons that compress to '…' and keep the edges pinned — the active page never jumps, the window slides around it. Prev/next disabled states included.",
     tags: ["pagination", "pages", "nav", "list"], behaviors: ["click", "keyboard"],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 1.6, themeable: true,
@@ -674,6 +707,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "toc-spine", kind: "element", title: "Table of Contents Spine",
+    aliases: ["table of contents", "page outline", "chapter nav"],
     description: "A sticky right rail that follows the article: click an entry to glide to its section, and the entry highlights as you scroll. The docs-page wayfinder that never loses your place.",
     tags: ["toc", "contents", "spine", "docs", "scroll-spy"], behaviors: ["click", "scroll"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 2.4, themeable: true,
@@ -684,6 +718,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "tabs-indicator", kind: "element", title: "Tabs with Sliding Indicator",
+    aliases: ["tabs", "tab switcher", "page tabs"],
     description: "Tab headers whose underline slides to the active tab's actual width — measured from the button, not guessed as a fraction — with role=tab wiring and a keyed panel swap.",
     tags: ["tabs", "indicator", "underline", "panels"], behaviors: ["click", "keyboard"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.9, themeable: true,
@@ -696,6 +731,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "sticky-subnav", kind: "section", title: "Sticky Section Sub-nav",
+    aliases: ["subnav", "anchor nav", "sticky nav"],
     description: "A section nav row that pins under the header while content scrolls beneath it, highlighting whichever section is in view. Built for long docs that need a spine without a sidebar.",
     tags: ["sticky", "subnav", "scroll-spy", "docs", "anchors"], behaviors: ["click", "scroll"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 2.1, themeable: true,
@@ -706,6 +742,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "back-to-top", kind: "element", title: "Back-to-top Comet",
+    aliases: ["scroll to top", "jump to top", "top link"],
     description: "A floating action that appears once you're two screens deep and eases you back up with a smooth scroll. Appears with a translate+fade, never blocks content.",
     tags: ["back-to-top", "scroll", "floating", "comet"], behaviors: ["scroll", "click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.1, themeable: true,
@@ -716,6 +753,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "disclosure-list", kind: "section", title: "Disclosure List (Accordion)",
+    aliases: ["accordion", "expandable", "collapsible", "faq list"],
     description: "FAQ rows with a plus→close rotation, one-open-at-a-time mode and full aria-expanded/region wiring. The pattern that keeps long Q&A lists scannable without hiding the answers.",
     tags: ["accordion", "disclosure", "faq", "expand"], behaviors: ["click", "keyboard"],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 1.7, themeable: true,
@@ -726,6 +764,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "fullscreen-overlay-menu", kind: "element", title: "Fullscreen Overlay Menu",
+    aliases: ["hamburger", "burger", "burger menu", "mobile menu", "drawer"],
     description: "A hamburger that expands into a full-screen takeover with staggered link entrances and Escape-to-close. For sites where a tiny drawer undersells the brand moment.",
     tags: ["menu", "overlay", "fullscreen", "nav", "hamburger"], behaviors: ["click", "keyboard"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 2.2, themeable: true,
@@ -768,6 +807,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "spinner-status", kind: "animated", title: "Spinner with Status Text",
+    aliases: ["spinner", "loading state", "busy"],
     description: "A loader whose label swaps in place — idle → 'Saving…' with a spin → 'Saved ✓' — inside a button that never changes width. No layout shift, no guessing whether it finished.",
     tags: ["spinner", "loader", "saving", "status", "button"], behaviors: ["click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.1, themeable: true,
@@ -778,6 +818,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "empty-state-trio", kind: "section", title: "Empty-state Trio",
+    aliases: ["empty state", "no results", "placeholder states"],
     description: "The empty-state pattern from the Learn essay, shipped: three cards (inbox / dashboard / saved stack) where a verb headline, a sub-minute next step and an escape hatch turn 'nothing here' into onboarding.",
     tags: ["empty", "state", "onboarding", "copywriting", "cards"], behaviors: ["click"],
     stack: ["HTML/CSS", "React"], deps: [], bundleKb: 2.0, themeable: true,
@@ -798,6 +839,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "error-boundary-card", kind: "element", title: "Error Boundary Card",
+    aliases: ["error boundary", "crash screen", "fallback ui"],
     description: "A friendly crash fallback that keeps the rest of the page alive: retry, copy the error report, and an expandable detail block — the boundary that reports once and recovers instead of blanking the app.",
     tags: ["error", "boundary", "crash", "fallback", "resilience"], behaviors: ["click"],
     stack: ["React"], deps: [], bundleKb: 1.5, themeable: true,
@@ -820,6 +862,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "dot-leader-loading", kind: "animated", title: "Dot Leader Loading",
+    aliases: ["loading dots", "typing dots", "progress dots"],
     description: "Terminal-style install output whose progress is a beat of dots — 'installing…' reads as a process, completes with a ✓ line, and announces each phase to assistive tech.",
     tags: ["loader", "dots", "terminal", "installing", "progress"], behaviors: ["click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.2, themeable: true,
@@ -1030,6 +1073,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "faq-two-column", kind: "section", title: "FAQ Two-column",
+    aliases: ["faq", "questions", "help center"],
     description: "Questions on the left, one answer panel on the right that swaps in place with a soft grow — no page jump, and each question reports its expanded state.",
     tags: ["faq", "two-column", "layout", "questions", "answers"], behaviors: ["click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.0, themeable: true,
@@ -1040,6 +1084,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "comparison-slider", kind: "element", title: "Comparison Slider",
+    aliases: ["before after", "image compare", "drag compare"],
     description: "A draggable before/after divider with pointer capture and arrow-key support — the classic proof tool without a single screenshot, both panes built from gradients.",
     tags: ["comparison", "slider", "before", "after", "drag"], behaviors: ["pointer", "keyboard"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.1, themeable: true,
@@ -1050,6 +1095,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "timeline-vertical", kind: "section", title: "Vertical Timeline",
+    aliases: ["roadmap", "history timeline", "milestones"],
     description: "A milestone rail with gradient spine, breathing-room cards and a '10 weeks' badge — built to scroll inside any docs or case-study page.",
     tags: ["timeline", "milestones", "vertical", "roadmap", "case-study"], behaviors: ["scroll"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.0, themeable: true,
@@ -1060,6 +1106,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "newsletter-band-tiers", kind: "section", title: "Newsletter Band with Tiers",
+    aliases: ["newsletter", "email signup", "subscribe"],
     description: "Email capture with frequency choice pills — weekly digest / launch only / deep dives — where the chosen tier is part of the promise, and errors announce politely.",
     tags: ["newsletter", "email", "capture", "subscribe", "tiers"], behaviors: ["click", "keyboard"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.2, themeable: true,
@@ -1140,6 +1187,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "app-screenshot-tour", kind: "section", title: "App Screenshot Tour",
+    aliases: ["product tour", "screenshot tour", "app showcase"],
     description: "The sticky-frame product tour: a phone mock stays put while four story captions swap under it, with dots, an auto walk and a stop button.",
     tags: ["tour", "screenshot", "phone", "sticky", "product"], behaviors: ["click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.1, themeable: true,
@@ -1150,6 +1198,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "template-docs-site", kind: "section", title: "Docs Site Template",
+    aliases: ["documentation", "docs template", "doc site"],
     description: "Sidebar TOC + scrollspy content + prev/next footer assembled in one compact frame — the docs layout pattern, live with real section tracking.",
     tags: ["docs", "template", "sidebar", "toc", "scrollspy"], behaviors: ["scroll", "click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.3, themeable: true,
@@ -1160,6 +1209,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "template-landing-saas", kind: "section", title: "Landing Template (Dark SaaS)",
+    aliases: ["landing template", "saas template", "startup page", "landing page"],
     description: "Hero → logo strip → features → pricing → FAQ → CTA assembled from shipped sections, with anchor nav and a working mobile menu — a whole page in one frame.",
     tags: ["landing", "template", "saas", "hero", "page"], behaviors: ["scroll", "click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.7, themeable: true,
@@ -1170,6 +1220,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "template-waitlist", kind: "section", title: "Waitlist Template",
+    aliases: ["coming soon", "launch page", "waitlist page"],
     description: "A countdown that ticks to the real next launch date, an invite code with one-click copy, and referral wording that never over-promises.",
     tags: ["waitlist", "countdown", "template", "invite", "launch"], behaviors: ["click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.2, themeable: true,
@@ -1180,6 +1231,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "template-changelog", kind: "section", title: "Changelog / Journal Template",
+    aliases: ["journal", "release notes", "updates page"],
     description: "One index for essays and releases side by side — kind badges (essay/release), reading-time chips and expandable entries for notes pages.",
     tags: ["changelog", "journal", "template", "essays", "index"], behaviors: ["click"],
     stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.0, themeable: true,
@@ -1190,6 +1242,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "template-gallery", kind: "section", title: "Template Gallery Page",
+    aliases: ["portfolio template", "showcase page"],
     description: "A gallery that filters the REAL catalog — every asset searchable by title, tag and kind, each tile offering a one-click slug copy.",
     tags: ["gallery", "template", "filter", "catalog", "search"], behaviors: ["click", "keyboard"],
     stack: ["React"], deps: [], bundleKb: 1.2, themeable: true,

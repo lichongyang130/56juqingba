@@ -14,6 +14,7 @@ export interface Asset {
   kind: AssetKind;
   title: string;
   description: string;
+  aliases?: string[]; // alternate search names ("dropdown" → sheet-menu, combo-box …)
   tags: string[];
   behaviors: string[]; // hover | click | scroll | drag | tilt …
   stack: ("React" | "HTML/CSS" | "Vue")[];
