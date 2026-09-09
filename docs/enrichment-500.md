@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 78 / 500 shipped (batches 1–10, in order) · Section 1 (component library) complete ✅
+## Progress — 86 / 500 shipped (batches 1–11, in order) · Section 1 (component library) complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -90,6 +90,14 @@ names, behaviours and where they plug into the existing pages.
 | 76 | Lava lamp blobs | `lava-lamp-blobs` on [/backgrounds](/backgrounds) |
 | 77 | Paper grain close-up | `paper-grain` on [/backgrounds](/backgrounds) |
 | 78 | Silk wave | `silk-wave` on [/backgrounds](/backgrounds) |
+| 79 | Star field with parallax | `star-field-parallax` on [/backgrounds](/backgrounds) |
+| 80 | Scanline CRT | `scanline-crt` on [/backgrounds](/backgrounds) |
+| 81 | Liquid gradient mesh | `liquid-mesh` on [/backgrounds](/backgrounds) |
+| 82 | Dot matrix pattern | `dot-matrix` on [/backgrounds](/backgrounds) |
+| 83 | Brushed metal sheen | `brushed-metal` on [/backgrounds](/backgrounds) |
+| 84 | Carbon fibre weave | `carbon-fibre` on [/backgrounds](/backgrounds) |
+| 85 | Water ripple ring | `water-ripple` on [/backgrounds](/backgrounds) |
+| 86 | Ink on wet paper | `ink-bloom` on [/backgrounds](/backgrounds) |
 
 
 ---
@@ -180,7 +188,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 2. Backgrounds & textures — 25 additions (8 → 33; 16/25 shipped so far)
+## 2. Backgrounds & textures — 25 additions (8 → 33; 24/25 shipped so far)
 
 - **Topographic contour lines** ✅ (`topographic-contours`): SVG contour map motif with a quiet animated current.
 - **Blueprint grid** ✅ (`blueprint-grid`): engineering-paper grid with crosshairs for architecture/atelier vibes.
@@ -190,14 +198,14 @@ names, behaviours and where they plug into the existing pages.
 - **Lava lamp blobs** ✅ (`lava-lamp-blobs`): two slow-morphing colour blobs on a dark base with rising bubbles.
 - **Paper grain close-up** ✅ (`paper-grain`): heavy photographic grain with a film jitter for editorial/print sections.
 - **Silk wave** ✅ (`silk-wave`): layered sine waves in brand hues with a slow hue-shift.
-- **Star field with parallax**: three depth layers of stars responding to scroll.
-- **Scanline CRT**: subtle scanlines + vignette for retro/terminal aesthetics.
-- **Liquid gradient mesh**: a slow-moving mesh gradient with `background-position` animation.
-- **Dot matrix pattern**: themeable halftone dots with size/opacity controls.
-- **Brushed metal sheen**: subtle diagonal light streaks for premium product pages.
-- **Carbon fibre weave**: quiet repeating weave for dashboards/tech.
-- **Water ripple ring**: expanding rings from a point (hero accent, mouse-triggered).
-- **Ink on wet paper**: a soft radial ink bloom that pulses gently.
+- **Star field with parallax** ✅ (`star-field-parallax`): three depth layers of stars leaning with the pointer.
+- **Scanline CRT** ✅ (`scanline-crt`): subtle scanlines + vignette for retro/terminal aesthetics.
+- **Liquid gradient mesh** ✅ (`liquid-mesh`): a slow-moving mesh gradient with `background-position` animation.
+- **Dot matrix pattern** ✅ (`dot-matrix`): themeable halftone dots with size/opacity controls.
+- **Brushed metal sheen** ✅ (`brushed-metal`): subtle diagonal light streaks for premium product pages.
+- **Carbon fibre weave** ✅ (`carbon-fibre`): quiet repeating weave for dashboards/tech.
+- **Water ripple ring** ✅ (`water-ripple`): expanding rings from a point, mouse-triggered.
+- **Ink on wet paper** ✅ (`ink-bloom`): soft radial ink blooms that pulse gently.
 - **Aurora band**: horizontal aurora ribbons instead of the current radial version.
 - **Noise storm**: animated TV-static grain at 3–5% opacity with a flicker toggle.
 - **Glass distortion**: a real backdrop-blur refraction demo on a moving photo layer.

@@ -6715,6 +6715,264 @@ function SilkWave() {
   );
 }
 
+/* ---------------- backgrounds: batch #79-86 ---------------- */
+
+function sfStar(seed: number, salt: number): number {
+  const x = Math.sin(seed * 127.1 + salt * 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+const SF_LAYERS = [
+  { depth: 34, n: 60, size: 1, op: 0.34, blur: 0, cls: "bg-white" },
+  { depth: 70, n: 40, size: 1.6, op: 0.6, blur: 0.5, cls: "bg-sky-200" },
+  { depth: 120, n: 22, size: 2.2, op: 0.9, blur: 1, cls: "bg-cyan-100" },
+] as const;
+
+function StarFieldParallax() {
+  const layers = useRef<(HTMLDivElement | null)[]>([]);
+  return (
+    <div
+      className="relative h-full w-full overflow-hidden bg-[radial-gradient(90%_110%_at_50%_120%,#101331,transparent_60%),#05060c]"
+      onMouseMove={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        layers.current.forEach((el, i) => {
+          if (!el) return;
+          const d = SF_LAYERS[i].depth;
+          el.style.transform = `translate3d(${(x * d).toFixed(1)}px, ${(y * d * 0.7).toFixed(1)}px, 0)`;
+        });
+      }}
+      onMouseLeave={() => {
+        layers.current.forEach((el) => {
+          if (el) el.style.transform = "translate3d(0,0,0)";
+        });
+      }}
+    >
+      {SF_LAYERS.map((l, li) => (
+        <div
+          key={li}
+          ref={(el) => {
+            layers.current[li] = el;
+          }}
+          aria-hidden
+          className="absolute inset-0"
+          style={{ transition: "transform .45s cubic-bezier(.22,.68,.32,1)", willChange: "transform" }}
+        >
+          {Array.from({ length: l.n }, (_, i) => {
+            const left = sfStar(i, li + 1) * 100;
+            const top = sfStar(i + 40, li + 9) * 100;
+            return (
+              <span
+                key={i}
+                className={`absolute rounded-full ${l.cls}`}
+                style={{
+                  left: `${left}%`,
+                  top: `${top}%`,
+                  width: l.size,
+                  height: l.size,
+                  opacity: l.op * (0.55 + sfStar(i, li + 3) * 0.45),
+                  filter: l.blur ? `blur(${l.blur}px)` : undefined,
+                  animation: `mf-sf-tw ${2.4 + sfStar(i, li + 5) * 4}s ease-in-out ${sfStar(i, li + 7) * 3}s infinite alternate`,
+                }}
+              />
+            );
+          })}
+        </div>
+      ))}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16" style={{ background: "linear-gradient(0deg, rgba(6,8,16,.85), transparent)" }} aria-hidden />
+      <style>{`@keyframes mf-sf-tw { from { opacity: .15 } to { opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { .sf-star { animation: none !important; } }`}</style>
+    </div>
+  );
+}
+
+function ScanlineCrt() {
+  return (
+    <div
+      className="crt-scan relative h-full w-full overflow-hidden bg-[#07100d]"
+      style={{
+        backgroundImage:
+          "radial-gradient(120% 90% at 50% 0%, rgba(74,222,128,.12), transparent 60%), radial-gradient(140% 120% at 50% 120%, rgba(16,185,129,.14), transparent 55%)",
+      }}
+    >
+      <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "repeating-linear-gradient(0deg, rgba(0,0,0,.34) 0 1px, transparent 1px 3px)" }} />
+      <div aria-hidden className="absolute inset-0 opacity-[0.16]" style={{ backgroundImage: "linear-gradient(90deg, rgba(244,63,94,.5) 0 2px, transparent 2px 14px, rgba(56,189,248,.4) 14px 16px, transparent 16px 28px)", backgroundSize: "28px 100%", mixBlendMode: "screen" }} />
+      <div aria-hidden className="crt-band absolute inset-x-0 h-10" style={{ background: "linear-gradient(180deg, transparent, rgba(134,239,172,.14), transparent)", animation: "mf-crt-band 7s linear infinite", boxShadow: "0 0 30px rgba(134,239,172,.2)" }} />
+      <div aria-hidden className="absolute inset-0" style={{ boxShadow: "inset 0 0 70px rgba(0,0,0,.8), inset 0 0 14px rgba(0,0,0,.5)" }} />
+      <style>{`@keyframes mf-crt-band { 0% { top: -12% } 100% { top: 112% } }
+@keyframes mf-crt-flick { 0%,100% { opacity: 1 } 92% { opacity: 1 } 93% { opacity: .82 } 94% { opacity: 1 } 97% { opacity: .9 } }
+.crt-scan { animation: mf-crt-flick 5s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .crt-scan, .crt-band { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function LiquidMesh() {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#05060c]">
+      <div aria-hidden className="absolute -inset-[30%]" style={{ background: "radial-gradient(38% 46% at 26% 30%, rgba(139,92,246,.5), transparent 70%), radial-gradient(32% 40% at 74% 24%, rgba(34,211,238,.42), transparent 70%), radial-gradient(40% 50% at 66% 78%, rgba(236,72,153,.38), transparent 72%), radial-gradient(34% 44% at 24% 82%, rgba(52,211,153,.34), transparent 72%)", backgroundSize: "160% 160%", filter: "blur(26px) saturate(1.2)", animation: "mf-lm-a 24s ease-in-out infinite alternate", mixBlendMode: "screen" }} />
+      <div aria-hidden className="absolute -inset-[30%] opacity-70" style={{ background: "radial-gradient(30% 36% at 70% 34%, rgba(99,102,241,.4), transparent 68%), radial-gradient(26% 32% at 30% 66%, rgba(20,184,166,.32), transparent 70%)", backgroundSize: "140% 140%", filter: "blur(34px)", animation: "mf-lm-b 31s ease-in-out -9s infinite alternate", mixBlendMode: "screen" }} />
+      <style>{`@keyframes mf-lm-a { from { background-position: 0% 0% } to { background-position: 100% 100% } }
+@keyframes mf-lm-b { from { background-position: 100% 0% } to { background-position: 0% 100% } }
+@media (prefers-reduced-motion: reduce) { .lm-move { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function DotMatrix() {
+  const [size, setSize] = useState(0);
+  const [dim, setDim] = useState(false);
+  const spacing = 9 + size * 3;
+  const radius = 1 + size * 0.8;
+  const alpha = dim ? 0.12 : 0.3;
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#0b0d13]">
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `radial-gradient(rgba(226,232,240,${alpha}) ${radius.toFixed(1)}px, transparent ${(radius + 0.8).toFixed(1)}px)`,
+          backgroundSize: `${spacing}px ${spacing}px`,
+          maskImage: "radial-gradient(ellipse 75% 80% at 50% 42%, black 30%, transparent 92%)",
+          WebkitMaskImage: "radial-gradient(ellipse 75% 80% at 50% 42%, black 30%, transparent 92%)",
+        }}
+      />
+      <div className="absolute bottom-2 right-2 flex gap-1 overflow-hidden rounded-md border border-white/10 bg-black/40 text-[8px] font-bold backdrop-blur">
+        <button type="button" onClick={() => setSize((v) => (v + 1) % 3)} className="px-2 py-1 text-white/80 hover:bg-white/10">
+          {size === 0 ? "fine" : size === 1 ? "mid" : "bold"}
+        </button>
+        <button type="button" onClick={() => setDim((d) => !d)} aria-pressed={dim} className={`px-2 py-1 ${dim ? "bg-white/15 text-white" : "text-white/60 hover:bg-white/10"}`}>
+          {dim ? "dim" : "bright"}
+        </button>
+      </div>
+      <style>{`@media (prefers-reduced-motion: reduce) { .dm-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function BrushedMetal() {
+  return (
+    <div
+      className="bm-sheen relative h-full w-full overflow-hidden"
+      style={{
+        background:
+          "linear-gradient(105deg, #20242e 0%, #171a21 30%, #262b36 52%, #14171d 74%, #1d212a 100%)",
+      }}
+    >
+      <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "repeating-linear-gradient(115deg, rgba(255,255,255,.028) 0 2px, transparent 2px 9px)", backgroundSize: "9px 100%" }} />
+      <div aria-hidden className="bm-sweep absolute -inset-x-1/2 inset-y-0" style={{ background: "linear-gradient(115deg, transparent 34%, rgba(255,255,255,.09) 46%, rgba(255,255,255,.02) 52%, transparent 66%)", animation: "mf-bm-sweep 7.5s ease-in-out infinite alternate" }} />
+      <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(60% 120% at 50% 0%, rgba(255,255,255,.1), transparent 55%), radial-gradient(70% 120% at 50% 100%, rgba(0,0,0,.4), transparent 60%)" }} />
+      <style>{`@keyframes mf-bm-sweep { from { transform: translateX(-18%) } to { transform: translateX(18%) } }
+@media (prefers-reduced-motion: reduce) { .bm-sweep { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function CarbonFibre() {
+  return (
+    <div className="cf-tex relative h-full w-full overflow-hidden bg-[#0c0e13]">
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(45deg, rgba(255,255,255,.05) 25%, transparent 25% 75%, rgba(255,255,255,.05) 75%), linear-gradient(45deg, rgba(255,255,255,.05) 25%, transparent 25% 75%, rgba(255,255,255,.05) 75%)",
+          backgroundPosition: "0 0, 5px 5px",
+          backgroundSize: "10px 10px",
+        }}
+      />
+      <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "repeating-linear-gradient(115deg, rgba(255,255,255,.018) 0 2px, transparent 2px 40px)", animation: "mf-cf-drift 26s linear infinite" }} />
+      <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(90% 100% at 50% -20%, rgba(80,90,140,.16), transparent 55%), radial-gradient(70% 90% at 50% 120%, rgba(0,0,0,.6), transparent 60%)" }} />
+      <style>{`@keyframes mf-cf-drift { from { background-position: 0 0 } to { background-position: 320px 0 } }
+@media (prefers-reduced-motion: reduce) { .cf-tex > div { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function WaterRipple() {
+  const [rings, setRings] = useState<{ id: number; x: number; y: number; big: boolean }[]>([]);
+  const seq = useRef(0);
+  const timeouts = useRef<number[]>([]);
+  useEffect(() => {
+    const all = timeouts.current;
+    return () => {
+      all.forEach((t) => window.clearTimeout(t));
+      all.length = 0;
+    };
+  }, []);
+  const drop = (x: number, y: number, big: boolean) => {
+    seq.current += 1;
+    const id = seq.current;
+    setRings((prev) => [...prev.slice(-10), { id, x, y, big }]);
+    const t = window.setTimeout(() => {
+      setRings((prev) => prev.filter((r) => r.id !== id));
+    }, 2200);
+    timeouts.current.push(t);
+  };
+  return (
+    <div
+      className="relative h-full w-full overflow-hidden bg-[radial-gradient(120%_100%_at_50%_0%,#0c2b33,transparent_60%),#06131a]"
+      style={{
+        backgroundImage:
+          "radial-gradient(80% 60% at 50% 30%, rgba(34,211,238,.1), transparent 60%), linear-gradient(180deg, #071820 0%, #0a2631 52%, #07151c 100%)",
+      }}
+      onPointerDown={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        drop(e.clientX - r.left, e.clientY - r.top, true);
+      }}
+    >
+      <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "repeating-linear-gradient(180deg, rgba(125,211,252,.05) 0 1px, transparent 1px 9px)" }} />
+      {rings.map((r) => (
+        <span
+          key={r.id}
+          aria-hidden
+          className="absolute rounded-full"
+          style={{
+            left: r.x,
+            top: r.y,
+            width: r.big ? 26 : 16,
+            height: r.big ? 26 : 16,
+            border: "1.5px solid rgba(125,211,252,.8)",
+            boxShadow: "0 0 18px rgba(125,211,252,.35), inset 0 0 10px rgba(125,211,252,.15)",
+            animation: r.big ? "mf-wr-ring 2s cubic-bezier(.2,.6,.35,1) forwards" : "mf-wr-ring 1.6s cubic-bezier(.2,.6,.35,1) forwards",
+          }}
+        />
+      ))}
+      <div aria-hidden className="absolute inset-x-0 bottom-0 top-1/2 opacity-40" style={{ background: "linear-gradient(180deg, transparent, rgba(2,10,14,.9))" }} />
+      <style>{`@keyframes mf-wr-ring { 0% { transform: translate(-50%,-50%) scale(.08); opacity: .9 } 100% { transform: translate(-50%,-50%) scale(16); opacity: 0 } }
+@media (prefers-reduced-motion: reduce) { .wr-drop { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function InkBloom() {
+  const [pulse, setPulse] = useState(false);
+  return (
+    <div className="relative h-full w-full overflow-hidden" style={{ background: "linear-gradient(160deg, #f4ecd9 0%, #ecdfc4 60%, #e3d0ac 100%)" }}>
+      <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(50% 40% at 30% 14%, rgba(255,252,240,.9), transparent 65%)" }} />
+      <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='ig'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23ig)' opacity='0.5'/%3E%3C/svg%3E\")", backgroundSize: "180px 180px", mixBlendMode: "multiply", opacity: 0.22 }} />
+      <div aria-hidden className="absolute inset-0">
+        <span className="absolute left-[34%] top-[36%] rounded-full" style={{ width: 190, height: 190, background: "radial-gradient(circle at 38% 32%, rgba(20,14,26,.95), rgba(38,28,48,.75) 38%, transparent 68%)", filter: "blur(2px)", animation: pulse ? "mf-ib-pulse 9s ease-in-out infinite alternate" : undefined }} />
+        <span className="absolute left-[52%] top-[52%] rounded-full" style={{ width: 120, height: 120, background: "radial-gradient(circle at 40% 34%, rgba(20,14,26,.8), transparent 66%)", filter: "blur(3px)", opacity: 0.85, animation: pulse ? "mf-ib-pulse2 13s ease-in-out -5s infinite alternate" : undefined }} />
+        <span className="absolute left-[16%] top-[66%] rounded-full" style={{ width: 60, height: 60, background: "radial-gradient(circle at 40% 34%, rgba(20,14,26,.55), transparent 70%)", filter: "blur(2px)", opacity: 0.7 }} />
+      </div>
+      <div aria-hidden className="absolute inset-0" style={{ boxShadow: "inset 0 0 80px rgba(96,60,18,.3)" }} />
+      <button
+        type="button"
+        aria-pressed={pulse}
+        onClick={() => setPulse((p) => !p)}
+        className="absolute bottom-2 right-2 rounded-md border border-white/15 bg-black/20 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-ink-dim backdrop-blur hover:bg-black/30"
+      >
+        {pulse ? "✓ pulsing" : "pulse"}
+      </button>
+      <style>{`@keyframes mf-ib-pulse { 0% { transform: scale(1) translate(0,0); opacity: .9 } 50% { transform: scale(1.18) translate(-4%, -3%); opacity: 1 } 100% { transform: scale(.96) translate(2%, 2%) } }
+@keyframes mf-ib-pulse2 { 0% { transform: scale(.9); opacity: .7 } 50% { transform: scale(1.24); opacity: .95 } 100% { transform: scale(1.02) }
+@media (prefers-reduced-motion: reduce) { .ib-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 
@@ -6751,6 +7009,8 @@ export const DEMO_KEYS = [
   "template-changelog", "template-gallery",
   "topographic-contours", "blueprint-grid", "confetti-field", "bokeh-depth-field",
   "glass-shards", "lava-lamp-blobs", "paper-grain", "silk-wave",
+  "star-field-parallax", "scanline-crt", "liquid-mesh", "dot-matrix",
+  "brushed-metal", "carbon-fibre", "water-ripple", "ink-bloom",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -6876,6 +7136,14 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "lava-lamp-blobs": return <LavaLampBlobs />;
     case "paper-grain": return <PaperGrain />;
     case "silk-wave": return <SilkWave />;
+    case "star-field-parallax": return <StarFieldParallax />;
+    case "scanline-crt": return <ScanlineCrt />;
+    case "liquid-mesh": return <LiquidMesh />;
+    case "dot-matrix": return <DotMatrix />;
+    case "brushed-metal": return <BrushedMetal />;
+    case "carbon-fibre": return <CarbonFibre />;
+    case "water-ripple": return <WaterRipple />;
+    case "ink-bloom": return <InkBloom />;
     default: return null;
   }
 }
