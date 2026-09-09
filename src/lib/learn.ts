@@ -1896,6 +1896,360 @@ the first is a decision, the second is a void.`,
       },
     ],
   },
+  {
+    slug: "model-personality-drift",
+    kicker: "Prompt engineering",
+    title: "Model personality drift",
+    deck: "The same brief on three models produces three different personalities — one verbose, one literal, one allergic to your constraints. What actually differs between models, and how to write briefs that survive the drift.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["prompts", "models", "drift", "ai"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The same words, three different designers",
+        body: [
+          "Motif runs every prompt on multiple models, and the run logs show the same pattern every time: identical brief, recognizably different output. One model inflates — longer copy, more sections, bigger claims. One deflates — literal, minimal, takes every 'optional' at its word. One improvises — holds structure but decorates beyond the brief. This is not noise; it is each model's probability distribution showing its favourite moves, and a brief that does not anticipate the drift gets drifted.",
+        ],
+        bullets: [
+          "The inflator wants more: cap it with explicit counts ('exactly three tiers', 'no more than two sentences per card') and with negative space ('no extra sections beyond the block list').",
+          "The deflator wants less: feed it obligations, not options — 'the hero must contain: a headline, a subline, and one button' beats 'consider a hero with some copy'.",
+          "The improviser wants freedom: pin the palette and the never-list, then let it decorate inside the fence — improvisation inside constraints is where the best output comes from.",
+          "Every model has a favourite failure: one loves generic praise copy, one loves gradients, one loves 3-column layouts for everything. Your never-list is a per-model conversation, and it takes two runs to learn.",
+        ],
+        code: {
+          title: "drift-log.md",
+          lang: "text",
+          text: `Brief: "a calm focus timer landing page, paper + ink + one green"
+Model A  -> added a purple gradient hero  (never-list missing)
+Model B  -> built it, ultra-minimal, no CTA above the fold
+          (obligations missing)
+Model C  -> structure perfect, copy full of "unlock your focus"
+          (copy obligations missing)
+One brief, three diagnoses, three different fixes.`,
+        },
+      },
+      {
+        h: "Drift is stable — use it",
+        body: [
+          "Model behaviour is consistent enough to plan around: once you know which model inflates, you route the copy-heavy briefs elsewhere or pre-load the caps. The professional move is a per-model brief header — one paragraph of 'this model tends to X, so this brief does Y' — and Motif's own prompts carry model-specific run notes for exactly this reason. The brief is not finished when it reads well; it is finished when it survives the model you actually run.",
+        ],
+        links: [{ label: "The retry loop, in practice", href: "/learn/the-retry-loop" }],
+      },
+    ],
+  },
+  {
+    slug: "design-tokens-inside-prompts",
+    kicker: "Prompt engineering",
+    title: "Design tokens inside prompts",
+    deck: "A generated page you cannot restyle is a generated page you will rebuild. Putting tokens in the brief — named colours, radii, spacing scale — makes output restyleable after generation. The difference between a one-off and a component.",
+    minutes: 10,
+    level: "Advanced",
+    tags: ["prompts", "design tokens", "theming", "ai"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Why untokened output is a dead end",
+        body: [
+          "A generated page with hard-coded hexes and magic spacing is a sculpture: impressive, immovable. The moment the brand shifts a hue or the design system changes a radius, the page must be regenerated or hand-edited in fifty places. Tokens in the prompt are the difference between a sculpture and a system — the model emits var(--color-ink) references and one central definition, so the whole page restyles from a single edit.",
+        ],
+        code: {
+          title: "tokenized-brief.md",
+          lang: "text",
+          text: `Define tokens in the brief, then require their use:
+"Palette as tokens: --ink #1a1d21, --paper #faf8f4,
+ --accent #1f7a5c (used only on the primary action),
+ --muted derives from --ink at 72% opacity.
+ Spacing from an 8px scale (--s1..--s6). Radius: --r-md 14px,
+ --r-lg 24px. Every colour and radius in the page must be a var()."`,
+        },
+      },
+      {
+        h: "The token set that pays for itself",
+        bullets: [
+          "Colour as named roles, not hues: --ink, --paper, --accent, --surface, --border, --text-dim — role names survive rebrands; hue names do not.",
+          "Spacing from one scale: the model then chooses gaps from the scale instead of inventing 13px, 31px and 47px — which is exactly what makes generated layouts look designed.",
+          "Radius and shadow tokens: two radii and a four-rung shadow scale keep cards and modals consistent across every generated section.",
+          "Type tokens: --font-display, --font-body, and a size scale — models that choose from a scale build hierarchy instead of guessing sizes.",
+        ],
+        callout: {
+          type: "pro",
+          title: "The follow-up prompt that tokenizes",
+          text: "If the first run ignored the tokens, do not regenerate — run a tokenization pass: 'Rewrite this page using the token set from the brief. Every hex, radius and spacing value becomes a var(); nothing hard-coded remains.' One pass turns a sculpture into a system.",
+        },
+      },
+      {
+        h: "Tokens are the bridge to the library",
+        body: [
+          "A tokenized page drops into Motif's workflow perfectly: the generated layout becomes a component, the tokens map onto the design-system scale, and the page becomes restyleable — which is the entire point of the from-prompt-to-component pipeline. Tokens are not an implementation detail; they are the contract that lets generated work join the library instead of sitting beside it.",
+        ],
+        links: [{ label: "From prompt to component", href: "/learn/from-prompt-to-component" }],
+      },
+    ],
+  },
+  {
+    slug: "prompting-for-reduced-motion",
+    kicker: "Prompt engineering",
+    title: "Prompting for reduced motion",
+    deck: "Accessibility constraints belong in the brief, not the audit. How to bake prefers-reduced-motion into a prompt so the generated page ships with its calmer experience designed, not deleted.",
+    minutes: 8,
+    level: "Intermediate",
+    tags: ["prompts", "a11y", "reduced motion", "ai"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The brief is where a11y decisions are made",
+        body: [
+          "Most accessibility work happens after generation — an audit finds the failures and a human fixes them. But motion is different: the reduced experience is a *design*, and designs are made in the brief. A prompt that says 'add a reduced-motion fallback' produces a delete-everything blanket rule. A prompt that specifies the reduced branch produces a second experience — and the run logs show the difference is entirely in how the constraint is phrased.",
+        ],
+        bullets: [
+          "Require the branch, not the switch: 'the spec must include a @media (prefers-reduced-motion: reduce) branch that keeps state changes visible via opacity and colour, and removes travel, scale and parallax' — naming what survives is what makes it a design.",
+          "Ban the blanket: 'no universal animation-duration: .01ms reset' — that reset is the delete-everything move, and it also kills the honest 200ms fades that carry state.",
+          "Name the motion budget: 'maximum three animated elements per screen; everything else is static by default' — a budget prevents the generated page from animating everything it can.",
+          "Ask for the audit note: 'include a short note on which animations were kept in the reduced branch and why' — forcing the explanation produces better decisions than the motion itself.",
+        ],
+        code: {
+          title: "reduced-branch-in-brief.md",
+          lang: "text",
+          text: `Motion spec (in the brief):
+- hero: one slow drift, 18s cycle, transform-only
+- cards: stagger entrance, 60ms apart, opacity + 6px rise
+- reduced branch (required):
+   drift removed entirely
+   card entrance = opacity fade 250ms only, no travel
+   progress bar keeps its fill transition (200ms)
+- note: name every motion kept in the reduced branch.`,
+        },
+      },
+      {
+        h: "The payoff",
+        body: [
+          "A brief with a specified reduced branch produces a page that passes a reduced-motion audit on the first run — no retrofitting, no blanket reset arguing with the design system later. The reduced experience stops being the thing an auditor deletes and becomes the thing a designer specified. That is the difference between prompting for compliance and prompting for craft.",
+        ],
+        links: [{ label: "Designing the second experience", href: "/learn/reduced-motion-beyond-the-switch" }],
+      },
+    ],
+  },
+  {
+    slug: "from-prompt-to-component",
+    kicker: "Prompt engineering",
+    title: "From prompt to component",
+    deck: "A great generated page is raw material, not a deliverable. The pipeline that turns a one-off generation into a library asset: extraction, tokenization, theming, and the tests that decide whether it earns a place in the catalog.",
+    minutes: 11,
+    level: "Advanced",
+    tags: ["prompts", "components", "workflow", "library"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The page is the prototype, not the product",
+        body: [
+          "When a prompt produces a page at fidelity 92, the temptation is to ship the page. The professional move is to ship the *component* — extract the reusable piece (the pricing table, the stagger, the hero pattern), strip the page-specific copy, tokenize the colours, and parameterize what varies. The generated page was the proof; the component is the asset.",
+        ],
+        bullets: [
+          "Extract by boundary: find where the pattern ends and the page begins — a pricing table component stops at the section padding; the section's headline is page content.",
+          "Tokenize before theming: replace every hex with a role token first; a component themed by tokens works in every context, a component with hard-coded colours works in one.",
+          "Parameterize the judgement calls: variant (tier count, density), and tone (calm, playful) become props; everything else stays internal.",
+          "Document the origin: the component's notes carry its prompt, its run log and its fidelity score — future edits start from the brief's intent, not a guess.",
+        ],
+      },
+      {
+        h: "The tests that decide admission",
+        code: {
+          title: "admission-tests.md",
+          lang: "text",
+          text: `A generated pattern earns library admission when it passes:
+[ ] Reusable - the pattern earns its keep in 2+ contexts
+[ ] Tokenized - zero hard-coded hex/radius/spacing
+[ ] Themed   - survives a token swap without breaking
+[ ] Reduced  - has a working prefers-reduced-motion branch
+[ ] Keyboard - operable and visibly focused by Tab
+[ ] Scored   - run fidelity recorded with model + date`,
+        },
+      },
+      {
+        h: "The loop closes on the library",
+        body: [
+          "The component then feeds the next prompt: library patterns become reference material in future briefs ('the pricing card from the library, applied to a bike shop'), and the library's own quality bar raises what the prompt asks for. Generation, extraction, admission, reuse — the loop is how Motif's catalog grows and how the prompts get sharper. A prompt library without a component pipeline is a museum; with one, it is a workshop.",
+        ],
+        links: [{ label: "Design tokens inside prompts", href: "/learn/design-tokens-inside-prompts" }],
+      },
+    ],
+  },
+  {
+    slug: "the-five-line-prompt-myth",
+    kicker: "Prompt engineering",
+    title: "The 5-line prompt myth",
+    deck: "'Short prompts are better prompts' is the most expensive folk wisdom in AI design. What the run logs actually show about brief length, and where the long brief's value really lives.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["prompts", "length", "evidence", "ai"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Where the myth comes from",
+        body: [
+          "The myth has a true ancestor: for open-ended generation (a poem, an idea, a tagline), short prompts outperform — the model has room and the task rewards surprise. Somewhere along the way that finding was generalized into 'briefs should be short', and it quietly destroyed a generation of UI prompts, because a website is not a poem: it has twenty decisions that must be made consistently, and an unasked decision gets a default — usually the model's favourite generic one.",
+        ],
+        bullets: [
+          "Length correlates with specificity, and specificity is what UI fidelity scores: the run logs show block-listed briefs at 88–93 fidelity and 3-line briefs at 70–80, consistently, across models.",
+          "A long brief full of genre praise ('modern, clean, premium, sleek') fails exactly like a short one — length without obligations is just a longer wish.",
+          "The real variable is obligation density: how many decisions the brief settles that the model would otherwise make by probability. Block list, palette, never-list, counts — four dense lines beat forty vague ones.",
+          "The 5-line brief's best use is iteration: a short brief to explore directions fast, then the winner gets the full obligation brief for the fidelity pass. Short for breadth, long for build.",
+        ],
+        code: {
+          title: "obligation-density.md",
+          lang: "text",
+          text: `Vague line:   "a modern landing page with hero and pricing"
+               -> model defaults: gradient hero, lorem pricing
+
+Obligation:   "hero: product name, one verb, one button.
+              pricing: three named tiers, real figures,
+              what each includes. palette: paper, ink,
+              one green. no gradients, no fake testimonials."
+              -> the defaults are replaced by decisions.`,
+        },
+      },
+      {
+        h: "The evidence habit",
+        body: [
+          "The myth survives because nobody logs. Motif scores every run and the scores are the argument: briefs win on fidelity when they settle decisions, and the scoreboard is public in every prompt's run log. If you believe short prompts are better, run the same brief at two lengths on the same model, score both against the same rubric, and keep the number. The myth does not survive contact with a run log.",
+        ],
+        links: [{ label: "Fidelity is a claim", href: "/learn/fidelity-is-a-claim" }],
+      },
+    ],
+  },
+  {
+    slug: "fidelity-is-a-claim",
+    kicker: "Prompt engineering",
+    title: "Fidelity is a claim",
+    deck: "A fidelity score without a rubric is a vibe. How Motif scores runs, why screenshots are not proof, and the scoring discipline that turns 'this looks good' into numbers you can iterate against.",
+    minutes: 10,
+    level: "Intermediate",
+    tags: ["prompts", "fidelity", "scoring", "process"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "What a fidelity score should mean",
+        body: [
+          "Every Motif prompt ships with per-model fidelity scores and run dates, and the score is only useful because it is defined. The rubric scores three axes: structure (are the brief's blocks present, in order, with nothing extra), content (is the copy specific — named products, real figures, no filler), and craft (palette discipline, spacing rhythm, restraint). A score of 92 means 'structure and content held, craft slightly under the brief's ceiling' — not 'I liked it'.",
+        ],
+        bullets: [
+          "Structure is binary-ish: blocks present? In order? Extras? A brief with a block list makes structure machine-checkable — which is why the block list is the backbone of every Motif prompt.",
+          "Content is specificity: 'the copy names real things' scores; 'compelling copy that elevates the brand' is the model talking about itself. Score the nouns, not the adjectives.",
+          "Craft is restraint: palette obeyed, one accent, spacing from a scale. The brief's never-list makes craft checkable too — every violated never is a docked point.",
+          "Screenshots are not proof: a beautiful screenshot of a page that ignored half the brief is a beautiful failure. Score against the brief, then admire the screenshot.",
+        ],
+      },
+      {
+        h: "The scoring discipline",
+        code: {
+          title: "scorecard.md",
+          lang: "text",
+          text: `Prompt: bike-shop-service-tiers   Model: Claude 4.6 Sonnet
+
+Structure  10/10  all 4 blocks, in order, no extras
+Content     9/10  tiers named + priced; one generic line
+Craft       9/10  palette held; spacing 2px off on one card
+                     ----------
+Fidelity    91    (weighted: structure .4, content .3, craft .3)
+
+Notes: "reads like a menu a mechanic would stand behind"
+       -> that is the brief's own line; it held.`,
+        },
+      },
+      {
+        h: "Why the claim matters",
+        body: [
+          "A score you can defend turns iteration into science: run 1 at 84, change one thing, run 2 at 91 — the delta is attributable. It also keeps the library honest: a component or prompt marked 'verified' has a dated score behind it, and the score's breakdown tells the next user where the weaknesses live. Fidelity is a claim — a claim with evidence attached — and evidence is the only thing that survives contact with a new model version.",
+        ],
+        links: [{ label: "The retry loop", href: "/learn/the-retry-loop" }],
+      },
+    ],
+  },
+  {
+    slug: "the-keyboard-walk",
+    kicker: "Accessibility",
+    title: "The keyboard walk",
+    deck: "The cheapest full accessibility audit in existence: put the mouse away and walk the page with Tab. A field guide to the traps you will hit, in the order you will hit them, and what each one means.",
+    minutes: 9,
+    level: "Beginner",
+    tags: ["a11y", "keyboard", "audit", "testing"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The walk, in rules",
+        body: [
+          "The keyboard walk has three rules and one notebook. Rule one: Tab only — no mouse, no trackpad, no touch. Rule two: narrate every stop — where am I, what is this, what will it do? Rule three: the walk must reach everything a mouse can reach and leave nothing a keyboard cannot. A page fails the walk the moment Tab stops on something invisible, skips something important, or traps you in a widget with no way out.",
+        ],
+        bullets: [
+          "Trap 1 — the invisible stop: focus lands on an off-screen element or a hidden control. Fix: check what has focus styling at every stop; if you cannot see where you are, the user cannot either.",
+          "Trap 2 — the skipped hero: the primary CTA is a div with onClick, so Tab walks past the most important action on the page. Fix: real <button> or an anchor with href — interactive things must be focusable things.",
+          "Trap 3 — the modal prison: focus enters a dialog and Tab cycles forever inside, or worse, escapes behind the scrim. Fix: focus management — trap within the dialog while open, return to the trigger on close.",
+          "Trap 4 — the scroll requirement: content expands on hover, so a keyboard user never sees it. Fix: hover-reveal must also open on focus-within.",
+          "Trap 5 — the radio maze: custom dropdowns and tab widgets that swallow arrow keys or announce nothing. Fix: use native controls first; only build custom widgets when you also build their keyboard contract.",
+        ],
+      },
+      {
+        h: "The order is the design",
+        body: [
+          "Tab order is DOM order unless you reorder it with tabindex, and DOM order should follow reading order — which should follow visual order. The walk exposes disagreements: a visually left-to-right layout whose DOM stacks the sidebar first, a skip-link that is missing so every page visit starts with the nav, a focus that jumps to the footer after a filter. These are not keyboard bugs; they are layout bugs seen from the keyboard. The walk finds them in about ninety seconds.",
+        ],
+        callout: {
+          type: "tip",
+          title: "The 90-second version",
+          text: "Every sprint, one person walks the changed pages: Tab through, note every stop that is invisible, unreachable, or trapping, and file the list as one ticket. Ninety seconds of walking replaces a week of 'we should really test accessibility sometime'.",
+        },
+        links: [{ label: "Focus order is layout", href: "/learn/focus-order-is-layout" }],
+      },
+    ],
+  },
+  {
+    slug: "screen-reader-poetry",
+    kicker: "Accessibility",
+    title: "Screen-reader poetry",
+    deck: "Alt text and labels are read aloud to someone who cannot see the page — they are the audio track of your design. Writing alt text that respects attention: what to say, what to skip, and the one question that decides both.",
+    minutes: 8,
+    level: "Beginner",
+    tags: ["a11y", "alt text", "screen readers", "copywriting"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The one question",
+        body: [
+          "Every image asks the same question: does this picture carry information the words do not? If yes, the alt text says what the picture shows, in the order it matters. If no — the image is decorative, a logo beside the company name, a gradient behind text — the alt text is empty and the image is aria-hidden, because reading 'image, decorative gradient' aloud is noise, and noise is the enemy of attention.",
+          "The poetry is in the economy: alt text is the haiku of your UI. 'Quarterly revenue chart: up 22% from Q2 to Q3' tells the listener everything the chart shows. 'Chart showing revenue growth over time' tells them the chart exists — which they already know — and nothing else.",
+        ],
+        code: {
+          title: "alt-text.md",
+          lang: "text",
+          text: `Decorative   alt=""               (aria-hidden, not omitted)
+Functional  alt="Search"          (the button's job, not its icon)
+Informative alt="Map pin: the venue is on Market St,
+              two blocks east of the station"
+Complex     <figure> + caption + data table + alt pointing
+            to both — a chart is never one alt string`,
+        },
+      },
+      {
+        h: "The ear test",
+        body: [
+          "The discipline that fixes most alt text: read it aloud. Alt text that works reads like a good friend describing the screen — 'there is a photo of the workshop, the mechanic is mid-laugh, the dog is asleep on the chair' — not like a museum label ('photograph, mechanic, dog, chair') and not like a legal disclaimer ('image of workshop scene with mechanic and canine companion'). Screen readers are ears; write for ears.",
+        ],
+        bullets: [
+          "Say what is relevant, in context: the same photo of a product gets different alt text on a product page (the product, its state) and a brand page (the scene, the feeling).",
+          "Name the numbers: a screenshot of a form error should read the error, not 'screenshot of form'. The words already on the page should never be duplicated in alt text — the listener hears them twice.",
+          "Respect the listener's time: alt text is a detour from the flow. Long descriptions belong to the page (a caption, a table), not to a 200-word alt string.",
+        ],
+      },
+      {
+        h: "Labels are alt text for controls",
+        body: [
+          "A button that shows only an icon needs a label the reader can hear; an input's label must be associated (the label element, not a placeholder — placeholders disappear and are not reliable labels); and a group of radio buttons needs a fieldset legend naming the question they answer. The same economy applies: 'Search', not 'Click here to search our website'. Attention is the budget, and every label spends some of it — spend it on the word that names the action.",
+        ],
+        links: [{ label: "The keyboard walk", href: "/learn/the-keyboard-walk" }],
+      },
+    ],
+  },
 ];
 
 export function learnArticleOf(slug: string): LearnArticle | undefined {

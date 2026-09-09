@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 169 / 500 shipped (batches 1–22, in order) · Sections 1–3 complete ✅
+## Progress — 177 / 500 shipped (batches 1–23, in order) · Sections 1–3 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -180,7 +180,15 @@ names, behaviours and where they plug into the existing pages.
 | 166 | Writing a brief the model can't ignore essay | [/learn/brief-the-model-cant-ignore](/learn/brief-the-model-cant-ignore) |
 | 167 | The retry loop essay | [/learn/the-retry-loop](/learn/the-retry-loop) |
 | 168 | One palette, three moods essay | [/learn/one-palette-three-moods](/learn/one-palette-three-moods) |
-| 169 | When to say no gradients in a prompt essay | [/learn/when-to-say-no-gradients-in-a-prompt](/learn/when-to-say-no-gradients-in-a-prompt) |
+| 169 | No-gradients-in-a-prompt essay | [/learn/when-to-say-no-gradients-in-a-prompt](/learn/when-to-say-no-gradients-in-a-prompt) |
+| 170 | Model personality drift essay | [/learn/model-personality-drift](/learn/model-personality-drift) |
+| 171 | Design tokens inside prompts essay | [/learn/design-tokens-inside-prompts](/learn/design-tokens-inside-prompts) |
+| 172 | Prompting for reduced motion essay | [/learn/prompting-for-reduced-motion](/learn/prompting-for-reduced-motion) |
+| 173 | From prompt to component essay | [/learn/from-prompt-to-component](/learn/from-prompt-to-component) |
+| 174 | The 5-line prompt myth essay | [/learn/the-five-line-prompt-myth](/learn/the-five-line-prompt-myth) |
+| 175 | Fidelity is a claim essay | [/learn/fidelity-is-a-claim](/learn/fidelity-is-a-claim) |
+| 176 | The keyboard walk essay | [/learn/the-keyboard-walk](/learn/the-keyboard-walk) |
+| 177 | Screen-reader poetry essay | [/learn/screen-reader-poetry](/learn/screen-reader-poetry) |
 
 
 ---
@@ -372,7 +380,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 4. Learn — 50 more essays & formats (currently 10 → 34 live)
+## 4. Learn — 50 more essays & formats (currently 10 → 42 live)
 
 ### Motion & animation theory
 - **Easing cheatsheet deep-dive** ✅ (`easing-cheatsheet-deep-dive`): compare the 8 named curves side-by-side with the Lab embeds.
@@ -403,16 +411,16 @@ names, behaviours and where they plug into the existing pages.
 - **The retry loop** ✅ (`the-retry-loop`): what to change between run 1 and run 2 when fidelity is 84.
 - **One palette, three moods** ✅ (`one-palette-three-moods`): how prompt colour direction phrases change output.
 - **When to say "no gradients" in a prompt** ✅ (`when-to-say-no-gradients-in-a-prompt`): and when it backfires.
-- **Model personality drift**: same prompt on three models — what actually differs.
-- **Design tokens inside prompts**: making output restyleable after generation.
-- **Prompting for reduced motion**: baking a11y constraints into the brief.
-- **From prompt to component**: turning a great generated page into library assets.
-- **The 5-line prompt myth**: short vs. long briefs, evidence from the run logs.
-- **Fidelity is a claim**: how Motif scores runs and why screenshots aren't proof.
+- **Model personality drift** ✅ (`model-personality-drift`): same prompt on three models — what actually differs.
+- **Design tokens inside prompts** ✅ (`design-tokens-inside-prompts`): making output restyleable after generation.
+- **Prompting for reduced motion** ✅ (`prompting-for-reduced-motion`): baking a11y constraints into the brief.
+- **From prompt to component** ✅ (`from-prompt-to-component`): turning a great generated page into library assets.
+- **The 5-line prompt myth** ✅ (`the-five-line-prompt-myth`): short vs. long briefs, evidence from the run logs.
+- **Fidelity is a claim** ✅ (`fidelity-is-a-claim`): how Motif scores runs and why screenshots aren't proof.
 
 ### Accessibility & inclusive design
-- **The keyboard walk**: audit a page with Tab only and find the traps.
-- **Screen-reader poetry**: writing alt text and labels that respect attention.
+- **The keyboard walk** ✅ (`the-keyboard-walk`): audit a page with Tab only and find the traps.
+- **Screen-reader poetry** ✅ (`screen-reader-poetry`): writing alt text and labels that respect attention.
 - **Focus order is layout**: why DOM order beats visual order.
 - **Contrast on brand colours**: keeping personality inside AA.
 - **Touch targets beyond 44px**: thumbs, gloves and the real minimum.
