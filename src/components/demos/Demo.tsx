@@ -31,6 +31,7 @@ const KEYFRAMES = `
   @keyframes mf-shake { 10%,90% { transform: translateX(-1px) } 20%,80% { transform: translateX(2px) } 30%,50%,70% { transform: translateX(-3px) } 40%,60% { transform: translateX(3px) } }
   @keyframes mf-sway-a { 0%,100% { transform: translate(0,0) } 50% { transform: translate(9px,-12px) } }
   @keyframes mf-sway-b { 0%,100% { transform: translate(0,0) } 50% { transform: translate(-12px,7px) } }
+@keyframes mf-marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
 `;
 /* ------------------------------ ELEMENTS ------------------------------ */
 
@@ -4967,6 +4968,443 @@ function BentoFeatureGrid() {
   );
 }
 
+const LW_LOGO = [
+  { mark: "⌘", name: "northwind", tint: "text-indigo-300" },
+  { mark: "▲", name: "arclight", tint: "text-amber-300" },
+  { mark: "◒", name: "hazel&co", tint: "text-emerald-300" },
+  { mark: "✳", name: "plainday", tint: "text-sky-300" },
+  { mark: "◮", name: "solidpine", tint: "text-rose-300" },
+  { mark: "❖", name: "quilto", tint: "text-violet-300" },
+  { mark: "◈", name: "bridgestone", tint: "text-cyan-300" },
+  { mark: "▲", name: "fermo labs", tint: "text-pink-300" },
+] as const;
+
+function LogoWallHoverPop() {
+  const [hot, setHot] = useState<string | null>(null);
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(139,92,246,0.1),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        <p className="text-center text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">trusted by quiet teams</p>
+        <div className="mt-4 grid grid-cols-4 gap-2">
+          {LW_LOGO.map((l) => (
+            <button
+              key={l.name}
+              type="button"
+              aria-label={l.name}
+              onMouseEnter={() => setHot(l.name)}
+              onMouseLeave={() => setHot(null)}
+              className={`flex flex-col items-center gap-1.5 rounded-xl border px-1 py-3 transition-all duration-200 ${
+                hot === l.name
+                  ? "-translate-y-1 border-white/20 bg-white/6 shadow-[0_14px_30px_rgba(0,0,0,.4)]"
+                  : "border-white/5 bg-white/2 hover:bg-white/4"
+              }`}
+            >
+              <span className={`text-sm leading-none ${l.tint} ${hot === l.name ? "scale-110" : ""}`} style={{ transition: "transform .2s cubic-bezier(.34,1.56,.64,1)" }}>
+                {l.mark}
+              </span>
+              <span className="max-w-full truncate font-mono text-[7.5px] text-ink-dim">{l.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <p className="max-w-md text-center text-[10px] leading-relaxed text-ink-faint">
+        hover pops a tile up and recolours it — a logo wall that only wakes up where the cursor is.
+        <span className="text-ink-dim"> Press points are 44px tall so touch users never fat-finger a neighbour.</span>
+      </p>
+    </div>
+  );
+}
+
+const TM_ROW_A = ["surface-first design", "42 theme tokens", "keyboard-complete", "motion on budget", "one source of truth", "ships in a week"];
+const TM_ROW_B = ["“the tokens alone paid for it”", "“our QA finally sees colour early”", "“zero docs drift since”", "“the a11y pass wrote itself”", "“lightweight, no runtime tax”", "“we shipped ahead of schedule”"];
+
+function TestimonialMarquee() {
+  const [paused, setPaused] = useState(false);
+  return (
+    <div
+      className="flex h-full w-full flex-col justify-center overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(34,211,238,0.09),transparent_60%),#08090f]"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="flex items-center justify-between px-6">
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">what teams say</p>
+        <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] text-ink-faint">{paused ? "paused — hover off to resume" : "hover to pause"}</span>
+      </div>
+      <div className="mt-3 flex flex-col gap-2.5" aria-hidden>
+        <div className="overflow-hidden" style={{ maskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)" }}>
+          <div className="flex w-max gap-2.5" style={{ animation: "mf-marquee 26s linear infinite", animationPlayState: paused ? "paused" : "running" }}>
+            {[...TM_ROW_A, ...TM_ROW_A].map((t, i) => (
+              <span key={`a-${i}`} className="shrink-0 rounded-full border border-white/10 bg-white/4 px-4 py-2 text-[11px] text-white/75">
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="overflow-hidden" style={{ maskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)" }}>
+          <div className="flex w-max gap-2.5" style={{ animation: "mf-marquee 32s linear infinite reverse", animationPlayState: paused ? "paused" : "running" }}>
+            {[...TM_ROW_B, ...TM_ROW_B].map((t, i) => (
+              <span key={`b-${i}`} className="shrink-0 rounded-2xl border border-cyan-300/15 bg-cyan-300/6 px-4 py-2.5 text-[11px] italic text-cyan-100/80">
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 px-6 text-center text-[10px] leading-relaxed text-ink-faint">
+        dual-row counter-scroll — the classic wall. Each row loops 2× content for a seamless 50% translate; hover anywhere pauses both rows.
+      </p>
+    </div>
+  );
+}
+
+const PRICE_PLANS = [
+  { name: "Studio", priceM: 0, priceY: 0, blurb: "for solo tinkerers", feats: ["120 original assets", "MIT licensed", "community updates"], pop: false },
+  { name: "Team", priceM: 24, priceY: 19, blurb: "for shipped products", feats: ["everything in Studio", "design tokens + Figma", "priority support", "team seat: 5"], pop: true },
+  { name: "Agency", priceM: 64, priceY: 49, blurb: "for client work", feats: ["everything in Team", "unlimited seats", "white-label license"], pop: false },
+] as const;
+
+function PricingTableThree() {
+  const [yearly, setYearly] = useState(false);
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(52,211,153,0.1),transparent_60%),#08090f] px-6">
+      <div className="flex w-full max-w-md items-center justify-between">
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">pricing · three plans</p>
+        <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-black/30 px-2 py-1">
+          <span className={`text-[10px] font-bold ${!yearly ? "text-white" : "text-ink-faint"}`}>monthly</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={yearly}
+            aria-label="Toggle yearly billing"
+            onClick={() => setYearly((y) => !y)}
+            className={`relative h-4 w-8 rounded-full transition-colors ${yearly ? "bg-emerald-400/70" : "bg-white/15"}`}
+          >
+            <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${yearly ? "left-[18px]" : "left-0.5"}`} />
+          </button>
+          <span className={`text-[10px] font-bold ${yearly ? "text-white" : "text-ink-faint"}`}>
+            yearly <span className="text-emerald-300">−20%</span>
+          </span>
+        </div>
+      </div>
+      <div className="grid w-full max-w-md grid-cols-3 gap-1.5">
+        {PRICE_PLANS.map((pl) => (
+          <div
+            key={pl.name}
+            className={`relative flex flex-col rounded-xl border p-2.5 ${pl.pop ? "border-emerald-300/40 bg-emerald-300/8 shadow-[0_0_36px_rgba(52,211,153,.18)]" : "border-white/8 bg-white/3"}`}
+          >
+            {pl.pop && (
+              <span className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full bg-emerald-300 px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.14em] text-[#06120c]">
+                popular
+              </span>
+            )}
+            <span className="text-[10px] font-black tracking-tight text-white">{pl.name}</span>
+            <span className="mt-1 text-lg font-black leading-none text-white">
+              ${yearly ? pl.priceY : pl.priceM}
+              <span className="text-[9px] font-semibold text-ink-dim">/mo</span>
+            </span>
+            <span className="mt-1 text-[8px] text-ink-faint">{pl.blurb}</span>
+            <ul className="mt-2 space-y-1 border-t border-white/6 pt-2">
+              {pl.feats.map((f) => (
+                <li key={f} className="flex items-start gap-1 text-[8.5px] leading-snug text-ink-dim">
+                  <span className="text-emerald-300">✓</span>
+                  <span className="min-w-0">{f}</span>
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              className={`mt-2.5 rounded-lg px-2 py-1.5 text-[9px] font-black transition-colors ${pl.pop ? "bg-emerald-300 text-[#06120c] hover:bg-emerald-200" : "bg-white/10 text-white hover:bg-white/15"}`}
+            >
+              {pl.priceM === 0 ? "Start free" : "Choose " + pl.name}
+            </button>
+          </div>
+        ))}
+      </div>
+      <p className="max-w-md text-center text-[10px] leading-relaxed text-ink-faint">
+        the popular plan glows but never blocks the other two — a billing toggle re-prices all three in place with a single state.
+      </p>
+    </div>
+  );
+}
+
+const STATS_TARGETS = [128, 98.6, 4.2, 1.9];
+const STATS_ROWS = [
+  { label: "assets shipped", note: "and counting — every one original", suffix: "" },
+  { label: "a11y score median", note: "tested with real screen readers", suffix: "%" },
+  { label: "stars after launch week", note: "from 300+ teams", suffix: "k" },
+  { label: "s average demo load", note: "no runtime, no tax", suffix: "s" },
+];
+
+function StatsBand() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [started, setStarted] = useState(false);
+  const [vals, setVals] = useState<number[]>([0, 0, 0, 0]);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) setStarted(true);
+        });
+      },
+      { threshold: 0.5 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!started) return;
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / 1400);
+      const ease = 1 - Math.pow(1 - p, 3);
+      setVals(STATS_TARGETS.map((t) => (t % 1 === 0 ? Math.round(t * ease) : Math.round(t * ease * 10) / 10)));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [started]);
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[#0a0c13] px-6">
+      <div ref={ref} className="w-full max-w-md rounded-2xl border border-white/8 bg-white/3 px-5 py-6">
+        <p className="text-center text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">motif by the numbers</p>
+        <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-5">
+          {STATS_ROWS.map((r, i) => (
+            <div key={r.label}>
+              <p className="font-mono text-2xl font-black tracking-tight text-white">
+                {vals[i]}
+                <span className="text-sm text-emerald-300">{r.suffix}</span>
+              </p>
+              <p className="mt-0.5 text-[10px] font-bold text-ink-dim">{r.label}</p>
+              <p className="text-[8.5px] leading-snug text-ink-faint">{r.note}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5 h-0.5 overflow-hidden rounded-full bg-white/8">
+          <div className="h-full bg-gradient-to-r from-emerald-300 to-cyan-300 transition-[width] duration-200" style={{ width: started ? "100%" : "0%" }} />
+        </div>
+        <p className="mt-2 text-center text-[9px] text-ink-faint">counts ease up once (IntersectionObserver), then stay put — metrics shouldn’t re-run on every scroll.</p>
+      </div>
+    </div>
+  );
+}
+
+const TEAM_ROLES = ["all", "design", "engine", "ops"] as const;
+const TEAM_PEOPLE = [
+  { name: "Ada Lin", role: "design", initials: "AL", hue: "#c4b5fd", blurb: "design systems" },
+  { name: "Miro Kade", role: "engine", initials: "MK", hue: "#67e8f9", blurb: "runtime & build" },
+  { name: "Temi Okafor", role: "engine", initials: "TO", hue: "#6ee7b7", blurb: "a11y tooling" },
+  { name: "Jonas Varga", role: "ops", initials: "JV", hue: "#fcd34d", blurb: "releases & docs" },
+  { name: "Rin Sato", role: "design", initials: "RS", hue: "#fda4af", blurb: "motion language" },
+  { name: "Nadia Haddad", role: "ops", initials: "NH", hue: "#7dd3fc", blurb: "community care" },
+] as const;
+
+function TeamGridFilter() {
+  const [role, setRole] = useState<(typeof TEAM_ROLES)[number]>("all");
+  const shown = TEAM_PEOPLE.filter((p) => role === "all" || p.role === role);
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(251,113,133,0.08),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">the people</p>
+          <div className="flex items-center gap-1 rounded-lg border border-white/8 bg-black/30 p-0.5">
+            {TEAM_ROLES.map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRole(r)}
+                aria-pressed={role === r}
+                className={`rounded-md px-2 py-1 text-[9px] font-bold capitalize ${role === r ? "bg-rose-400/20 text-rose-100" : "text-ink-faint hover:text-ink-dim"}`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          {shown.map((p, i) => (
+            <div
+              key={p.name}
+              className="flex flex-col items-center gap-1.5 rounded-xl border border-white/8 bg-white/4 px-2 py-3"
+              style={{ animation: `mf-pop .35s cubic-bezier(.34,1.56,.64,1) ${i * 40}ms both` }}
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-full text-[11px] font-black text-[#0b0c12]" style={{ background: p.hue }}>
+                {p.initials}
+              </span>
+              <span className="text-center text-[10px] font-bold leading-tight text-white">{p.name}</span>
+              <span className="text-[8px] text-ink-faint">{p.blurb}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-center text-[9px] text-ink-faint">
+          {shown.length} of {TEAM_PEOPLE.length} shown — filtering re-stamps cards with a 40ms pop so the change reads as one action.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const FAQ_PAIRS = [
+  { q: "Are the assets original?", a: "Every demo, token and copy block is authored in-house. Nothing is scraped from third-party libraries — that is the whole point of the library." },
+  { q: "Can I use them commercially?", a: "Yes. Every asset ships under MIT, including agency client work. The only thing you cannot do is resell the library itself as a product." },
+  { q: "Do demos ship with the code?", a: "Each component page carries the full React + CSS snippet and a design note. Figma tokens are a separate download on the Team plan." },
+  { q: "What about screen readers?", a: "The a11y pass is part of definition-of-done: live regions, keyboard paths and reduced-motion are tested, not bolted on." },
+] as const;
+
+function FaqTwoColumn() {
+  const [open, setOpen] = useState(0);
+  const cur = FAQ_PAIRS[open];
+  return (
+    <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(99,102,241,0.1),transparent_60%),#08090f] px-6">
+      <div className="grid w-full max-w-md grid-cols-[132px_minmax(0,1fr)] gap-3">
+        <div className="flex flex-col gap-1.5">
+          {FAQ_PAIRS.map((f, i) => (
+            <button
+              key={f.q}
+              type="button"
+              onClick={() => setOpen(i)}
+              aria-expanded={open === i}
+              className={`rounded-xl border px-3 py-2.5 text-left text-[10px] font-bold leading-snug transition-colors ${
+                open === i ? "border-indigo-300/40 bg-indigo-300/10 text-indigo-100" : "border-white/6 bg-white/3 text-ink-dim hover:border-white/15"
+              }`}
+            >
+              {f.q}
+            </button>
+          ))}
+        </div>
+        <div key={open} className="flex flex-col justify-center rounded-2xl border border-white/8 bg-white/4 px-5 py-6" style={{ animation: "mf-growin .3s ease-out both" }}>
+          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink-faint">answer {open + 1}/{FAQ_PAIRS.length}</span>
+          <p className="mt-2 text-[11.5px] leading-relaxed text-white/85">{cur.a}</p>
+          <div className="mt-4 flex items-center gap-2 text-[9px] text-ink-faint">
+            <span className="rounded-full border border-white/10 px-2 py-0.5">{cur.q.length < 22 ? "quick one" : "the long read"}</span>
+            <span>swap animates in place — no page jump</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ComparisonSlider() {
+  const track = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState(50);
+  const [drag, setDrag] = useState(false);
+  const moveTo = (clientX: number) => {
+    const el = track.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setPos(Math.max(4, Math.min(96, ((clientX - r.left) / r.width) * 100)));
+  };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(250,204,21,0.08),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">before / after</p>
+          <span className="font-mono text-[9px] text-ink-faint">{Math.round(pos)}%</span>
+        </div>
+        <div
+          ref={track}
+          role="slider"
+          aria-label="Comparison slider"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(pos)}
+          aria-orientation="horizontal"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowLeft" || e.key === "ArrowDown") setPos((p) => Math.max(4, p - 4));
+            if (e.key === "ArrowRight" || e.key === "ArrowUp") setPos((p) => Math.min(96, p + 4));
+          }}
+          onPointerDown={(e) => {
+            setDrag(true);
+            (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+            moveTo(e.clientX);
+          }}
+          onPointerMove={(e) => {
+            if (drag) moveTo(e.clientX);
+          }}
+          onPointerUp={() => setDrag(false)}
+          className="relative mt-3 h-48 w-full cursor-ew-resize touch-none overflow-hidden rounded-2xl border border-white/10 select-none"
+          style={{ touchAction: "none" }}
+        >
+          {/* after (colour) */}
+          <div className="absolute inset-0" aria-hidden style={{ background: "linear-gradient(135deg, hsl(262 80% 30%) 0%, hsl(199 90% 36%) 55%, hsl(172 80% 34%) 100%)" }}>
+            <div className="absolute inset-x-5 top-4 flex items-center gap-2">
+              <span className="rounded-full bg-black/30 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-100 backdrop-blur">after · aurora tokenised</span>
+            </div>
+            <p className="absolute inset-x-5 bottom-4 text-[10px] font-black tracking-tight text-white/90">one palette, four surfaces, no drift</p>
+          </div>
+          {/* before (flat) */}
+          <div className="absolute inset-0 overflow-hidden" aria-hidden style={{ width: `${pos}%` }}>
+            <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, hsl(220 12% 18%) 0%, hsl(222 10% 26%) 60%, hsl(215 8% 22%) 100%)", filter: "saturate(.25)" }}>
+              <div className="absolute inset-x-5 top-4 flex items-center gap-2">
+                <span className="rounded-full bg-black/40 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-white/70 backdrop-blur">before · six hand-picked hexes</span>
+              </div>
+              <p className="absolute inset-x-5 bottom-4 text-[10px] font-black tracking-tight text-white/40">every screen a slightly different grey</p>
+            </div>
+          </div>
+          {/* divider */}
+          <div className="absolute inset-y-0" aria-hidden style={{ left: `${pos}%`, transform: "translateX(-50%)" }}>
+            <div className="h-full w-[2px] bg-white/90 shadow-[0_0_14px_rgba(255,255,255,.6)]" />
+            <span className="absolute left-1/2 top-1/2 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/60 bg-black/60 text-[11px] text-white backdrop-blur">
+              ⇄
+            </span>
+          </div>
+        </div>
+        <p className="mt-3 text-center text-[9px] leading-relaxed text-ink-faint">
+          drag or arrow-key the divider — pointer-captured so the drag never leaves the handle behind. Both panes stay in the same box, so the diff reads honestly.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const TL_MILES = [
+  { when: "week 1", what: "Scaffold", text: "palette + type ramp agreed on real screens, not swatches." },
+  { when: "week 3", what: "Ship 8 inputs", text: "combo-box through radio-pills land with keyboard paths intact." },
+  { when: "week 6", what: "Motion pass", text: "signature scenes — odometer, confetti, liquid buttons — join." },
+  { when: "week 8", what: "a11y audit", text: "screen-reader tour finds 3 gaps; all three close same week." },
+  { when: "week 10", what: "Public launch", text: "the library opens with 39 originals and zero borrowed code." },
+] as const;
+
+function TimelineVertical() {
+  const scroller = useRef<HTMLDivElement>(null);
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">milestone rail — scroll to walk it</span>
+        <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] text-amber-200/80">10 weeks</span>
+      </div>
+      <div ref={scroller} className="relative min-h-0 flex-1 overflow-y-auto px-6 py-5">
+        <div className="relative mx-auto max-w-sm">
+          <span aria-hidden className="absolute bottom-2 left-[7px] top-2 w-px bg-gradient-to-b from-violet-400/60 via-cyan-300/40 to-transparent" />
+          <div className="space-y-4">
+            {TL_MILES.map((m, i) => (
+              <div key={m.what} className="relative flex gap-3.5">
+                <span className="relative z-10 mt-1 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border-2 border-cyan-300 bg-[#0a0c13]">
+                  <span className="h-1 w-1 rounded-full bg-cyan-300" />
+                </span>
+                <div
+                  className={`min-w-0 flex-1 rounded-xl border border-white/6 bg-white/3 px-3.5 py-2.5 transition-colors hover:border-white/15 ${i % 2 === 1 ? "sm:ml-6" : ""}`}
+                  style={{ animation: "mf-rise .45s ease-out both" }}
+                >
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-[11px] font-black tracking-tight text-white">{m.what}</span>
+                    <span className="shrink-0 font-mono text-[8.5px] uppercase tracking-[0.16em] text-ink-faint">{m.when}</span>
+                  </div>
+                  <p className="mt-1 text-[10px] leading-relaxed text-ink-dim">{m.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 
@@ -4995,6 +5433,8 @@ export const DEMO_KEYS = [
   "scroll-linked-hue-hero", "staggered-list-entrance", "shuffle-kenburns-gallery", "particle-trail-hero",
   "ink-stamp-appear", "gradient-border-flow", "ripple-reveal", "parallax-layered-scene",
   "scroll-vignette", "word-by-word-highlight", "shake-on-error-field", "bento-feature-grid",
+  "logo-wall-hover-pop", "testimonial-marquee", "pricing-table-three", "stats-band",
+  "team-grid-filter", "faq-two-column", "comparison-slider", "timeline-vertical",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -5090,6 +5530,14 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "word-by-word-highlight": return <WordHighlight />;
     case "shake-on-error-field": return <ShakeField />;
     case "bento-feature-grid": return <BentoFeatureGrid />;
+    case "logo-wall-hover-pop": return <LogoWallHoverPop />;
+    case "testimonial-marquee": return <TestimonialMarquee />;
+    case "pricing-table-three": return <PricingTableThree />;
+    case "stats-band": return <StatsBand />;
+    case "team-grid-filter": return <TeamGridFilter />;
+    case "faq-two-column": return <FaqTwoColumn />;
+    case "comparison-slider": return <ComparisonSlider />;
+    case "timeline-vertical": return <TimelineVertical />;
     default: return null;
   }
 }

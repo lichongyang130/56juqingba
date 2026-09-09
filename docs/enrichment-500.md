@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 48 / 500 shipped (batches 1–6, in order)
+## Progress — 56 / 500 shipped (batches 1–7, in order)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -60,11 +60,19 @@ names, behaviours and where they plug into the existing pages.
 | 46 | Word-by-word highlight | [/components/word-by-word-highlight](/components/word-by-word-highlight) |
 | 47 | Shake-on-error field | [/components/shake-on-error-field](/components/shake-on-error-field) |
 | 48 | Bento feature grid | [/components/bento-feature-grid](/components/bento-feature-grid) |
+| 49 | Logo wall with hover pop | [/components/logo-wall-hover-pop](/components/logo-wall-hover-pop) |
+| 50 | Testimonial marquee row | [/components/testimonial-marquee](/components/testimonial-marquee) |
+| 51 | Pricing table (three plans) | [/components/pricing-table-three](/components/pricing-table-three) |
+| 52 | Stats band | [/components/stats-band](/components/stats-band) |
+| 53 | Team grid with roles filter | [/components/team-grid-filter](/components/team-grid-filter) |
+| 54 | FAQ two-column | [/components/faq-two-column](/components/faq-two-column) |
+| 55 | Comparison slider (before/after) | [/components/comparison-slider](/components/comparison-slider) |
+| 56 | Timeline (vertical) | [/components/timeline-vertical](/components/timeline-vertical) |
 
 
 ---
 
-## 1. Component library — 70 ideas (48/70 shipped · catalog 39 → 85)
+## 1. Component library — 70 ideas (56/70 shipped · catalog 39 → 93)
 
 ### Form & input elements
 - **Combo box** ✅ (`combo-box`): text input with a live-filtered option list, keyboard navigation and a "no matches" row — slots into every filter on the site.
@@ -123,14 +131,14 @@ names, behaviours and where they plug into the existing pages.
 
 ### Sections
 - **Bento feature grid** ✅ (`bento-feature-grid`): asymmetric feature tiles with an interactive centrepiece.
-- **Logo wall with hover pop**: sponsor logos that lift and colourise on hover.
-- **Testimonial marquee row**: the classic dual-row counter-scroll, pausable on hover.
-- **Pricing table (three plans)**: feature comparison with a "most popular" glow and toggle.
-- **Stats band**: headline metrics with odometer counts and per-stat footnotes.
-- **Team grid with roles filter**: filterable people grid (port the spotlight cursor in as an option).
-- **FAQ two-column**: question list left, answer panel right with animated swap.
-- **Comparison slider (before/after)**: draggable divider over two visuals.
-- **Timeline (vertical)**: milestone rail with alternating cards and scroll reveal.
+- **Logo wall with hover pop** ✅ (`logo-wall-hover-pop`): sponsor logos that lift and colourise on hover.
+- **Testimonial marquee row** ✅ (`testimonial-marquee`): the classic dual-row counter-scroll, pausable on hover.
+- **Pricing table (three plans)** ✅ (`pricing-table-three`): feature comparison with a "most popular" glow and toggle.
+- **Stats band** ✅ (`stats-band`): headline metrics with count-up-once numbers and per-stat footnotes.
+- **Team grid with roles filter** ✅ (`team-grid-filter`): filterable people grid with role chips.
+- **FAQ two-column** ✅ (`faq-two-column`): question list left, answer panel right with animated swap.
+- **Comparison slider (before/after)** ✅ (`comparison-slider`): draggable divider over two visuals.
+- **Timeline (vertical)** ✅ (`timeline-vertical`): milestone rail with breathing cards and gradient spine.
 - **Newsletter band with tiers**: email capture with frequency choice pills ("weekly digest / launch only").
 - **Hero with product mock frame**: a browser-chrome frame containing a mini UI — the classic dev-tool hero.
 - **Split feature rows**: image/text alternating rows with scroll-fade and hover zoom on image.

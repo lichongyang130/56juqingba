@@ -1387,6 +1387,156 @@ const [val, setVal] = useState(64); // revenue pace knob
 .bento--feature { grid-column: 1 / -1; }
 /* accent is one variable so calm ↔ festive is a single swap */`,
   },
+  "logo-wall-hover-pop": {
+    react: `// React — one hot key, one raised tile
+const [hot, setHot] = useState(null);
+{logos.map(l => (
+  <button key={l.name} aria-label={l.name}
+    onMouseEnter={() => setHot(l.name)}
+    onMouseLeave={() => setHot(null)}
+    className={hot === l.name ? "logo hot" : "logo"}>
+    <span aria-hidden>{l.mark}</span>
+    <span>{l.name}</span>
+  </button>
+))}`,
+    css: `.logo { display: flex; flex-direction: column; gap: 6px;
+  align-items: center; padding: 12px 4px; border-radius: 12px;
+  border: 1px solid transparent; transition: all .2s ease; }
+.logo.hot { transform: translateY(-4px);
+  border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.06);
+  box-shadow: 0 14px 30px rgba(0,0,0,.4); }
+.logo mark { transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
+/* min 44px tall targets — the wall is hover theatre, not a minefield */`,
+  },
+  "testimonial-marquee": {
+    react: `// React — pause on hover is two CSS states
+<div onMouseEnter={() => setPaused(true)}
+     onMouseLeave={() => setPaused(false)}>
+  <div className="marquee" style={{ animationPlayState: paused ? "paused" : "running" }}>
+    {[...row, ...row].map((t, i) => <span key={i}>{t}</span>)}
+  </div>
+</div>
+// content duplicated 2× so a -50% translate loops seamlessly;
+// edge fade via mask-image, reverse direction on the quote row`,
+    css: `@keyframes mf-marquee { from { transform: translateX(0) }
+  to { transform: translateX(-50%) } }
+.marquee { display: flex; gap: 10px; width: max-content;
+  animation: mf-marquee 26s linear infinite; }
+.marquee--reverse { animation-direction: reverse; }
+.marquee-mask { mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+@media (prefers-reduced-motion: reduce) { .marquee { animation: none; flex-wrap: wrap } }`,
+  },
+  "pricing-table-three": {
+    react: `// React — billing state drives every price
+const [yearly, setYearly] = useState(false);
+{plans.map(pl => (
+  <article className={pl.pop ? "card pop" : "card"}>
+    <h3>{pl.name}</h3>
+    <p className="price">\${yearly ? pl.priceY : pl.priceM}<small>/mo</small></p>
+    <ul>{pl.feats.map(f => <li>{f}</li>)}</ul>
+    <button>{pl.priceM === 0 ? "Start free" : "Choose " + pl.name}</button>
+  </article>
+))}
+// yearly flag is a single state; prices are data, never strings`,
+    css: `.card { border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 10px; }
+.card.pop { border-color: color-mix(in srgb, var(--color-mint) 40%, transparent);
+  background: color-mix(in srgb, var(--color-mint) 8%, transparent);
+  box-shadow: 0 0 36px color-mix(in srgb, var(--color-mint) 18%, transparent); }
+.price { transition: none; } /* numbers swap instantly — no fake counting */
+.badge { position: absolute; top: -8px; left: 50%; translate: -50%; }`,
+  },
+  "stats-band": {
+    react: `// React — count up once, driven by one observer
+const [started, setStarted] = useState(false);
+useEffect(() => {
+  const io = new IntersectionObserver(es => es.forEach(en =>
+    en.isIntersecting && setStarted(true)), { threshold: 0.5 });
+  io.observe(ref.current);
+  return () => io.disconnect();
+}, []);
+// when started: rAF from 0 → target with cubic ease-out, ~1.4s,
+// then stop. Numbers never re-run on re-scroll — metrics that
+// recount on every scroll read as fake`,
+    css: `.stat-value { font-variant-numeric: tabular-nums; }
+/* use <p> text, not aria-live, for the counters — SR users get
+   the final number once via the label text, not a 1.4s count */`,
+  },
+  "team-grid-filter": {
+    react: `// React — filter to an array, then restamp
+const shown = people.filter(p => role === "all" || p.role === role);
+{shown.map((p, i) => (
+  <article key={p.name} style={{ animation: \`mf-pop .35s \${i * 40}ms both\` }}>
+    <Avatar initials={p.initials} hue={p.hue} />
+    <h3>{p.name}</h3><p>{p.blurb}</p>
+  </article>
+))}
+// keying by person (not index) keeps filters stable for SR`,
+    css: `.filter-chip { border-radius: 8px; padding: 4px 8px; font-size: 10px; }
+.filter-chip[aria-pressed="true"] { background: rgba(251,113,133,.2); color: #ffe4e6; }
+@keyframes mf-pop { 0% { transform: scale(.6); opacity: 0 }
+  65% { transform: scale(1.05) } 100% { transform: none; opacity: 1 } }`,
+  },
+  "faq-two-column": {
+    react: `// React — list + one answer panel
+const [open, setOpen] = useState(0);
+<div className="faq">
+  <nav>{pairs.map((f, i) =>
+    <button aria-expanded={open === i} onClick={() => setOpen(i)}>{f.q}</button>)}
+  </nav>
+  <section key={open} className="answer">
+    {pairs[open].a}
+  </section>
+</div>
+// re-keying the panel restarts its entrance — in-place swap, no jump`,
+    css: `.faq { display: grid; grid-template-columns: 132px 1fr; gap: 12px; }
+.question { border: 1px solid rgba(255,255,255,.06); border-radius: 12px;
+  padding: 10px 12px; text-align: left; font-size: 10px; }
+.question[aria-expanded="true"] { border-color: rgba(165,180,252,.4);
+  background: rgba(165,180,252,.1); color: #e0e7ff; }
+.answer { animation: mf-growin .3s ease-out both; }`,
+  },
+  "comparison-slider": {
+    react: `// React — a real slider role, not a div game
+const [pos, setPos] = useState(50);
+<div role="slider" tabIndex={0} aria-valuenow={Math.round(pos)}
+  aria-valuemin={0} aria-valuemax={100}
+  onPointerDown={e => { setDrag(true); e.currentTarget.setPointerCapture(e.pointerId); }}
+  onPointerMove={e => drag && setPos(clamp(e.clientX))}
+  onKeyDown={e => (e.key === "ArrowLeft" || e.key === "ArrowRight") && nudge(e.key)}>
+  <div className="after" />
+  <div className="before" style={{ width: pos + "%" }} />
+</div>
+// pointer capture keeps the drag glued even when the cursor
+// outruns the handle — arrows make it keyboard-true`,
+    css: `.cmp { position: relative; touch-action: none; cursor: ew-resize; }
+.before { position: absolute; inset: 0 auto 0 0; overflow: hidden; }
+.after { position: absolute; inset: 0; }
+.rail { position: absolute; inset-block: 0; width: 2px;
+  background: #fff; box-shadow: 0 0 14px rgba(255,255,255,.6); }`,
+  },
+  "timeline-vertical": {
+    react: `// React — the spine is one gradient line, milestones float beside it
+<div className="rail">
+  <span className="spine" aria-hidden />
+  {miles.map(m => (
+    <li className="mile">
+      <span className="dot" aria-hidden />
+      <article>
+        <h3>{m.what}</h3>
+        <time>{m.when}</time>
+        <p>{m.text}</p>
+      </article>
+    </li>
+  ))}
+</div>
+// scroll-reveal optional; the rail works without it`,
+    css: `.rail { position: relative; }
+.spine { position: absolute; top: 8px; bottom: 8px; left: 7px; width: 1px;
+  background: linear-gradient(180deg, #a78bfa, #67e8f9 60%, transparent); }
+.mile { position: relative; display: flex; gap: 14px; }
+.dot { z-index: 1; width: 14px; height: 14px; border-radius: 99px;
+  border: 2px solid #67e8f9; background: var(--canvas, #0a0c13); }`,
+  },
 };
 
 const FALLBACK = {
@@ -1745,6 +1895,46 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     why: "A bento grid reads as a product dashboard even in a marketing context: asymmetric tiles imply real data without a screenshot.",
     idea: "One live centrepiece (a chart with a knob) makes the grid interactive theatre — satellites stay static so the eye knows where the action is.",
     skip: "Bento collapses under more than ~7 tiles or long labels; if a tile needs a paragraph, it's not a tile, it's a section.",
+  },
+  "logo-wall-hover-pop": {
+    why: "A logo wall is social proof that most visitors scan in a second — the hover pop gives that scan a moment of delight without turning the row into a light show.",
+    idea: "Only the hovered tile moves; quiet neighbours make the one in motion meaningful. Monogram text keeps the wall honest on small screens.",
+    skip: "If the logos are actual client brands, link them (nofollow) and keep the pop subtle — the wall sells trust, not your CSS skills.",
+  },
+  "testimonial-marquee": {
+    why: "A wall of quotes is static furniture; two rows drifting opposite directions make the same quotes feel alive and 'in use'.",
+    idea: "Duplicated content with a -50% translate is the cheapest seamless loop there is, and hovering anywhere to pause respects readers mid-quote.",
+    skip: "Never autoplay a marquee near a real CTA, and hide the duplicated content from screen readers — one reading of each quote is enough.",
+  },
+  "pricing-table-three": {
+    why: "Pricing is the one page where hesitation is expensive; three equal-weight plans plus a clear popular option answer the 'which one' question in one glance.",
+    idea: "A yearly toggle that re-prices everything from one state beats two side-by-side tables — the comparison happens in place.",
+    skip: "Don't bury the free plan or fake-urgent the popular one; if the free tier is the real product, give it the glow.",
+  },
+  "stats-band": {
+    why: "Numbers are the fastest proof on a landing page, but only if they read as measured — footnotes and honest formatting do that work.",
+    idea: "Count up exactly once when the band scrolls into view, then stop; metrics that re-animate on every scroll read as decorative.",
+    skip: "If you can't footnote a metric, cut it — an unexplained 98% invites distrust faster than no stat at all.",
+  },
+  "team-grid-filter": {
+    why: "A people page is a trust page; filtering by role turns a static grid into a navigable org chart for visitors hunting a contact.",
+    idea: "Re-stamp the visible cards with a short pop on filter change so the difference between before and after is felt, not inferred.",
+    skip: "Empty states after a filter are failures — every role should have at least two people or the chip shouldn't exist.",
+  },
+  "faq-two-column": {
+    why: "FAQ pages usually hide answers behind accordions; a two-column layout shows one full answer at all times, which kills the 'am I missing something?' feeling.",
+    idea: "Re-key the answer panel on selection so its entrance restarts — a swap in place reads as one motion, not a page jump.",
+    skip: "On narrow screens force the columns to stack; two compressed columns of text are harder to read than one honest list.",
+  },
+  "comparison-slider": {
+    why: "Before/after is the strongest proof format for visual products — but only when the divider is an honest tool, not a screenshot montage.",
+    idea: "Make it a real slider: pointer capture during drag, arrow-key support, aria-valuenow. A comparison you can't keyboard is a gif with extra steps.",
+    skip: "Never rig the divider to rest at the most flattering position — users will drag it anyway and the trust loss is permanent.",
+  },
+  "timeline-vertical": {
+    why: "A vertical timeline lets a story (roadmap, case study, changelog) keep its chronology while cards breathe beside a single spine.",
+    idea: "Alternate emphasis rather than alternating sides on small screens — one rail, consistent rhythm, and the 'when' chip always visible.",
+    skip: "If your milestones are all the same weight, a numbered list beats a timeline — the rail promises progression, not just order.",
   },
 };
 
