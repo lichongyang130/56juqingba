@@ -30,6 +30,8 @@ export const REAL_VIOLET = "#8b5cf6";
 export const REAL_VIOLET_DEEP = "#7c3aed";
 export const REAL_CYAN = "#22d3ee";
 export const REAL_MINT = "#34d399";
+export const REAL_AMBER = "#fbbf24";
+export const REAL_DANGER = "#f87171";
 
 /** Studio sample surfaces (what the mock previews actually paint on). */
 export function studioSurfaces(mode: Tokens["mode"]) {

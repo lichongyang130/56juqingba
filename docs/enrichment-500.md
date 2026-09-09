@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 313 / 500 shipped (batches 1–42, in order) · Sections 1–9 complete ✅ · Section 10 14/20 ✅
+## Progress — 319 / 500 shipped (batches 1–43, in order) · Sections 1–10 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -325,6 +325,12 @@ names, behaviours and where they plug into the existing pages.
 | 311 | Theme Studio — original default case study | [/studio](/studio) |
 | 312 | Theme Studio — real-component theming recipe | [/studio](/studio) |
 | 313 | Theme Studio — colour-blind simulation | [/studio](/studio) |
+| 314 | Theme Studio — semantic token map | [/studio](/studio) |
+| 315 | Theme Studio — motion tokens | [/studio](/studio) |
+| 316 | Theme Studio — spacing scale explorer | [/studio](/studio) |
+| 317 | Theme Studio — iconography token set | [/studio](/studio) |
+| 318 | Theme Studio — theme API preview | [/studio](/studio) |
+| 319 | Theme Studio — reset-theme escape hatch | [/studio](/studio) |
 
 ---
 
@@ -709,7 +715,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 10. Theme Studio & design tokens — 20 upgrades
+## 10. Theme Studio & design tokens — 20 upgrades — complete (20/20 shipped ✅)
 
 - **Real token editor** ✅ (`/studio` live editor + catalog previews): edit accent/hues/radii in the Lab and see catalog-wide previews.
 - **Token diff view** ✅ (+/- CSS token lines per tweak): show what changed in code when you tweak one value.
@@ -725,12 +731,12 @@ names, behaviours and where they plug into the existing pages.
 - **Original default defence** ✅ (case study on [/studio](/studio)): Motif's own violet/cyan/mint explained as a case study.
 - **Theming a real component** ✅ (Halo Button recipe on [/studio](/studio)): step-through showing which tokens change which layers.
 - **Colour-blind simulation** ✅ (CVD filters on [/studio](/studio)): preview a theme under protanopia/deuteranopia filters.
-- **Semantic token map**: colour → role (accent, positive, warning) with usage counts.
-- **Motion tokens**: durations and easings as named tokens with Lab previews.
-- **Spacing scale explorer**: 4/8-based rhythm with visual rulers.
-- **Iconography token set**: stroke weight and corner radius controls.
-- **Theme API preview**: the future Theme Studio endpoint's JSON shape.
-- **Reset-theme escape hatch**: prove every theme is undoable in one click.
+- **Semantic token map** ✅ (live role table on [/studio](/studio)): colour → role (accent, positive, warning) with usage counts.
+- **Motion tokens** ✅ (playable dot preview on [/studio](/studio)): durations and easings as named tokens with Lab previews.
+- **Spacing scale explorer** ✅ (ruler + live effect on [/studio](/studio)): 4/8-based rhythm with visual rulers.
+- **Iconography token set** ✅ (live sliders on [/studio](/studio)): stroke weight and corner radius controls.
+- **Theme API preview** ✅ (spec preview on [/studio](/studio)): the future Theme Studio endpoint's JSON shape.
+- **Reset-theme escape hatch** ✅ (one-click reset on [/studio](/studio)): prove every theme is undoable in one click.
 
 ---
 

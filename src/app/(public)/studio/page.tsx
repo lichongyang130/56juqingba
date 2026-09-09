@@ -19,6 +19,14 @@ import {
   SavedThemesPanel,
   ThemePreviewPanel,
 } from "@/components/studio-panels";
+import {
+  ApiPreviewPanel,
+  IconPanel,
+  MotionPanel,
+  ResetPanel,
+  SemanticMapPanel,
+  SpacingPanel,
+} from "@/components/studio-panels-2";
 
 const PRESETS: (Tokens & { id: string; label: string; note: string })[] = [
   { id: "violet", label: "Motif Violet", hue: 262, sat: 82, radius: 12, mode: "dark", note: "the house default — calm, generative" },
@@ -68,20 +76,36 @@ function TokenStudio() {
   const [typeRatio, setTypeRatio] = useState(1.25);
   const [saved, setSaved] = useState<string | null>(null);
   const [fromLink, setFromLink] = useState(false);
+  const [edits, setEdits] = useState(0);
+  const [trail, setTrail] = useState<string[]>([]);
 
   const apply = (patch: Partial<Tokens>) => {
     setPrev(tokens);
     setTokens((t) => ({ ...t, ...patch }));
+    setEdits((e) => e + 1);
   };
 
-  const applyTokens = (t: Tokens) => {
+  const applyTokens = (t: Tokens, label = "saved theme") => {
     setPrev(tokens);
     setTokens(t);
+    setEdits((e) => e + 1);
+    setTrail((tr) => [label, ...tr].slice(0, 5));
   };
 
   const applyPreset = (p: (typeof PRESETS)[number]) => {
     setPrev(tokens);
     setTokens({ hue: p.hue, sat: p.sat, radius: p.radius, mode: p.mode });
+    setEdits((e) => e + 1);
+    setTrail((tr) => [p.label, ...tr].slice(0, 5));
+  };
+
+  const resetTheme = () => {
+    setPrev(tokens);
+    setTokens({ ...DEFAULT_TOKENS });
+    setRotating(false);
+    setEdits(0);
+    setTrail([]);
+    setSaved(null);
   };
 
   /* share-link load: ?hue=&sat=&radius=&mode= — applied once at mount */
@@ -379,7 +403,7 @@ function TokenStudio() {
         </div>
       </div>
 
-      {/* batch 42 — export, guardrail, gallery + colour-blind sim, saved themes, default trio, component recipe */}
+      {/* batch 42–43 — export, guardrail, gallery + colour-blind sim, saved themes, default trio, component recipe, semantic map, motion, spacing, iconography, API preview, reset */}
       <div className="mt-8 space-y-8">
         <ExportPanel tokens={tokens} />
         <GuardrailPanel tokens={tokens} />
@@ -387,6 +411,12 @@ function TokenStudio() {
         <SavedThemesPanel tokens={tokens} onApply={applyTokens} />
         <DefaultsCasePanel />
         <RecipePanel tokens={tokens} />
+        <SemanticMapPanel />
+        <MotionPanel tokens={tokens} />
+        <SpacingPanel />
+        <IconPanel tokens={tokens} />
+        <ApiPreviewPanel />
+        <ResetPanel tokens={tokens} edits={edits} trail={trail} onReset={resetTheme} />
       </div>
 
       {/* token export line */}
