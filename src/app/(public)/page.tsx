@@ -356,6 +356,9 @@ export default function HomePage() {
               </span>
               Next content push: <b className="text-ink">Thu · +31 assets + 12 prompts</b>
             </div>
+            <Link href="/digest" className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-violet-300 transition-colors hover:text-violet-200">
+              Read this week&apos;s full digest <span aria-hidden>→</span>
+            </Link>
           </div>
           <ol className="relative space-y-0 border-l border-white/8 pl-6">
             {CHANGELOG.slice(0, 6).map((e) => (

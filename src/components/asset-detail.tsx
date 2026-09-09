@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DemoView } from "@/components/demos/Demo";
 import { AssetCard, CopyCount, Stage } from "@/components/cards";
 import CourseRail from "@/components/course-rail";
@@ -2341,6 +2341,70 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
   }, [asset, snippet]);
   const accentColor = accentCss(asset.slug, 85, 68);
 
+  /* deep-linkable theme + variant state (#274) */
+  const buildParams = (hue: number, vals: Record<string, number | string | boolean>): string => {
+    const p = new URLSearchParams();
+    if (hue !== 262) p.set("hue", String(hue));
+    for (const pr of asset.props) {
+      const cur = vals[pr.name] ?? pr.defaultValue;
+      if (cur !== pr.defaultValue) p.set(pr.name, String(cur));
+    }
+    const qs = p.toString();
+    try {
+      return `${window.location.pathname}${qs ? `?${qs}` : ""}`;
+    } catch {
+      return `?${qs}`;
+    }
+  };
+  const syncUrl = (hue: number, vals: Record<string, number | string | boolean>) => {
+    try {
+      window.history.replaceState(null, "", buildParams(hue, vals));
+    } catch {
+      /* sandboxed */
+    }
+  };
+  const applyHue = (h: number) => {
+    setThemeHue(h);
+    syncUrl(h, props);
+  };
+  const applyProp = (name: string, v: number | string | boolean) => {
+    const next = { ...props, [name]: v };
+    setProps(next);
+    syncUrl(themeHue, next);
+  };
+
+  /* hydrate theme + variant knobs from the shareable URL once, after mount */
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      try {
+        const sp = new URLSearchParams(window.location.search);
+        const rawHue = Number(sp.get("hue"));
+        const hue = Number.isFinite(rawHue) ? Math.min(360, Math.max(0, Math.round(rawHue))) : null;
+        const next: Record<string, number | string | boolean> = {};
+        let hasProp = false;
+        for (const pr of asset.props) {
+          const raw = sp.get(pr.name);
+          if (raw === null) continue;
+          if (typeof pr.defaultValue === "boolean") next[pr.name] = raw === "true";
+          else if (typeof pr.defaultValue === "number") {
+            const n = Number(raw);
+            if (!Number.isFinite(n)) continue;
+            next[pr.name] = n;
+          } else {
+            if (pr.options && !pr.options.includes(raw)) continue;
+            next[pr.name] = raw;
+          }
+          hasProp = true;
+        }
+        if (hue !== null) setThemeHue(hue);
+        if (hasProp) setProps((prev) => ({ ...prev, ...next }));
+      } catch {
+        /* ignore malformed links */
+      }
+    });
+    return () => cancelAnimationFrame(id);
+  }, [asset]);
+
   const copy = async (label: string, text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -2402,7 +2466,17 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
               <span className="text-[11px] font-bold uppercase tracking-widest text-ink-faint">
                 Live playground — drag, click, hover
               </span>
-              <span className="chip !text-[10px]">sandboxed preview</span>
+              <span className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => copy("link copied", `${window.location.origin}${buildParams(themeHue, props)}`)}
+                  className="rounded-lg px-2.5 py-1 text-[10px] font-bold text-ink-dim transition-colors hover:bg-white/5 hover:text-ink"
+                  title="Copy a shareable link that preserves this theme and variant"
+                >
+                  {copied === "link copied" ? "link copied ✓" : "🔗 share link"}
+                </button>
+                <span className="chip !text-[10px]">sandboxed preview</span>
+              </span>
             </div>
             <Stage className="rounded-2xl">
               <DemoView demo={asset.demo} props={props} />
@@ -2420,7 +2494,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
                 <span className="shrink-0">Ambience</span>
                 <input
                   type="range" min={0} max={360} value={themeHue}
-                  onChange={(e) => setThemeHue(Number(e.target.value))}
+                  onChange={(e) => applyHue(Number(e.target.value))}
                   className="w-36 md:w-44"
                   aria-label="Ambience hue"
                 />
@@ -2438,7 +2512,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
                   <button
                     key={v.label}
                     type="button"
-                    onClick={() => setThemeHue(v.h)}
+                    onClick={() => applyHue(v.h)}
                     aria-label={`${v.label} ambience`}
                     title={v.label}
                     className={`h-5 w-5 rounded-full border transition-transform hover:scale-110 ${
@@ -2520,7 +2594,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
               )}
               {asset.props.map((p) => {
                 const val = props[p.name];
-                const set = (v: number | string | boolean) => setProps((prev) => ({ ...prev, [p.name]: v }));
+                const set = (v: number | string | boolean) => applyProp(p.name, v);
                 return (
                   <div key={p.name}>
                     <div className="flex items-center justify-between text-xs">
@@ -2642,6 +2716,34 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
           <TemplateKitMore asset={asset} cssCode={snippet.css} />
         </>
       )}
+
+      {/* next / previous trail between catalog siblings */}
+      {(() => {
+        const idx = COMPONENTS.findIndex((c) => c.slug === asset.slug);
+        const prev = idx > 0 ? COMPONENTS[idx - 1] : null;
+        const next = idx >= 0 && idx < COMPONENTS.length - 1 ? COMPONENTS[idx + 1] : null;
+        if (!prev && !next) return null;
+        return (
+          <div className="mt-16 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/6 bg-white/[.02] px-5 py-4">
+            {prev ? (
+              <Link href={`/components/${prev.slug}`} className="group min-w-0 max-w-[46%]">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink-faint">← Previous in the library</p>
+                <p className="mt-1 truncate text-sm font-extrabold text-ink-dim transition-colors group-hover:text-ink">{prev.title}</p>
+              </Link>
+            ) : (
+              <span />
+            )}
+            {next ? (
+              <Link href={`/components/${next.slug}`} className="group min-w-0 max-w-[46%] text-right">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink-faint">Next in the library →</p>
+                <p className="mt-1 truncate text-sm font-extrabold text-ink-dim transition-colors group-hover:text-ink">{next.title}</p>
+              </Link>
+            ) : (
+              <span />
+            )}
+          </div>
+        );
+      })()}
 
       {/* related */}
       <div className="mt-16">

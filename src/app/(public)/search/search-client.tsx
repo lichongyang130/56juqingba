@@ -131,6 +131,11 @@ function fmtCount(n: number): string {
   return n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : String(n);
 }
 
+function fresh30(date: string): boolean {
+  const cut = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  return new Date(date).getTime() >= cut;
+}
+
 /* ---------------- results model ---------------- */
 
 type CompHit = { item: Asset; aliasOnly: boolean; fuzzyWord?: string };
@@ -293,6 +298,12 @@ export default function SearchExplorer({
     if (stack !== "All") list = list.filter((c) => c.item.stack.includes(stack as Asset["stack"][number]));
     if (sort === "newest") list.sort((a, b) => b.item.published.localeCompare(a.item.published));
     else if (sort === "lightest") list.sort((a, b) => a.item.bundleKb - b.item.bundleKb);
+    else if (sort === "fresh30")
+      list.sort((a, b) => {
+        const fa = fresh30(a.item.published) ? 0 : 1;
+        const fb = fresh30(b.item.published) ? 0 : 1;
+        return fa - fb || (a.item.published < b.item.published ? 1 : -1);
+      });
     else list.sort((a, b) => b.item.copies - a.item.copies);
     return list;
   }, [state, sort, stack]);
@@ -576,6 +587,7 @@ export default function SearchExplorer({
                   <option value="best" className="bg-panel">Best (copies)</option>
                   <option value="newest" className="bg-panel">Newest</option>
                   <option value="lightest" className="bg-panel">Lightest (KB)</option>
+                  <option value="fresh30" className="bg-panel">Fresh — new in 30d</option>
                 </select>
               </div>
             )}

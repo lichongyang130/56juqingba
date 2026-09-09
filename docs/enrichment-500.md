@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 267 / 500 shipped (batches 1–36, in order) · Sections 1–7 complete ✅
+## Progress — 279 / 500 shipped (batches 1–37, in order) · Sections 1–8 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -279,6 +279,20 @@ names, behaviours and where they plug into the existing pages.
 | 265 | Search — result meta chips | [/search?q=glass](/search?q=glass) |
 | 266 | Search — keyboard-first results | [/search](/search) |
 | 267 | Search — URL-synced filters | [/search?type=components&sort=newest](/search?type=components&sort=newest) |
+| 268 | Catalog — save a component set | [/components?stack=halo-button,glass-pricing](/components?stack=halo-button,glass-pricing) |
+| 269 | Catalog — browse by collection | [/components](/components) |
+| 270 | Discovery — live counts on filter chips | [/components](/components) · [/templates](/templates) · [/search#scope-tabs](/search#scope-tabs) |
+| 271 | Fresh-within-30d sort | [/components](/components) · [/search?sort=fresh30](/search?sort=fresh30) |
+| 272 | View-density toggle (cards ⇄ rows) | [/components](/components) |
+| 273 | Colour-first filter | [/components](/components) |
+| 274 | Zero-dependency filter | [/components](/components) |
+| 275 | Random asset button | [/components](/components) |
+| 276 | Shareable asset links (theme + variants) | [/components/prism-switch?hue=330](/components/prism-switch?hue=330) |
+| 277 | Next/prev asset trail | [/components/prism-switch](/components/prism-switch) |
+| 278 | Discovery via Learn — practice assets | [/learn/hero-that-breathes-in-20-min](/learn/hero-that-breathes-in-20-min) |
+| 279 | Weekly digest archive route | [/digest](/digest) |
+
+
 
 
 
@@ -616,7 +630,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 8. Discovery, search & browsing — 20 refinements
+## 8. Discovery, search & browsing — 20 refinements ✅
 
 - **Save searches** ✅ (`/search#saved-searches`): persist recent queries as chips on /search (localStorage).
 - **Search scoped by type** ✅ (`/search#scope-tabs`): tab the results into Components/Prompts/Guides before typing.
@@ -626,18 +640,18 @@ names, behaviours and where they plug into the existing pages.
 - **Result meta chips** ✅ (kind · stack · KB · copies): show kind, stack and size right in search rows.
 - **Keyboard-first search** ✅ (↑/↓ + Enter): ↑/↓ to move, Enter to open the highlighted result.
 - **URL-synced filters** ✅ (q · type · sort · stack): every kind/stack/sort filter lands in the query string for shareable links.
-- **Save a component set**: multi-select cards into a "stack" you can share as a build recipe.
-- **Browse by collection**: editorial lists ("Landing heroes", "Dark SaaS", "Under 5KB").
-- **Counts everywhere**: totals shown per filter chip, updated live (started on /components).
-- **Sort by new-within-30d**: freshness sort that weighs recency not raw date.
-- **View-density toggle**: switch between rich cards and compact list rows on catalog pages.
-- **Colour-first filter**: pick a hue and see assets whose accent matches.
-- **Zero-stack filter**: filter to dependency-free assets only.
-- **Random asset button**: a curated "surprise me" that teaches breadth.
-- **Shareable asset links**: deep link with theme + variant state preserved.
-- **Next/prev asset trail**: foot-of-page navigation between catalog siblings on detail pages.
-- **Discovery via Learn**: each essay ends with assets that practice its lesson (started — widen it).
-- **Weekly digest page**: "this week at Motif" as a real archive route, not only a homepage section.
+- **Save a component set** ✅ (`/components` → Build a stack): multi-select cards into a "stack" you can share as a build recipe.
+- **Browse by collection** ✅ (`/components` → Collections): editorial lists ("Landing heroes", "Dark SaaS", "Under 5KB").
+- **Counts everywhere** ✅ (search tabs · catalog chips · template moods): totals shown per filter chip, updated live (started on /components).
+- **Sort by new-within-30d** ✅ (`fresh30` on catalog + search): freshness sort that weighs recency not raw date.
+- **View-density toggle** ✅ (rich cards ⇄ compact rows): switch between rich cards and compact list rows on catalog pages.
+- **Colour-first filter** ✅ (hue chips on catalog): pick a hue and see assets whose accent matches.
+- **Zero-stack filter** ✅ (`zero-dep` chip): filter to dependency-free assets only.
+- **Random asset button** ✅ (🎲 Surprise me): a curated "surprise me" that teaches breadth.
+- **Shareable asset links** ✅ (`?hue=` + prop params, copy button): deep link with theme + variant state preserved.
+- **Next/prev asset trail** ✅ (detail-page footer): foot-of-page navigation between catalog siblings on detail pages.
+- **Discovery via Learn** ✅ (essays end with practice assets): each essay ends with assets that practice its lesson (started — widen it).
+- **Weekly digest page** ✅ (`/digest` archive): "this week at Motif" as a real archive route, not only a homepage section.
 
 ---
 

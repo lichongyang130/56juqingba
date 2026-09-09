@@ -2,7 +2,19 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { COMPONENTS } from "@/lib/data";
 import { learnArticleOf } from "@/lib/learn";
+import type { Asset } from "@/lib/types";
+
+/* essay → practice-asset matching: overlap article tags, then lesson keywords */
+function practiceScore(c: Asset, tags: string[], keywords: string[]): number {
+  let score = c.tags.filter((t) => tags.includes(t)).length;
+  for (const w of keywords) {
+    if (c.title.toLowerCase().includes(w)) score += 2;
+    else if (c.description.toLowerCase().includes(w) || c.tags.some((t) => t.includes(w))) score += 1;
+  }
+  return score;
+}
 
 function CodeBlock({ code }: { code: { title?: string; lang: string; text: string } }) {
   const [copied, setCopied] = useState(false);
@@ -114,6 +126,40 @@ export default function LearnArticleView({ slug }: { slug: string }) {
           </section>
         ))}
       </article>
+
+      {/* practice assets — every essay ends with library assets that do the lesson */}
+      <div className="mt-12 rounded-3xl border border-emerald-300/15 bg-emerald-400/[.04] p-6">
+        <div className="text-xs font-bold uppercase tracking-widest text-emerald-300">Practise the lesson</div>
+        <p className="mt-2 text-[13px] leading-relaxed text-ink-dim">
+          Theory sticks when you ship it. These original Motif assets put this guide&apos;s lesson to work —
+          open one and copy it into your own page.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {(() => {
+            const keywords = (article.title + " " + article.deck + " " + article.tags.join(" "))
+              .toLowerCase()
+              .split(/[^a-z]+/)
+              .filter((w) => w.length >= 5);
+            const scored = COMPONENTS.map((c) => ({ c, s: practiceScore(c, article.tags, keywords) }))
+              .filter((x) => x.s > 0)
+              .sort((a, b) => b.s - a.s || b.c.copies - a.c.copies)
+              .slice(0, 3);
+            const picks = scored.length
+              ? scored
+              : [...COMPONENTS].sort((a, b) => b.copies - a.copies).slice(0, 3).map((c) => ({ c, s: 0 }));
+            return picks.map(({ c, s }) => (
+              <Link
+                key={c.slug}
+                href={`/components/${c.slug}`}
+                className="chip !cursor-pointer !border-emerald-300/25 !text-[11px] !text-emerald-100/90 transition-colors hover:!border-emerald-300/50"
+              >
+                {c.title}
+                {s > 0 && <span className="ml-1.5 rounded-full bg-emerald-300/15 px-1.5 py-px text-[9px] uppercase tracking-wider">practice</span>}
+              </Link>
+            ));
+          })()}
+        </div>
+      </div>
 
       <div className="mt-12 rounded-3xl border border-white/8 bg-panel p-6">
         <div className="text-xs font-bold uppercase tracking-widest text-ink-faint">Keep learning</div>

@@ -13,6 +13,6 @@ export default async function SearchPage({
   const get = (k: string): string => (typeof sp[k] === "string" ? (sp[k] as string) : "");
   const type: Scope = SCOPES.includes(get("type") as Scope) ? (get("type") as Scope) : "all";
   const stack = get("stack") || "All";
-  const sort = get("sort") === "newest" || get("sort") === "lightest" ? get("sort") : "best";
+  const sort = ["newest", "lightest", "fresh30"].includes(get("sort")) ? get("sort") : "best";
   return <SearchExplorer initial={{ q: get("q"), type, sort, stack }} />;
 }

@@ -10,10 +10,10 @@ export default function TemplateHub({ templates }: { templates: Asset[] }) {
   const [stack, setStack] = useState("All");
   const [open, setOpen] = useState<string | null>(null);
 
-  const moods = useMemo(() => {
+  const [moodCounts, moods] = useMemo(() => {
     const counts = new Map<string, number>();
     templates.forEach((t) => t.tags.forEach((tag) => counts.set(tag, (counts.get(tag) ?? 0) + 1)));
-    return ["all", ...[...counts.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t)];
+    return [counts, ["all", ...[...counts.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t)] as const];
   }, [templates]);
 
   const stacks = useMemo(() => ["All", ...Array.from(new Set(templates.flatMap((t) => t.stack)))], [templates]);
@@ -35,7 +35,8 @@ export default function TemplateHub({ templates }: { templates: Asset[] }) {
         <div className="flex items-center gap-1 rounded-xl border border-white/8 bg-black/30 p-1">
           {moods.slice(0, 8).map((m) => (
             <button key={m} type="button" onClick={() => setMood(m)} className={`rounded-lg px-3 py-1.5 text-xs font-bold capitalize transition-colors ${mood === m ? "bg-white/10 text-ink" : "text-ink-dim hover:text-ink"}`}>
-              {m}
+              {m === "all" ? "All moods" : m}
+              <span className="ml-1.5 opacity-50">{m === "all" ? templates.length : moodCounts.get(m) ?? 0}</span>
             </button>
           ))}
         </div>
