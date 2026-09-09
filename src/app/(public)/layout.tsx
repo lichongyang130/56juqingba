@@ -1,4 +1,4 @@
-import { Footer, Header } from "@/components/chrome";
+import { CtaRail, Footer, Header } from "@/components/chrome";
 import { KeyframesStyle } from "@/components/cards";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -8,6 +8,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      <CtaRail />
     </div>
   );
 }

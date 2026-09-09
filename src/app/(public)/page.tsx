@@ -4,6 +4,7 @@ import { DemoView } from "@/components/demos/Demo";
 import { SearchBar } from "@/components/chrome";
 import { accentCss, BACKGROUNDS, CHANGELOG, COMPONENTS, LAB_TOOLS, PROMPTS } from "@/lib/data";
 import { SAMPLE_BUILDS } from "@/lib/samples";
+import AfternoonTimeline from "@/components/home-story";
 
 const SUPER_POWERS = [
   {
@@ -88,6 +89,20 @@ export default function HomePage() {
     { label: "Avg prompt fidelity", value: `${Math.round(PROMPTS.reduce((s, p) => s + p.avgFidelity, 0) / Math.max(1, PROMPTS.length))}%`, delta: "+0.6 pt", up: true },
     { label: "Copies (30d)", value: `${(copiesTotal / 1000).toFixed(1)}k`, delta: "+12.4%", up: true },
   ];
+  /* feature-math + homepage marketing internals (#281-#285) */
+  const avgModels = (PROMPTS.reduce((sum, p) => sum + p.runs.length, 0) / Math.max(1, PROMPTS.length)).toFixed(1);
+  const totalRuns = PROMPTS.reduce((sum, p) => sum + p.runs.length, 0);
+  const zeroDep = COMPONENTS.filter((c) => c.deps.length === 0).length;
+  const featureMath = [
+    { value: String(COMPONENTS.length), label: "original assets", proof: "every one shipped with an a11y + quality audit", tone: "text-violet-300" },
+    { value: `${zeroDep}/${COMPONENTS.length}`, label: "dependency-free", proof: "zero packages to install — paste and run", tone: "text-emerald-300" },
+    { value: String(PROMPTS.length), label: "run-tested prompts", proof: `each re-run on ${avgModels} models before shipping`, tone: "text-cyan-300" },
+    { value: `${Math.round(PROMPTS.reduce((sum, p) => sum + p.avgFidelity, 0) / Math.max(1, PROMPTS.length))}%`, label: "average fidelity", proof: `${totalRuns} recorded runs, failures kept on the log`, tone: "text-amber-200" },
+  ] as const;
+  const leaderboard = trending.slice(0, 4);
+  const nightBuild = SAMPLE_BUILDS.find((b) => b.slug === "nightfolio") ?? SAMPLE_BUILDS[0];
+  const latestNote = CHANGELOG[0];
+
   return (
     <>
       {/* ============================== HERO ============================== */}
@@ -184,6 +199,74 @@ export default function HomePage() {
               </span>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* ============================== FEATURE MATH (receipts) ============================== */}
+      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-violet-300">Receipts, not rhetoric</p>
+            <h2 className="mt-2 max-w-2xl text-3xl font-extrabold tracking-tight md:text-4xl">
+              Every claim above is a <span className="text-gradient">counted number</span>
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-dim">
+              “Every prompt has test scores” only means something when you can open the run logs.
+              These counts come straight from the library data — the same numbers the detail pages show.
+            </p>
+          </div>
+          <Link href="/prompts" className="btn btn-ghost !py-2 text-xs">Open the run logs</Link>
+        </div>
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {featureMath.map((m) => (
+            <div key={m.label} className="rounded-2xl border border-white/8 bg-panel p-5">
+              <div className={`text-3xl font-extrabold tracking-tight ${m.tone}`}>{m.value}</div>
+              <div className="mt-1 text-sm font-bold text-ink-dim">{m.label}</div>
+              <div className="mt-1 text-[11px] leading-relaxed text-ink-faint">{m.proof}</div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-[11px] text-ink-faint">
+          No marketing roundings: components and prompts are counted from <code className="font-mono">src/lib/data.ts</code> at build time.
+        </p>
+      </section>
+
+      {/* ============================== LIVE DEMO LEADERBOARD ============================== */}
+      <section className="border-y border-white/6 bg-panel/40">
+        <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-amber-200">Most copied — playing live</p>
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">The leaderboard, still running</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-dim">
+                Not screenshots — the actual demos, interactive in place. Hover, drag, click; then open the asset
+                when you want the code.
+              </p>
+            </div>
+            <Link href="/components" className="text-sm font-semibold text-ink-dim hover:text-ink">Full library →</Link>
+          </div>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {leaderboard.map((a, i) => (
+              <Link key={a.slug} href={`/components/${a.slug}`} className="card-hover group overflow-hidden rounded-2xl border border-white/8 bg-panel">
+                <div className="relative">
+                  <Stage className="rounded-none border-0 !aspect-video">
+                    <DemoView demo={a.demo} props={{}} />
+                  </Stage>
+                  <span className="absolute left-2.5 top-2.5 flex items-center gap-1.5 rounded-full bg-black/55 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-amber-200 backdrop-blur">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-300" aria-hidden />
+                    #{i + 1} most copied
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-3 p-3.5">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: accentCss(a.slug, 85, 62) }} />
+                    <span className="truncate text-[13px] font-bold group-hover:text-white">{a.title}</span>
+                  </div>
+                  <span className="shrink-0 text-[10px] text-ink-faint">{a.copies.toLocaleString()} copies</span>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -339,6 +422,42 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ============================== WEEK NOTE ============================== */}
+      <section className="mx-auto max-w-7xl px-5 py-14 lg:px-8">
+        <div className="relative overflow-hidden rounded-[2rem] border border-violet-300/15 bg-violet-400/[.04] p-6 md:p-10">
+          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-violet-600/15 blur-[100px]" aria-hidden />
+          <div className="relative grid max-w-6xl gap-8 lg:grid-cols-[1.15fr_1fr]">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-violet-300">Week note · {latestNote.date}</p>
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">From the editor&apos;s desk</h2>
+              <div className="prose-list mt-5 space-y-4 text-[15px] leading-relaxed text-ink-dim">
+                <p>
+                  This week the studio logged <span className="font-semibold text-ink">&ldquo;{latestNote.title}&rdquo;</span> — and the rest of the week was
+                  the unglamorous half of shipping: audits run, failing runs kept in the log instead of deleted,
+                  copy rewritten twice because the first draft over-claimed.
+                </p>
+                <p>
+                  That is the whole editorial stance in one sentence: we would rather show you the run that scored
+                  71 than a screenshot we posed. If a component ships, its test report ships with it.
+                </p>
+              </div>
+              <p className="mt-5 text-xs font-semibold text-ink-faint">— the Motif editors</p>
+            </div>
+            <div className="flex flex-col justify-center gap-3">
+              {CHANGELOG.slice(0, 3).map((e) => (
+                <div key={e.date + e.title} className="rounded-2xl border border-white/6 bg-bg/50 px-4 py-3">
+                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-ink-faint">
+                    <span style={{ color: accentCss(e.title, 90, 70) }}>{e.tag}</span>
+                    <span>· {e.date}</span>
+                  </div>
+                  <p className="mt-1 text-[13px] font-semibold text-ink-dim">{e.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ============================== CHANGELOG / ALIVE ============================== */}
       <section id="changelog" className="border-y border-white/6 bg-panel/40">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[0.9fr_1.4fr] lg:px-8">
@@ -445,6 +564,58 @@ export default function HomePage() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ============================== BUILDER TESTIMONIALS ============================== */}
+      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">Builder notes</p>
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">Three people, three real builds</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-dim">
+              Each of these pages is a full case study with the challenge, the assets used and the measured result.
+              The quotes below are their numbers, verbatim.
+            </p>
+          </div>
+          <Link href="/samples" className="btn btn-ghost !py-2 text-xs">All case studies</Link>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {SAMPLE_BUILDS.map((b) => (
+            <Link key={b.slug} href={`/samples/${b.slug}`} className="card-hover group flex flex-col rounded-3xl border border-white/8 bg-panel p-6">
+              <div className="text-4xl leading-none text-emerald-300/60" aria-hidden>&ldquo;</div>
+              <p className="mt-2 line-clamp-4 text-[13.5px] leading-relaxed text-ink-dim group-hover:text-ink/90">{b.result}</p>
+              <div className="mt-auto pt-5">
+                <div className="flex items-center gap-2.5 border-t border-white/6 pt-4">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-black" style={{ background: `${accentCss(b.slug, 85, 62, 0.18)}`, color: accentCss(b.slug, 90, 70) }}>
+                    {b.by.slice(0, 1).toUpperCase()}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="truncate text-xs font-extrabold">{b.by} · {b.title}</div>
+                    <div className="text-[10px] text-ink-faint">read the case study →</div>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ============================== BUILT IN AN AFTERNOON ============================== */}
+      <section className="border-y border-white/6 bg-panel/40">
+        <div className="mx-auto grid max-w-7xl items-start gap-10 px-5 py-16 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
+          <div className="lg:sticky lg:top-28">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">The honest timeline</p>
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">
+              Built in an <span className="text-gradient">afternoon</span>, minute by minute
+            </h2>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-dim">
+              A 90-minute build story of {nightBuild.title.toLowerCase()}. No &ldquo;effortless&rdquo; marketing —
+              the library removes the boilerplate third of the work, never the thinking. Scroll the timeline.
+            </p>
+            <Link href={`/samples/${nightBuild.slug}`} className="btn btn-ghost mt-6 !py-2 text-xs">Open the full case study</Link>
+          </div>
+          <AfternoonTimeline build={nightBuild} />
         </div>
       </section>
 

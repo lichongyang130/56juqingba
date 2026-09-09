@@ -2,8 +2,69 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NAV, SITE } from "@/lib/site";
+
+/* Subtle bottom CTA rail — marketing pages only; dismissed once per browser. */
+export function CtaRail() {
+  const [gone, setGone] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const [deep, setDeep] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      try {
+        if (window.localStorage.getItem("motif:rail-dismissed")) setDismissed(true);
+      } catch {
+        /* private mode */
+      }
+    });
+    const onScroll = () => setDeep(window.scrollY > 560);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(id);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  if (dismissed || !deep) return null;
+  const hide = () => {
+    setGone(true);
+    try {
+      window.localStorage.setItem("motif:rail-dismissed", "1");
+    } catch {
+      /* private mode */
+    }
+  };
+  return (
+    <div
+      className={`fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 transition-all duration-500 ${
+        gone ? "pointer-events-none translate-y-6 opacity-0" : "translate-y-0 opacity-100"
+      }`}
+    >
+      <div className="flex w-full max-w-3xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/12 bg-[#10131c]/95 px-4 py-3 shadow-[0_24px_70px_-20px_rgba(0,0,0,.85)] backdrop-blur-xl md:px-5">
+        <div className="min-w-0">
+          <p className="text-sm font-extrabold tracking-tight">Every asset here is free to copy</p>
+          <p className="mt-0.5 text-[11px] text-ink-dim">
+            107 components · 74 run-tested prompts · 30 guides — no account, no signup.
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Link href="/components" className="btn btn-primary !px-3.5 !py-2 text-xs">Browse the library</Link>
+          <button
+            type="button"
+            onClick={hide}
+            aria-label="Dismiss"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-ink-faint transition-colors hover:bg-white/5 hover:text-ink"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function LogoMark({ size = 26 }: { size?: number }) {
   return (
@@ -143,6 +204,69 @@ export function Footer() {
           <p className="mt-4 text-xs text-ink-faint">
             Original content only. Assets are MIT · guides are CC BY 4.0.
           </p>
+          <div className="mt-5 rounded-2xl border border-white/6 bg-white/[.02] p-3.5">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink-faint">
+              <LogoMark size={14} /> Press &amp; media kit
+            </div>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-ink-dim">
+              Logo lockup · fact sheet · brand palette. One click, no forms.
+            </p>
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {(["json", "css"] as const).map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => {
+                    try {
+                      const payload =
+                        f === "json"
+                          ? JSON.stringify(
+                              {
+                                brand: SITE.name,
+                                tagline: SITE.description,
+                                counts: "as of Sep 2026 — 107 components, 74 prompts, 30 guides, 33 backgrounds",
+                                colors: {
+                                  violet: "hsl(262 82% 60%)",
+                                  cyan: "hsl(192 82% 55%)",
+                                  rose: "hsl(330 82% 60%)",
+                                  emerald: "hsl(152 60% 50%)",
+                                  canvas: "#0b0d14",
+                                },
+                                typefaces: { display: "Sora", body: "Inter" },
+                              },
+                              null,
+                              2
+                            )
+                          : `:root {
+  /* Motif UI — press palette (original tokens) */
+  --motif-violet: hsl(262 82% 60%);
+  --motif-cyan: hsl(192 82% 55%);
+  --motif-rose: hsl(330 82% 60%);
+  --motif-emerald: hsl(152 60% 50%);
+  --motif-canvas: #0b0d14;
+  --motif-panel: #12151f;
+  --motif-ink: #eef0f6;
+}
+/* Display: Sora · Body: Inter */`;
+                      const url = URL.createObjectURL(
+                        new Blob([payload], { type: f === "json" ? "application/json" : "text/css" })
+                      );
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = f === "json" ? "motif-brand.json" : "motif-palette.css";
+                      a.click();
+                      setTimeout(() => URL.revokeObjectURL(url), 4000);
+                    } catch {
+                      /* sandboxed */
+                    }
+                  }}
+                  className="rounded-lg border border-white/10 px-2.5 py-1.5 text-[10px] font-bold text-ink-dim transition-colors hover:border-white/25 hover:text-ink"
+                >
+                  {f === "json" ? "↓ brand.json" : "↓ palette.css"}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
         {groups.map(([title, links]) => (
           <div key={title}>

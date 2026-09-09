@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 279 / 500 shipped (batches 1–37, in order) · Sections 1–8 complete ✅
+## Progress — 286 / 500 shipped (batches 1–38, in order) · Sections 1–8 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -291,6 +291,14 @@ names, behaviours and where they plug into the existing pages.
 | 277 | Next/prev asset trail | [/components/prism-switch](/components/prism-switch) |
 | 278 | Discovery via Learn — practice assets | [/learn/hero-that-breathes-in-20-min](/learn/hero-that-breathes-in-20-min) |
 | 279 | Weekly digest archive route | [/digest](/digest) |
+| 280 | Home — sticky CTA rail | every public page (scroll past hero) |
+| 281 | Home — feature math with receipts | [/](/) · homepage data-derived counts |
+| 282 | Home — live demo leaderboard | [/](/) · top-copied assets playing inline |
+| 283 | Home — editor's week note | [/](/) · human-voice log block |
+| 284 | Home — builder testimonials → case pages | [/](/) · quotes link /samples |
+| 285 | Home — built-in-an-afternoon timeline | [/](/) · animated 90-min story |
+| 286 | Footer — press & media kit downloads | [/](/) · brand.json + palette.css |
+
 
 
 
@@ -657,13 +665,13 @@ names, behaviours and where they plug into the existing pages.
 
 ## 9. Homepage & marketing pages — 20 upgrades
 
-- **Sticky CTA rail**: a subtle bottom bar on scroll for first-time visitors.
-- **Feature math section**: copy the honesty ("every prompt has test scores") into concrete numbers.
-- **Live demo leaderboard**: homepage strip of the most-copied asset playing inline.
-- **Week note**: a short "editor's log" block with the changelog's human voice.
-- **Real testimonials from sample builds**: link out to three made-with-Motif pages.
-- **"Built in an afternoon" timeline**: an animated 90-minute build story (not a fake claim).
-- **Press/kit footer**: logo lockup, fact sheet, and brand palette downloads.
+- **Sticky CTA rail** ✅ (`CtaRail` bottom bar, dismiss once): a subtle bottom bar on scroll for first-time visitors.
+- **Feature math section** ✅ (data-derived receipts band): copy the honesty ("every prompt has test scores") into concrete numbers.
+- **Live demo leaderboard** ✅ (top 4 playing inline): homepage strip of the most-copied asset playing inline.
+- **Week note** ✅ (editor's desk block): a short "editor's log" block with the changelog's human voice.
+- **Real testimonials from sample builds** ✅ (quotes → /samples): link out to three made-with-Motif pages.
+- **"Built in an afternoon" timeline** ✅ (animated 90-min story): an animated 90-minute build story (not a fake claim).
+- **Press/kit footer** ✅ (lockup · fact sheet · palette downloads): logo lockup, fact sheet, and brand palette downloads.
 - **Mission page**: a short about page explaining "original only, tested or it doesn't ship".
 - **/components needs a header CTA**: convert the top strip from explanation to action.
 - **Search empty-state on home**: if the hero search has no query yet, offer popular topics.
