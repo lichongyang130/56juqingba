@@ -385,24 +385,24 @@ const filtered = COMMANDS.filter(c =>
        background: rgba(255,255,255,.08); }`,
   },
   "toast-stack": {
-    react: `// React — toasts are just state; the container does the announcing
-const [toasts, setToasts] = useState([]);
+    react: `// React — a toast is a state item with its own countdown
+type Toast = { id: number; kind: "ok" | "undo" | "info"; text: string };
 const push = () => {
-  const id = ++ref.current;
-  setToasts(t => [...t.slice(-2), { id, text: "Build passed · 3.2s" }]);
-  setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3500);
+  const id = ++idRef.current;
+  setToasts(t => [...t.slice(-2), makeToast(id)]);        // batch cap: 3
+  window.setTimeout(() => dismiss(id), TTL);              // auto-dismiss
 };
-
-<div aria-live="polite" className="fixed right-4 bottom-4 flex flex-col gap-2">
-  {toasts.map(t => (
-    <div key={t.id} className="toast rounded-xl border px-4 py-3 text-sm shadow-2xl">
-      {t.text}
-    </div>
-  ))}
+// every toast renders:
+//   · a per-message accent tone (ok/undo/info)
+//   · a countdown bar: <span style={{ animation: \`mf-shrink \${TTL}ms linear\` }}/>
+//   · dismiss ✕  ·  an Undo action on undoable messages only
+<div aria-live="polite" aria-atomic="false" className="fixed inset-x-4 bottom-4 …">
+  {toasts.map(t => <ToastRow key={t.id} … />)}
 </div>`,
-    css: `/* the entrance: rise + ease; exits handled by state removal */
+    css: `/* countdown bar animates width 100% → 0 over the TTL */
+@keyframes mf-shrink { from { width: 100% } to { width: 0% } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(14px) scale(.97) } }
 .toast { animation: toast-in .3s cubic-bezier(.34,1.56,.64,1) both; }
-@keyframes toast-in { from { opacity: 0; transform: translateY(14px); } }
 @media (prefers-reduced-motion: reduce) { .toast { animation: none; } }`,
   },
   "sheet-menu": {
@@ -949,6 +949,142 @@ useEffect(() => {
   background-size: 200% 100%;
   animation: sk-float 1.1s linear infinite; }`,
   },
+  "status-banner": {
+    react: `// React — four tones, one banner; each announces politely
+const TONES = {
+  ok:    { cls: "banner-ok", glyph: "✓" },
+  error: { cls: "banner-err", glyph: "✕" },
+  warn:  { cls: "banner-warn", glyph: "!" },
+  info:  { cls: "banner-info", glyph: "i" },
+};
+<div role="status" className={\`banner \${TONES[tone].cls}\`}>
+  <span>{TONES[tone].glyph}</span>
+  <div>{title + text}</div>
+  <button aria-label={"Dismiss " + title} onClick={dismiss}>✕</button>
+</div>
+// role=status → polite announcement; never role=alert for recoveries`,
+    css: `.banner { display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 14px; border-radius: 12px; border: 1px solid;
+  animation: banner-in .25s ease-out both; }
+.banner-ok   { border-color: color-mix(in srgb, var(--color-mint) 30%, transparent);
+  background: color-mix(in srgb, var(--color-mint) 8%, transparent); }
+.banner-err  { … same with danger … }
+@keyframes banner-in { from { opacity: 0; transform: translateY(6px) } }`,
+  },
+  "progress-ring": {
+    react: `// React — an SVG arc is a number, not a GIF
+const C = 2 * Math.PI * R;
+<svg viewBox="0 0 100 100" className="-rotate-90">
+  <circle cx="50" cy="50" r={R} stroke="rgba(255,255,255,.08)" strokeWidth="7" />
+  <circle cx="50" cy="50" r={R} stroke={color} strokeWidth="7" strokeLinecap="round"
+    strokeDasharray={C} strokeDashoffset={C - C * pct / 100}
+    style={{ transition: "stroke-dashoffset .12s linear" }} />
+</svg>
+// stalled state: freeze pct, turn the arc amber, offer retry —
+// a spinner that never resolves is a liar`,
+    css: `/* the ring itself is stroke math; states come from colour */
+.ring--stalled circle { stroke: var(--color-amber); }
+.ring-pct { font: 700 14px ui-monospace, monospace; tabular-nums; }`,
+  },
+  "spinner-status": {
+    react: `// React — swap the label in place; never swap the button size
+const states = { idle: "Save changes", saving: "Saving changes…", done: "Saved ✓" };
+<button onClick={save} disabled={st === "saving"}
+  className={\`btn \${st === "done" ? "btn-saved" : "btn-primary"}\`}>
+  <span aria-hidden>{st === "saving" && <i className="spin" />}</span>
+  <span>{states[st]}</span>          // fixed-width label slot
+</button>`,
+    css: `/* a tiny pre-element spinner on a 16px square: no layout shift */
+.spin { width: 12px; height: 12px; border-radius: 99px;
+  border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+  animation: mf-spin .7s linear infinite; }
+.btn-saved { border-color: color-mix(in srgb, var(--color-mint) 40%, transparent);
+  background: color-mix(in srgb, var(--color-mint) 15%, transparent);
+  color: var(--color-mint); }`,
+  },
+  "empty-state-trio": {
+    react: `// React — an empty state is a mini campaign, three parts
+<div className="empty">
+  {/* 1 illustration that shows the FILLED state */}
+  <span className="empty-glyph">{done ? "✓" : glyph}</span>
+  {/* 2 a verb headline, never 'No items yet' */}
+  <h3>{done ? "It has content now" : "Set your first alert"}</h3>
+  {/* 3 a next step under a minute + an escape hatch */}
+  <button onClick={fill}>{verb}</button>
+  <a onClick={fill}>{hatch}</a>
+</div>`,
+    css: `/* the trio reads as a system: same card, same anatomy,
+   different tone per product surface */
+.empty { border: 1px solid var(--color-edge); border-radius: 16px;
+  padding: 16px; transition: border-color .3s, background .3s; }
+.empty--filled { border-color: color-mix(in srgb, var(--color-mint) 40%, transparent);
+  background: color-mix(in srgb, var(--color-mint) 8%, transparent); }`,
+  },
+  "offline-indicator": {
+    react: `// React — drive from the platform events, render a banner
+const [online, setOnline] = useState(navigator.onLine);
+useEffect(() => {
+  const on = () => setOnline(true);
+  const off = () => setOnline(false);
+  window.addEventListener("online", on);
+  window.addEventListener("offline", off);
+  return () => { window.removeEventListener("online", on); … };
+}, []);
+{!online && (
+  <div role="status" className="offline-banner">
+    <span className="offline-pulse" /> Reconnecting…
+    <small>your edits are saved on this device</small>
+  </div>
+)}`,
+    css: `/* pulse = ping ring while reconnecting; banner clears itself */
+.offline-pulse { position: relative; width: 8px; height: 8px;
+  border-radius: 99px; background: var(--color-amber); }
+.offline-pulse::after { content: ""; position: absolute; inset: 0;
+  border-radius: 99px; background: inherit;
+  animation: pulse-soft 1.2s ease-out infinite; }
+.offline-banner { border: 1px solid color-mix(in srgb, var(--color-amber) 25%, transparent);
+  background: color-mix(in srgb, var(--color-amber) 8%, transparent); }`,
+  },
+  "error-boundary-card": {
+    react: `// React — the boundary pattern, one section at a time
+// 1. error boundary wraps ONLY the fragile surface
+// 2. fallback keeps the rest of the page interactive
+// 3. it reports the error once (console + telemetry hook)
+// 4. retry remounts the surface via a key bump:
+try { return <Surface key={attempt} />; }
+catch (e) {
+  return <ErrorCard error={e} onRetry={() => setAttempt(a => a + 1)}
+          onCopy={copyReport} />;
+}
+// role=alert so the failure is announced; copy-error gives support
+// a chance instead of leaving the user with a blank screen`,
+    css: `/* friendly, honest, small — no skulls, no full-page takeover */
+.boundary { border: 1px solid color-mix(in srgb, var(--color-danger) 25%, transparent);
+  border-radius: 16px; padding: 20px; }
+.boundary code/pre { font-size: 10px; max-height: 120px; overflow: auto; }`,
+  },
+  "confetti-burst": {
+    react: `// React — one burst per milestone; re-key to replay
+const fire = () => setBurst(b => b + 1);
+{burst > 0 && (
+  <div key={burst} className="confetti-stage" aria-hidden>
+    {pieces.map((p, i) => (
+      <span key={i} className="confetti"
+        style={{ left: p.left + "%", background: p.color,
+                 animation: \`confetti-fall 1.8s cubic-bezier(.2,.6,.35,1) \${p.delay}s both\`,
+                 ["--drift"]: p.drift + "px", ["--rot"]: p.rot + "deg" }} />
+    ))}
+  </div>
+)}
+// pieces are plain spans with per-piece drift/rotation CSS vars;
+// 30-40 pieces read as a celebration, 300 as an accident`,
+    css: `@keyframes confetti-fall { from { transform: translate(0,-10px) rotate(0);
+  opacity: 1 } to { transform: translate(var(--drift), 130%)
+  rotate(var(--rot)); opacity: .2 } }
+.confetti { position: absolute; top: -12px; pointer-events: none;
+  border-radius: 2px; }
+@media (prefers-reduced-motion: reduce) { .confetti { display: none; } }`,
+  },
 };
 
 const FALLBACK = {
@@ -1032,9 +1168,9 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     skip: "Skip it under ~30 commands. A palette with three results is ceremony; a plain search input is honest.",
   },
   "toast-stack": {
-    why: "Toasts fail two ways: they're decorative (no aria-live, so screen readers never hear them) or they scream. This stack announces politely and auto-dismisses.",
-    idea: "The accent tone derives from the message type — success/motion/prompt runs all read differently at a glance.",
-    skip: "Every toast is an interruption budget. Batch updates into one toast ('3 assets saved') and never toast errors the user can't act on.",
+    why: "Toasts fail two ways: they're decorative (no aria-live, so screen readers never hear them) or they scream. This queue announces politely, shows its own countdown and auto-dismisses.",
+    idea: "The countdown bar makes auto-dismiss a visible promise, the Undo action answers the 'wait, I mis-tapped' panic, and a batch cap of three keeps the corner honest.",
+    skip: "Every toast is an interruption budget. Batch updates into one toast ('3 assets saved'), never toast errors the user can't act on, and skip the auto-dismiss entirely for destructive outcomes.",
   },
   "sheet-menu": {
     why: "Hamburger menus that fly in from the left fight the thumb; a bottom sheet sits where the thumb already is. That's the entire argument.",
@@ -1192,6 +1328,41 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     why: "A blank white flash while data loads reads as broken; a skeleton that mirrors the final layout says 'something is coming' and shapes it.",
     idea: "The handoff matters more than the shimmer: swap skeleton → content in one frame with a soft rise, and replay the skeleton when the request re-runs.",
     skip: "If content loads in under ~300ms, a skeleton is slower than nothing — show the real content the moment it's ready and skip the theatre.",
+  },
+  "status-banner": {
+    why: "Forms and audit flows need a place to land outcomes without a modal; an inline banner is that place — visible, in context, gone when dismissed.",
+    idea: "Use role=status (polite) for recoveries and save confirmations, and reserve role=alert for true errors — announcement volume should match stakes.",
+    skip: "If the message needs the user to choose before anything else, that's a modal, not a banner — banners inform, modals decide.",
+  },
+  "progress-ring": {
+    why: "Linear bars read as 'amount done'; a ring keeps the destination visible too, which is why uploads and installs feel better as circles.",
+    idea: "An SVG arc is just stroke-dashoffset math — cheap, crisp at any size, and trivially recoloured per state. Never ship a GIF for progress.",
+    skip: "If the operation is instant (<300ms), skip progress entirely — a flash of progress for a fast action is worse than none.",
+  },
+  "spinner-status": {
+    why: "Buttons that go quiet during saves make users click twice; a label that swaps in place ('Saving…' → 'Saved ✓') confirms the click without a page jump.",
+    idea: "Reserve a fixed slot for the label and swap text inside it — a button that widens mid-action causes misclicks exactly when it matters.",
+    skip: "For irreversible actions the confirm state should be explicit ('Really delete?') — a spinner implies the work is happening, which is a different promise.",
+  },
+  "empty-state-trio": {
+    why: "An empty state is the first screen a new user sees; 'No items yet' burns it. The verb-headline pattern turns that screen into onboarding.",
+    idea: "One illustration that depicts the filled state, a verb headline, a next step under a minute, and a secondary hatch — that anatomy scales to any surface.",
+    skip: "If the empty state is a transient filter result ('no matches for this tag'), keep it tiny and factual — a full onboarding campaign there is noise.",
+  },
+  "offline-indicator": {
+    why: "Silent offline failures are how work gets lost; a banner that says 'queued locally' turns a network drop from a disaster into a deferral.",
+    idea: "Drive it from real online/offline events and always pair the warning with reassurance — what is saved and what will happen when the connection returns.",
+    skip: "If your app can't actually queue work locally, an offline banner that promises sync is a lie — ship the queue or drop the promise.",
+  },
+  "error-boundary-card": {
+    why: "A crash that blanks the whole app punishes everyone for one component's failure; a boundary contains the blast radius to the section that broke.",
+    idea: "The fallback's job is triage: retry for transient failures, copy-report for support, details for the curious — never a bare 'Something went wrong'.",
+    skip: "Boundaries shouldn't catch errors you can prevent — validate props and types at the edges instead of wrapping everything as a habit.",
+  },
+  "confetti-burst": {
+    why: "Milestones deserve a moment; a small DOM burst is the cheapest way to make 'shipped' feel like a win without pulling in a canvas library.",
+    idea: "Taste is in the throttle: one burst per real milestone, ~35 pieces, reduced-motion off, and the stage cleans itself so it never lingers.",
+    skip: "Never autoplay confetti on load or loop it — the second burst reads as a carnival, and the third makes users reach for the mute button.",
   },
 };
 

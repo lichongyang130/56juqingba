@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 24 / 500 shipped (batches 1–3, in order)
+## Progress — 32 / 500 shipped (batches 1–4, in order)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -36,11 +36,19 @@ names, behaviours and where they plug into the existing pages.
 | 22 | Disclosure list (accordion rows) | [/components/disclosure-list](/components/disclosure-list) |
 | 23 | Fullscreen overlay menu | [/components/fullscreen-overlay-menu](/components/fullscreen-overlay-menu) |
 | 24 | Skeleton profile card | [/components/skeleton-card](/components/skeleton-card) |
+| 25 | Toast queue with undo | [/components/toast-stack](/components/toast-stack) |
+| 26 | Inline status banner | [/components/status-banner](/components/status-banner) |
+| 27 | Upload progress ring | [/components/progress-ring](/components/progress-ring) |
+| 28 | Spinner + status text | [/components/spinner-status](/components/spinner-status) |
+| 29 | Empty-state trio | [/components/empty-state-trio](/components/empty-state-trio) |
+| 30 | Offline indicator | [/components/offline-indicator](/components/offline-indicator) |
+| 31 | Error-boundary card | [/components/error-boundary-card](/components/error-boundary-card) |
+| 32 | Confetti burst | [/components/confetti-burst](/components/confetti-burst) |
 
 
 ---
 
-## 1. Component library — 70 ideas (24/70 shipped · catalog 39 → 62)
+## 1. Component library — 70 ideas (32/70 shipped · catalog 39 → 69)
 
 ### Form & input elements
 - **Combo box** ✅ (`combo-box`): text input with a live-filtered option list, keyboard navigation and a "no matches" row — slots into every filter on the site.

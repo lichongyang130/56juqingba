@@ -1283,52 +1283,77 @@ function CommandPalette() {
   );
 }
 
-const TOAST_MESSAGES = [
-  "Build passed · 3.2s",
-  "Wipe Reveal copied to clipboard",
-  "New run log: 3/3 models clean",
-  "Theme applied to 47 assets",
-  "Changelog drafted — ready to publish",
+const TOAST_POOL: { text: string; tone: number; kind: "ok" | "undo" | "info" }[] = [
+  { text: "Build passed · 3.2s", tone: 152, kind: "ok" },
+  { text: "Wipe Reveal copied to clipboard", tone: 262, kind: "info" },
+  { text: "Changed 3 theme tokens — undo?", tone: 32, kind: "undo" },
+  { text: "New run log: 3/3 models clean", tone: 152, kind: "ok" },
+  { text: "Theme applied to 62 assets", tone: 262, kind: "info" },
 ];
 
-function ToastStack({ time = 3.5 }: DemoProps) {
-  const [toasts, setToasts] = useState<{ id: number; text: string; tone: number }[]>([]);
+interface ToastItem {
+  id: number;
+  text: string;
+  tone: number;
+  kind: "ok" | "undo" | "info";
+  undone?: boolean;
+}
+
+function ToastStack({ time = 4 }: DemoProps) {
+  const ttl = typeof time === "number" ? Math.max(1, Math.min(10, time)) * 1000 : 4000;
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
   const idRef = useRef(0);
-  const ttl = typeof time === "number" ? Math.max(1, Math.min(8, time)) * 1000 : 3500;
   const push = () => {
+    const src = TOAST_POOL[idRef.current % TOAST_POOL.length];
     const id = ++idRef.current;
-    const tone = (id % 3) * 110;
-    setToasts((prev) => [...prev.slice(-2), { id, text: TOAST_MESSAGES[id % TOAST_MESSAGES.length], tone }]);
-    window.setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), ttl);
+    const item: ToastItem = { id, text: src.text, tone: src.tone, kind: src.kind };
+    setToasts((prev) => [...prev.slice(-2), item]);
+    window.setTimeout(() => dismiss(id), ttl);
   };
+  const dismiss = (id: number) => setToasts((prev) => prev.filter((t) => t.id !== id));
+  const undo = (id: number) =>
+    setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, text: "✓ Tokens restored", tone: 152, kind: "ok", undone: true } : t)));
   return (
-    <div className="relative flex h-full w-full items-end justify-end overflow-hidden bg-[radial-gradient(60%_80%_at_80%_100%,rgba(34,211,238,0.12),transparent_60%),#0a0c13] p-5">
-      {/* pretend page corner */}
-      <div className="absolute left-4 top-4 space-y-1.5 opacity-60">
-        <div className="h-2 w-24 rounded-full bg-white/15" />
-        <div className="h-2 w-16 rounded-full bg-white/8" />
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[radial-gradient(60%_80%_at_80%_100%,rgba(34,211,238,0.12),transparent_60%),#0a0c13]">
+      <div className="flex items-center justify-between px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300/70">Toast queue · auto-dismiss + undo</span>
+        <span className="chip !text-[9px] uppercase">{toasts.length}/3 on screen</span>
       </div>
-      <button
-        type="button"
-        onClick={push}
-        className="btn btn-primary absolute left-1/2 top-1/2 !px-5 !py-2.5 text-xs -translate-x-1/2 -translate-y-1/2"
-      >
-        Ping a toast
-      </button>
-      <div className="pointer-events-none absolute inset-x-4 bottom-4 flex flex-col items-end gap-2" aria-live="polite">
+      <div className="relative flex flex-1 items-center justify-center">
+        <button type="button" onClick={push} className="btn btn-primary !px-5 !py-2.5 text-xs">
+          Ping a toast
+        </button>
+      </div>
+      <div className="pointer-events-none absolute inset-x-4 bottom-4 flex flex-col items-stretch gap-2 sm:items-end" aria-live="polite" aria-atomic="false">
         {toasts.map((t) => (
           <div
             key={t.id}
-            className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-[#0d0f17]/95 py-2.5 pl-3 pr-4 text-xs font-medium text-white shadow-2xl backdrop-blur-md"
-            style={{ boxShadow: `inset 0 1px 0 rgba(255,255,255,.1), 0 12px 30px -10px hsl(${t.tone} 80% 55% / .45)` }}
+            className="pointer-events-auto w-full max-w-xs overflow-hidden rounded-xl border border-white/12 bg-[#0d0f17]/95 shadow-2xl backdrop-blur-md"
+            style={{ boxShadow: `inset 0 1px 0 rgba(255,255,255,.1), 0 12px 30px -10px hsl(${t.tone} 80% 55% / .4)`, animation: "mf-toast-in .3s cubic-bezier(.34,1.56,.64,1) both" }}
           >
-            <span className="flex h-5 w-5 items-center justify-center rounded-full text-[10px]" style={{ background: `hsl(${t.tone} 85% 60% / .2)`, color: `hsl(${t.tone} 90% 72%)` }}>
-              ✓
+            <div className="flex items-center gap-2.5 py-2.5 pl-3 pr-2">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px]" style={{ background: `hsl(${t.tone} 85% 60% / .2)`, color: `hsl(${t.tone} 90% 72%)` }}>
+                {t.kind === "undo" && !t.undone ? "↶" : "✓"}
+              </span>
+              <span className="min-w-0 flex-1 truncate text-xs font-medium text-white">{t.text}</span>
+              {t.kind === "undo" && !t.undone && (
+                <button type="button" onClick={() => undo(t.id)} className="rounded-md px-2 py-1 text-[10px] font-bold text-cyan-200 transition-colors hover:bg-white/10">
+                  Undo
+                </button>
+              )}
+              <button type="button" onClick={() => dismiss(t.id)} aria-label="Dismiss notification" className="flex h-5 w-5 items-center justify-center rounded-md text-ink-faint transition-colors hover:bg-white/10 hover:text-ink">
+                ✕
+              </button>
+            </div>
+            {/* countdown bar */}
+            <span aria-hidden className="block h-0.5 w-full overflow-hidden bg-white/5">
+              <span className="block h-full" style={{ background: `hsl(${t.tone} 90% 65%)`, animation: `mf-shrink ${ttl}ms linear forwards` }} />
             </span>
-            {t.text}
           </div>
         ))}
       </div>
+      <style>{`@keyframes mf-toast-in { from { opacity: 0; transform: translateY(14px) scale(.97) } }
+@keyframes mf-shrink { from { width: 100% } to { width: 0% } }`}</style>
     </div>
   );
 }
@@ -3311,7 +3336,405 @@ function SkeletonCardInner({ delay, onReplay }: { delay: number; onReplay: () =>
   );
 }
 
+
+const BANNER_TONES = [
+  { id: "ok", t: "Success", glyph: "✓", text: "Your component passed the audit gate — quality 96, a11y 98.", cls: "border-mint/30 bg-mint/8 text-mint", iconCls: "bg-mint/15 text-mint" },
+  { id: "err", t: "Error", glyph: "✕", text: "The prompt run failed on one model. Re-run or open the log.", cls: "border-danger/30 bg-danger/8 text-danger", iconCls: "bg-danger/15 text-danger" },
+  { id: "warn", t: "Warning", glyph: "!", text: "Snippet is 6.8 KB gzipped — under budget, but watch the blur layer.", cls: "border-amber-300/30 bg-amber-400/8 text-amber-300", iconCls: "bg-amber-400/15 text-amber-300" },
+  { id: "info", t: "Info", glyph: "i", text: "Learn guides now cover the 60fps handshake — new this week.", cls: "border-cyan-300/30 bg-cyan-400/8 text-cyan-300", iconCls: "bg-cyan-400/15 text-cyan-300" },
+];
+
+function StatusBanner() {
+  const [dismissed, setDismissed] = useState<Record<string, boolean>>({});
+  const [flash, setFlash] = useState(false);
+  const visible = BANNER_TONES.filter((b) => !dismissed[b.id]);
+  return (
+    <div className="flex h-full w-full flex-col justify-center gap-3 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(139,92,246,0.12),transparent_60%),#08090f] px-6">
+      <div className="mx-auto w-full max-w-md space-y-2.5">
+        {visible.map((b) => (
+          <div key={b.id} role="status" className={`flex items-start gap-3 rounded-xl border px-3.5 py-3 backdrop-blur-sm ${b.cls}`} style={{ animation: "mf-toast-in .25s ease-out both" }}>
+            <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-black ${b.iconCls}`}>{b.glyph}</span>
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-extrabold">{b.t}</div>
+              <div className="mt-0.5 text-[11px] leading-relaxed opacity-90">{b.text}</div>
+            </div>
+            <button type="button" aria-label={`Dismiss ${b.t} banner`} onClick={() => setDismissed((p) => ({ ...p, [b.id]: true }))} className="shrink-0 rounded-md px-1.5 py-0.5 text-xs opacity-60 transition-opacity hover:opacity-100">
+              ✕
+            </button>
+          </div>
+        ))}
+        {visible.length === 0 && (
+          <div className="rounded-xl border border-dashed border-white/12 py-8 text-center text-xs text-ink-faint">
+            All banners dismissed
+            <button type="button" onClick={() => setDismissed({})} className="ml-2 font-bold text-violet-300 underline-offset-2 hover:underline">restore</button>
+          </div>
+        )}
+        <button type="button" onClick={() => { setFlash(true); setDismissed({}); window.setTimeout(() => setFlash(false), 1600); }} className="btn btn-ghost !w-full !py-2 !text-xs">
+          {flash ? "✓ A success banner will re-appear above" : "Reset + show a success banner"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ProgressRing() {
+  const [pct, setPct] = useState(0);
+  const [phase, setPhase] = useState<"idle" | "run" | "stalled" | "done">("idle");
+  const R = 40;
+  const C = 2 * Math.PI * R;
+  useEffect(() => {
+    if (phase !== "run") return;
+    const t = setInterval(() => {
+      setPct((p) => {
+        if (p >= 99) {
+          clearInterval(t);
+          window.setTimeout(() => setPhase("done"), 200);
+          return 100;
+        }
+        const next = p + 2 + Math.random() * 5;
+        if (next > 68 && next < 74 && Math.random() < 0.22) {
+          clearInterval(t);
+          setPhase("stalled");
+          return Math.round(next);
+        }
+        return next;
+      });
+    }, 130);
+    return () => clearInterval(t);
+  }, [phase]);
+  const start = () => { setPct(0); setPhase("run"); };
+  const cancel = () => { setPct(0); setPhase("idle"); };
+  const retry = () => { setPct(0); setPhase("run"); };
+  const pctColor = phase === "stalled" ? "#fbbf24" : "#22d3ee";
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(34,211,238,0.12),transparent_60%),#08090f] px-6">
+      <div className="relative h-32 w-32">
+        <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90" aria-hidden>
+          <circle cx="50" cy="50" r={R} fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="7" />
+          <circle
+            cx="50" cy="50" r={R} fill="none"
+            stroke={pctColor}
+            strokeWidth="7"
+            strokeLinecap="round"
+            strokeDasharray={C}
+            strokeDashoffset={C - (C * Math.max(0, Math.min(100, pct))) / 100}
+            style={{ transition: "stroke-dashoffset .12s linear, stroke .3s" }}
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          {phase === "done" ? (
+            <>
+              <span className="text-xl text-mint">✓</span>
+              <span className="text-[10px] font-bold text-mint">uploaded</span>
+            </>
+          ) : phase === "stalled" ? (
+            <>
+              <span className="text-sm font-black text-amber-300">{Math.round(pct)}%</span>
+              <span className="text-[8px] font-bold uppercase tracking-wider text-amber-300/80">stalled</span>
+            </>
+          ) : (
+            <>
+              <span className="font-mono text-sm font-black tabular-nums">{Math.round(pct)}%</span>
+              <span className="text-[8px] uppercase tracking-wider text-ink-faint">{phase === "run" ? "uploading" : "ready"}</span>
+            </>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        {phase === "run" && (
+          <button type="button" onClick={cancel} className="btn btn-quiet !px-4 !py-2 !text-xs">
+            Cancel upload
+          </button>
+        )}
+        {phase === "stalled" && (
+          <>
+            <span className="chip !border-amber-300/30 !text-amber-200">connection dropped — retry?</span>
+            <button type="button" onClick={retry} className="btn btn-primary !px-4 !py-2 !text-xs">
+              ↺ Retry
+            </button>
+          </>
+        )}
+        {phase !== "run" && phase !== "stalled" && (
+          <button type="button" onClick={start} className="btn btn-primary !px-5 !py-2 !text-xs">
+            {phase === "done" ? "Upload another" : "Start upload"}
+          </button>
+        )}
+      </div>
+      <p className="max-w-xs text-center text-[11px] text-ink-faint">
+        {phase === "stalled"
+          ? "simulated stall: the ring freezes in amber so the failure is visible, not silent"
+          : phase === "done"
+            ? "100% — the ring hands off to a ✓ so there is no guessing"
+            : "circular progress keeps the destination visible — you always see how much is left"}
+      </p>
+    </div>
+  );
+}
+
+const SAVE_STATES = [
+  { t: "idle", l: "Save changes", busy: false },
+  { t: "saving", l: "Saving changes…", busy: true },
+  { t: "done", l: "Saved ✓", busy: false },
+] as const;
+
+function SpinnerStatus() {
+  const [st, setSt] = useState<"idle" | "saving" | "done">("idle");
+  const save = () => {
+    if (st === "saving") return;
+    setSt("saving");
+    window.setTimeout(() => setSt("done"), 1400);
+    window.setTimeout(() => setSt("idle"), 3200);
+  };
+  const cur = SAVE_STATES.find((x) => x.t === st)!;
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_100%,rgba(52,211,153,0.12),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-xs rounded-2xl border border-white/8 bg-white/4 p-4">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold">Theme tokens</span>
+          <span className="chip !text-[9px]">violet · default</span>
+        </div>
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center justify-between rounded-lg bg-black/25 px-3 py-2 text-[11px]">
+            <span className="text-ink-dim">--color-accent</span>
+            <span className="font-mono text-violet-200">#8b5cf6</span>
+          </div>
+          <div className="flex items-center justify-between rounded-lg bg-black/25 px-3 py-2 text-[11px]">
+            <span className="text-ink-dim">--color-ink-dim</span>
+            <span className="font-mono text-ink-dim">#9aa3b5</span>
+          </div>
+          <div className="flex items-center justify-between rounded-lg bg-black/25 px-3 py-2 text-[11px]">
+            <span className="text-ink-dim">--radius-lg</span>
+            <span className="font-mono text-cyan-200">24px</span>
+          </div>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={save}
+        disabled={st === "saving"}
+        className={`btn w-full max-w-xs !py-2.5 !text-xs disabled:cursor-wait ${
+          st === "done" ? "!border-mint/40 !bg-mint/15 !text-mint" : "btn-primary"
+        }`}
+      >
+        <span className="flex h-4 w-4 items-center justify-center" aria-hidden>
+          {st === "saving" ? (
+            <span className="block h-3 w-3 rounded-full border-2 border-white/30 border-t-white" style={{ animation: "mf-spin .7s linear infinite" }} />
+          ) : st === "done" ? (
+            <span>✓</span>
+          ) : null}
+        </span>
+        <span>{cur.l}</span>
+      </button>
+      <p className="text-[11px] text-ink-faint">the label swaps in place — the button never jumps or widens mid-action</p>
+    </div>
+  );
+}
+
+const EMPTY_TRIPLES = [
+  { id: "inbox", glyph: "▣", t: "No alerts yet", verb: "Set your first alert", step: "Pick a component and we will watch it for changes.", hatch: "or watch a whole collection", tone: "text-violet-300", ring: "from-violet-400/20" },
+  { id: "dash", glyph: "◔", t: "Your dashboard is bare", verb: "Add a first metric", step: "Copies, views or model runs — one tile and it starts counting.", hatch: "or import last month's report", tone: "text-cyan-300", ring: "from-cyan-400/20" },
+  { id: "board", glyph: "▤", t: "Nothing saved yet", verb: "Save your first stack", step: "Collect 3 assets and the stack becomes a shareable recipe.", hatch: "or browse the library first", tone: "text-mint", ring: "from-mint/20" },
+];
+
+function EmptyStateTrio() {
+  const [filled, setFilled] = useState<string | null>(null);
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(52,211,153,0.1),transparent_60%),#08090f] px-6">
+      <div className="flex flex-wrap items-center justify-center gap-2 text-center">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-mint">Empty-state trio</span>
+        <span className="text-[11px] text-ink-faint">one verb headline · a visible next step · an escape hatch</span>
+      </div>
+      <div className="grid w-full max-w-lg gap-3 sm:grid-cols-3">
+        {EMPTY_TRIPLES.map((e) => {
+          const done = filled === e.id;
+          return (
+            <div key={e.id} className={`rounded-2xl border p-4 text-left transition-all duration-300 ${done ? "border-mint/40 bg-mint/8" : "border-white/8 bg-white/4"}`}>
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br ${e.ring} to-transparent text-base ${e.tone}`}>{done ? "✓" : e.glyph}</span>
+              <div className="mt-3 text-sm font-extrabold tracking-tight">{done ? "It has content now" : e.t}</div>
+              {done ? (
+                <p className="mt-1 text-[10px] leading-relaxed text-mint">Tap the verb below to undo the demo fill.</p>
+              ) : (
+                <>
+                  <p className="mt-0.5 text-[10px] leading-relaxed text-ink-faint">{e.step}</p>
+                  <div className="mt-2.5 flex items-center gap-1.5">
+                    <button type="button" onClick={() => setFilled(e.id)} className="rounded-lg bg-white/10 px-2 py-1 text-[10px] font-bold transition-colors hover:bg-white/18">
+                      {e.verb}
+                    </button>
+                    <button type="button" onClick={() => setFilled(e.id)} className="text-[9px] text-ink-faint underline-offset-2 hover:underline">{e.hatch}</button>
+                  </div>
+                </>
+              )}
+              {done && (
+                <button type="button" onClick={() => setFilled(null)} className="mt-1 text-[9px] text-ink-faint underline-offset-2 hover:underline">
+                  reset empty state
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <p className="text-center text-[11px] text-ink-faint">the empty state is onboarding — the headline is a verb, the first step takes under a minute</p>
+    </div>
+  );
+}
+
+function OfflineIndicator() {
+  const [online, setOnline] = useState(true);
+  const [reconnecting, setReconnecting] = useState(false);
+  const goOffline = () => {
+    setOnline(false);
+    setReconnecting(true);
+    window.setTimeout(() => setReconnecting(false), 2800);
+    window.setTimeout(() => setOnline(true), 3400);
+  };
+  const show = !online;
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(244,114,182,0.1),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-sm rounded-2xl border border-white/8 bg-white/4 p-5">
+        <div className="flex items-center gap-2">
+          <span className={`relative flex h-2 w-2 ${online ? "" : ""}`}>
+            {online ? (
+              <span className="inline-flex h-2 w-2 rounded-full bg-mint" />
+            ) : (
+              <>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-300 opacity-70" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-300" />
+              </>
+            )}
+          </span>
+          <span className="text-sm font-bold">{online ? "Connected" : reconnecting ? "Reconnecting…" : "Offline"}</span>
+          <span className={`ml-auto text-[10px] ${online ? "text-mint" : "text-amber-300"}`}>{online ? "changes sync live" : "queued locally"}</span>
+        </div>
+        <div className="mt-3 space-y-1.5">
+          <div className="h-1.5 w-full rounded-full bg-white/8" />
+          <div className="h-1.5 w-3/4 rounded-full bg-white/6" />
+        </div>
+        {show && (
+          <div className="mt-3 rounded-lg border border-amber-300/25 bg-amber-400/8 px-3 py-2 text-[11px] text-amber-200" style={{ animation: "mf-toast-in .2s ease-out both" }}>
+            Your changes are saved on this device. We will sync the moment the connection returns.
+          </div>
+        )}
+      </div>
+      <button type="button" onClick={goOffline} disabled={!online} className="btn btn-quiet !px-4 !py-2 !text-xs disabled:cursor-not-allowed disabled:opacity-40">
+        Simulate going offline
+      </button>
+      <p className="max-w-xs text-center text-[11px] text-ink-faint">wire it to the real <span className="font-mono text-pink-200">online/offline</span> events — the banner pulses while it reconnects, then clears itself</p>
+    </div>
+  );
+}
+
+function ErrorBoundaryCard({ fail = 1 }: DemoProps) {
+  const failsLeft = typeof fail === "number" ? Math.max(0, Math.min(3, Math.round(fail))) : 1;
+  const [attempt, setAttempt] = useState(0);
+  const [showDetail, setShowDetail] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const broken = attempt <= failsLeft;
+  const copyError = async () => {
+    try {
+      await navigator.clipboard.writeText("TypeError: Cannot read properties of undefined (reading 'layers')" + "\n" + "  at renderSurface (Surface.tsx:84:11)");
+    } catch { /* noop */ }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1400);
+  };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(248,113,113,0.1),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        {broken ? (
+          <div className="rounded-2xl border border-danger/25 bg-panel p-5" role="alert" style={{ animation: "mf-toast-in .25s ease-out both" }}>
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-danger/15 text-lg text-danger">!</span>
+              <div>
+                <div className="text-sm font-extrabold">This section hit a snag</div>
+                <div className="text-[11px] text-ink-dim">The rest of the page is fine — only the surface renderer failed.</div>
+              </div>
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <button type="button" onClick={() => setAttempt((n) => n + 1)} className="btn btn-primary !px-4 !py-2 !text-xs">
+                ↺ Try again
+              </button>
+              <button type="button" onClick={copyError} className="btn btn-ghost !px-4 !py-2 !text-xs">
+                {copied ? "✓ Copied" : "Copy error report"}
+              </button>
+              <button type="button" onClick={() => setShowDetail((v) => !v)} className="ml-auto text-[11px] font-semibold text-ink-faint hover:text-ink">
+                {showDetail ? "hide details" : "show details"}
+              </button>
+            </div>
+            {showDetail && (
+              <pre className="mt-3 overflow-x-auto rounded-xl bg-black/40 p-3 font-mono text-[10px] leading-relaxed text-danger/90">
+                TypeError: Cannot read properties of undefined (reading &apos;layers&apos;)
+                {"\n"}  at renderSurface (Surface.tsx:84:11)
+              </pre>
+            )}
+            <p className="mt-3 text-[10px] text-ink-faint">attempt {attempt} of {failsLeft + 1} · a real boundary reports once and recovers — it never blanks the whole app</p>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-mint/30 bg-mint/8 p-5 text-center" style={{ animation: "mf-toast-in .25s ease-out both" }}>
+            <div className="text-2xl">✓</div>
+            <div className="mt-1 text-sm font-extrabold text-mint">Recovered on attempt {attempt}</div>
+            <p className="mt-1 text-[11px] text-ink-dim">The boundary caught the error, reported it, and the section re-rendered cleanly.</p>
+            <button type="button" onClick={() => setAttempt(0)} className="btn btn-ghost mt-3 !py-2 !text-xs">↺ Break it again</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const CONFETTI_COLORS = ["#8b5cf6", "#22d3ee", "#34d399", "#f472b6", "#fbbf24", "#a5b4fc"];
+
+function ConfettiBurst() {
+  const [burst, setBurst] = useState(0);
+  const pieces = burst ? Array.from({ length: 34 }) : [];
+  return (
+    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(244,114,182,0.12),transparent_60%),#08090f] px-6">
+      {/* stage */}
+      <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl border border-white/8 bg-white/4 p-6 text-center">
+        <span className="chip !border-mint/25 !bg-mint/10 !text-mint">Launch complete</span>
+        <div className="text-2xl font-black tracking-tight">motif/ui is live 🎉</div>
+        <p className="text-[11px] text-ink-dim">your build shipped — celebrate once, then get back to work.</p>
+        <button type="button" onClick={() => setBurst((n) => n + 1)} className="btn btn-primary !px-5 !py-2 !text-xs">
+          🎉 Fire confetti
+        </button>
+      </div>
+      {/* confetti layer, re-keyed per burst */}
+      {burst > 0 && (
+        <div key={burst} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          {pieces.map((_, i) => {
+            const hue = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+            const left = ((i * 37) % 100) + (i % 3 === 0 ? -6 : 4);
+            const delay = (i % 11) * 0.045;
+            const drift = (i % 5) - 2;
+            const rot = (i * 61) % 360;
+            return (
+              <span
+                key={i}
+                className="absolute top-[-12px] block"
+                style={{
+                  left: `${left}%`,
+                  width: i % 3 === 0 ? 8 : 6,
+                  height: i % 4 === 0 ? 8 : 11,
+                  background: hue,
+                  borderRadius: i % 4 === 0 ? "99px" : "2px",
+                  animation: `mf-confetti-fall ${1.6 + (i % 5) * 0.22}s cubic-bezier(.2,.6,.35,1) ${delay}s both`,
+                  ["--cf-drift" as string]: `${drift * 30}px`,
+                  ["--cf-rot" as string]: `${rot}deg`,
+                }}
+              />
+            );
+          })}
+          <style>{`@keyframes mf-confetti-fall {
+  0% { transform: translate(0, -10px) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--cf-drift), 130%) rotate(var(--cf-rot)); opacity: .2; }
+}`}</style>
+        </div>
+      )}
+      <p className="mt-4 max-w-xs text-center text-[11px] text-ink-faint">tasteful by default: one burst per milestone, never looping, and it cleans itself off the stage</p>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
+
 
 
 
@@ -3332,6 +3755,8 @@ export const DEMO_KEYS = [
   "password-strength", "split-button-menu", "breadcrumb-trail",
   "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
+  "status-banner", "progress-ring", "spinner-status", "empty-state-trio",
+  "offline-indicator", "error-boundary-card", "confetti-burst",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -3404,6 +3829,13 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "disclosure-list": return <DisclosureList />;
     case "fullscreen-overlay-menu": return <FullscreenOverlayMenu />;
     case "skeleton-card": return <SkeletonCard {...props} />;
+    case "status-banner": return <StatusBanner />;
+    case "progress-ring": return <ProgressRing />;
+    case "spinner-status": return <SpinnerStatus />;
+    case "empty-state-trio": return <EmptyStateTrio />;
+    case "offline-indicator": return <OfflineIndicator />;
+    case "error-boundary-card": return <ErrorBoundaryCard {...props} />;
+    case "confetti-burst": return <ConfettiBurst />;
     default: return null;
   }
 }
