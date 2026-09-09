@@ -1097,6 +1097,407 @@ Image                   150-250ms   scale 1.02 -> 1, no travel`,
       },
     ],
   },
+  {
+    slug: "the-200ms-click-window",
+    kicker: "Perception",
+    title: "The 200ms click window",
+    deck: "Between the finger landing and the interface answering sits a 200-millisecond window where the user decides whether the product is fast or slow. What fills that window decides how the whole app feels.",
+    minutes: 8,
+    level: "Beginner",
+    tags: ["perception", "latency", "feedback", "ux"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Perceived latency is a story, not a timer",
+        body: [
+          "Research on perceived responsiveness keeps landing on the same numbers: under 100ms the response feels instant. Between 100 and 300ms the user notices the wait but credits the interface with intent. Past 300ms the user starts to doubt whether the click registered at all — and that doubt is the expensive one, because doubt produces re-clicks, and re-clicks produce double-submits, and double-submits produce duplicates, and duplicates produce tickets.",
+          "The trick of the 200ms window: the user does not need the *result* in 200ms — they need *evidence* in 200ms. A button that compresses the instant it is pressed buys the slow network call that follows. The click window is filled by confirmation, and confirmation is motion's job.",
+        ],
+        callout: {
+          type: "pro",
+          title: "The 200ms budget, spent",
+          text: "0–60ms: press feedback (scale, fill). 60–200ms: state change (spinner, optimistic update, 'Saving…'). 200ms+: if the real result is late, the UI must already look busy — a calm spinner beats a frozen button.",
+        },
+      },
+      {
+        h: "Optimistic updates are the professional move",
+        body: [
+          "The interface that feels fastest is the one that acts as if the network does not exist and corrects itself if it turns out to be wrong. Toggling a switch flips it instantly and shows 'syncing'; only on failure does it flip back with a reason. That is filling the click window with the product's own confidence.",
+          "The rule for optimism: only optimistic-update actions that are reversible or low-cost. A like, a toggle, a reorder — yes. A payment — never. Optimism is a design decision about who apologises when the network disagrees.",
+        ],
+      },
+      {
+        h: "What steals the window",
+        bullets: [
+          "No press state at all: the button sits still for 300ms, then the result arrives — the user cannot tell when the click registered.",
+          "Disabled-looking buttons: grey until the handler runs, making the user wonder whether they may click at all.",
+          "Double-submit traps: a slow submit that lets a second click through; the second click is the click window's revenge.",
+          "Spinner-only feedback on fast actions: a 40ms action that shows a spinner for 300ms feels slower than the same action with no feedback at all.",
+          "Navigation without a hint: clicking a card that takes 400ms to navigate with zero feedback in between.",
+        ],
+      },
+      {
+        h: "The motion recipe for the window",
+        code: {
+          title: "press-feedback.css",
+          lang: "css",
+          text: `button:active { transform: scale(.97); }
+/* instant, 60ms, then the state change takes over */
+
+.card[data-pending] .spinner { opacity: 1; }
+/* the 200ms window stays honest: pressed -> busy -> done */`,
+        },
+        links: [{ label: "Press feedback that feels instant", href: "/components/halo-button" }],
+      },
+    ],
+  },
+  {
+    slug: "reduced-motion-beyond-the-switch",
+    kicker: "Accessibility",
+    title: "Reduced motion beyond the switch",
+    deck: "prefers-reduced-motion is a switch, but accessibility is a second design: a calmer experience with the same information, not a stripped one. Designing the reduced experience deliberately, not by deletion.",
+    minutes: 11,
+    level: "Intermediate",
+    tags: ["a11y", "reduced motion", "motion", "vestibular"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The switch is a signal, not a sentence",
+        body: [
+          "prefers-reduced-motion: reduce is one of the few accessibility signals a browser sends unprompted — it means the person at the other end has told their operating system that motion makes them uncomfortable or unwell. Treating it as a binary that blanks all animation is like responding to a wheelchair user by removing the stairs *and* the building. The goal is the same journey, with a different movement system.",
+          "The reduced experience should still communicate state, still guide attention, still reward progress — just without vestibular triggers: no large movement, no parallax, no persistent drifting, no simulated motion sickness.",
+        ],
+        bullets: [
+          "Keep opacity fades (200–300ms) — fading does not trigger vestibular responses and still carries state changes.",
+          "Replace parallax with stillness plus a subtle shadow or gradient change; the depth cue survives without the motion.",
+          "Replace autoplaying carousels with manual controls that are more visible, not less — the reduced experience gives the user control.",
+          "Replace long springs and overshoot with short settles — the information lands either way.",
+          "Replace scroll-linked reveals with content that is simply visible — a reader with motion sensitivity should not have to scroll-trigger every paragraph into existence.",
+        ],
+      },
+      {
+        h: "The second-design principle",
+        body: [
+          "The professional framing is to design the reduced experience as a *second design*, not a deletion pass. Ask: what is this animation's job? If the job is 'show the user the item was added', then the reduced version needs a different mechanism for that same job — a color change, a checkmark, a position shift. If the job is pure atmosphere, cut it — but say so in the code, so the next designer knows the cut was a decision.",
+          "Motif's motion-spec prompt bakes this in: every specified animation ships with its reduced branch in the same spec — what plays (nothing that moves layout), what fades (opacity only), and the exact media query hook. The reduced experience is in the contract, not bolted on after the audit.",
+        ],
+        code: {
+          title: "reduced-branch.css",
+          lang: "css",
+          text: `@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* then re-enable the deliberate fades: */
+  .toast { transition: opacity 250ms ease; }
+  .progress-bar { transition: width 200ms ease; }
+}`,
+        },
+        links: [{ label: "The a11y-strict prompt brief", href: "/prompts/accessibility-strict-page" }],
+      },
+    ],
+  },
+  {
+    slug: "glass-part-two-when-glass-belongs",
+    kicker: "Craft & CSS",
+    title: "Glass, part two: when glass belongs",
+    deck: "Frosted glass is the most overused effect in modern UI. Part two of the glass series: the three situations where blur-and-translucency genuinely earns its place, and the two where it is camouflage for a weak layout.",
+    minutes: 10,
+    level: "Intermediate",
+    tags: ["glass", "backdrop-filter", "css", "craft"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Where glass physically makes sense",
+        body: [
+          "Glass in UI works when the metaphor holds: something is *on top of* something else, and the user benefits from seeing the underneath through the top. Three cases earn it. Floating navigation over scrolling content: the nav stays legible while the page moves under it — glass is the excuse for a bar that is not opaque. Modals and sheets over a busy backdrop: the blur keeps the page present enough for context but quiet enough for focus — glass is focus management. And media surfaces over imagery: a caption bar over a photo, a control bar over a video — the image stays visible, the control stays readable.",
+        ],
+        callout: {
+          type: "tip",
+          title: "The legibility test",
+          text: "Blur the background 8–16px and put the text over it. If the text needs extra shadow, a darker scrim, or a higher blur to pass contrast, the glass is decorative — make the panel opaque or nearly so. Glass must earn its translucency with legibility it does not have to cheat for.",
+        },
+      },
+      {
+        h: "Where glass is camouflage",
+        bullets: [
+          "Over flat colour: blurring a flat background produces nothing but a muddy tint — if there is nothing behind the glass, there is no reason for the glass.",
+          "Over text the user needs to read through: glass over a paragraph is a readability tax on whatever is beneath.",
+          "As a card style on a page with no layering: glass implies depth; a page of floating panels with nothing beneath them reads as indecision.",
+          "Where backdrop-filter costs frames: every blurred layer repaints as content scrolls beneath it — on low-end devices a hero with a blurred scrim can drop the scroll to jank. If you cannot hold 60fps with the blur, the glass is too expensive for its job.",
+        ],
+      },
+      {
+        h: "The recipe that behaves",
+        code: {
+          title: "honest-glass.css",
+          lang: "css",
+          text: `.glass {
+  background: rgb(255 255 255 / .55);   /* tint first */
+  backdrop-filter: blur(14px) saturate(1.4); /* blur second */
+  border: 1px solid rgb(255 255 255 / .35);   /* edge light */
+  box-shadow: 0 8px 32px rgb(0 0 0 / .12);    /* separation */
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .glass { background: rgb(255 255 255 / .92); } /* fallback */
+}`,
+        },
+        links: [{ label: "The original glass essay", href: "/learn/glass-is-a-material" }],
+      },
+    ],
+  },
+  {
+    slug: "shadow-discipline",
+    kicker: "Craft & CSS",
+    title: "Shadow discipline",
+    deck: "Shadows are an elevation system, not an ornament budget. Layer counts, elevation scales, and the one shadow rule that separates systems that feel physical from pages that look smudged.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["shadows", "elevation", "css", "design systems"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Shadow is a Z-axis language",
+        body: [
+          "Every shadow on a page says how high the element floats above the surface. When a design system lets each card choose its own shadow, the page silently disagrees about physics: this card floats at 2px, that one at 24px, and the eye registers the inconsistency as messiness it cannot name. Elevation is a scale, like type — usually four rungs are enough.",
+          "The discipline: an element's shadow should be a function of its *role* (resting, hovered, overlaying, modal), not of its designer's mood. Same role, same shadow, everywhere.",
+        ],
+      },
+      {
+        h: "The four-rung scale that survives",
+        bullets: [
+          "rung 1 — resting cards on a flat surface: 0 1px 2px rgb(0 0 0 / .06) plus a hairline border. Barely there; the card sits on the page.",
+          "rung 2 — hover and interactive elevation: 0 4px 12px rgb(0 0 0 / .10). One rung up, clearly lifted, still calm.",
+          "rung 3 — overlays, dropdowns, popovers: 0 12px 32px rgb(0 0 0 / .14). The element now floats above the content it covers.",
+          "rung 4 — modals and sheets: 0 24px 64px rgb(0 0 0 / .20) plus a 0.5–1px rim light. The modal is the tallest thing on the page; the scrim beneath does the rest.",
+        ],
+        code: {
+          title: "elevation-tokens.css",
+          lang: "css",
+          text: `:root {
+  --shadow-1: 0 1px 2px rgb(0 0 0 / .06), 0 0 0 1px rgb(0 0 0 / .02);
+  --shadow-2: 0 4px 12px rgb(0 0 0 / .10);
+  --shadow-3: 0 12px 32px rgb(0 0 0 / .14);
+  --shadow-4: 0 24px 64px rgb(0 0 0 / .20), 0 1px 0 rgb(255 255 255 / .06) inset;
+}
+.card:hover  { box-shadow: var(--shadow-2); }
+.dropdown   { box-shadow: var(--shadow-3); }
+.modal      { box-shadow: var(--shadow-4); }`,
+        },
+      },
+      {
+        h: "When not to glow",
+        body: [
+          "The glow — a colored, larger-radius shadow — is a spotlight, and spotlights are for one element per scene. A primary CTA may glow; a row of four buttons may not, or the page looks like a casino. The discipline for glows: colored shadows only on the single action you are directing the eye toward, sized tight to the element, and never as a resting state for everything hoverable.",
+          "And the silent killer: shadows under text. Text shadows are almost never needed on dark UI — if text needs a shadow to be readable, the background is too busy, and the fix is the background, not the crutch.",
+        ],
+        links: [{ label: "Elevation with real hover states", href: "/components/tilt-card" }],
+      },
+    ],
+  },
+  {
+    slug: "grid-systems-that-dont-shout",
+    kicker: "Craft & CSS",
+    title: "Grid systems that don't shout",
+    deck: "Twelve columns is a default, not a law. Layout rhythm without grid anxiety: the three questions that actually decide column count, and how to make a grid disappear into the design instead of announcing itself.",
+    minutes: 8,
+    level: "Beginner",
+    tags: ["grid", "layout", "css", "rhythm"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "A grid is a rhythm instrument, not a cage",
+        body: [
+          "A grid exists so the eye can relax — content aligned to shared vertical lines reads as organized without the reader ever counting columns. The moment a grid *shouts* is the moment alignment becomes visible as pattern: everything snapped to the same few positions, every card the same width, every gap identical, so the page looks like a spreadsheet wearing a nice font.",
+          "Rhythm beats symmetry. A page whose cards share a gutter and an edge but vary in internal structure reads as designed; a page whose every module is the same box reads as templated.",
+        ],
+        bullets: [
+          "Choose columns by content, not fashion: prose wants a 6-column book grid; a pricing page wants 3; a gallery wants 4–6; a dashboard wants 12 because its widgets are genuinely heterogeneous. If every module is the same shape, you needed 3 columns, not 12.",
+          "Gutter before column count: pick the gutter (16–32px on desktop) that makes adjacent content feel related-but-distinct, then divide the rest. Changing the gutter changes the reading of every module; changing column count changes only the module widths.",
+          "Break the grid on purpose, once: a full-bleed hero or a pulled quote that ignores the columns proves the grid is a decision, not a constraint — one deliberate break per page is punctuation; five is chaos.",
+          "Alignment is a promise: if two modules share an edge, their interiors should share its logic — a card aligned to the left edge should start its text on that edge, not 20px in for no reason.",
+        ],
+      },
+      {
+        h: "The quiet grid in practice",
+        code: {
+          title: "quiet-grid.css",
+          lang: "css",
+          text: `.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(16px, 2.5vw, 32px);
+}
+.module--prose  { grid-column: span 6; }  /* book rhythm */
+.module--card   { grid-column: span 4; }
+.module--wide   { grid-column: span 8; }
+.module--full   { grid-column: 1 / -1; }   /* the one break */`,
+        },
+        links: [{ label: "Grids at work in a bento layout", href: "/components/bento-feature-grid" }],
+      },
+    ],
+  },
+  {
+    slug: "fluid-type-without-magic-numbers",
+    kicker: "Craft & CSS",
+    title: "Fluid type without magic numbers",
+    deck: "clamp() is everywhere and understood nowhere. The math that makes fluid type explainable — minimum, maximum, and a slope you can defend in a code review instead of a number you found in a tweet.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["typography", "clamp", "fluid type", "css"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "What clamp actually computes",
+        body: [
+          "clamp(min, preferred, max) picks the middle value when it fits between the bounds. The middle is usually a vw-based expression, and that expression is a straight line: at some viewport width it equals the minimum, at another it equals the maximum, and between them type scales linearly. Magic numbers are just slopes chosen by trial; the fix is choosing the slope on purpose.",
+          "The defensible recipe: pick your type size at a small viewport (the minimum), pick it at a large viewport (the maximum), and decide at which widths the size stops changing. The vw slope is then arithmetic: (max - min) / (max-width - min-width).",
+        ],
+        code: {
+          title: "fluid-type.ts",
+          lang: "text",
+          text: `Goal: 16px @ 360px viewport -> 20px @ 1280px viewport.
+Slope = (20 - 16) / (1280 - 360) = 4 / 920 = 0.00435
+
+clamp(16px, 0.435vw + ?px, 20px)
+
+Solve the intercept at 360px:
+0.00435 * 360 = 1.57 -> need 16 - 1.57 = 14.43px base
+
+clamp(16px, calc(0.435vw + 14.43px), 20px)
+-- a line you can explain in one sentence.`,
+        },
+      },
+      {
+        h: "The rules that keep it sane",
+        bullets: [
+          "Anchor every clamp to real breakpoints you already use — the min viewport (small phone), the max viewport (large desktop). If your container maxes at 1200px, scaling type to 2000px viewports is scaling for empty space.",
+          "Never clamp a single size in isolation — scale the whole type ramp together so the hierarchy's *ratios* stay constant, or headings will outgrow their paragraphs at some width.",
+          "Use rem for the bounds so user font-size settings still scale your type; a clamp in px ignores the browser's minimum font size and accessibility settings.",
+          "Container queries change the game: with container query units you can scale type to the *component* width, which matters for sidebars and cards that never reach viewport scale.",
+        ],
+      },
+      {
+        h: "When fluid type is the wrong tool",
+        body: [
+          "Long-form reading: body text that grows with the viewport fights the reader's preferred measure. For articles, fix the measure (60–75ch) and let font size stay steady across a wide range — fluid type belongs to display and headings, not paragraphs. If a line of body copy changes size between two monitors side by side, a reader who notices will not thank you.",
+        ],
+        links: [{ label: "Type in a real editorial layout", href: "/learn/print-inspired-editorial" }],
+      },
+    ],
+  },
+  {
+    slug: "css-nesting-now",
+    kicker: "Craft & CSS",
+    title: "CSS nesting, now",
+    deck: "Native CSS nesting shipped in every evergreen browser. Flatter files, real cascade semantics — and a syntax trap that will cost you a debugging afternoon if nobody warns you.",
+    minutes: 8,
+    level: "Intermediate",
+    tags: ["css", "nesting", "modern css"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "What native nesting changes",
+        body: [
+          "Native nesting lets a selector live inside its parent, exactly like the preprocessors taught us — but with one crucial difference: it is the browser's own cascade, no build step, no indentation rules from a tool that left the room. The payoff is files that group a component's styles where the eye expects them: the card's padding, its title rule, and its hover state in one readable block instead of three scattered locations.",
+        ],
+        code: {
+          title: "nested-card.css",
+          lang: "css",
+          text: `.card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+
+  & h2 { font-size: 1.25rem; }        /* descendant */
+  & > .title { font-weight: 700; }    /* child */
+  &:hover { translate: 0 -2px; }      /* self pseudo */
+  &.is-selected { border-color: var(--accent); }
+
+  @media (width < 640px) { padding: 1rem; }  /* nested at-rule */
+}`,
+        },
+      },
+      {
+        h: "The trap: specificity climbs silently",
+        body: [
+          "Every nesting level adds specificity. .card & h2 computes as (0,1,1) — one class, one type — while .card { & .title & .meta } keeps stacking. Deeply nested selectors quietly outrank the flat overrides you write later, and the 'why is my override not applying' hunt begins. The discipline: nest for grouping, not for depth. Two levels deep is the comfort zone; three is where you start paying.",
+        ],
+        callout: {
+          type: "warn",
+          title: "The bare & pitfall",
+          text: "& h2 and & .title and &:hover all behave differently from each other and from preprocessor habits. & concatenates the parent selector as-is: .card & h2 means 'h2 inside .card', but & .title inside .card means '.card .title' — the space matters. Read every & as 'the parent selector, literally here' and the syntax stops surprising you.",
+        },
+      },
+      {
+        h: "Mixing nesting with the cascade layers",
+        body: [
+          "Nesting composes beautifully with @layer: put the component layer inside the nesting and the whole file reads top-to-bottom as one story. Nesting is not a rewrite — it is a reorganization of files you already have, and the safest migration is bottom-up: nest one component a week, keep the specificity shallow, and let the cascade layers do the arbitration that nesting must not.",
+        ],
+        links: [{ label: "CSS craft in a five-move essay", href: "/learn/css-depth-five-moves" }],
+      },
+    ],
+  },
+  {
+    slug: "container-queries-cookbook",
+    kicker: "Craft & CSS",
+    title: "Container queries cookbook",
+    deck: "Component-first responsive means the card does not care what page it lives on. Four recipes that replace viewport-width hacks with container queries that actually survive production.",
+    minutes: 10,
+    level: "Advanced",
+    tags: ["container queries", "responsive", "css", "components"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The shift: from viewport to container",
+        body: [
+          "Viewport queries answer the wrong question for components: a card in a narrow sidebar and the same card in a wide content column face different viewports but identical containers. Container queries let the component respond to its own width — the sidebar card stacks its media above its text; the content-column card puts them side by side, from the same CSS, no duplication.",
+          "The mental model flips from 'how big is the screen?' to 'how much room does this component have?' — which is the question components can actually answer about themselves.",
+        ],
+        code: {
+          title: "setup.css",
+          lang: "css",
+          text: `.card-grid {
+  container-type: inline-size;   /* size queries off this container */
+  container-name: card;          /* optional, for specificity */
+}
+
+.card { display: grid; gap: 1rem; }
+.card__media { aspect-ratio: 4 / 3; }
+
+@container card (width > 480px) {
+  .card { grid-template-columns: 240px 1fr; }
+  .card__media { aspect-ratio: auto; height: 100%; }
+}`,
+        },
+      },
+      {
+        h: "Recipe 1 — the media object that knows its width",
+        body: [
+          "The classic: an avatar-plus-text row. Narrow (in a drawer), stack avatar above text. Wide, avatar left. One component, both layouts, and the breakpoint is the container's own width — it behaves identically in a sidebar at 1400px viewport and a phone at 700px, because the phone is the wide context for that drawer.",
+        ],
+        bullets: [
+          "Recipe 2 — the stats band: five stats in a full-width band become three-plus-two at container 700px, then two-plus-two-plus-one at 480px. The band queries its container, so embedding the band in a page section or a dashboard card both work without a second stylesheet.",
+          "Recipe 3 — the pricing card: price tables flip from rows to stacked tiers by container width; the same card component serves the marketing page (wide container) and an embedded comparison widget (narrow container).",
+          "Recipe 4 — the hero: hero components with container queries can live on the homepage (full width, split layout) and on a campaign page (contained, stacked) without variants or props-for-layout.",
+        ],
+        callout: {
+          type: "tip",
+          title: "The gotcha that bites everyone",
+          text: "container-type: inline-size makes the element a size container — but it also makes the element's size depend on its contents only in the block axis, and it changes how percentage heights resolve. The classic breakage: an img with height: 100% inside a container query stops resolving. Query the wrapper, not the element whose height you are sizing.",
+        },
+      },
+      {
+        h: "When viewport queries still win",
+        body: [
+          "Page chrome — navs, sidebars, global layout — is genuinely viewport-sized and should stay on viewport queries. The rule of thumb: container queries for anything reusable, viewport queries for anything architectural. And container query units (cqw, cqh) for sizing type and spacing inside components complete the story — fluid type that responds to the component, not the monitor.",
+        ],
+        links: [{ label: "Container-size type, applied", href: "/learn/fluid-type-without-magic-numbers" }],
+      },
+    ],
+  },
 ];
 
 export function learnArticleOf(slug: string): LearnArticle | undefined {

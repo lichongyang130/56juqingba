@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 153 / 500 shipped (batches 1–20, in order) · Sections 1–3 complete ✅
+## Progress — 161 / 500 shipped (batches 1–21, in order) · Sections 1–3 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -165,6 +165,14 @@ names, behaviours and where they plug into the existing pages.
 | 151 | Why 60fps feels like 24fps essay | [/learn/why-60fps-feels-like-24fps](/learn/why-60fps-feels-like-24fps) |
 | 152 | GPU animation explained plainly essay | [/learn/gpu-animating-without-asking](/learn/gpu-animating-without-asking) |
 | 153 | Scroll speed is a type choice essay | [/learn/scroll-speed-is-a-type-choice](/learn/scroll-speed-is-a-type-choice) |
+| 154 | The 200ms click window essay | [/learn/the-200ms-click-window](/learn/the-200ms-click-window) |
+| 155 | Reduced motion beyond the switch essay | [/learn/reduced-motion-beyond-the-switch](/learn/reduced-motion-beyond-the-switch) |
+| 156 | Glass, part two essay | [/learn/glass-part-two-when-glass-belongs](/learn/glass-part-two-when-glass-belongs) |
+| 157 | Shadow discipline essay | [/learn/shadow-discipline](/learn/shadow-discipline) |
+| 158 | Grid systems that don't shout essay | [/learn/grid-systems-that-dont-shout](/learn/grid-systems-that-dont-shout) |
+| 159 | Fluid type without magic numbers essay | [/learn/fluid-type-without-magic-numbers](/learn/fluid-type-without-magic-numbers) |
+| 160 | CSS nesting now essay | [/learn/css-nesting-now](/learn/css-nesting-now) |
+| 161 | Container queries cookbook essay | [/learn/container-queries-cookbook](/learn/container-queries-cookbook) |
 
 
 ---
@@ -356,7 +364,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 4. Learn — 50 more essays & formats (currently 10 → 18 live)
+## 4. Learn — 50 more essays & formats (currently 10 → 26 live)
 
 ### Motion & animation theory
 - **Easing cheatsheet deep-dive** ✅ (`easing-cheatsheet-deep-dive`): compare the 8 named curves side-by-side with the Lab embeds.
@@ -367,16 +375,16 @@ names, behaviours and where they plug into the existing pages.
 - **Why 60fps feels like 24fps** ✅ (`why-60fps-feels-like-24fps`): perceived smoothness, frame pacing and jank perception.
 - **Animating on the GPU without asking** ✅ (`gpu-animating-without-asking`): transform/opacity and the compositor explained plainly.
 - **Scroll speed is a type choice** ✅ (`scroll-speed-is-a-type-choice`): mapping reading rhythm to reveal timing.
-- **The 200ms click window**: how click-to-action motion shapes perceived latency.
-- **Reduced motion beyond the switch**: designing a second, calmer experience not a stripped one.
+- **The 200ms click window** ✅ (`the-200ms-click-window`): how click-to-action motion shapes perceived latency.
+- **Reduced motion beyond the switch** ✅ (`reduced-motion-beyond-the-switch`): designing a second, calmer experience not a stripped one.
 
 ### Craft & CSS
-- **Glass, part two**: when glass belongs over photography vs. flat colour.
-- **Shadow discipline**: layer counts, elevation scales, and when not to glow.
-- **Grid systems that don't shout**: layout rhythm without 12-column anxiety.
-- **Fluid type without magic numbers**: clamp() math you can explain in a tweet.
-- **CSS nesting now**: writing cleaner cascade with native nesting.
-- **Container queries cookbook**: component-first responsive that isn't viewport-sized.
+- **Glass, part two** ✅ (`glass-part-two-when-glass-belongs`): when glass belongs over photography vs. flat colour.
+- **Shadow discipline** ✅ (`shadow-discipline`): layer counts, elevation scales, and when not to glow.
+- **Grid systems that don't shout** ✅ (`grid-systems-that-dont-shout`): layout rhythm without 12-column anxiety.
+- **Fluid type without magic numbers** ✅ (`fluid-type-without-magic-numbers`): clamp() math you can explain in a tweet.
+- **CSS nesting now** ✅ (`css-nesting-now`): writing cleaner cascade with native nesting.
+- **Container queries cookbook** ✅ (`container-queries-cookbook`): component-first responsive that isn't viewport-sized.
 - **has() is finally useful**: three parent-selector patterns that survive production.
 - **scroll-timeline, honestly**: what scroll-driven animations can and can't do today.
 - **In defence of the button**: states, semantics and the one you always forget.
