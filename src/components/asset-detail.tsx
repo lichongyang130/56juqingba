@@ -712,6 +712,117 @@ useEffect(() => {
   in srgb, var(--color-accent) 80%, transparent); outline-offset: 2px; }
 .radio-pill-hit:has(~ input:checked) { /* or peer-checked:… */ }`,
   },
+  "auto-grow-textarea": {
+    react: `// React — grow by re-measuring, then cap the ceiling
+const ref = useRef<HTMLTextAreaElement>(null);
+const grow = () => {
+  const el = ref.current;
+  if (!el) return;
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 168) + "px";
+};
+<textarea ref={ref} onChange={e => { setVal(e.target.value); grow(); }}
+  rows={3} className="resize-none" />`,
+    css: `/* the counter owns the emotion: amber at 90%, red past zero */
+.count--warn { color: var(--color-amber); }
+.count--over { color: var(--color-danger); font-weight: 700; }
+textarea { overflow: hidden; } /* box grows, no internal scrollbar */`,
+  },
+  "date-presets": {
+    react: `// React — presets are just day counts; custom is a real range
+const PRESETS = [
+  { id: "7d", label: "7d", days: 7 },
+  { id: "30d", label: "30d", days: 30 },
+];
+// pill row sets the window; the chart and the range caption both
+// derive from the same [start, end] — one source of truth, always.`,
+    css: `/* pills read as one control: shared rail + accent for the active */
+.date-rail { display: flex; gap: 6px; padding: 6px;
+  border-radius: 12px; border: 1px solid var(--color-edge); }
+.date-pill--on { background: color-mix(in srgb, var(--color-accent-2) 15%, transparent);
+  color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.12); }`,
+  },
+  "file-drop-zone": {
+    react: `// React — three states: idle, drag-over, and upload-in-progress
+<div role="button" tabIndex={0} aria-label="Upload a file"
+  onDragOver={e => { e.preventDefault(); setPhase("over"); }}
+  onDragLeave={() => setPhase("idle")}
+  onDrop={e => { e.preventDefault(); accept(e.dataTransfer?.files?.[0]); }}
+  onClick={() => fileInput.current?.click()}>
+  {/* dashed border; drag-over turns it accent + lifts it 1% */}
+</div>
+// progress: interval of ~90ms; clean up on unmount + phase change`,
+    css: `.dropzone { border: 2px dashed rgba(255,255,255,.15); border-radius: 16px;
+  transition: border-color .2s, background .2s, transform .2s; }
+.dropzone--over { border-color: var(--color-mint);
+  background: color-mix(in srgb, var(--color-mint) 8%, transparent);
+  transform: scale(1.01); }`,
+  },
+  "toggle-label-stack": {
+    react: `// React — a real switch with a real <label> and description
+<button type="button" role="switch" aria-checked={on}
+  aria-label={title} onClick={() => toggle(id)}
+  className={on ? "switch switch--on" : "switch"}>
+  <span className="switch-thumb" />
+</button>
+// title + description live next to it, in normal text flow —
+// a preference nobody can misread`,
+    css: `.switch { display: flex; align-items: center; width: 44px; height: 24px;
+  border-radius: 99px; padding: 2px; background: rgba(255,255,255,.08);
+  border: 1px solid var(--color-edge); transition: background .2s; }
+.switch--on { justify-content: flex-end;
+  background: linear-gradient(90deg, #8b5cf6, #6366f1);
+  border-color: rgba(196,181,253,.5); }
+.switch-thumb { width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }`,
+  },
+  "password-strength": {
+    react: `// React — four boolean checks, never a magic heuristic
+const score = [pw.length >= 8,
+  /[a-z]/.test(pw) && /[A-Z]/.test(pw),
+  /[0-9]/.test(pw), /[^A-Za-z0-9]/.test(pw)]
+  .filter(Boolean).length;
+// segment i is lit when i < score; label maps 0-4 → Too short…Strong
+<input type={show ? "text" : "password"} aria-describedby="pw-meter" />`,
+    css: `/* segments animate width/colour; the checklist shows the receipt */
+.pw-seg { height: 6px; flex: 1; border-radius: 99px;
+  background: rgba(255,255,255,.1);
+  transition: background .3s; }
+.pw-seg--lit { background: var(--pw-color, var(--color-amber)); }`,
+  },
+  "split-button-menu": {
+    react: `// React — the split: one action + a caret that owns the menu
+<div className="split">
+  <button className="btn btn-primary split-main" onClick={run}>
+    Deploy live
+  </button>
+  <button aria-haspopup="menu" aria-expanded={open}
+    onClick={() => setOpen(v => !v)} className="split-caret">
+    <svg>{/* chevron, rotates 180° while open */}</svg>
+  </button>
+  {open && (
+    <div role="menu"> {/* absolute below the caret; Escape closes */} </div>
+  )}
+</div>`,
+    css: `.split-main { border-radius: 12px 0 0 12px; }
+.split-caret { border-radius: 0 12px 12px 0;
+  border-left: 1px solid rgba(255,255,255,.2); }
+[role="menu"] { animation: mf-growin .13s ease-out both;
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,.9); }`,
+  },
+  "breadcrumb-trail": {
+    react: `// React — collapse to Home / … / current when the trail is long
+const shown = full ? crumbs : crumbs.length > 4
+  ? [crumbs[0], crumbs[crumbs.length - 2], crumbs[crumbs.length - 1]]
+  : crumbs;
+// the ellipsis is a real button that flips \`full\` —
+// never an inert "…" screen readers can't reach`,
+    css: `/* separators come from the list, not the markup:
+   each non-last crumb renders its own chevron — no stray edges */
+.crumb-arrow { color: var(--color-ink-faint); }
+.crumb-current { background: rgba(255,255,255,.08); border-radius: 8px;
+  font-weight: 700; }`,
+  },
 };
 
 const FALLBACK = {
@@ -881,6 +992,41 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     idea: "Hide the native input visually (sr-only) and style the pill from the checked state — you keep native arrow-key behaviour for free.",
     skip: "More than five options and pills become a wall of chips; a vertical radio list reads better and is easier to scan.",
   },
+  "auto-grow-textarea": {
+    why: "A textarea that scrolls internally the moment you type past two lines is a wall the reader never asked for — growing the field keeps the answer visible as it's being written.",
+    idea: "Set height to auto, then to scrollHeight, then cap it — the cap is what stops an essay from pushing the submit button off screen.",
+    skip: "For code input or logs, a fixed-height scrolling field is correct — auto-grow there fights muscle memory.",
+  },
+  "date-presets": {
+    why: "Date pickers fail when the common case (last 7/30 days) is hidden behind a calendar widget. Presets put the decision the user actually makes on the surface.",
+    idea: "One source of truth for the window: the pills set [start, end], and the caption + chart both derive from it — they can never disagree.",
+    skip: "If the range is part of a saved report (“run every month”), presets alone won't do — persist the window as a named schedule.",
+  },
+  "file-drop-zone": {
+    why: "A bare file input is the ugliest control on the web; a drop zone turns upload into a spatial action and previews the consequence.",
+    idea: "The drag-over state must be unmistakable — border colour, tint and a 1% scale lift — because drop targets only work when users trust they're aimed right.",
+    skip: "Keep the browse fallback always visible: drag-and-drop is a discovery, not a requirement — some people are on touch or in files-first workflows.",
+  },
+  "toggle-label-stack": {
+    why: "A toggle without context is a gamble — the label stack (title + one-line description) turns every switch into an informed decision.",
+    idea: "Make the whole row the click target and let the switch announce itself (role=switch + aria-checked). Description text should say what happens when it's on.",
+    skip: "Never use a toggle for a destructive or hard-to-reverse action — that's what explicit buttons are for, with a confirm step.",
+  },
+  "password-strength": {
+    why: "Users guess at requirements and get rejected at submit; a live meter moves the feedback to the moment of typing, where it's cheap to fix.",
+    idea: "Four binary checks (length, case, digit, symbol) are more honest than a scoring algorithm users can't reverse-engineer — and they double as the checklist.",
+    skip: "Show, don't tell, policy: if the site enforces rules, the meter must reflect exactly those rules — a meter that disagrees with the validator is a lie.",
+  },
+  "split-button-menu": {
+    why: "One primary action plus a few rare-but-real alternates is the exact moment a split button earns its complexity — two buttons would fight for the user's eye.",
+    idea: "The caret half owns aria-haspopup and aria-expanded; Escape and outside-click close the menu, and every action writes a status line so clicks always land somewhere.",
+    skip: "If the menu would hold more than five items, that's not a split button — that's a toolbar with a misplaced dropdown.",
+  },
+  "breadcrumb-trail": {
+    why: "Deep pages without a trail strand users three levels down; breadcrumbs answer “how did I get here and how do I get back” without a back-button gamble.",
+    idea: "The ellipsis must be a real control that expands the full trail — collapsed crumbs are only useful if the missing middle is one tap away.",
+    skip: "Breadcrumbs are for hierarchies, not history — on a flat site (home → article) they're noise; keep them only where the structure actually nests.",
+  },
 };
 
 function CodeBlock({ title, code, onCopy }: { title: string; code: string; onCopy: () => void }) {
@@ -975,7 +1121,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
         <span className="chip">updated {asset.published}</span>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1.7fr_1fr]">
+      <div className="mt-8 grid gap-6 [&>*]:min-w-0 lg:grid-cols-[1.7fr_1fr]">
         {/* preview + theme */}
         <div>
           <div className="rounded-3xl border border-white/8 bg-panel p-3">

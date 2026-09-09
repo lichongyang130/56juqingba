@@ -1,14 +1,14 @@
 # 500 ways to make Motif richer
 
 _A living idea bank for Motif UI — every item is original, specific and intended to be
-actionable against the current site (as of 2026-09: 47 components · 24 prompts ·
+actionable against the current site (as of 2026-09: 54 components · 24 prompts ·
 10 Learn essays · 8 backgrounds · 8 lab tools · a /search hub · a persistent admin)._
 
 How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 8 / 500 shipped (batch 1, in order)
+## Progress — 16 / 500 shipped (batches 1–2, in order)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -20,11 +20,19 @@ names, behaviours and where they plug into the existing pages.
 | 6 | Checkbox card | [/components/checkbox-card](/components/checkbox-card) |
 | 7 | Quantity stepper | [/components/quantity-stepper](/components/quantity-stepper) |
 | 8 | Radio pills with focus ring | [/components/radio-pills](/components/radio-pills) |
+| 9 | Textarea auto-grow | [/components/auto-grow-textarea](/components/auto-grow-textarea) |
+| 10 | Date presets picker | [/components/date-presets](/components/date-presets) |
+| 11 | File drop zone | [/components/file-drop-zone](/components/file-drop-zone) |
+| 12 | Toggle with label stack | [/components/toggle-label-stack](/components/toggle-label-stack) |
+| 13 | Password strength meter | [/components/password-strength](/components/password-strength) |
+| 14 | Button with embedded menu | [/components/split-button-menu](/components/split-button-menu) |
+| 15 | Command palette | upgraded: [command-palette](/components/command-palette) now searches the real catalog |
+| 16 | Breadcrumb trail | [/components/breadcrumb-trail](/components/breadcrumb-trail) |
 
 
 ---
 
-## 1. Component library — 70 new assets to build (39 → 47 shipped; 62 remain)
+## 1. Component library — 70 new assets to build (39 → 54 shipped; 54 remain)
 
 ### Form & input elements
 - **Combo box** ✅ (`combo-box`): text input with a live-filtered option list, keyboard navigation and a "no matches" row — slots into every filter on the site.
@@ -35,17 +43,17 @@ names, behaviours and where they plug into the existing pages.
 - **Checkbox card** ✅ (`checkbox-card`): an entire option card that is selectable, with checkmark that draws in — for pricing/plan pickers.
 - **Quantity stepper** ✅ (`quantity-stepper`): − / + stepper with long-press repeat, used by cart rows and ticket seats.
 - **Radio pills with focus ring** ✅ (`radio-pills`): keyboard-first segmented radios that announce the checked option.
-- **Textarea auto-grow**: a textarea that expands as you type with a subtle char budget meter.
-- **Date presets picker**: Today / 7d / 30d / custom pill row for dashboards.
-- **File drop zone**: drag-and-drop surface with a dash-bordered highlight state and fake progress.
-- **Toggle with label stack**: themeable iOS-style switch that ships with a labels-and-description row.
-- **Password strength meter**: input that grades a passphrase with animated segments.
-- **Button with embedded menu**: a primary button whose right half opens a dropdown of secondary actions.
+- **Textarea auto-grow** ✅ (`auto-grow-textarea`): a textarea that expands as you type with a subtle char budget meter.
+- **Date presets picker** ✅ (`date-presets`): Today / 7d / 30d / custom pill row for dashboards.
+- **File drop zone** ✅ (`file-drop-zone`): drag-and-drop surface with a dash-bordered highlight state and honest progress.
+- **Toggle with label stack** ✅ (`toggle-label-stack`): themeable iOS-style switch that ships with a labels-and-description row.
+- **Password strength meter** ✅ (`password-strength`): input that grades a passphrase with animated segments.
+- **Button with embedded menu** ✅ (`split-button-menu`): a primary button whose right half opens a dropdown of secondary actions.
 - **Slug input transform**: writes a URL slug live from a title field (title → kebab-case) — perfect for prompt pages.
 
 ### Navigation & layout atoms
-- **Command palette**: ⌘K overlay that searches library, prompts, guides and admin routes in one fuzzy list.
-- **Breadcrumb trail**: separator-aware breadcrumbs with a collapsing "…" on mobile.
+- **Command palette** ✅ (`command-palette`): ⌘K overlay that searches library, prompts, guides and admin routes in one fuzzy list.
+- **Breadcrumb trail** ✅ (`breadcrumb-trail`): separator-aware breadcrumbs with a collapsing "…" on mobile.
 - **Pagination with ellipsis**: page buttons that compress to "… 8 9 10" and keep the active page centred.
 - **Table of contents spine**: sticky right rail that highlights the section in view and smooth-scrolls.
 - **Tabs with indicator**: animated underline/slide that follows the active tab width.

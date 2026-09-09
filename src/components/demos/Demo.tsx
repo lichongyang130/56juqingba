@@ -4,6 +4,8 @@
 // none of the code is taken from third-party component libraries.
 
 import { useEffect, useRef, useState } from "react";
+import { COMPONENTS, PROMPTS } from "@/lib/data";
+import { LEARN_ARTICLES } from "@/lib/learn";
 
 export type DemoProps = Record<string, number | string | boolean>;
 
@@ -1192,41 +1194,52 @@ function AvatarStack({ count = 5, size = 40 }: DemoProps) {
 
 /* ------------------------------ OVERLAY WIDGETS (2026-09) ------------------------------ */
 
-const PALETTE_ITEMS = [
-  { icon: "▦", label: "Open dashboard", grp: "Go" },
-  { icon: "◇", label: "New component", grp: "Create" },
-  { icon: "⧉", label: "Copy aurora snippet", grp: "Library" },
-  { icon: "$", label: "Pricing plans", grp: "Go" },
-  { icon: "◐", label: "Toggle dark mode", grp: "Settings" },
-  { icon: "▲", label: "Deploy preview", grp: "Actions" },
+const PALETTE_SOURCES = [
+  ...COMPONENTS.map((c) => ({ grp: "Components", icon: "▦", label: c.title, meta: `${c.kind} · ${c.slug}`, href: `/components/${c.slug}` })),
+  ...PROMPTS.map((p) => ({ grp: "Prompts", icon: "◎", label: p.title, meta: `${p.industry} · ${p.avgFidelity}/100`, href: `/prompts/${p.slug}` })),
+  ...LEARN_ARTICLES.map((g) => ({ grp: "Guides", icon: "✎", label: g.title, meta: `${g.level} · ${g.minutes} min`, href: `/learn/${g.slug}` })),
+  { grp: "Pages", icon: "⌂", label: "Component library", meta: "browse all", href: "/components" },
+  { grp: "Pages", icon: "◉", label: "Backgrounds", meta: "living canvases", href: "/backgrounds" },
+  { grp: "Admin", icon: "⚙", label: "Moderation queue", meta: "admin", href: "/admin/moderation" },
 ];
 
-function CommandPalette({ rows = 6 }: DemoProps) {
-  const n = typeof rows === "number" ? Math.max(2, Math.min(8, Math.round(rows))) : 6;
-  const items = PALETTE_ITEMS.slice(0, n);
+function CommandPalette() {
   const [q, setQ] = useState("");
   const [sel, setSel] = useState(0);
-  const filtered = items.filter((it) => it.label.toLowerCase().includes(q.trim().toLowerCase()));
+  const [flash, setFlash] = useState<string | null>(null);
+  const needle = q.trim().toLowerCase();
+  const filtered = PALETTE_SOURCES.filter(
+    (it) => !needle || it.label.toLowerCase().includes(needle) || it.meta.toLowerCase().includes(needle),
+  );
   const groups = [...new Set(filtered.map((f) => f.grp))];
+  const open = (href: string) => {
+    setFlash(href);
+    setQ("");
+    setSel(0);
+    setTimeout(() => setFlash(null), 1400);
+  };
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(139,92,246,0.16),transparent_60%),#08090f] px-6">
       <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/12 bg-[#0d0f17]/95 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl">
         <div className="flex items-center gap-2.5 border-b border-white/6 px-4 py-3">
           <span className="text-violet-300">⌘</span>
           <input
-            autoFocus
             value={q}
             onChange={(e) => { setQ(e.target.value); setSel(0); }}
-            placeholder="Search commands, assets, pages…"
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") { e.preventDefault(); setSel((v) => Math.min(filtered.length - 1, v + 1)); }
+              else if (e.key === "ArrowUp") { e.preventDefault(); setSel((v) => Math.max(0, v - 1)); }
+              else if (e.key === "Enter") { e.preventDefault(); const hit = filtered[sel]; if (hit) open(hit.href); }
+              else if (e.key === "Escape") { e.preventDefault(); setQ(""); setFlash(null); }
+            }}
+            placeholder={`Search ${COMPONENTS.length} assets, ${PROMPTS.length} prompts, guides…`}
             className="w-full bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
-            aria-label="Command palette search"
+            aria-label="Search the whole library"
           />
           <span className="chip !text-[9px] !py-0.5 text-white/40">esc</span>
         </div>
-        <div className="max-h-44 overflow-y-auto p-2">
-          {filtered.length === 0 && (
-            <p className="px-3 py-5 text-center text-xs text-ink-faint">No command matches “{q}”</p>
-          )}
+        <div className="max-h-48 overflow-y-auto p-2">
+          {filtered.length === 0 && <p className="px-3 py-5 text-center text-xs text-ink-faint">Nothing matches “{q}” — try “glass”, “pricing”, “admin”.</p>}
           {groups.map((g) => (
             <div key={g}>
               <div className="px-3 pb-1 pt-2 text-[9px] font-bold uppercase tracking-[0.25em] text-ink-faint">{g}</div>
@@ -1234,15 +1247,18 @@ function CommandPalette({ rows = 6 }: DemoProps) {
                 const idx = filtered.indexOf(it);
                 return (
                   <button
-                    key={it.label}
+                    key={it.href + it.label}
                     type="button"
                     onMouseEnter={() => setSel(idx)}
-                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[13px] transition-colors ${
+                    onClick={() => open(it.href)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); open(it.href); } }}
+                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-1.5 text-left text-[13px] transition-colors ${
                       sel === idx ? "bg-white/10 text-white" : "text-ink-dim"
                     }`}
                   >
                     <span className="w-4 text-center text-violet-300">{it.icon}</span>
                     <span className="flex-1 truncate font-medium">{it.label}</span>
+                    <span className="shrink-0 text-[9px] text-ink-faint">{it.meta}</span>
                     {sel === idx && <span className="text-[9px] text-white/35">↵</span>}
                   </button>
                 );
@@ -1251,9 +1267,15 @@ function CommandPalette({ rows = 6 }: DemoProps) {
           ))}
         </div>
         <div className="flex items-center gap-3 border-t border-white/6 px-4 py-2 text-[9px] text-ink-faint">
-          <span><kbd className="rounded bg-white/8 px-1">↑</kbd><kbd className="ml-0.5 rounded bg-white/8 px-1">↓</kbd> navigate</span>
-          <span><kbd className="rounded bg-white/8 px-1">↵</kbd> open</span>
-          <span className="ml-auto">type to filter · this is a widget, not a page</span>
+          {flash ? (
+            <span className="font-bold text-violet-300">↵ would open {flash}</span>
+          ) : (
+            <>
+              <span><kbd className="rounded bg-white/8 px-1">↑</kbd><kbd className="ml-0.5 rounded bg-white/8 px-1">↓</kbd> navigate</span>
+              <span><kbd className="rounded bg-white/8 px-1">↵</kbd> open</span>
+              <span className="ml-auto">searches the real catalog</span>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -1261,10 +1283,11 @@ function CommandPalette({ rows = 6 }: DemoProps) {
 }
 
 const TOAST_MESSAGES = [
-  "Saved to your library",
   "Build passed · 3.2s",
-  "Asset copied to clipboard",
-  "Prompt run finished · 94/100",
+  "Wipe Reveal copied to clipboard",
+  "New run log: 3/3 models clean",
+  "Theme applied to 47 assets",
+  "Changelog drafted — ready to publish",
 ];
 
 function ToastStack({ time = 3.5 }: DemoProps) {
@@ -2301,7 +2324,457 @@ function RadioPills({ count = 3 }: DemoProps) {
   );
 }
 
+
+function AutoGrowTextarea({ budget = 400 }: DemoProps) {
+  const bd = typeof budget === "number" ? Math.max(80, Math.min(1200, Math.round(budget))) : 400;
+  const [val, setVal] = useState("A launch page that loads in under a second and explains the product in one sentence — dark, glassy, no stock video.");
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const [sent, setSent] = useState(false);
+  const grow = () => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 168)}px`;
+  };
+  useEffect(grow, []);
+  const left = bd - val.length;
+  const tone = left < 0 ? "text-danger" : left < bd * 0.1 ? "text-amber-300" : "text-ink-faint";
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(60%_90%_at_50%_0%,rgba(139,92,246,0.13),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/70">
+          <span>Pitch the idea</span>
+          <span className="normal-case tracking-normal text-ink-faint">auto-grows as you type</span>
+        </div>
+        <textarea
+          ref={ref}
+          value={val}
+          onChange={(e) => { setVal(e.target.value); grow(); setSent(false); }}
+          rows={3}
+          maxLength={bd + 80}
+          aria-label="Pitch text"
+          placeholder="What are you shipping?"
+          className="input w-full resize-none !rounded-2xl !py-3.5 leading-relaxed"
+        />
+        <div className="mt-1.5 flex items-center justify-between text-[11px]">
+          <span className={sent ? "font-bold text-mint" : "text-ink-faint"}>
+            {sent ? "✓ Sent to the build queue" : "no scrollbar — the box does the scrolling"}
+          </span>
+          <span className={`font-mono tabular-nums ${tone}`}>{left >= 0 ? `${left} left` : `${-left} over`}</span>
+        </div>
+        <div className="mt-3">
+          <button
+            type="button"
+            onClick={() => { setSent(true); }}
+            disabled={left < 0}
+            className="btn btn-primary !w-full !py-2.5 !text-xs disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Send pitch
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const DATE_PRESETS = [
+  { id: "today", label: "Today", days: 1 },
+  { id: "7d", label: "7d", days: 7 },
+  { id: "30d", label: "30d", days: 30 },
+  { id: "90d", label: "90d", days: 90 },
+] as const;
+
+function DatePresetsPicker() {
+  const [preset, setPreset] = useState("30d");
+  const [custom, setCustom] = useState({ a: "2026-08-10", b: "2026-09-09" });
+  const days = preset === "custom" ? 0 : (DATE_PRESETS.find((p) => p.id === preset)?.days ?? 30);
+  const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const end = new Date();
+  const start = preset === "custom" ? new Date(custom.a) : new Date(end.getTime() - days * 864e5);
+  const rangeText = `${fmt(start)} — ${fmt(preset === "custom" ? new Date(custom.b) : end)}`;
+  const bars = Array.from({ length: 14 }).map((_, i) => 26 + Math.round(Math.sin(i * 1.9 + days / 9) * 16 + Math.cos(i * 0.7) * 10));
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(60%_90%_at_50%_100%,rgba(34,211,238,0.12),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-cyan-300/70">Report window</div>
+        <div className="flex flex-wrap items-center gap-1.5 rounded-xl border border-white/8 bg-white/4 p-1.5">
+          {DATE_PRESETS.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => setPreset(p.id)}
+              aria-pressed={preset === p.id}
+              className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
+                preset === p.id
+                  ? "bg-cyan-400/15 text-cyan-100 shadow-[inset_0_1px_0_rgba(255,255,255,.12)]"
+                  : "text-ink-dim hover:text-ink"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setPreset("custom")}
+            aria-pressed={preset === "custom"}
+            className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
+              preset === "custom"
+                ? "bg-cyan-400/15 text-cyan-100 shadow-[inset_0_1px_0_rgba(255,255,255,.12)]"
+                : "text-ink-dim hover:text-ink"
+            }`}
+          >
+            Custom
+          </button>
+        </div>
+        {preset === "custom" && (
+          <div className="mt-2 flex items-center gap-2 text-xs" style={{ animation: "mf-growin .15s ease-out both" }}>
+            <input type="date" value={custom.a} max={custom.b} aria-label="From date" onChange={(e) => setCustom((p) => ({ ...p, a: e.target.value }))} className="input !py-1.5 !text-xs" />
+            <span className="text-ink-faint">→</span>
+            <input type="date" value={custom.b} min={custom.a} aria-label="To date" onChange={(e) => setCustom((p) => ({ ...p, b: e.target.value }))} className="input !py-1.5 !text-xs" />
+          </div>
+        )}
+        <div className="mt-3 rounded-xl border border-white/8 bg-black/25 p-4">
+          <div className="flex items-baseline justify-between text-xs">
+            <span className="font-semibold text-ink">{preset === "custom" ? "Custom range" : `Last ${days} day${days === 1 ? "" : "s"}`}</span>
+            <span className="font-mono text-[11px] text-cyan-200/80">{rangeText}</span>
+          </div>
+          <div className="mt-3 flex h-16 items-end gap-1.5" aria-hidden>
+            {bars.map((h, i) => (
+              <span key={i} className="flex-1 rounded-sm" style={{ height: `${h}%`, background: `linear-gradient(180deg, hsl(192 90% 65% / .85), hsl(192 70% 40% / .35))` }} />
+            ))}
+          </div>
+          <div className="mt-2 flex items-center justify-between text-[10px] text-ink-faint">
+            <span>{preset === "custom" ? "custom range · compare on export" : "copies per day · daily rollup"}</span>
+            <span className="chip !text-[9px] uppercase">updated 4m ago</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FileDropZone() {
+  const [phase, setPhase] = useState<"idle" | "over" | "busy" | "done">("idle");
+  const [file, setFile] = useState<{ name: string; size: string } | null>(null);
+  const [pct, setPct] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const started = useRef(false);
+  useEffect(() => {
+    if (phase !== "busy") return;
+    started.current = true;
+    const t = setInterval(() => {
+      setPct((p) => {
+        const n = p + 7 + Math.round(Math.random() * 6);
+        if (n >= 100) {
+          clearInterval(t);
+          setTimeout(() => setPhase("done"), 250);
+          return 100;
+        }
+        return n;
+      });
+    }, 90);
+    return () => clearInterval(t);
+  }, [phase]);
+  const accept = (f?: File | null) => {
+    const name = f?.name ?? "motif-build-spec.json";
+    const size = f ? `${(f.size / 1024 / 1024).toFixed(1)} MB` : "1.2 MB";
+    setFile({ name, size });
+    setPct(0);
+    setPhase("busy");
+  };
+  const reset = () => { setPhase("idle"); setFile(null); setPct(0); started.current = false; };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(60%_90%_at_50%_0%,rgba(52,211,153,0.12),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-sm">
+        <input ref={inputRef} type="file" className="hidden" aria-hidden tabIndex={-1} onChange={(e) => accept(e.target.files?.[0])} />
+        <div
+          role="button"
+          tabIndex={0}
+          aria-label="Upload a build spec"
+          onDragOver={(e) => { e.preventDefault(); if (phase === "idle") setPhase("over"); }}
+          onDragLeave={() => phase === "over" && setPhase("idle")}
+          onDrop={(e) => { e.preventDefault(); accept(e.dataTransfer?.files?.[0]); }}
+          onClick={() => phase === "idle" && inputRef.current?.click()}
+          onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && phase === "idle") inputRef.current?.click(); }}
+          className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-9 text-center outline-none transition-all duration-200 ${
+            phase === "over"
+              ? "border-mint/70 bg-mint/8 scale-[1.01]"
+              : phase === "done"
+                ? "border-mint/40 bg-mint/5"
+                : "border-white/15 bg-white/3 hover:border-mint/40 hover:bg-white/5"
+          }`}
+        >
+          {phase !== "done" ? (
+            <>
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-white/6 text-xl text-mint">⇪</span>
+              <span className="text-sm font-bold">{phase === "over" ? "Drop it — we have it" : "Drag a build spec here"}</span>
+              <span className="text-[11px] text-ink-faint">or <span className="font-semibold text-mint">browse files</span> · anything under 5 MB</span>
+            </>
+          ) : (
+            <>
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-mint/15 text-xl text-mint">✓</span>
+              <span className="text-sm font-bold text-mint">{file?.name}</span>
+              <span className="text-[11px] text-ink-faint">{file?.size} · uploaded clean</span>
+            </>
+          )}
+        </div>
+        {phase === "busy" && (
+          <div className="mt-3 rounded-xl border border-white/8 bg-black/25 p-3" style={{ animation: "mf-growin .15s ease-out both" }}>
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="truncate font-semibold text-ink-dim">{file?.name}</span>
+              <span className="font-mono text-mint">{pct}%</span>
+            </div>
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/8">
+              <div className="h-full rounded-full bg-gradient-to-r from-mint to-cyan-300 transition-[width] duration-100" style={{ width: `${pct}%` }} />
+            </div>
+            <p className="mt-1.5 text-[10px] text-ink-faint">auditing a11y + size before it lands in your stack…</p>
+          </div>
+        )}
+        {phase === "done" && (
+          <button type="button" onClick={reset} className="btn btn-ghost mt-3 !w-full !py-2 text-xs">
+            ↺ Upload another
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const SETTING_ROWS = [
+  { id: "digest", t: "Weekly digest", d: "A Tuesday email of what shipped in the library.", def: true },
+  { id: "deploys", t: "Build alerts", d: "Ping me when a copied asset changes or breaks.", def: true },
+  { id: "updates", t: "Product updates", d: "New tools, lab features and Pro launches.", def: false },
+];
+
+function ToggleLabelStack() {
+  const [on, setOn] = useState<Record<string, boolean>>(() => Object.fromEntries(SETTING_ROWS.map((r) => [r.id, r.def])));
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(60%_90%_at_50%_0%,rgba(139,92,246,0.13),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/70">Email preferences</div>
+        <div className="overflow-hidden rounded-2xl border border-white/8 bg-white/4">
+          {SETTING_ROWS.map((r, i) => {
+            const val = on[r.id];
+            return (
+              <div key={r.id} className={`flex items-center justify-between gap-4 px-4 py-3.5 ${i > 0 ? "border-t border-white/6" : ""}`}>
+                <div className="min-w-0">
+                  <div className="text-sm font-bold">{r.t}</div>
+                  <div className="mt-0.5 text-[11px] leading-snug text-ink-faint">{r.d}</div>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={val}
+                  aria-label={r.t}
+                  onClick={() => setOn((p) => ({ ...p, [r.id]: !val }))}
+                  className={`flex h-6 w-11 shrink-0 items-center rounded-full border px-0.5 transition-colors duration-200 ${
+                    val ? "justify-end border-violet-300/50 bg-gradient-to-r from-violet-500 to-indigo-500" : "justify-start border-white/15 bg-white/8"
+                  }`}
+                >
+                  <span className="flex h-4.5 w-4.5 items-center justify-center rounded-full bg-white text-[8px] font-black text-violet-700 shadow" style={{ transition: "transform .15s" }}>
+                    {val ? "✓" : ""}
+                  </span>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-2 text-[11px] text-ink-faint">every switch announces its state — a label needs a description to be a real preference</p>
+      </div>
+    </div>
+  );
+}
+
+function passwordScore(pw: string): number {
+  let s = 0;
+  if (pw.length >= 8) s++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) s++;
+  if (/[0-9]/.test(pw)) s++;
+  if (/[^A-Za-z0-9]/.test(pw)) s++;
+  return s;
+}
+const PASSWORD_LABELS = ["Too short", "Weak", "Fair", "Good", "Strong"];
+
+function PasswordStrength() {
+  const [pw, setPw] = useState("motifui-2026");
+  const [show, setShow] = useState(false);
+  const score = passwordScore(pw);
+  const colors = ["#f87171", "#f87171", "#fbbf24", "#34d399", "#34d399"];
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(60%_90%_at_50%_100%,rgba(244,114,182,0.11),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-pink-300/70">Create a password</div>
+        <div className="relative">
+          <input
+            type={show ? "text" : "password"}
+            value={pw}
+            onChange={(e) => setPw(e.target.value)}
+            aria-label="Password"
+            aria-describedby="pw-meter"
+            className="input !rounded-xl !py-2.5 !pr-16 font-mono"
+            placeholder="Type something…"
+          />
+          <button
+            type="button"
+            onClick={() => setShow((v) => !v)}
+            aria-label={show ? "Hide password" : "Show password"}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg px-2 py-1 text-[11px] font-bold text-ink-faint transition-colors hover:bg-white/6 hover:text-ink"
+          >
+            {show ? "hide" : "show"}
+          </button>
+        </div>
+        <div id="pw-meter" className="mt-3">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-ink-faint">strength</span>
+            <span className="font-bold" style={{ color: colors[score] }}>{PASSWORD_LABELS[score]}</span>
+          </div>
+          <div className="mt-1.5 flex gap-1.5" aria-hidden>
+            {[0, 1, 2, 3].map((i) => (
+              <span
+                key={i}
+                className="h-1.5 flex-1 rounded-full transition-colors duration-300"
+                style={{ background: i < score ? colors[score] : "rgba(255,255,255,.1)" }}
+              />
+            ))}
+          </div>
+          <ul className="mt-2.5 grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-ink-faint">
+            {[
+              ["8+ characters", pw.length >= 8],
+              ["upper + lower case", /[a-z]/.test(pw) && /[A-Z]/.test(pw)],
+              ["a number", /[0-9]/.test(pw)],
+              ["a symbol", /[^A-Za-z0-9]/.test(pw)],
+            ].map(([label, ok]) => (
+              <li key={String(label)} className={`flex items-center gap-1.5 ${ok ? "text-ink-dim" : ""}`}>
+                <span style={{ color: ok ? colors[score] : "rgba(255,255,255,.25)" }}>{ok ? "✓" : "○"}</span> {label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const DEPLOY_ACTIONS = [
+  { label: "Preview build", note: "shareable URL · 2 min" },
+  { label: "Deploy to staging", note: "no DNS change" },
+  { label: "Roll back release", note: "last green build" },
+];
+
+function SplitButtonMenu() {
+  const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState("Ready — nothing deployed yet.");
+  const run = (label: string) => { setStatus(`→ ${label}…`); setOpen(false); setTimeout(() => setStatus("✓ done · build passed in 3.2s"), 700); };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(60%_90%_at_50%_0%,rgba(139,92,246,0.15),transparent_60%),#08090f] px-6">
+      <div className="flex flex-col items-center gap-6">
+        <div className="flex items-center">
+          <button
+            type="button"
+            onClick={() => run("Deploying live")}
+            className="btn btn-primary !h-11 rounded-r-none !px-6 !py-0"
+          >
+            Deploy live
+          </button>
+          <div className="relative">
+            <button
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={open}
+              aria-label="More deploy actions"
+              onClick={() => setOpen((v) => !v)}
+              className="btn btn-primary !h-11 !w-11 rounded-l-none !border-l !border-white/20 !px-0 !py-0"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }} aria-hidden>
+                <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            {open && (
+              <div role="menu" className="absolute right-0 top-[calc(100%+6px)] z-10 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#0d0f17] py-1.5 shadow-2xl" style={{ animation: "mf-growin .13s ease-out both" }}>
+                {DEPLOY_ACTIONS.map((a) => (
+                  <button
+                    key={a.label}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => run(a.label)}
+                    className="flex w-full items-center justify-between gap-3 px-3.5 py-2 text-left text-xs transition-colors hover:bg-white/8"
+                  >
+                    <span className="font-semibold text-ink">{a.label}</span>
+                    <span className="text-[9px] text-ink-faint">{a.note}</span>
+                  </button>
+                ))}
+                <div className="my-1 border-t border-white/6" />
+                <button type="button" role="menuitem" onClick={() => setOpen(false)} className="w-full px-3.5 py-2 text-left text-xs text-ink-faint transition-colors hover:bg-white/8">
+                  esc to close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+        <p className="text-xs text-ink-dim">{status}</p>
+      </div>
+    </div>
+  );
+}
+
+const CRUMBS = [
+  { label: "Home", href: "/" },
+  { label: "Library", href: "/components" },
+  { label: "Components", href: "/components" },
+  { label: "Animated", href: "/components?kind=animated" },
+  { label: "Prism Switch", href: "/components/prism-switch" },
+];
+
+function BreadcrumbTrail() {
+  const [full, setFull] = useState(false);
+  const shown = full ? CRUMBS : CRUMBS.length > 4 ? [CRUMBS[0], CRUMBS[CRUMBS.length - 2], CRUMBS[CRUMBS.length - 1]] : CRUMBS;
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(251,191,36,0.1),transparent_60%),#08090f] px-6">
+      <nav aria-label="Breadcrumb" className="w-full max-w-md">
+        <div className="chip !mb-3 !border-amber-300/25 !bg-amber-400/10 !text-amber-200">breadcrumb trail · separator-aware</div>
+        <ol className="flex flex-wrap items-center gap-y-1 rounded-xl border border-white/8 bg-white/4 px-3.5 py-2.5 text-xs">
+          {shown.map((c, i) => {
+            const last = i === shown.length - 1;
+            return (
+              <li key={c.label + i} className="flex items-center">
+                {last ? (
+                  <span aria-current="page" className="flex items-center gap-1.5 rounded-lg bg-white/8 px-2 py-1 font-bold text-ink">
+                    {c.label}
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-300/80" aria-hidden />
+                  </span>
+                ) : (
+                  <>
+                    <a href="#" onClick={(e) => e.preventDefault()} className="rounded-md px-2 py-1 font-medium text-ink-dim transition-colors hover:bg-white/6 hover:text-ink">{c.label}</a>
+                    <svg className="mx-0.5 h-3 w-3 text-ink-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                      <path d="m9 6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </>
+                )}
+              </li>
+            );
+          })}
+          {!full && CRUMBS.length > 4 && (
+            <li>
+              <button
+                type="button"
+                onClick={() => setFull(true)}
+                aria-label="Show full breadcrumb trail"
+                title="Show full trail"
+                className="mx-1 flex h-6 w-8 items-center justify-center rounded-md border border-dashed border-white/15 font-mono text-[11px] font-bold text-ink-faint transition-colors hover:border-amber-300/40 hover:text-amber-200"
+              >
+                …
+              </button>
+            </li>
+          )}
+        </ol>
+      </nav>
+      <p className="text-[11px] text-ink-faint">{full ? "full trail restored — tap the ellipsis collapses it again" : "collapsed to Home / … / current on small widths — the ellipsis expands it"}</p>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
+
 
 
 export const DEMO_KEYS = [
@@ -2316,6 +2789,8 @@ export const DEMO_KEYS = [
   "countdown-drop", "terminal-hero", "polaroid-stack", "team-spotlight",
   "combo-box", "odometer-counter", "star-rating", "tag-input",
   "slider-ticks", "checkbox-card", "quantity-stepper", "radio-pills",
+  "auto-grow-textarea", "date-presets", "file-drop-zone", "toggle-label-stack",
+  "password-strength", "split-button-menu", "breadcrumb-trail",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -2373,6 +2848,13 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "checkbox-card": return <CheckboxCard />;
     case "quantity-stepper": return <QuantityStepper {...props} />;
     case "radio-pills": return <RadioPills {...props} />;
+    case "auto-grow-textarea": return <AutoGrowTextarea {...props} />;
+    case "date-presets": return <DatePresetsPicker />;
+    case "file-drop-zone": return <FileDropZone />;
+    case "toggle-label-stack": return <ToggleLabelStack />;
+    case "password-strength": return <PasswordStrength />;
+    case "split-button-menu": return <SplitButtonMenu />;
+    case "breadcrumb-trail": return <BreadcrumbTrail />;
     default: return null;
   }
 }

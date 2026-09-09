@@ -52,7 +52,7 @@ export default function PromptDetail({ prompt }: { prompt: PromptTemplate }) {
         )}
       </div>
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
+      <div className="mt-6 grid gap-8 [&>*]:min-w-0 lg:grid-cols-[1.5fr_1fr]">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="chip">{prompt.industry}</span>
