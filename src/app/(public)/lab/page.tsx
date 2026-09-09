@@ -1,6 +1,7 @@
 import { EasingLab, GradientForge, ScrollLab, SpringLab } from "@/components/lab-tools";
 import { BackgroundPainter, ColourRampChecker, FilterLab, RadiusPlayground, ShadowStacker, StaggerCalculator, TextAnimationLab, TimingComposer } from "@/components/lab-additions";
 import { BreakpointInspector, ExportClipboard, FavouriteRecipes, HueShiftSimulator, MotionPreferencePreview, PerfMeter, RandomInspiration, UrlStateLabs } from "@/components/lab-additions-2";
+import { DiffViewer, IconLineWeightLab, LogoDriftPreview, TypingSpeedMeter } from "@/components/lab-additions-3";
 import { ToolCard } from "@/components/cards";
 import { LAB_TOOLS } from "@/lib/data";
 
@@ -56,6 +57,18 @@ export default function LabPage() {
           <UrlStateLabs />
           <FavouriteRecipes />
           <RandomInspiration />
+        </div>
+      </div>
+
+      {/* lab additions — batch 3 */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-extrabold tracking-tight">Calibration & review</h2>
+        <p className="mt-1 text-sm text-ink-dim">Tune the details that make generated work feel finished — then compare two versions before you choose.</p>
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <TypingSpeedMeter />
+          <IconLineWeightLab />
+          <LogoDriftPreview />
+          <DiffViewer />
         </div>
       </div>
 

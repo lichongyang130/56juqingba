@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 211 / 500 shipped (batches 1–28, in order) · Sections 1–4 complete ✅
+## Progress — 215 / 500 shipped (batches 1–29, in order) · Sections 1–5 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -223,6 +223,10 @@ names, behaviours and where they plug into the existing pages.
 | 209 | URL state for labs | [/lab#url-state-labs](/lab#url-state-labs) |
 | 210 | Favourite recipes lab | [/lab#favourite-recipes](/lab#favourite-recipes) |
 | 211 | Random inspiration button lab | [/lab#random-inspiration](/lab#random-inspiration) |
+| 212 | Typing-speed meter lab | [/lab#typing-speed-meter](/lab#typing-speed-meter) |
+| 213 | Icon line-weight lab | [/lab#icon-line-weight-lab](/lab#icon-line-weight-lab) |
+| 214 | Logo-drift preview lab | [/lab#logo-drift-preview](/lab#logo-drift-preview) |
+| 215 | Diff viewer lab | [/lab#diff-viewer](/lab#diff-viewer) |
 
 
 ---
@@ -478,7 +482,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 5. Lab tools — 20 additions (currently 8)
+## 5. Lab tools — 20 additions (currently 8) ✅ complete — all 20 additions live on /lab
 
 - **Timing-chart composer** ✅ (`timing-composer`): visually author a keyframe timeline (enter/dwell/exit) and export CSS.
 - **Stagger calculator** ✅ (`stagger-calculator`): input N items and read the per-item delay offsets for a wave.
@@ -496,10 +500,10 @@ names, behaviours and where they plug into the existing pages.
 - **URL state for labs** ✅ (`url-state-labs`): shareable lab configurations via query params.
 - **Favourite recipes** ✅ (`favourite-recipes`): save tuned outputs to localStorage with names.
 - **Random inspiration button** ✅ (`random-inspiration`): shuffle presets when the blank canvas stares back.
-- **Typing-speed meter**: calibrate the typewriter demo to your copy length.
-- **Icon line-weight lab**: stroke width/roundness adjustments across the icon set.
-- **Logo-drift preview**: preview logo animation ideas with safe-zone guides.
-- **Diff viewer**: paste two gradient/easing exports side by side and compare frames.
+- **Typing-speed meter** ✅ (`typing-speed-meter`): calibrate the typewriter demo to your copy length.
+- **Icon line-weight lab** ✅ (`icon-line-weight-lab`): stroke width/roundness adjustments across the icon set.
+- **Logo-drift preview** ✅ (`logo-drift-preview`): preview logo animation ideas with safe-zone guides.
+- **Diff viewer** ✅ (`diff-viewer`): paste two gradient/easing exports side by side and compare frames.
 
 ---
 
