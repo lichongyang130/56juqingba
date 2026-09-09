@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 95 / 500 shipped (batches 1–12, in order) · Sections 1–2 complete ✅
+## Progress — 101 / 500 shipped (batches 1–13, in order) · Sections 1–2 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -107,6 +107,12 @@ names, behaviours and where they plug into the existing pages.
 | 93 | Halftone burst | `halftone-burst` on [/backgrounds](/backgrounds) |
 | 94 | Cloud layer drift | `cloud-drift` on [/backgrounds](/backgrounds) |
 | 95 | Sunset horizon strip | `sunset-horizon` on [/backgrounds](/backgrounds) |
+| 96 | SaaS onboarding flow prompt | [/prompts/saas-activation-onboarding](/prompts/saas-activation-onboarding) |
+| 97 | Dev-tool API reference prompt | [/prompts/devtool-api-reference](/prompts/devtool-api-reference) |
+| 98 | Crypto/fintech dashboard prompt | [/prompts/fintech-portfolio-dashboard](/prompts/fintech-portfolio-dashboard) |
+| 99 | Creator newsletter landing prompt | [/prompts/creator-newsletter-landing](/prompts/creator-newsletter-landing) |
+| 100 | Web3 marketplace prompt | [/prompts/web3-marketplace-drop](/prompts/web3-marketplace-drop) |
+| 101 | Perfume house prompt | [/prompts/perfume-house-editorial](/prompts/perfume-house-editorial) |
 
 
 ---
@@ -227,17 +233,17 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 3. Prompt library — 50 next prompts across industries (currently 24)
+## 3. Prompt library — 50 next prompts across industries (24 → 74; 30 shipped so far)
 
 ### Growth industries
-- **SaaS onboarding flow prompt**: signup → plan → invite → success, in one prompt.
-- **Dev-tool API reference prompt**: docs site with request/response cards and try-it pane.
-- **Crypto/fintech dashboard prompt**: data-dense but calm, candlestick-free chart honesty.
-- **Creator newsletter landing prompt**: subscribe wall with archive proof.
-- **Web3 marketplace prompt**: collection grid + mint steps, restrained glow.
+- **SaaS onboarding flow prompt** ✅ (`saas-activation-onboarding`): signup → plan → invite → success, in one prompt.
+- **Dev-tool API reference prompt** ✅ (`devtool-api-reference`): docs site with request/response cards and try-it pane.
+- **Crypto/fintech dashboard prompt** ✅ (`fintech-portfolio-dashboard`): data-dense but calm, candlestick-free chart honesty.
+- **Creator newsletter landing prompt** ✅ (`creator-newsletter-landing`): subscribe wall with archive proof.
+- **Web3 marketplace prompt** ✅ (`web3-marketplace-drop`): collection grid + mint steps, restrained glow.
 
 ### Retail & commerce
-- **Perfume house prompt**: scent-notes accordion, editorial full-bleed.
+- **Perfume house prompt** ✅ (`perfume-house-editorial`): scent-notes accordion, editorial full-bleed.
 - **Watch atelier prompt**: precision macro shots, movement cutaway diagrams.
 - **Flower studio prompt**: seasonal bouquets with a same-day delivery band.
 - **Furniture maker prompt**: joinery close-ups, finish swatches, lead-time honesty.
