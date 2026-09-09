@@ -1,0 +1,329 @@
+// Motif UI — Prisma schema (MVP stage).
+// The public demo runs on mock data in src/lib/data.ts so the site works
+// without a database. This schema is the target for production and is
+// kept in sync with src/lib/types.ts by hand.
+//
+// Setup when a Postgres instance is available:
+//   cp .env.example .env        # set DATABASE_URL
+//   npm run db:setup            # prisma migrate dev + generate
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ----------------------------- Identity -----------------------------
+
+enum Role {
+  ADMIN
+  EDITOR
+  MODERATOR
+  CONTRIBUTOR
+  VIEWER
+}
+
+enum Plan {
+  FREE
+  PRO_MONTHLY
+  PRO_YEARLY
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  role          Role      @default(VIEWER)
+  plan          Plan      @default(FREE)
+  credits       Int       @default(0)
+  stripeId      String?   @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  assets        Asset[]
+  prompts       PromptTemplate[]
+  submissions   Submission[]
+  collections   Collection[]
+  likes         Like[]
+  comments      Comment[]
+  reports       Report[]
+  orders        Order[]
+}
+
+// ----------------------------- Assets -----------------------------
+
+enum AssetKind {
+  ELEMENT
+  ANIMATED
+  SECTION
+  TEMPLATE
+  BACKGROUND
+  TEXTURE
+}
+
+enum AssetStatus {
+  DRAFT
+  REVIEW
+  LIVE
+  ARCHIVED
+}
+
+model Asset {
+  id            String     @id @default(cuid())
+  slug          String     @unique
+  kind          AssetKind
+  title         String
+  description   String
+  license       String     @default("MIT")
+  stack         Json // ["React","HTML/CSS","Vue"]
+  deps          Json // ["motion", ...]
+  tags          Json // ["dark","hero", ...]
+  behaviors     Json // ["hover","scroll","drag", ...]
+  propsSchema   Json // [ {name,label,type,min,max,defaultValue,...} ]
+  bundleKb      Float      @default(0)
+  themeable     Boolean    @default(true)
+  a11yScore     Int        @default(0)
+  qualityScore  Int        @default(0)
+  status        AssetStatus @default(DRAFT)
+  copies        Int        @default(0)
+  views         Int        @default(0)
+  authorId      String?
+  author        User?      @relation(fields: [authorId], references: [id])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  publishedAt   DateTime?
+
+  versions      AssetVersion[]
+  categories    AssetCategory[]
+  tagsOnAsset   AssetTag[]
+  media         Media[]
+  submissions   Submission[]
+}
+
+model AssetVersion {
+  id        String   @id @default(cuid())
+  assetId   String
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  version   String // semver
+  code      Json // { react?: string; htmlCss?: string; vue?: string }
+  changelog String?
+  createdAt DateTime @default(now())
+
+  @@unique([assetId, version])
+}
+
+model Category {
+  id        String  @id @default(cuid())
+  slug      String  @unique
+  label     String
+  assetKind AssetKind
+  assets    AssetCategory[]
+}
+
+model AssetCategory {
+  assetId    String
+  categoryId String
+  asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([assetId, categoryId])
+}
+
+model Tag {
+  id    String     @id @default(cuid())
+  slug  String     @unique
+  label String
+  assets AssetTag[]
+}
+
+model AssetTag {
+  assetId String
+  tagId   String
+  asset   Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  tag     Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([assetId, tagId])
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  assetId   String?
+  asset     Asset?   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  promptId  String?
+  prompt    PromptTemplate? @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  kind      String // preview | og | cover | run-screenshot
+  url       String
+  width     Int?
+  height    Int?
+  createdAt DateTime @default(now())
+}
+
+// ----------------------------- AI Prompt library -----------------------------
+
+enum PromptStatus {
+  DRAFT
+  BETA
+  VERIFIED
+  FEATURED
+  ARCHIVED
+}
+
+model PromptTemplate {
+  id           String        @id @default(cuid())
+  slug         String        @unique
+  title        String
+  industry     String
+  vibe         String
+  stacks       Json // variants shipped: ["Next.js","HTML","React"]
+  blocks       Json // sections covered
+  promptBody   String
+  status       PromptStatus  @default(DRAFT)
+  avgFidelity  Float         @default(0)
+  bestModel    String?
+  authorId     String?
+  author       User?         @relation(fields: [authorId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  publishedAt  DateTime?
+
+  runs   PromptRun[]
+  media  Media[]
+}
+
+model PromptRun {
+  id            String   @id @default(cuid())
+  promptId      String
+  prompt        PromptTemplate @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  model         String // "Claude 4.6 Sonnet" | "Codex" | "GLM-4.6 (CN)" ...
+  modelVersion  String? // pinned model version for reproducibility
+  fidelity      Int // 0-100 visual fidelity
+  buildError    Boolean @default(false)
+  errorLog      String?
+  notes         String?
+  queuedAt      DateTime
+  startedAt     DateTime?
+  finishedAt    DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([promptId, model])
+}
+
+// ----------------------------- Community -----------------------------
+
+enum SubmissionStatus {
+  PENDING
+  AUDITING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model Submission {
+  id          String           @id @default(cuid())
+  authorId    String
+  author      User             @relation(fields: [authorId], references: [id])
+  assetId     String?
+  asset       Asset?           @relation(fields: [assetId], references: [id])
+  code        Json
+  status      SubmissionStatus @default(PENDING)
+  auditReport Json? // automated a11y / lint / safety results
+  modNotes    String?
+  decidedBy   String?
+  decidedAt   DateTime?
+  createdAt   DateTime         @default(now())
+}
+
+model Collection {
+  id        String           @id @default(cuid())
+  ownerId   String
+  owner     User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name      String
+  isPrivate Boolean          @default(false)
+  items     CollectionItem[]
+  createdAt DateTime         @default(now())
+}
+
+model CollectionItem {
+  collectionId String
+  assetId      String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  asset        Asset      @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, assetId])
+}
+
+model Like {
+  userId  String
+  assetId String
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset   Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, assetId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  body      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  assetId   String
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  reason    String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  assetId   String?
+  asset     Asset?   @relation(fields: [assetId], references: [id])
+  promptId  String?
+  prompt    PromptTemplate? @relation(fields: [promptId], references: [id])
+  status    String   @default("OPEN")
+  createdAt DateTime @default(now())
+}
+
+// ----------------------------- Commerce -----------------------------
+
+model Order {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  stripeRef    String   @unique
+  amountCents  Int
+  currency     String   @default("usd")
+  itemType     String // pro_subscription | template_pack | prompt_pack
+  itemRef      String?
+  status       String   @default("paid")
+  createdAt    DateTime @default(now())
+}
+
+// ----------------------------- System -----------------------------
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  meta      Json?
+  createdAt DateTime @default(now())
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  label     String
+  keyHash   String   @unique
+  userId    String
+  quota     Int      @default(1000)
+  used      Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  lastUsed  DateTime?
+}
