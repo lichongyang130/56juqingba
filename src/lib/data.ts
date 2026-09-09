@@ -2188,6 +2188,62 @@ export const PROMPTS: PromptTemplate[] = [
     promptBody: `A prompt-form experiment under hard constraints: three colours or fewer, one typeface, no gradients, and whitespace as the only decoration.\n• Three colours: ink, paper, and one accent chosen last — the palette constraint is written into the header of the page so viewers can audit it.\n• One typeface: a single family doing all the work through weight, size, and case — no second font, no display face; the hierarchy is proven by contrast of weight, not contrast of font.\n• No gradients: every surface is flat; depth comes from spacing and rules, never from a fade — the page documents this rule in a corner note.\n• Margin log: the page shows its spacing system as a live ruler (8, 16, 32, 64, 128) because in this brief the margins are the design.\n• Palette: the three chosen colours as swatches in the footer with their hex and their role; anything outside them is a bug.`,
     author: "Motif Studio", published: "2026-09-10",
   },
+  {
+    slug: "print-inspired-editorial",
+    title: "Print-inspired web — a magazine spread that scrolls",
+    industry: "PrintMag", vibe: "folio-proud, editorial, ink-logical", stacks: ["HTML", "React"],
+    blocks: ["Editorial spread", "Folio rules", "Ink logic", "Pull quotes"],
+    status: "featured", avgFidelity: 91, bestModel: "Claude 4.6 Sonnet",
+    runs: [
+      { model: "Claude 4.6 Sonnet", date: "2026-09-06", fidelity: 93, buildError: false, notes: "Spread layout reads like a designed page, not a blog; folio rules hold." },
+      { model: "GLM-4.6 (CN)", date: "2026-09-07", fidelity: 91, buildError: false, notes: "Ink logic consistent; pull quotes placed like a layout artist." },
+      { model: "Codex", date: "2026-09-07", fidelity: 90, buildError: false, notes: "Grid discipline excellent; wanted a running head." },
+    ],
+    promptBody: `A prompt-form experiment: design a product story as a magazine spread that happens to be a website.\n• Editorial spread: a hero that opens like a cover — masthead, cover line, one image with a caption — then a table of contents that is honest about what the page contains, because a magazine that lies about its contents gets thrown away.\n• Folio rules: running head with section name and folio number, rules between columns, and a real grid with 12 columns the layout visibly obeys; the grid is part of the design language and the viewer should sense it.\n• Ink logic: type sizes that respect print logic (body 16–18 px, measure 60–72 characters, hanging punctuation on quotes) — the discipline of ink applied to pixels.\n• Pull quotes: two pull quotes placed at column breaks with the source named and the rule that a pull quote never repeats the paragraph verbatim.\n• Palette: newsprint, ink, one spot colour used like a second ink on a press run.`,
+    author: "Motif Studio", published: "2026-09-10",
+  },
+  {
+    slug: "accessibility-strict-page",
+    title: "A11y-strict page — WCAG AA as a hard requirement",
+    industry: "A11yStrict", vibe: "spec-exact, keyboard-clean, audit-visible", stacks: ["HTML", "React"],
+    blocks: ["AA requirements", "Contrast audit", "Keyboard map", "Screen-reader pass"],
+    status: "featured", avgFidelity: 92, bestModel: "Claude 4.6 Sonnet",
+    runs: [
+      { model: "Claude 4.6 Sonnet", date: "2026-09-05", fidelity: 94, buildError: false, notes: "The audit strip makes the requirements legible; keyboard map complete." },
+      { model: "GLM-4.6 (CN)", date: "2026-09-06", fidelity: 92, buildError: false, notes: "Screen-reader notes practical; focus rings visible everywhere." },
+      { model: "Codex", date: "2026-09-06", fidelity: 91, buildError: false, notes: "AA list enforced to the letter; headings hierarchy clean." },
+    ],
+    promptBody: `A prompt-form experiment where WCAG AA is a hard requirement list in the brief, and the page proves it on itself.\n• AA requirements: the requirement list written into the page — contrast 4.5:1, focus visible, headings in order, no info by colour alone — as a checklist the viewer can audit the page against.\n• Contrast audit: a live audit strip showing each palette pair with its measured ratio and its AA pass/fail; if a pair fails, the page shows the replacement pair it should have used.\n• Keyboard map: a small 'try it' panel listing the full keyboard journey — Tab order, skip link, focus rings, the Escape paths — because keyboard access is a feature you can demo.\n• Screen-reader pass: the page's own landmarks, heading order, and alt-text policy shown in a notes column ('every image has alt; decorative images are aria-hidden, and here is why').\n• Palette: chosen to pass AA first and look good second — the constraint is the design.`,
+    author: "Motif Studio", published: "2026-09-10",
+  },
+  {
+    slug: "multilanguage-i18n-page",
+    title: "Multi-language page — one brief, three languages",
+    industry: "MultiLang", vibe: "locale-true, parallel, length-aware", stacks: ["HTML", "React"],
+    blocks: ["Parallel pages", "i18n notes", "Locale proof", "RTL note"],
+    status: "verified", avgFidelity: 90, bestModel: "GLM-4.6 (CN)",
+    runs: [
+      { model: "GLM-4.6 (CN)", date: "2026-09-07", fidelity: 92, buildError: false, notes: "Three parallel pages feel native each; toggling is seamless." },
+      { model: "Claude 4.6 Sonnet", date: "2026-09-08", fidelity: 90, buildError: false, notes: "i18n notes instructive; length-aware layout holds." },
+      { model: "Codex", date: "2026-09-08", fidelity: 89, buildError: false, notes: "Locale proof clever; RTL note honest about scope." },
+    ],
+    promptBody: `A prompt-form experiment: one product-landing brief delivered in three languages, with the i18n thinking shown, not hidden.\n• Parallel pages: the same page in three locales (e.g. English, German, Japanese) behind a real toggle — each translation written by a native hand, not machine-flattened, with layout that survives the length changes ('German is 30% longer; Japanese is shorter and denser — the grid is tested at all three').\n• i18n notes: a notes rail on each locale card covering the real decisions — number formats, date order, currency, the word that has no equivalent and how the copy solved it.\n• Locale proof: three 'proof' lines per locale showing a localised date, a localised price, and a localised unit — because dates and money are where translation breaks visibly.\n• RTL note: an honest note that this brief is LTR-only and what an Arabic or Hebrew pass would change (mirroring, not just text direction) — the page names its own scope.\n• Palette: one design system, three voice-and-length-tuned layouts; the palette stays constant to prove the system survives the languages.`,
+    author: "Motif Studio", published: "2026-09-10",
+  },
+  {
+    slug: "motion-spec-only",
+    title: "Motion-spec page — the animation before the layout",
+    industry: "MotionSpec", vibe: "spec-first, timing-exact, curve-drawn", stacks: ["HTML"],
+    blocks: ["Spec sheet", "Timing table", "Easing curves", "Reduced-motion"],
+    status: "beta", avgFidelity: 88, bestModel: "Claude 4.6 Sonnet",
+    runs: [
+      { model: "Claude 4.6 Sonnet", date: "2026-09-08", fidelity: 90, buildError: false, notes: "Spec-only framing works; timing table precise enough to build from." },
+      { model: "Codex", date: "2026-09-09", fidelity: 88, buildError: false, notes: "Easing curves drawn clearly; wanted pause controls." },
+      { model: "GLM-4.6 (CN)", date: "2026-09-09", fidelity: 87, buildError: false, notes: "Reduced-motion spec thoughtful; playback loop smooth." },
+    ],
+    promptBody: `A prompt-form experiment that ships only the motion spec — no layout, no copy, just the animation system a developer can build from.\n• Spec sheet: the page opens as a spec document — the four moments it specifies (hero entrance, card stagger, state change, page transition) with their purpose stated before their parameters.\n• Timing table: every moment in a table — duration in ms, delay, trigger, and the responsive rule ('under 640px, the stagger halves because the cards stack'); numbers a developer can copy.\n• Easing curves: each curve drawn as a real graph beside its cubic-bezier value with a one-line 'why' ('ease-out-quart: heavy object settling; never use it for exits').\n• Reduced-motion: the spec's reduced-motion branch specified in full — what plays (nothing that moves layout), what fades (opacity only, ≤ 300 ms), and the media-query hook.\n• Palette: graph paper, ink, one curve-colour per moment; the page is a blueprint and proud of it.`,
+    author: "Motif Studio", published: "2026-09-10",
+  },
 ];
 
 export const BACKGROUNDS: BackgroundAsset[] = [
@@ -2364,6 +2420,10 @@ export const INDUSTRY_SAMPLES: Record<string, { kicker: string; title: string; s
   SlowTravel:  { kicker: "TRIPS / 14",     title: "Fourteen routes,\nzero rushed",      sub: "Itineraries · local-host notes · carbon honesty",  cta: "Travel slow" },
   DarkMode:    { kicker: "DARK / READY",   title: "Built first\nfor the dark",          sub: "Same brief · dark surfaces · glow discipline",      cta: "See it dimmed" },
   Whitespace:  { kicker: "WHITE / 3 COL",  title: "Three colours,\none voice",          sub: "Minimal brief · restraint as the feature",         cta: "Breathe" },
+  PrintMag:    { kicker: "SPREAD / 12",    title: "A magazine\nyou can scroll",         sub: "Editorial spread · folio rules · ink logic",        cta: "Turn the page" },
+  A11yStrict:  { kicker: "WCAG / AA",      title: "Accessible,\nas specified",          sub: "AA requirements · contrast audit · keyboard map",   cta: "Meet the spec" },
+  MultiLang:   { kicker: "I18N / 3",       title: "One brief,\nthree languages",        sub: "Parallel pages · i18n notes · locale proof",        cta: "Read both" },
+  MotionSpec:  { kicker: "SPEC / 120 FPS", title: "The motion\nbefore the page",        sub: "Animation spec only · timing · easing curves",      cta: "Watch the spec" },
 };
 export const INDUSTRY_SAMPLE_FALLBACK = {
   kicker: "MOTIF / CONCEPT",

@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 141 / 500 shipped (batches 1–18, in order) · Sections 1–2 complete ✅
+## Progress — 145 / 500 shipped (batches 1–19, in order) · Sections 1–3 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -153,6 +153,10 @@ names, behaviours and where they plug into the existing pages.
 | 139 | Slow-travel agency prompt | [/prompts/slow-travel-agency-routes](/prompts/slow-travel-agency-routes) |
 | 140 | Dark-mode-first prompt variant | [/prompts/dark-mode-first-page](/prompts/dark-mode-first-page) |
 | 141 | Whitespace-maximal prompt variant | [/prompts/whitespace-maximal-page](/prompts/whitespace-maximal-page) |
+| 142 | Print-inspired prompt variant | [/prompts/print-inspired-editorial](/prompts/print-inspired-editorial) |
+| 143 | A11y-strict prompt variant | [/prompts/accessibility-strict-page](/prompts/accessibility-strict-page) |
+| 144 | Multi-language prompt variant | [/prompts/multilanguage-i18n-page](/prompts/multilanguage-i18n-page) |
+| 145 | Motion-spec prompt variant | [/prompts/motion-spec-only](/prompts/motion-spec-only) |
 
 
 ---
@@ -273,7 +277,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 3. Prompt library — 50 next prompts across industries (24 → 74; 70 shipped so far)
+## 3. Prompt library — 50 next prompts across industries (24 → 74; 74 shipped so far) ✅ complete
 
 ### Growth industries
 - **SaaS onboarding flow prompt** ✅ (`saas-activation-onboarding`): signup → plan → invite → success, in one prompt.
@@ -336,10 +340,10 @@ names, behaviours and where they plug into the existing pages.
 ### Prompt-form experiments (any industry)
 - **Dark-mode-first prompt variant** ✅ (`dark-mode-first-page`): same brief, delivered for dark surfaces.
 - **Whitespace-maximal prompt** ✅ (`whitespace-maximal-page`): ≤ 3 colours, one typeface, no gradients.
-- **Print-inspired web prompt**: editorial layout that works like a magazine spread.
-- **A11y-strict prompt**: WCAG AA as a hard requirement list in the brief.
-- **Multi-language prompt**: the same page brief in three languages with i18n notes.
-- **Motion-spec prompt**: a prompt that *only* ships the animation spec, no layout.
+- **Print-inspired web prompt** ✅ (`print-inspired-editorial`): editorial layout that works like a magazine spread.
+- **A11y-strict prompt** ✅ (`accessibility-strict-page`): WCAG AA as a hard requirement list in the brief.
+- **Multi-language prompt** ✅ (`multilanguage-i18n-page`): the same page brief in three languages with i18n notes.
+- **Motion-spec prompt** ✅ (`motion-spec-only`): a prompt that *only* ships the animation spec, no layout.
 
 
 ---
