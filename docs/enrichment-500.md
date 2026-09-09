@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 101 / 500 shipped (batches 1–13, in order) · Sections 1–2 complete ✅
+## Progress — 109 / 500 shipped (batches 1–14, in order) · Sections 1–2 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -113,6 +113,14 @@ names, behaviours and where they plug into the existing pages.
 | 99 | Creator newsletter landing prompt | [/prompts/creator-newsletter-landing](/prompts/creator-newsletter-landing) |
 | 100 | Web3 marketplace prompt | [/prompts/web3-marketplace-drop](/prompts/web3-marketplace-drop) |
 | 101 | Perfume house prompt | [/prompts/perfume-house-editorial](/prompts/perfume-house-editorial) |
+| 102 | Watch atelier prompt | [/prompts/watch-atelier-precision](/prompts/watch-atelier-precision) |
+| 103 | Flower studio prompt | [/prompts/flower-studio-same-day](/prompts/flower-studio-same-day) |
+| 104 | Furniture maker prompt | [/prompts/furniture-maker-joinery](/prompts/furniture-maker-joinery) |
+| 105 | Streetwear capsule prompt | [/prompts/streetwear-capsule-drop](/prompts/streetwear-capsule-drop) |
+| 106 | Skincare clinic prompt | [/prompts/skincare-clinic-treatments](/prompts/skincare-clinic-treatments) |
+| 107 | Coffee roaster prompt | [/prompts/coffee-roaster-origin](/prompts/coffee-roaster-origin) |
+| 108 | Boutique hotel prompt | [/prompts/boutique-hotel-amenities](/prompts/boutique-hotel-amenities) |
+| 109 | Craft brewery taproom prompt | [/prompts/brewery-taproom-taps](/prompts/brewery-taproom-taps) |
 
 
 ---
@@ -233,7 +241,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 3. Prompt library — 50 next prompts across industries (24 → 74; 30 shipped so far)
+## 3. Prompt library — 50 next prompts across industries (24 → 74; 38 shipped so far)
 
 ### Growth industries
 - **SaaS onboarding flow prompt** ✅ (`saas-activation-onboarding`): signup → plan → invite → success, in one prompt.
@@ -244,16 +252,16 @@ names, behaviours and where they plug into the existing pages.
 
 ### Retail & commerce
 - **Perfume house prompt** ✅ (`perfume-house-editorial`): scent-notes accordion, editorial full-bleed.
-- **Watch atelier prompt**: precision macro shots, movement cutaway diagrams.
-- **Flower studio prompt**: seasonal bouquets with a same-day delivery band.
-- **Furniture maker prompt**: joinery close-ups, finish swatches, lead-time honesty.
-- **Streetwear capsule prompt**: drop calendar, size-run honesty, lookbook marquee.
-- **Skincare clinic prompt**: treatments menu with practitioner names.
-- **Coffee roaster prompt**: origin map, roast-level meter, brew guides.
+- **Watch atelier prompt** ✅ (`watch-atelier-precision`): precision macro shots, movement cutaway diagrams.
+- **Flower studio prompt** ✅ (`flower-studio-same-day`): seasonal bouquets with a same-day delivery band.
+- **Furniture maker prompt** ✅ (`furniture-maker-joinery`): joinery close-ups, finish swatches, lead-time honesty.
+- **Streetwear capsule prompt** ✅ (`streetwear-capsule-drop`): drop calendar, size-run honesty, lookbook marquee.
+- **Skincare clinic prompt** ✅ (`skincare-clinic-treatments`): treatments menu with practitioner names.
+- **Coffee roaster prompt** ✅ (`coffee-roaster-origin`): origin map, roast-level meter, brew guides.
 
 ### Hospitality & local
-- **Boutique hotel prompt**: room gallery with real-amenity chips.
-- **Craft brewery taproom prompt**: tap list with ABV meter and food-pairing rows.
+- **Boutique hotel prompt** ✅ (`boutique-hotel-amenities`): room gallery with real-amenity chips.
+- **Craft brewery taproom prompt** ✅ (`brewery-taproom-taps`): tap list with ABV meter and food-pairing rows.
 - **Bike shop prompt**: service tiers with turnaround honesty.
 - **Yoga studio prompt**: class schedule with teacher bios and first-class invite.
 - **Dog-walking service prompt**: GPS-route visuals, insured badges, sitter faces.
