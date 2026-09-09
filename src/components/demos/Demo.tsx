@@ -5885,6 +5885,480 @@ function MapFreeLocalBand() {
   );
 }
 
+const AST_SHOTS = [
+  {
+    id: "shelf",
+    cap: "The asset shelf — filters on the left, live previews on the right.",
+    tag: "browse",
+    art: "linear-gradient(160deg, hsl(262 70% 22%), hsl(262 80% 34%))",
+  },
+  {
+    id: "detail",
+    cap: "Every asset page carries code, tokens and a design note — no tab roulette.",
+    tag: "inspect",
+    art: "linear-gradient(160deg, hsl(199 80% 20%), hsl(199 90% 36%))",
+  },
+  {
+    id: "admin",
+    cap: "The admin updates the same localStorage store the site reads — no fake CRUD.",
+    tag: "manage",
+    art: "linear-gradient(160deg, hsl(172 70% 18%), hsl(172 80% 32%))",
+  },
+  {
+    id: "learn",
+    cap: "Learn essays sit next to the components they teach — theory 20cm from practice.",
+    tag: "read",
+    art: "linear-gradient(160deg, hsl(30 80% 20%), hsl(30 90% 34%))",
+  },
+] as const;
+
+function AppScreenshotTour() {
+  const [idx, setIdx] = useState(0);
+  const [auto, setAuto] = useState(true);
+  useEffect(() => {
+    if (!auto) return;
+    const t = window.setTimeout(() => setIdx((i) => (i + 1) % AST_SHOTS.length), 3400);
+    return () => window.clearTimeout(t);
+  }, [auto, idx]);
+  const shot = AST_SHOTS[idx];
+  return (
+    <div className="flex h-full w-full flex-col justify-center overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(139,92,246,0.12),transparent_60%),#08090f] px-6">
+      <div className="mx-auto grid w-full max-w-md grid-cols-[150px_minmax(0,1fr)] items-center gap-4">
+        <div className="flex justify-center">
+          <div className="w-[122px] rounded-[26px] border border-white/12 bg-black/50 p-2 shadow-[0_24px_60px_rgba(0,0,0,.5)]">
+            <div className="rounded-[19px] border border-white/6 p-1.5" style={{ background: shot.art }}>
+              <div className="mx-auto mb-1.5 h-1 w-8 rounded-full bg-black/40" />
+              <div className="space-y-1 rounded-lg bg-black/25 p-1.5">
+                <div className="h-1 w-3/4 rounded-full bg-white/25" />
+                <div className="h-1 w-1/2 rounded-full bg-white/15" />
+                <div className="mt-1.5 grid grid-cols-2 gap-1">
+                  <div className="h-6 rounded-md bg-white/15" />
+                  <div className="h-6 rounded-md bg-white/15" />
+                </div>
+                <div className="mt-1.5 h-1 w-full rounded-full bg-white/15" />
+                <div className="h-1 w-2/3 rounded-full bg-white/10" />
+              </div>
+              <p className="mt-1.5 text-center font-mono text-[7px] uppercase tracking-[0.18em] text-white/70">{shot.tag}</p>
+            </div>
+          </div>
+        </div>
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">product tour · {idx + 1}/{AST_SHOTS.length}</p>
+          <p className="mt-2 min-h-12 text-[12px] font-bold leading-relaxed text-white" style={{ animation: "mf-fade .3s ease-out both" }} key={shot.id}>
+            {shot.cap}
+          </p>
+          <div className="mt-2 flex gap-1.5">
+            {AST_SHOTS.map((sh, i) => (
+              <button
+                key={sh.id}
+                type="button"
+                aria-label={`Show ${sh.tag}`}
+                onClick={() => {
+                  setIdx(i);
+                  setAuto(false);
+                }}
+                className={`h-1.5 rounded-full transition-all ${i === idx ? "w-6 bg-violet-300" : "w-1.5 bg-white/20 hover:bg-white/40"}`}
+              />
+            ))}
+          </div>
+          <div className="mt-3 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setAuto((a) => !a)}
+              aria-pressed={auto}
+              className={`btn ${auto ? "!border-white/12 !bg-white/6 !text-white" : "btn-ghost"} !px-3 !py-1 !text-[10px]`}
+            >
+              {auto ? "❚❚ stop auto" : "▶ auto tour"}
+            </button>
+            <span className="text-[9px] text-ink-faint">caption swaps with the screen; dots pick a stop</span>
+          </div>
+        </div>
+      </div>
+      <p className="mx-auto mt-5 w-full max-w-md text-center text-[9px] leading-relaxed text-ink-faint">
+        the phone stays put while the story changes — the sticky-frame pattern that lets a tour read like a scroll, not a slideshow.
+      </p>
+    </div>
+  );
+}
+
+function TemplateDocsSite() {
+  const sections = ["overview", "install", "tokens", "components", "motion"];
+  const [active, setActive] = useState("overview");
+  const scroller = useRef<HTMLDivElement>(null);
+  const jump = (id: string) => {
+    setActive(id);
+    const el = scroller.current?.querySelector(`[data-sec="${id}"]`);
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center gap-2 border-b border-white/6 px-4 py-2">
+        <span className="rounded-md border border-white/10 px-2 py-0.5 font-mono text-[9px] text-ink-faint">docs</span>
+        <span className="truncate text-[10px] font-bold text-white/80">Getting started · motif/ui</span>
+        <span className="ml-auto rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] text-emerald-300">v1.3</span>
+      </div>
+      <div className="grid min-h-0 flex-1 grid-cols-[92px_minmax(0,1fr)]">
+        <nav className="flex flex-col gap-0.5 overflow-y-auto border-r border-white/6 px-2 py-3" aria-label="Docs sections">
+          {sections.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => jump(s)}
+              aria-current={active === s ? "true" : undefined}
+              className={`rounded-lg px-2 py-1.5 text-left text-[10px] font-bold capitalize transition-colors ${
+                active === s ? "bg-white/10 text-white" : "text-ink-faint hover:bg-white/5 hover:text-ink-dim"
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </nav>
+        <div ref={scroller} onScroll={(e) => {
+          const el = e.currentTarget;
+          let cur = sections[0];
+          sections.forEach((s) => {
+            const node = el.querySelector(`[data-sec="${s}"]`) as HTMLElement | null;
+            if (node && node.offsetTop - 70 <= el.scrollTop) cur = s;
+          });
+          setActive(cur);
+        }} className="min-h-0 overflow-y-auto px-4 py-4">
+          <div className="space-y-6">
+            {[
+              ["overview", "A library that reads like a book", "Every asset page ships code, tokens and a design note in one place, so onboarding is one scroll instead of five tabs."],
+              ["install", "npm i motif-ui", "One command, no peer-dependency maze. The package is 4 kB gzipped and carries zero runtime."],
+              ["tokens", "Tokens before themes", "Colour, type and spacing are data first; dark mode is a token swap, not a stylesheet rewrite."],
+              ["components", "93 assets and counting", "Inputs, sections and signature motion pieces — each with an original demo, copy snippet and a11y score."],
+              ["motion", "A motion language, not a toolbox", "Under 200ms for feedback, 500ms+ for story beats, and reduced-motion kills the theatre — by design."],
+            ].map(([id, t, b]) => (
+              <section key={id} data-sec={id} className="scroll-mt-4">
+                <h3 className="text-[13px] font-black tracking-tight text-white">{t}</h3>
+                <p className="mt-1.5 text-[10.5px] leading-relaxed text-ink-dim">{b}</p>
+              </section>
+            ))}
+            <div className="flex items-center justify-between border-t border-white/6 pt-3">
+              <button type="button" className="text-[10px] font-bold text-ink-dim hover:text-white">← Previous</button>
+              <button type="button" onClick={() => jump(sections[(sections.indexOf(active) + 1) % sections.length])} className="rounded-lg bg-white/10 px-3 py-1.5 text-[10px] font-black text-white hover:bg-white/15">
+                Next: {sections[(sections.indexOf(active) + 1) % sections.length]} →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TemplateLandingSaas() {
+  const scroller = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const go = (id: string) => {
+    setMenuOpen(false);
+    scroller.current?.querySelector(`[data-sec="${id}"]`)?.scrollIntoView({ behavior: "smooth" });
+  };
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+        <span className="text-[11px] font-black tracking-tight text-white">
+          motif<span className="text-violet-300">/</span>ui
+        </span>
+        <nav className="hidden items-center gap-3 sm:flex" aria-label="Landing nav">
+          {["features", "pricing", "faq"].map((n) => (
+            <button key={n} type="button" onClick={() => go(n)} className="text-[10px] font-bold text-ink-dim hover:text-white">
+              {n}
+            </button>
+          ))}
+          <button type="button" onClick={() => go("cta")} className="rounded-lg bg-white px-3 py-1 text-[10px] font-black text-[#0b0c12]">
+            Start free
+          </button>
+        </nav>
+        <button
+          type="button"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((m) => !m)}
+          className="rounded-lg border border-white/10 px-2.5 py-1 text-[11px] sm:hidden"
+        >
+          {menuOpen ? "✕" : "☰"}
+        </button>
+      </div>
+      {menuOpen && (
+        <div className="flex flex-col gap-2 border-b border-white/6 bg-black/40 px-4 py-3 sm:hidden" style={{ animation: "mf-fade .15s ease-out both" }}>
+          {["features", "pricing", "faq"].map((n) => (
+            <button key={n} type="button" onClick={() => go(n)} className="rounded-lg px-2 py-1.5 text-left text-[11px] font-bold text-ink-dim hover:bg-white/5">
+              {n}
+            </button>
+          ))}
+        </div>
+      )}
+      <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto">
+        <section data-sec="hero" className="px-5 pb-8 pt-8 text-center" style={{ background: "radial-gradient(70% 100% at 50% 0%, rgba(139,92,246,.22), transparent 60%)" }}>
+          <div className="mx-auto max-w-sm">
+            <span className="rounded-full border border-violet-300/25 bg-violet-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-violet-200">
+              dark SaaS template
+            </span>
+            <h2 className="mt-3 text-2xl font-black leading-tight tracking-tight text-white">
+              The component library your roadmap <span className="text-violet-300">kept promising</span>
+            </h2>
+            <p className="mx-auto mt-2 max-w-[300px] text-[11px] leading-relaxed text-ink-dim">
+              Original assets, honest a11y and a motion language — assembled from the same sections on this page.
+            </p>
+            <div className="mt-4 flex justify-center gap-2">
+              <button type="button" onClick={() => go("features")} className="rounded-lg bg-white px-4 py-2 text-[11px] font-black text-[#0b0c12]">
+                See features
+              </button>
+              <button type="button" onClick={() => go("pricing")} className="rounded-lg border border-white/15 px-4 py-2 text-[11px] font-bold text-white/85">
+                View pricing
+              </button>
+            </div>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[9px] text-ink-faint">
+              {["northwind", "arclight", "hazel&co", "plainday", "solidpine"].map((l) => (
+                <span key={l} className="rounded-full border border-white/8 bg-white/3 px-2.5 py-1 font-mono opacity-80 hover:opacity-100">
+                  {l}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+        <section data-sec="features" className="border-t border-white/6 px-5 py-6">
+          <div className="mx-auto grid max-w-sm grid-cols-3 gap-2">
+            {[
+              ["tokens", "one source of truth"],
+              ["motion", "budgeted animation"],
+              ["a11y", "tested, not bolted"],
+            ].map(([t, b]) => (
+              <div key={t} className="rounded-xl border border-white/6 bg-white/3 p-3">
+                <span className="text-lg text-violet-300">◈</span>
+                <p className="mt-1 text-[10px] font-black capitalize text-white">{t}</p>
+                <p className="mt-0.5 text-[8.5px] leading-snug text-ink-dim">{b}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section data-sec="pricing" className="border-t border-white/6 px-5 py-6">
+          <div className="mx-auto grid max-w-sm grid-cols-3 gap-2">
+            {[
+              ["Studio", "$0"],
+              ["Team", "$24"],
+              ["Agency", "$64"],
+            ].map(([n, p], i) => (
+              <div key={n} className={`rounded-xl border p-3 text-center ${i === 1 ? "border-emerald-300/35 bg-emerald-300/8" : "border-white/8 bg-white/3"}`}>
+                <p className="text-[10px] font-black text-white">{n}</p>
+                <p className="mt-1 text-base font-black text-white">
+                  {p}
+                  <span className="text-[8px] text-ink-faint">/mo</span>
+                </p>
+                <button type="button" className={`mt-2 w-full rounded-lg px-2 py-1 text-[9px] font-black ${i === 1 ? "bg-emerald-300 text-[#06120c]" : "bg-white/10 text-white"}`}>
+                  {i === 0 ? "Free" : "Choose"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section data-sec="faq" className="border-t border-white/6 px-5 py-6">
+          <div className="mx-auto max-w-sm space-y-1.5">
+            {[
+              ["Original?", "Every asset is authored in-house."],
+              ["Licence?", "MIT, including client work."],
+              ["Fast?", "Zero runtime on your page."],
+            ].map(([q, a]) => (
+              <div key={q} className="flex items-baseline gap-2 rounded-lg border border-white/6 bg-white/2 px-3 py-2">
+                <span className="shrink-0 text-[10px] font-black text-white">{q}</span>
+                <span className="text-[9.5px] text-ink-dim">{a}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section data-sec="cta" className="border-t border-white/6 px-5 py-6 text-center" style={{ background: "linear-gradient(180deg, transparent, rgba(52,211,153,.08))" }}>
+          <p className="text-sm font-black text-white">Stop promising the library. Ship it.</p>
+          <button type="button" onClick={() => go("hero")} className="mt-3 rounded-lg bg-emerald-300 px-5 py-2 text-[11px] font-black text-[#06120c]">
+            Start building free
+          </button>
+        </section>
+        <p className="border-t border-white/6 px-5 py-3 text-center text-[8px] text-ink-faint">
+          assembled from shipped sections · hero → logos → features → pricing → faq → cta
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function TemplateWaitlist() {
+  const [target] = useState(() => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() + 1);
+    d.setHours(9, 0, 0, 0);
+    return d;
+  });
+  const [left, setLeft] = useState(() => target.getTime() - Date.now());
+  useEffect(() => {
+    const t = window.setInterval(() => setLeft(target.getTime() - Date.now()), 1000);
+    return () => window.clearInterval(t);
+  }, [target]);
+  const seg = (ms: number) => Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(seg(left) / 86400);
+  const hrs = Math.floor((seg(left) % 86400) / 3600);
+  const mins = Math.floor((seg(left) % 3600) / 60);
+  const secs = seg(left) % 60;
+  const [code] = useState("MOTIF-EARLY-42");
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch { /* clipboard may be blocked in sandboxed iframes */ }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1400);
+  };
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return (
+    <div className="flex h-full w-full flex-col justify-center overflow-hidden bg-[radial-gradient(70%_100%_at_50%_0%,rgba(52,211,153,0.14),transparent_60%),#08090f] px-6">
+      <div className="mx-auto w-full max-w-md rounded-2xl border border-white/8 bg-white/4 p-6 text-center">
+        <span className="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-emerald-200">
+          waitlist · batch {pad(hrs + days * 24)}h
+        </span>
+        <h3 className="mt-3 text-xl font-black tracking-tight text-white">motif desktop is almost here</h3>
+        <p className="mx-auto mt-1.5 max-w-[300px] text-[11px] leading-relaxed text-ink-dim">
+          invite-only access opens at 09:00 on the first of next month. Your spot is saved the moment you join.
+        </p>
+        <div className="mt-4 grid grid-cols-4 gap-1.5 font-mono">
+          {[
+            [pad(days), "days"],
+            [pad(hrs), "hrs"],
+            [pad(mins), "min"],
+            [pad(secs), "sec"],
+          ].map(([v, k]) => (
+            <div key={k} className="rounded-xl border border-white/8 bg-black/30 py-2.5">
+              <span className="block text-lg font-black leading-none text-white tabular-nums">{v}</span>
+              <span className="mt-1 block text-[8px] uppercase tracking-[0.18em] text-ink-faint">{k}</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 flex items-center gap-2 rounded-xl border border-dashed border-emerald-300/30 bg-emerald-300/5 px-3 py-2.5">
+          <span className="min-w-0 flex-1 truncate text-left font-mono text-[11px] font-bold tracking-[0.14em] text-emerald-200">{code}</span>
+          <button type="button" onClick={copy} className="shrink-0 rounded-lg bg-white/10 px-3 py-1.5 text-[10px] font-black text-white hover:bg-white/15">
+            {copied ? "✓ copied" : "Copy invite"}
+          </button>
+        </div>
+        <p className="mt-3 text-[9px] text-ink-faint">
+          referral code: friends who join with it move one spot up the list — honesty, the countdown is real.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const TJ_ITEMS = [
+  { kind: "essay", title: "Empty states are onboarding", meta: "learn · 6 min", tone: "border-violet-300/25 bg-violet-300/10 text-violet-200" },
+  { kind: "release", title: "v1.3 — eight new sections", meta: "changelog · mar 2026", tone: "border-emerald-300/25 bg-emerald-300/10 text-emerald-200" },
+  { kind: "essay", title: "Motion on a budget", meta: "learn · 9 min", tone: "border-violet-300/25 bg-violet-300/10 text-violet-200" },
+  { kind: "release", title: "v1.2 — pricing & newsletter", meta: "changelog · feb 2026", tone: "border-emerald-300/25 bg-emerald-300/10 text-emerald-200" },
+  { kind: "essay", title: "The audit that ran itself", meta: "learn · 7 min", tone: "border-violet-300/25 bg-violet-300/10 text-violet-200" },
+] as const;
+
+function TemplateChangelogJournal() {
+  const [pick, setPick] = useState<string | null>("Empty states are onboarding");
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">journal · essays + releases</span>
+        <span className="flex gap-1.5">
+          <span className="rounded-full border border-violet-300/20 px-2 py-0.5 text-[8px] font-bold uppercase text-violet-200">essays</span>
+          <span className="rounded-full border border-emerald-300/20 px-2 py-0.5 text-[8px] font-bold uppercase text-emerald-200">releases</span>
+        </span>
+      </div>
+      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)]">
+        <div className="space-y-1.5 overflow-y-auto px-4 py-3">
+          {TJ_ITEMS.map((it) => {
+            const open = pick === it.title;
+            return (
+              <button
+                key={it.title}
+                type="button"
+                onClick={() => setPick(open ? null : it.title)}
+                aria-expanded={open}
+                className={`flex w-full items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition-colors ${open ? "border-white/15 bg-white/5" : "border-white/6 bg-white/2 hover:border-white/12"}`}
+              >
+                <span className={`rounded-full border px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.16em] ${it.tone}`}>{it.kind}</span>
+                <span className="min-w-0 flex-1 truncate text-[11px] font-bold text-white/90">{it.title}</span>
+                <span className="shrink-0 text-[8px] uppercase tracking-[0.14em] text-ink-faint">{it.meta.split("·")[1]?.trim()}</span>
+              </button>
+            );
+          })}
+          <p className="pt-2 text-center text-[9px] text-ink-faint">one index for both streams — a changelog that reads like a journal, or the reverse.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TemplateGallery() {
+  const [q, setQ] = useState("");
+  const [kind, setKind] = useState("all");
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+  const hay = q.trim().toLowerCase();
+  const list = COMPONENTS.filter((c) => {
+    const byKind = kind === "all" || (c.kind || "").toLowerCase().includes(kind);
+    const byQ = !hay || c.title.toLowerCase().includes(hay) || (c.tags || []).some((t) => t.includes(hay)) || c.slug.includes(hay);
+    return byKind && byQ;
+  }).slice(0, 12);
+  const copy = async (slug: string) => {
+    try {
+      await navigator.clipboard.writeText(slug);
+    } catch { /* clipboard blocked in sandboxed iframe */ }
+    setCopiedSlug(slug);
+    window.setTimeout(() => setCopiedSlug(null), 1200);
+  };
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between gap-2 border-b border-white/6 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">template gallery · real catalog</span>
+        <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] text-ink-faint">{list.length} of {COMPONENTS.length}</span>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 border-b border-white/6 px-4 py-2">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="filter 101 assets…"
+          aria-label="Filter templates"
+          className="min-w-0 flex-1 rounded-lg border border-white/10 bg-black/25 px-3 py-1.5 text-[11px] text-white outline-none placeholder:text-ink-faint focus:border-violet-300/40"
+        />
+        <div className="flex items-center gap-1">
+          {["all", "element", "animated", "section"].map((k) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setKind(k)}
+              aria-pressed={kind === k}
+              className={`rounded-md px-2 py-1 text-[9px] font-bold capitalize ${kind === k ? "bg-violet-400/20 text-violet-100" : "text-ink-faint hover:text-ink-dim"}`}
+            >
+              {k}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="grid min-h-0 flex-1 grid-cols-3 gap-2 overflow-y-auto px-4 py-3 sm:grid-cols-4">
+        {list.map((c) => (
+          <button
+            key={c.slug}
+            type="button"
+            onClick={() => copy(c.slug)}
+            className={`flex flex-col rounded-xl border px-2 py-2.5 text-left transition-colors ${copiedSlug === c.slug ? "border-emerald-300/40 bg-emerald-300/8" : "border-white/6 bg-white/3 hover:border-white/15 hover:bg-white/5"}`}
+            style={{ animation: "mf-pop .3s ease-out both" }}
+          >
+            <span className="flex h-9 items-end justify-start rounded-lg bg-gradient-to-br from-white/12 to-white/2 px-1.5 pb-1.5">
+              <span className="truncate font-mono text-[7px] uppercase tracking-wider text-ink-dim">{(c.slug || "").slice(0, 16)}</span>
+            </span>
+            <span className="mt-1.5 truncate text-[9px] font-bold leading-tight text-white">{c.title}</span>
+            <span className="mt-0.5 truncate text-[7.5px] text-ink-faint">{copiedSlug === c.slug ? "✓ slug copied" : `kind · ${c.kind} · v${c.version ?? "1.0"}`}</span>
+          </button>
+        ))}
+        {list.length === 0 && (
+          <p className="col-span-full py-8 text-center text-[10px] text-ink-faint">no assets match “{q}” — the filter is live, the catalog is real.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 
@@ -5917,6 +6391,8 @@ export const DEMO_KEYS = [
   "team-grid-filter", "faq-two-column", "comparison-slider", "timeline-vertical",
   "newsletter-band-tiers", "hero-product-mock", "split-feature-rows", "case-study-header",
   "changelog-feed", "resource-download-cards", "event-schedule-list", "map-free-local-band",
+  "app-screenshot-tour", "template-docs-site", "template-landing-saas", "template-waitlist",
+  "template-changelog", "template-gallery",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -6028,6 +6504,12 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "resource-download-cards": return <ResourceDownloadCards />;
     case "event-schedule-list": return <EventScheduleList />;
     case "map-free-local-band": return <MapFreeLocalBand />;
+    case "app-screenshot-tour": return <AppScreenshotTour />;
+    case "template-docs-site": return <TemplateDocsSite />;
+    case "template-landing-saas": return <TemplateLandingSaas />;
+    case "template-waitlist": return <TemplateWaitlist />;
+    case "template-changelog": return <TemplateChangelogJournal />;
+    case "template-gallery": return <TemplateGallery />;
     default: return null;
   }
 }

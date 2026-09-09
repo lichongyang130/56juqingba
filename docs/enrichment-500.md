@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 64 / 500 shipped (batches 1–8, in order)
+## Progress — 70 / 500 shipped (batches 1–9, in order) · Section 1 (component library) complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -76,11 +76,17 @@ names, behaviours and where they plug into the existing pages.
 | 62 | Resource/download cards | [/components/resource-download-cards](/components/resource-download-cards) |
 | 63 | Event schedule list | [/components/event-schedule-list](/components/event-schedule-list) |
 | 64 | Map-free local band | [/components/map-free-local-band](/components/map-free-local-band) |
+| 65 | App screenshot tour | [/components/app-screenshot-tour](/components/app-screenshot-tour) |
+| 66 | Docs site template | [/components/template-docs-site](/components/template-docs-site) |
+| 67 | Landing page template (dark SaaS) | [/components/template-landing-saas](/components/template-landing-saas) |
+| 68 | Waitlist template | [/components/template-waitlist](/components/template-waitlist) |
+| 69 | Changelog/journal template | [/components/template-changelog](/components/template-changelog) |
+| 70 | Template gallery page | [/components/template-gallery](/components/template-gallery) |
 
 
 ---
 
-## 1. Component library — 70 ideas (64/70 shipped · catalog 39 → 101)
+## 1. Component library — 70 ideas ✅ complete (70/70 shipped · catalog 39 → 107)
 
 ### Form & input elements
 - **Combo box** ✅ (`combo-box`): text input with a live-filtered option list, keyboard navigation and a "no matches" row — slots into every filter on the site.
@@ -155,14 +161,14 @@ names, behaviours and where they plug into the existing pages.
 - **Resource/download cards** ✅ (`resource-download-cards`): card rows with format badges (PDF, ZIP, Figma) and size.
 - **Event schedule list** ✅ (`event-schedule-list`): date-sticky list with session cards.
 - **Map-free local band** ✅ (`map-free-local-band`): offices/where-we-work cards with live local time, no map script.
-- **App screenshot tour**: sticky phone frame whose screen swaps with captions.
+- **App screenshot tour** ✅ (`app-screenshot-tour`): sticky phone frame whose screen swaps with captions.
 
 ### Templates (whole pages)
-- **Docs site template**: sidebar TOC + content + prev/next footer, assembled from library sections.
-- **Landing page template (dark SaaS)**: hero + logos + features + pricing + FAQ + CTA.
-- **Waitlist template**: hero with countdown and referral-style invite box.
-- **Changelog/journal template**: date index pages for release notes and essays.
-- **Template gallery page**: filters + preview tiles + "use this" actions.
+- **Docs site template** ✅ (`template-docs-site`): sidebar TOC + content + prev/next footer, assembled from library sections.
+- **Landing page template (dark SaaS)** ✅ (`template-landing-saas`): hero + logos + features + pricing + FAQ + CTA.
+- **Waitlist template** ✅ (`template-waitlist`): hero with countdown and referral-style invite box.
+- **Changelog/journal template** ✅ (`template-changelog`): date index pages for release notes and essays.
+- **Template gallery page** ✅ (`template-gallery`): filters + preview tiles + copy-slug "use this" actions.
 
 ---
 

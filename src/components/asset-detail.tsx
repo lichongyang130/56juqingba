@@ -1718,6 +1718,110 @@ const t = new Intl.DateTimeFormat("en", { hour: "2-digit", minute: "2-digit",
   animation: mf-glow 2s ease-in-out infinite; background: inherit; }
 time { font-variant-numeric: tabular-nums; }`,
   },
+  "app-screenshot-tour": {
+    react: `// React — one index, one auto-advance timer
+const [idx, setIdx] = useState(0);
+const [auto, setAuto] = useState(true);
+useEffect(() => {
+  if (!auto) return;
+  const t = setTimeout(() => setIdx(i => (i + 1) % shots.length), 3400);
+  return () => clearTimeout(t);
+}, [auto, idx]);
+<div className="tour">
+  <PhoneScreen art={shots[idx].art} />
+  <p key={shots[idx].id} className="caption">{shots[idx].cap}</p>
+</div>
+// dots = manual override; picking one stops the auto tour`,
+    css: `.tour { display: grid; grid-template-columns: 150px 1fr; gap: 16px; }
+.caption { animation: mf-fade .3s ease-out both; }
+.phone { border: 1px solid rgba(255,255,255,.12); border-radius: 26px;
+  padding: 8px; background: rgba(0,0,0,.5); box-shadow: 0 24px 60px rgba(0,0,0,.5); }
+.dot { width: 6px; height: 6px; border-radius: 99px; }
+.dot[aria-current] { width: 24px; }`,
+  },
+  "template-docs-site": {
+    react: `// React — scrollspy = which section owns scrollTop
+const onScroll = (e) => {
+  let cur = sections[0];
+  sections.forEach(s => {
+    const node = e.currentTarget.querySelector(\`[data-sec="\${s}"]\`);
+    if (node && node.offsetTop - 70 <= e.currentTarget.scrollTop) cur = s;
+  });
+  setActive(cur);
+};
+// nav jump: element.scrollIntoView({ behavior: "smooth" })
+// sections carry data-sec + scroll-mt so anchors never hide under chrome`,
+    css: `.docs { display: grid; grid-template-columns: 92px 1fr; }
+.nav button[aria-current="true"] { background: rgba(255,255,255,.1); color: #fff; }
+article[data-sec] { scroll-margin-top: 16px; }`,
+  },
+  "template-landing-saas": {
+    react: `// React — a landing is a sequence of shipped sections
+const go = id =>
+  scroller.current?.querySelector(\`[data-sec="\${id}"]\`)?.scrollIntoView({ behavior: "smooth" });
+<nav>{["features","pricing","faq"].map(n =>
+  <button onClick={() => go(n)}>{n}</button>)}</nav>
+<div ref={scroller} className="page">
+  <section data-sec="hero">…</section>
+  <section data-sec="features">…</section>
+  …
+</div>
+// hero → logos → features → pricing → faq → cta; anchor nav is real`,
+    css: `.page { overflow-y: auto; max-height: 100%; }
+section { scroll-margin-top: 8px; }
+.menu-toggle { display: none; }
+@media (max-width: 640px) { .menu-toggle { display: inline-flex } }`,
+  },
+  "template-waitlist": {
+    react: `// React — the countdown target is computed, never faked
+const [target] = useState(() => {
+  const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + 1);
+  d.setHours(9,0,0,0); return d; // next month, 09:00 local
+});
+const [left, setLeft] = useState(() => target.getTime() - Date.now());
+useEffect(() => {
+  const t = setInterval(() => setLeft(target.getTime() - Date.now()), 1000);
+  return () => clearInterval(t);
+}, [target]);
+// invite code: clipboard.writeText(code) → "✓ copied"`,
+    css: `.count { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  font-variant-numeric: tabular-nums; }
+.invite { border: 1px dashed rgba(52,211,153,.3); border-radius: 12px;
+  display: flex; align-items: center; gap: 8px; padding: 10px 12px; }`,
+  },
+  "template-changelog": {
+    react: `// React — one stream, two kinds
+{items.map(it => (
+  <button aria-expanded={open === it.title}
+    onClick={() => setOpen(open === it.title ? null : it.title)}>
+    <KindBadge kind={it.kind} />   // essay | release
+    <strong>{it.title}</strong>
+    <time>{it.meta}</time>
+  </button>
+))}
+// same anatomy for essays and releases — the index stays one list,
+// the badges do the sorting in the reader's eye`,
+    css: `.kind { border-radius: 99px; padding: 2px 8px; font-size: 8px;
+  font-weight: 800; text-transform: uppercase; letter-spacing: .16em; }
+.kind--essay { border-color: rgba(167,139,250,.25); color: #ddd6fe; }
+.kind--release { border-color: rgba(52,211,153,.25); color: #a7f3d0; }`,
+  },
+  "template-gallery": {
+    react: `// React — the gallery filters the real catalog
+const hay = q.trim().toLowerCase();
+const list = COMPONENTS.filter(c =>
+  (kind === "all" || c.kind === kind) &&
+  (!hay || c.title.toLowerCase().includes(hay) ||
+    c.tags.some(t => t.includes(hay)) || c.slug.includes(hay))
+).slice(0, 12);
+// tile action copies the slug to the clipboard — "use this" without
+// pretending a download happened`,
+    css: `.tile { display: flex; flex-direction: column; border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.03);
+  padding: 8px 10px; transition: border-color .2s ease; }
+.tile:hover { border-color: rgba(255,255,255,.15); }
+.tile[data-copied="true"] { border-color: rgba(52,211,153,.4); }`,
+  },
 };
 
 const FALLBACK = {
@@ -2156,6 +2260,36 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     why: "An embedded map costs a script, a tracker and a cookie banner; a card per office with real local time answers the actual question — is anyone awake?",
     idea: "Compute the local time from the true IANA timezone with Intl and refresh on a slow interval; open/closed falls out of the same data.",
     skip: "If you're open by appointment only, say so in the card — a green 'open' pulse next to 'by appointment' is a contradiction users will notice.",
+  },
+  "app-screenshot-tour": {
+    why: "A static screenshot grid asks visitors to imagine the product moving; a sticky frame with swapping captions narrates it instead.",
+    idea: "Keep the frame fixed and swap the story beneath it — the pattern reads as a guided scroll, which is exactly what a tour should feel like.",
+    skip: "Auto-advancing without a stop control is the fastest way to lose a reader mid-sentence; always pair autoplay with dots and pause.",
+  },
+  "template-docs-site": {
+    why: "Docs pages get abandoned when readers can't tell where they are; a sidebar with live scrollspy restores the map at all times.",
+    idea: "Scrollspy needs only one rule — the last section whose offsetTop clears the current scroll position owns the highlight.",
+    skip: "Don't let the sidebar collapse into mystery icons on mobile; a simple top bar with the current section beats a burger nobody opens.",
+  },
+  "template-landing-saas": {
+    why: "A landing page is a sequence of sections, not a design — hero, logos, features, pricing, FAQ, CTA — and every section already exists as a library asset.",
+    idea: "Real anchor navigation makes the template honest: nav buttons scroll to actual data-sec sections, so the assembled page is navigable, not decorative.",
+    skip: "If your template page scrolls inside a demo frame, keep every section short enough to survive one viewport each — long-form marketing pages deserve the real viewport.",
+  },
+  "template-waitlist": {
+    why: "Waitlists sell scarcity, so the countdown must be real — a timer that restarts on reload is the fastest trust-killer on a launch page.",
+    idea: "Compute the target date from the calendar (next first-of-month, 09:00) instead of hardcoding, and let the invite code be the shareable artifact.",
+    skip: "If you don't have a real launch date, skip the countdown entirely — 'spring 2027' with a ticking clock reads as a joke, not scarcity.",
+  },
+  "template-changelog": {
+    why: "Essays and releases both deserve a date index; one list with kind badges serves both streams and keeps the notes section from rotting.",
+    idea: "The badge does the sorting in the reader's eye — same card anatomy, distinct kinds, so the index stays one maintainable list.",
+    skip: "Don't let essays and releases share numbering; version numbers are anchors for issues, reading times are anchors for humans — keep the metadata honest.",
+  },
+  "template-gallery": {
+    why: "A template gallery should prove the library it sells — filtering the real catalog makes every preview a live search result, not a mock.",
+    idea: "Copy-the-slug is the honest 'use this' action on a preview tile: no fake download, no dead link, just the one string a developer needs.",
+    skip: "If the underlying catalog is small, a search box is theatre — show all tiles and let filters hide nothing instead of implying breadth.",
   },
 };
 
