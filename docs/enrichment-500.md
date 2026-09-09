@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 299 / 500 shipped (batches 1–40, in order) · Sections 1–9 complete ✅
+## Progress — 306 / 500 shipped (batches 1–41, in order) · Sections 1–9 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -311,6 +311,14 @@ names, behaviours and where they plug into the existing pages.
 | 297 | Newsletter promise in every footer | every public page (cadence honesty) |
 | 298 | Designed 404 → search with broken path | any missing route |
 | 299 | Localised landing copy test (/es) | [/es](/es) |
+| 300 | Theme Studio — real token editor | [/studio](/studio) |
+| 301 | Theme Studio — token diff view | [/studio](/studio) |
+| 302 | Theme Studio — 10 palette presets | [/studio](/studio) |
+| 303 | Theme Studio — accent rotation demo | [/studio](/studio) |
+| 304 | Theme Studio — radius system explorer | [/studio](/studio) |
+| 305 | Theme Studio — type scale calculator | [/studio](/studio) |
+| 306 | Theme Studio — density presets | [/studio](/studio) |
+
 
 
 
@@ -705,13 +713,13 @@ names, behaviours and where they plug into the existing pages.
 
 ## 10. Theme Studio & design tokens — 20 upgrades
 
-- **Real token editor**: edit accent/hues/radii in the Lab and see catalog-wide previews.
-- **Token diff view**: show what changed in code when you tweak one value.
-- **Palette presets**: 10 hand-made token themes ("Monochrome", "Terminal", "Paper").
-- **Accent rotation demo**: sweep the whole library's accent through hues live.
-- **Radius system explorer**: consistent radii scales and when to use each step.
-- **Type scale calculator**: generate a modular scale from a base size and ratio.
-- **Density presets**: compact/comfortable/spacious token sets.
+- **Real token editor** ✅ (`/studio` live editor + catalog previews): edit accent/hues/radii in the Lab and see catalog-wide previews.
+- **Token diff view** ✅ (+/- CSS token lines per tweak): show what changed in code when you tweak one value.
+- **Palette presets** ✅ (10 hand-made themes): 10 hand-made token themes ("Monochrome", "Terminal", "Paper").
+- **Accent rotation demo** ✅ (▶ live sweep of hues): sweep the whole library's accent through hues live.
+- **Radius system explorer** ✅ (5-step scale + use cases): consistent radii scales and when to use each step.
+- **Type scale calculator** ✅ (base + ratio → rem/px scale): generate a modular scale from a base size and ratio.
+- **Density presets** ✅ (compact / comfortable / spacious): compact/comfortable/spacious token sets.
 - **Token export formats**: Tailwind config, CSS vars, JSON, and design-token spec output.
 - **Contrast guardrail**: warn when an edit breaks AA between paired tokens.
 - **Theme preview gallery**: render 3 representative pages in the active theme.
