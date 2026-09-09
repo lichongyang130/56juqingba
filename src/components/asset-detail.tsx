@@ -823,6 +823,132 @@ const shown = full ? crumbs : crumbs.length > 4
 .crumb-current { background: rgba(255,255,255,.08); border-radius: 8px;
   font-weight: 700; }`,
   },
+  "pagination-ellipsis": {
+    react: `// React — build the visible page set, edges always included
+function pages(page, total) {
+  const set = new Set([1, 2, total - 1, total, page - 1, page, page + 1]);
+  const list = [...set].filter(n => n >= 1 && n <= total).sort((a, b) => a - b);
+  const out = [];
+  list.forEach((n, i) => {
+    if (i > 0 && n - list[i - 1] > 1) out.push("…");
+    out.push(n);
+  });
+  return out;
+}
+// aria-current="page" on the active button; prev/next disabled at ends`,
+    css: `/* the active page holds an accent chip; neighbours stay quiet */
+.pg-btn { min-width: 32px; height: 32px; border-radius: 8px;
+  font-weight: 700; font-size: 12px; color: var(--color-ink-dim); }
+.pg-btn--on { background: linear-gradient(180deg, #8b5cf6, #6366f1);
+  color: #fff; box-shadow: 0 6px 14px -6px rgba(124,58,237,.8); }
+.pg-gap { color: var(--color-ink-faint); padding-inline: 4px; }`,
+  },
+  "toc-spine": {
+    react: `// React — one scroller, scroll-spy by offset, click glides
+const onScroll = () => {
+  let cur = sections[0].id;
+  for (const s of sections) {
+    const n = scroller.current?.querySelector(\`[data-sec="\${s.id}"]\`);
+    if (n && n.offsetTop - 24 <= scroller.current.scrollTop) cur = s.id;
+  }
+  setActive(cur);
+};
+const jump = (id) => scroller.current?.querySelector(\`[data-sec="\${id}"]\`)
+  ?.scrollIntoView({ behavior: "smooth", block: "start" });`,
+    css: `/* the rail is a sibling of the article, not an overlay — it
+   never covers content, and it's hidden below sm */
+.toc-rail { position: sticky; top: 1rem; }
+.toc-item--on { background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: #fff; }`,
+  },
+  "tabs-indicator": {
+    react: `// React — measure the button, not the container
+const btn = btnRefs.current[active];
+useEffect(() => {
+  if (btn) setInd({ left: btn.offsetLeft, width: btn.offsetWidth });
+}, [active]);
+// the indicator is a span absolutely positioned on the tablist:
+//   style={{ left: ind.left, width: ind.width,
+//           transition: "left .28s cubic-bezier(.65,0,.25,1), width .28s" }}
+// panels swap on a key so the entrance animation runs per change`,
+    css: `/* indicator sits at the border-bottom of the tablist */
+.tab-ind { position: absolute; bottom: -1px; height: 2px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #22d3ee, #8b5cf6);
+  box-shadow: 0 0 10px rgba(34,211,238,.6); }
+[role="tab"] { color: var(--color-ink-faint); font-weight: 700; }
+[role="tab"][aria-selected="true"] { color: #fff; }`,
+  },
+  "sticky-subnav": {
+    react: `// React — sticky inside the scrolling container, scroll-spy on scroll
+<div className="sticky top-0 z-20">
+  {sections.map(s => <button aria-current={active === s.id}>…</button>)}
+</div>
+// jump(): scrollTo({ top: target.offsetTop - 44 }) — 44 ≈ the
+// subnav's own height, so the section lands below it`,
+    css: `/* the trick is the container: the subnav sticks within it, not
+   to the viewport — perfect for an embedded docs pane */
+.doc-scroller { overflow-y: auto; position: relative; }
+.doc-subnav { position: sticky; top: 0; z-index: 20;
+  background: rgba(13,16,23,.95); backdrop-filter: blur(8px); }`,
+  },
+  "back-to-top": {
+    react: `// React — show after a threshold, then smooth-scroll home
+const onScroll = () => setShow(el.scrollTop > 130);
+const toTop = () => el.scrollTo({ top: 0, behavior: "smooth" });
+// opacity + translate on a pointer-events-none wrapper when hidden,
+// so the invisible button never eats clicks`,
+    css: `.comet { position: fixed; right: 1rem; bottom: 1rem;
+  transition: transform .3s, opacity .3s; }
+.comet--off { pointer-events: none; transform: translateY(12px);
+  opacity: 0; }
+html { scroll-behavior: smooth; } /* or scrollTo with behavior */`,
+  },
+  "disclosure-list": {
+    react: `// React — one open at a time is state, not CSS
+const toggle = (i) => setOpen(cur => cur === i ? null : i);
+<button aria-expanded={open} aria-controls={\`panel-\${i}\`}
+  onClick={() => toggle(i)}>
+  <svg className={open ? "rotate-45" : ""}>{/* plus icon */}</svg>
+</button>
+{open && <div id={\`panel-\${i}\`} role="region">…</div>}`,
+    css: `/* the plus rotates 45° into a close; panel fades+rises */
+.disclosure-icon { transition: transform .2s ease; }
+.disclosure-icon--open { transform: rotate(45deg); }
+.disclosure-panel { animation: mf-growin .16s ease-out both; }`,
+  },
+  "fullscreen-overlay-menu": {
+    react: `// React — an overlay is a layer, not a page: lock nothing, close freely
+{open && (
+  <div role="dialog" aria-modal="true" aria-label="Site menu"
+    className="fixed inset-0 z-50">
+    {/* links stagger in: style={{ animationDelay: i * 30 + 'ms' }} */}
+  </div>
+)}
+// Escape closes via a keydown listener added while open only;
+// the hamburger carries aria-expanded so the toggle is unambiguous`,
+    css: `.overlay { animation: mf-fade .18s ease-out both;
+  background: rgba(6,7,11,.97); backdrop-filter: blur(10px); }
+.overlay-link { animation: mf-rise .25s cubic-bezier(.16,1,.3,1) both;
+  animation-delay: calc(var(--i, 0) * 30ms); }`,
+  },
+  "skeleton-card": {
+    react: `// React — skeleton until a timeout flips \`loaded\`
+useEffect(() => {
+  setLoaded(false);
+  const t = setTimeout(() => setLoaded(true), delay);
+  return () => clearTimeout(t);
+}, [delay, replayKey]);
+// render skeleton OR content — never both — and hide the bars
+// from AT while they are placeholders (aria-hidden)`,
+    css: `@keyframes sk-float { from { background-position: 100% 0 }
+  to { background-position: -100% 0 } }
+.skeleton { background: linear-gradient(90deg,
+    rgba(255,255,255,.05) 25%, rgba(255,255,255,.14) 50%,
+    rgba(255,255,255,.05) 75%);
+  background-size: 200% 100%;
+  animation: sk-float 1.1s linear infinite; }`,
+  },
 };
 
 const FALLBACK = {
@@ -1026,6 +1152,46 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     why: "Deep pages without a trail strand users three levels down; breadcrumbs answer “how did I get here and how do I get back” without a back-button gamble.",
     idea: "The ellipsis must be a real control that expands the full trail — collapsed crumbs are only useful if the missing middle is one tap away.",
     skip: "Breadcrumbs are for hierarchies, not history — on a flat site (home → article) they're noise; keep them only where the structure actually nests.",
+  },
+  "pagination-ellipsis": {
+    why: "A 30-page list rendered as 30 buttons is a wall; compression keeps the edges reachable and the middle predictable.",
+    idea: "Never let the active page move the window by more than one — build the set around it (page ±1) and let the ellipsis absorb the rest.",
+    skip: "If your list has a strong ordering story (newest first, load-more), infinite scroll beats pagination — pages are for findability, not feed.",
+  },
+  "toc-spine": {
+    why: "Long-form pages fail when readers can't see the shape of the argument; a TOC spine restores the map without leaving the page.",
+    idea: "Scroll-spy should highlight by offset comparison, not IntersectionObserver callbacks per section — one scroll handler, one loop, no observer churn.",
+    skip: "Under ~5 headings a TOC is furniture; only ship the rail when the page genuinely has chapters.",
+  },
+  "tabs-indicator": {
+    why: "Tabs are where 'which am I looking at' matters most; a sliding underline carries the state change instead of a blunt colour swap.",
+    idea: "Measure the active button for the indicator position — fixed fractions drift as labels change length and look broken mid-slide.",
+    skip: "Never use tabs when every panel must be scannable at once (comparisons) — that's a stacked list, and tabs would hide the difference.",
+  },
+  "sticky-subnav": {
+    why: "Docs and landing pages get long; a subnav that pins keeps the four most important anchors one tap away at all times.",
+    idea: "Compensate for the subnav's own height in the jump target — a section that lands hidden under the pinned row is a broken promise.",
+    skip: "On pages shorter than two viewports a sticky subnav is dead weight — pinning only pays when there's genuinely more to scroll.",
+  },
+  "back-to-top": {
+    why: "Long scrolls need an exit hatch that isn't 'scroll all the way back up' — especially on mobile where the thumb does the work.",
+    idea: "Fade and slide the button in only after a real threshold (a couple of screens); a button visible at the top is noise from second zero.",
+    skip: "For feeds and continuous reading (news, social), back-to-top fights the pattern — users expect infinite downward, not a reset.",
+  },
+  "disclosure-list": {
+    why: "Full Q&A lists bury answers under walls of text; a disclosure keeps every question visible and one tap from its answer.",
+    idea: "One-open-at-a-time is a state decision, not a CSS trick — it keeps the page height stable and the reader oriented.",
+    skip: "If answers are longer than a paragraph, disclosure hides too much — render them as full sections with a TOC instead.",
+  },
+  "fullscreen-overlay-menu": {
+    why: "Some brand moments deserve more than a 320px drawer; a fullscreen takeover turns navigation into the page's first impression.",
+    idea: "Staggered link entrances (30ms apart) give the overlay a deliberate rhythm — but keep the total under ~300ms so it never feels slow.",
+    skip: "For utility-heavy sites (dashboards, tools) a fullscreen menu hides function behind theatre — save the takeover for marketing surfaces.",
+  },
+  "skeleton-card": {
+    why: "A blank white flash while data loads reads as broken; a skeleton that mirrors the final layout says 'something is coming' and shapes it.",
+    idea: "The handoff matters more than the shimmer: swap skeleton → content in one frame with a soft rise, and replay the skeleton when the request re-runs.",
+    skip: "If content loads in under ~300ms, a skeleton is slower than nothing — show the real content the moment it's ready and skip the theatre.",
   },
 };
 

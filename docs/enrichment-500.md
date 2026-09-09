@@ -1,14 +1,14 @@
 # 500 ways to make Motif richer
 
 _A living idea bank for Motif UI — every item is original, specific and intended to be
-actionable against the current site (as of 2026-09: 54 components · 24 prompts ·
+actionable against the current site (as of 2026-09: 62 components · 24 prompts ·
 10 Learn essays · 8 backgrounds · 8 lab tools · a /search hub · a persistent admin)._
 
 How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 16 / 500 shipped (batches 1–2, in order)
+## Progress — 24 / 500 shipped (batches 1–3, in order)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -28,11 +28,19 @@ names, behaviours and where they plug into the existing pages.
 | 14 | Button with embedded menu | [/components/split-button-menu](/components/split-button-menu) |
 | 15 | Command palette | upgraded: [command-palette](/components/command-palette) now searches the real catalog |
 | 16 | Breadcrumb trail | [/components/breadcrumb-trail](/components/breadcrumb-trail) |
+| 17 | Pagination with ellipsis | [/components/pagination-ellipsis](/components/pagination-ellipsis) |
+| 18 | Table of contents spine | [/components/toc-spine](/components/toc-spine) |
+| 19 | Tabs with indicator | [/components/tabs-indicator](/components/tabs-indicator) |
+| 20 | Sticky section nav (sub-nav) | [/components/sticky-subnav](/components/sticky-subnav) |
+| 21 | Back-to-top comet | [/components/back-to-top](/components/back-to-top) |
+| 22 | Disclosure list (accordion rows) | [/components/disclosure-list](/components/disclosure-list) |
+| 23 | Fullscreen overlay menu | [/components/fullscreen-overlay-menu](/components/fullscreen-overlay-menu) |
+| 24 | Skeleton profile card | [/components/skeleton-card](/components/skeleton-card) |
 
 
 ---
 
-## 1. Component library — 70 new assets to build (39 → 54 shipped; 54 remain)
+## 1. Component library — 70 ideas (24/70 shipped · catalog 39 → 62)
 
 ### Form & input elements
 - **Combo box** ✅ (`combo-box`): text input with a live-filtered option list, keyboard navigation and a "no matches" row — slots into every filter on the site.
@@ -54,16 +62,16 @@ names, behaviours and where they plug into the existing pages.
 ### Navigation & layout atoms
 - **Command palette** ✅ (`command-palette`): ⌘K overlay that searches library, prompts, guides and admin routes in one fuzzy list.
 - **Breadcrumb trail** ✅ (`breadcrumb-trail`): separator-aware breadcrumbs with a collapsing "…" on mobile.
-- **Pagination with ellipsis**: page buttons that compress to "… 8 9 10" and keep the active page centred.
-- **Table of contents spine**: sticky right rail that highlights the section in view and smooth-scrolls.
-- **Tabs with indicator**: animated underline/slide that follows the active tab width.
-- **Sticky section nav (sub-nav)**: second-row tabs that pin under the header on long docs.
-- **Back-to-top comet**: a floating action that appears after 2 viewports and eases you up.
-- **Disclosure list (accordion rows)**: FAQ rows with plus→minus rotation, one-open-at-a-time mode.
-- **Fullscreen overlay menu**: a tasteful takeover nav with staggered link entrance.
+- **Pagination with ellipsis** ✅ (`pagination-ellipsis`): page buttons that compress to "… 8 9 10" and keep the active page centred.
+- **Table of contents spine** ✅ (`toc-spine`): sticky right rail that highlights the section in view and smooth-scrolls.
+- **Tabs with indicator** ✅ (`tabs-indicator`): animated underline/slide that follows the active tab width.
+- **Sticky section nav (sub-nav)** ✅ (`sticky-subnav`): second-row tabs that pin under the header on long docs.
+- **Back-to-top comet** ✅ (`back-to-top`): a floating action that appears after 2 viewports and eases you up.
+- **Disclosure list (accordion rows)** ✅ (`disclosure-list`): FAQ rows with plus→minus rotation, one-open-at-a-time mode.
+- **Fullscreen overlay menu** ✅ (`fullscreen-overlay-menu`): a tasteful takeover nav with staggered link entrance.
 
 ### Feedback, status & loaders
-- **Skeleton profile card**: shimmering placeholders for avatars + lines, then content swaps in.
+- **Skeleton profile card** ✅ (`skeleton-card`): shimmering placeholders for avatars + lines, then content swaps in.
 - **Toast queue**: stacked notifications that enter right, auto-dismiss with timer bars, support undo actions.
 - **Inline status banner**: success/error/info/warn banners that announce to screen readers and can be dismissed.
 - **Spinner with status text**: loader that swaps label ("Saving… → Saved ✓") without layout shift.

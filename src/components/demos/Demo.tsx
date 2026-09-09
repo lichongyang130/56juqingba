@@ -21,6 +21,7 @@ const KEYFRAMES = `
 @keyframes mf-pop { 0% { transform: scale(.6); opacity: 0 } 65% { transform: scale(1.08); opacity: 1 } 100% { transform: none; opacity: 1 } }
 @keyframes mf-draw { to { stroke-dashoffset: 0 } }
 @keyframes mf-growin { from { opacity: 0; transform: scale(.96) translateY(4px) } to { opacity: 1; transform: none } }
+@keyframes mf-fade { from { opacity: 0 } to { opacity: 1 } }
 `;
 
 /* ------------------------------ ELEMENTS ------------------------------ */
@@ -2773,7 +2774,545 @@ function BreadcrumbTrail() {
   );
 }
 
+
+/* ------------------------------ NAVIGATION & SKELETON (batch 3) ------------------------------ */
+
+function ellipsizedPages(page: number, total: number): (number | "…")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const set = new Set<number>([1, 2, total - 1, total, page - 1, page, page + 1]);
+  const sorted = [...set].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+  const out: (number | "…")[] = [];
+  sorted.forEach((n, i) => {
+    if (i > 0 && n - sorted[i - 1] > 1) out.push("…");
+    out.push(n);
+  });
+  return out;
+}
+
+function PaginationEllipsis({ pages = 12 }: DemoProps) {
+  const total = typeof pages === "number" ? Math.max(5, Math.min(30, Math.round(pages))) : 12;
+  const [page, setPage] = useState(1);
+  const items = ellipsizedPages(page, total);
+  const go = (p: number) => setPage(Math.max(1, Math.min(total, p)));
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(139,92,246,0.13),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/70">Browse library — page {page} of {total}</span>
+          <span className="chip !text-[9px] uppercase">12 per page</span>
+        </div>
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-white/8 bg-white/4 p-1.5">
+          <button
+            type="button"
+            disabled={page === 1}
+            onClick={() => go(page - 1)}
+            aria-label="Previous page"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-xs transition-colors hover:bg-white/8 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            ←
+          </button>
+          <div className="flex items-center gap-1" role="navigation" aria-label="Pagination">
+            {items.map((it, i) =>
+              it === "…" ? (
+                <span key={`e${i}`} className="px-1 font-mono text-[11px] text-ink-faint" aria-hidden>…</span>
+              ) : (
+                <button
+                  key={it}
+                  type="button"
+                  onClick={() => go(it)}
+                  aria-current={it === page ? "page" : undefined}
+                  className={`h-8 min-w-8 rounded-lg px-1.5 text-xs font-bold transition-all ${
+                    it === page
+                      ? "bg-gradient-to-b from-violet-500 to-indigo-600 text-white shadow-[0_6px_14px_-6px_rgba(124,58,237,.8)]"
+                      : "text-ink-dim hover:bg-white/8 hover:text-ink"
+                  }`}
+                >
+                  {it}
+                </button>
+              ),
+            )}
+          </div>
+          <button
+            type="button"
+            disabled={page === total}
+            onClick={() => go(page + 1)}
+            aria-label="Next page"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-xs transition-colors hover:bg-white/8 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            →
+          </button>
+        </div>
+        <p className="mt-3 text-[11px] text-ink-faint">edges stay pinned · the active page never jumps — the window slides around it</p>
+      </div>
+    </div>
+  );
+}
+
+const TOC_SECTIONS = [
+  { id: "s-intro", t: "Introduction", fill: 0 },
+  { id: "s-tokens", t: "Tokens & theming", fill: 1 },
+  { id: "s-motion", t: "Motion language", fill: 2 },
+  { id: "s-a11y", t: "Accessibility", fill: 3 },
+  { id: "s-faq", t: "FAQ", fill: 4 },
+];
+const TOC_PARAS = [
+  "Every surface on this page is built from the same ten tokens, so nothing can drift out of the system.",
+  "Motion here is a language with a tiny vocabulary: enter, focus, state. Nothing decorates for its own sake.",
+  "We treat reduced motion as a second design, not a deletion — the story survives without the theatre.",
+  "If a component can't be reached with a keyboard and understood by a screen reader, it doesn't ship.",
+  "The library grows weekly and the changelog says exactly what changed and why — no vague release notes.",
+];
+
+function TocSpine() {
+  const scroller = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState("s-intro");
+  const jump = (id: string) => {
+    const el = scroller.current;
+    if (!el) return;
+    const target = el.querySelector<HTMLElement>(`[data-sec="${id}"]`);
+    if (target) el.scrollTo({ top: target.offsetTop - el.offsetTop - 8, behavior: "smooth" });
+  };
+  const onScroll = () => {
+    const el = scroller.current;
+    if (!el) return;
+    let cur = TOC_SECTIONS[0].id;
+    for (const sec of TOC_SECTIONS) {
+      const node = el.querySelector<HTMLElement>(`[data-sec="${sec.id}"]`);
+      if (node && node.offsetTop - el.offsetTop - 24 <= el.scrollTop) cur = sec.id;
+    }
+    setActive(cur);
+  };
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center gap-2 border-b border-white/6 bg-[#0d1017]/95 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-violet-300/70">Guide · scroll the article</span>
+        <span className="ml-auto font-mono text-[10px] text-ink-faint">TOC follows you</span>
+      </div>
+      <div className="flex min-h-0 flex-1">
+        {/* article */}
+        <div ref={scroller} onScroll={onScroll} className="min-w-0 flex-1 overflow-y-auto px-5 py-4">
+          <div className="mx-auto max-w-sm space-y-3">
+            {TOC_SECTIONS.map((sec, i) => (
+              <div key={sec.id} data-sec={sec.id} className="rounded-xl border border-white/7 bg-white/3 p-3.5">
+                <div className="text-xs font-extrabold tracking-tight">{sec.t}</div>
+                <div className="mt-1.5 space-y-2">
+                  <div className="h-1.5 w-full rounded-full bg-white/12" />
+                  <div className="h-1.5 w-11/12 rounded-full bg-white/8" />
+                  <div className="h-1.5 w-4/5 rounded-full bg-white/8" />
+                </div>
+                <p className="mt-2.5 text-[10px] leading-relaxed text-ink-dim">{TOC_PARAS[i]}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* toc spine */}
+        <div className="hidden w-32 shrink-0 border-l border-white/6 bg-black/25 p-2.5 sm:block">
+          <div className="px-1 pb-2 text-[8px] font-bold uppercase tracking-[0.22em] text-ink-faint">On this page</div>
+          <ol className="space-y-0.5">
+            {TOC_SECTIONS.map((sec) => (
+              <li key={sec.id}>
+                <button
+                  type="button"
+                  onClick={() => jump(sec.id)}
+                  className={`flex w-full items-center gap-1.5 rounded-md px-1.5 py-1 text-left text-[9px] font-semibold transition-colors ${
+                    active === sec.id ? "bg-violet-400/15 text-violet-100" : "text-ink-faint hover:text-ink-dim"
+                  }`}
+                >
+                  <span className={`h-1 w-1 shrink-0 rounded-full ${active === sec.id ? "bg-violet-300" : "bg-white/20"}`} aria-hidden />
+                  {sec.t}
+                </button>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const TAB_TITLES = [
+  { t: "Overview", body: "A one-screen glance at the library: newest assets, top copies, and what shipped this week." },
+  { t: "Components", body: "54 themeable assets across elements, animated pieces, sections and whole templates." },
+  { t: "Prompts", body: "24 run-tested prompts with per-model fidelity scores and public run logs." },
+  { t: "Learn", body: "10 original guides that teach the motion and craft behind the code you copy." },
+];
+
+function TabsIndicator({ count = 3 }: DemoProps) {
+  const n = typeof count === "number" ? Math.max(2, Math.min(4, Math.round(count))) : 3;
+  const tabs = TAB_TITLES.slice(0, n);
+  const [active, setActive] = useState(0);
+  const barRef = useRef<HTMLDivElement>(null);
+  const [ind, setInd] = useState({ left: 0, width: 0 });
+  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  useEffect(() => {
+    const el = btnRefs.current[active];
+    const bar = barRef.current;
+    if (el && bar) {
+      setInd({ left: el.offsetLeft, width: el.offsetWidth });
+    }
+  }, [active, n]);
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(34,211,238,0.12),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        <div ref={barRef} role="tablist" aria-label="Sections" className="relative flex gap-1 border-b border-white/8">
+          {tabs.map((t, i) => (
+            <button
+              key={t.t}
+              ref={(el) => { btnRefs.current[i] = el; }}
+              type="button"
+              role="tab"
+              aria-selected={active === i}
+              onClick={() => setActive(i)}
+              className={`relative px-4 py-2.5 text-sm font-bold transition-colors ${active === i ? "text-cyan-100" : "text-ink-faint hover:text-ink-dim"}`}
+            >
+              {t.t}
+            </button>
+          ))}
+          <span
+            aria-hidden
+            className="absolute -bottom-px h-0.5 rounded-full bg-gradient-to-r from-cyan-300 to-violet-400 shadow-[0_0_10px_rgba(34,211,238,.6)]"
+            style={{ left: ind.left, width: ind.width, transition: "left .28s cubic-bezier(.65,0,.25,1), width .28s cubic-bezier(.65,0,.25,1)" }}
+          />
+        </div>
+        <div key={active} className="mt-4 rounded-xl border border-white/8 bg-white/4 p-4" style={{ animation: "mf-growin .18s ease-out both" }}>
+          <div className="text-sm font-extrabold text-cyan-100">{tabs[active].t}</div>
+          <p className="mt-1 text-[11px] leading-relaxed text-ink-dim">{tabs[active].body}</p>
+        </div>
+        <p className="mt-3 text-[11px] text-ink-faint">the underline slides to the active tab&apos;s actual width — not a fixed fraction</p>
+      </div>
+    </div>
+  );
+}
+
+const STICKY_SECS = [
+  { id: "st-hero", t: "Hero" },
+  { id: "st-features", t: "Features" },
+  { id: "st-pricing", t: "Pricing" },
+  { id: "st-faq", t: "FAQ" },
+];
+
+function StickySubNav() {
+  const scroller = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState("st-hero");
+  const jump = (id: string) => {
+    const el = scroller.current;
+    if (!el) return;
+    const target = el.querySelector<HTMLElement>(`[data-sec="${id}"]`);
+    if (target) el.scrollTo({ top: target.offsetTop - el.offsetTop - 44, behavior: "smooth" });
+  };
+  const onScroll = () => {
+    const el = scroller.current;
+    if (!el) return;
+    let cur = STICKY_SECS[0].id;
+    for (const sec of STICKY_SECS) {
+      const node = el.querySelector<HTMLElement>(`[data-sec="${sec.id}"]`);
+      if (node && node.offsetTop - el.offsetTop - 60 <= el.scrollTop) cur = sec.id;
+    }
+    setActive(cur);
+  };
+  const heights = [150, 170, 140, 160];
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div ref={scroller} onScroll={onScroll} className="relative min-h-0 flex-1 overflow-y-auto">
+        {/* the row that pins while content scrolls under it */}
+        <div className="sticky top-0 z-20 flex items-center gap-1 border-b border-white/8 bg-[#0d1017]/95 px-3 py-2 backdrop-blur-md">
+          <span className="mr-1 text-[9px] font-bold uppercase tracking-[0.2em] text-ink-faint">On-page</span>
+          {STICKY_SECS.map((sec) => (
+            <button
+              key={sec.id}
+              type="button"
+              onClick={() => jump(sec.id)}
+              aria-current={active === sec.id ? "true" : undefined}
+              className={`rounded-lg px-2.5 py-1 text-[11px] font-bold transition-colors ${
+                active === sec.id ? "bg-cyan-400/15 text-cyan-100" : "text-ink-dim hover:text-ink"
+              }`}
+            >
+              {sec.t}
+            </button>
+          ))}
+          <span className="ml-auto hidden font-mono text-[9px] text-ink-faint sm:block">position: sticky · top: 0</span>
+        </div>
+        <div className="px-4 py-4">
+          <div className="space-y-3">
+            {STICKY_SECS.map((sec, i) => (
+              <div key={sec.id} data-sec={sec.id} className="rounded-xl border border-white/7 bg-white/3 p-4">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-md bg-cyan-400/12 px-1.5 py-0.5 font-mono text-[9px] font-bold text-cyan-200">{sec.id.replace("st-", "")}</span>
+                  <span className="text-xs font-extrabold">{sec.t} section</span>
+                </div>
+                <div className="mt-2 space-y-1.5" style={{ height: heights[i] }}>
+                  <div className="h-1.5 w-full rounded-full bg-white/10" />
+                  <div className="h-1.5 w-5/6 rounded-full bg-white/7" />
+                  <div className="h-1.5 w-2/3 rounded-full bg-white/7" />
+                  <div className="h-1.5 w-11/12 rounded-full bg-white/5" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BackToTop() {
+  const scroller = useRef<HTMLDivElement>(null);
+  const [show, setShow] = useState(false);
+  const onScroll = () => {
+    const el = scroller.current;
+    if (!el) return;
+    setShow(el.scrollTop > 130);
+  };
+  const toTop = () => scroller.current?.scrollTo({ top: 0, behavior: "smooth" });
+  return (
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#0a0c13]">
+      <div ref={scroller} onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+        <div className="mx-auto max-w-sm space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-violet-300/70">Article · 60s read</span>
+            <span className="ml-auto chip !text-[9px] uppercase">keep scrolling ↓</span>
+          </div>
+          {Array.from({ length: 16 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-white/6 bg-white/3 p-3.5">
+              <div className="flex items-center gap-2">
+                <span className="h-4 w-4 rounded-md bg-gradient-to-br from-violet-400/60 to-cyan-400/40" />
+                <span className="text-xs font-bold">Section {i + 1}</span>
+              </div>
+              <div className="mt-2 space-y-1.5">
+                <div className="h-1.5 w-full rounded-full bg-white/10" />
+                <div className="h-1.5 w-10/12 rounded-full bg-white/7" />
+                <div className="h-1.5 w-8/12 rounded-full bg-white/6" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* comet */}
+      <button
+        type="button"
+        onClick={toTop}
+        aria-label="Back to top"
+        className={`absolute bottom-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-violet-300/40 bg-[#141728]/90 text-violet-200 shadow-[0_10px_30px_-8px_rgba(124,58,237,.7)] backdrop-blur transition-all duration-300 hover:scale-105 hover:bg-violet-500/25 ${
+          show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+        }`}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+          <path d="M12 19V5m-6 6 6-6 6 6" />
+        </svg>
+      </button>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#0a0c13] to-transparent" aria-hidden />
+      {show && <p className="pointer-events-none absolute bottom-5 right-16 text-[10px] font-semibold text-violet-200/70">comet appears after 2 screens</p>}
+    </div>
+  );
+}
+
+const FAQ_ROWS = [
+  { q: "Can I use Motif assets in commercial projects?", a: "Yes — components are MIT and guides are CC BY 4.0. Attribution is appreciated, not required." },
+  { q: "Do the prompts really get tested before they ship?", a: "Every prompt runs against three frontier models and the run log is public on its page — scores, screenshots, failure notes." },
+  { q: "What does the audit gate actually check?", a: "Accessibility (axe + a human keyboard walk), bundle size, dependency count and original-content checks." },
+  { q: "How often does the library grow?", a: "A content push lands most weeks. The changelog on the homepage lists every drop with dates and links." },
+];
+
+function DisclosureList() {
+  const [openIdx, setOpenIdx] = useState<number | null>(0);
+  const toggle = (i: number) => setOpenIdx((cur) => (cur === i ? null : i));
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(60%_90%_at_50%_0%,rgba(52,211,153,0.11),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-mint">FAQ · one row open at a time</span>
+          <span className="chip !text-[9px] uppercase">aria-expanded wired</span>
+        </div>
+        <div className="overflow-hidden rounded-2xl border border-white/8 bg-white/4">
+          {FAQ_ROWS.map((row, i) => {
+            const open = openIdx === i;
+            return (
+              <div key={row.q} className={i > 0 ? "border-t border-white/6" : ""}>
+                <button
+                  type="button"
+                  aria-expanded={open}
+                  aria-controls={`faq-panel-${i}`}
+                  onClick={() => toggle(i)}
+                  className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left"
+                >
+                  <span className={`text-sm font-bold ${open ? "text-mint" : "text-ink"}`}>{row.q}</span>
+                  <svg
+                    width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                    aria-hidden
+                    className={`shrink-0 ${open ? "rotate-45 text-mint" : "text-ink-faint"}`}
+                    style={{ transition: "transform .2s ease" }}
+                  >
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                </button>
+                {open && (
+                  <div
+                    id={`faq-panel-${i}`}
+                    role="region"
+                    aria-label={row.q}
+                    className="px-4 pb-4 text-[12px] leading-relaxed text-ink-dim"
+                    style={{ animation: "mf-growin .16s ease-out both" }}
+                  >
+                    {row.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const OVERLAY_LINKS = [
+  { t: "Components", m: "54 assets · themed" },
+  { t: "AI Prompts", m: "24 tested briefs" },
+  { t: "Backgrounds", m: "8 living canvases" },
+  { t: "Learn", m: "10 craft guides" },
+  { t: "The Lab", m: "physics you can touch" },
+  { t: "Pricing", m: "free core, Pro power" },
+];
+
+function FullscreenOverlayMenu() {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+  return (
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#0a0c13]">
+      {/* fake page behind */}
+      <div className="flex w-full flex-col px-6 opacity-60">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-[11px] font-black tracking-tight">motif<span className="text-violet-300">/ui</span></span>
+          <button type="button" onClick={() => setOpen(true)} aria-label="Open menu" aria-expanded={open}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+          </button>
+        </div>
+        <div className="flex h-24 items-center justify-center rounded-2xl border border-white/8 bg-white/4">
+          <span className="text-sm font-bold text-ink-dim">the page, dimmed behind the overlay</span>
+        </div>
+      </div>
+
+      {open && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site menu"
+          className="absolute inset-0 z-30 flex flex-col bg-[#07080d]/97 px-6 py-5 backdrop-blur-md"
+          style={{ animation: "mf-fade .18s ease-out both" }}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-black tracking-tight">motif<span className="text-violet-300">/ui</span></span>
+            <button type="button" onClick={() => setOpen(false)} aria-label="Close menu"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/12 bg-white/5 text-ink-dim transition-colors hover:text-ink">
+              ✕
+            </button>
+          </div>
+          <nav className="flex flex-1 flex-col justify-center gap-1" aria-label="Fullscreen">
+            {OVERLAY_LINKS.map((l, i) => (
+              <button
+                key={l.t}
+                type="button"
+                onClick={() => setOpen(false)}
+                className="group flex items-baseline gap-3 rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-white/4"
+                style={{ animation: `mf-rise .25s ${0.03 * i}s cubic-bezier(.16,1,.3,1) both` }}
+              >
+                <span className="text-xl font-black tracking-tight text-white transition-transform group-hover:translate-x-1 md:text-2xl">{l.t}</span>
+                <span className="text-[10px] uppercase tracking-widest text-violet-300/70">{l.m}</span>
+              </button>
+            ))}
+          </nav>
+          <p className="text-center text-[10px] text-ink-faint">esc closes · links stagger in 30ms apart</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const SKELETON_PROFILE = {
+  name: "Lena Voss",
+  role: "Frontend engineer · Berlin",
+  blurb: "Builds design systems and the teams that ship them. Collects vintage German type specimens.",
+  counts: "14 builds · 3 awards",
+};
+
+function SkeletonCard({ delay = 1600 }: DemoProps) {
+  const dl = typeof delay === "number" ? Math.max(400, Math.min(4000, Math.round(delay))) : 1600;
+  const [again, setAgain] = useState(0);
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(60%_90%_at_50%_100%,rgba(34,211,238,0.11),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-xs">
+        <SkeletonCardInner key={again} delay={dl} onReplay={() => setAgain((n) => n + 1)} />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonCardInner({ delay, onReplay }: { delay: number; onReplay: () => void }) {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setLoaded(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+  return (
+    <>
+      <div className="overflow-hidden rounded-2xl border border-white/8 bg-panel">
+        {!loaded ? (
+          <div className="p-5" aria-hidden>
+            <div className="flex items-center gap-4">
+              <div className="skeleton h-14 w-14 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <div className="skeleton h-3 w-3/4 rounded-full" />
+                <div className="skeleton h-2.5 w-1/2 rounded-full" />
+              </div>
+            </div>
+            <div className="mt-4 space-y-2">
+              <div className="skeleton h-2.5 w-full rounded-full" />
+              <div className="skeleton h-2.5 w-11/12 rounded-full" />
+              <div className="skeleton h-2.5 w-2/3 rounded-full" />
+            </div>
+            <div className="mt-4 flex gap-2">
+              <div className="skeleton h-6 w-20 rounded-full" />
+              <div className="skeleton h-6 w-14 rounded-full" />
+            </div>
+            <style>{`@keyframes mf-sk-float { from { background-position: 100% 0 } to { background-position: -100% 0 } }
+.skeleton { background: linear-gradient(90deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.14) 50%, rgba(255,255,255,.05) 75%); background-size: 200% 100%; animation: mf-sk-float 1.1s linear infinite; }`}</style>
+          </div>
+        ) : (
+          <div className="p-5" style={{ animation: "mf-growin .25s ease-out both" }}>
+            <div className="flex items-center gap-4">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-cyan-300/30 to-violet-400/30 text-lg font-black text-cyan-100">
+                LV
+              </span>
+              <div className="min-w-0">
+                <div className="truncate text-sm font-extrabold tracking-tight">{SKELETON_PROFILE.name}</div>
+                <div className="truncate text-[11px] text-cyan-200/70">{SKELETON_PROFILE.role}</div>
+              </div>
+            </div>
+            <p className="mt-3 text-[11px] leading-relaxed text-ink-dim">{SKELETON_PROFILE.blurb}</p>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="chip !text-[9px] text-mint">{SKELETON_PROFILE.counts}</span>
+              <span className="chip !text-[9px]">verified contributor</span>
+            </div>
+          </div>
+        )}
+      </div>
+      <button type="button" onClick={onReplay} className="btn btn-ghost mt-3 !w-full !py-2 !text-xs">
+        ↺ Replay the skeleton
+      </button>
+    </>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
+
 
 
 
@@ -2791,6 +3330,8 @@ export const DEMO_KEYS = [
   "slider-ticks", "checkbox-card", "quantity-stepper", "radio-pills",
   "auto-grow-textarea", "date-presets", "file-drop-zone", "toggle-label-stack",
   "password-strength", "split-button-menu", "breadcrumb-trail",
+  "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
+  "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -2855,6 +3396,14 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "password-strength": return <PasswordStrength />;
     case "split-button-menu": return <SplitButtonMenu />;
     case "breadcrumb-trail": return <BreadcrumbTrail />;
+    case "pagination-ellipsis": return <PaginationEllipsis {...props} />;
+    case "toc-spine": return <TocSpine />;
+    case "tabs-indicator": return <TabsIndicator {...props} />;
+    case "sticky-subnav": return <StickySubNav />;
+    case "back-to-top": return <BackToTop />;
+    case "disclosure-list": return <DisclosureList />;
+    case "fullscreen-overlay-menu": return <FullscreenOverlayMenu />;
+    case "skeleton-card": return <SkeletonCard {...props} />;
     default: return null;
   }
 }
