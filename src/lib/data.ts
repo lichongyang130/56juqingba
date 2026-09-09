@@ -376,6 +376,40 @@ export const COMPONENTS: Asset[] = [
     ],
     copies: 1320, views: 8100,
   },
+  {
+    slug: "command-palette", kind: "element", title: "Command Palette",
+    description: "A ⌘K-style overlay with live filtering, grouped results and arrow-key selection. The pattern that makes power users feel at home on any site.",
+    tags: ["command", "palette", "search", "overlay", "kbd"], behaviors: ["click"],
+    stack: ["React"], deps: [], bundleKb: 6.1, themeable: true,
+    a11yScore: 96, qualityScore: 96, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-09", demo: "command-palette",
+    props: [
+      { name: "rows", label: "Commands", type: "range", min: 2, max: 8, step: 1, defaultValue: 6 },
+    ],
+    copies: 870, views: 5900,
+  },
+  {
+    slug: "toast-stack", kind: "animated", title: "Toast Stack",
+    description: "Accessible toasts that slide in over the corner with per-message accent tones, auto-dismiss timers and an aria-live container. Test it: ping a few in a row.",
+    tags: ["toast", "notification", "feedback", "overlay"], behaviors: ["click"],
+    stack: ["React"], deps: [], bundleKb: 4.2, themeable: true,
+    a11yScore: 98, qualityScore: 95, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-09", demo: "toast-stack",
+    props: [
+      { name: "time", label: "Auto-dismiss", type: "range", min: 1, max: 8, step: 0.5, unit: "s", defaultValue: 3.5 },
+    ],
+    copies: 760, views: 4800,
+  },
+  {
+    slug: "sheet-menu", kind: "element", title: "Mobile Sheet Menu",
+    description: "A bottom-sheet navigation for touch: springy rise, draggable-handle affordance and a dismissible backdrop. The mobile menu pattern that doesn't feel bolted on.",
+    tags: ["menu", "mobile", "sheet", "navigation"], behaviors: ["click"],
+    stack: ["React", "HTML/CSS"], deps: [], bundleKb: 3.4, themeable: true,
+    a11yScore: 95, qualityScore: 94, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-08", demo: "sheet-menu",
+    props: [],
+    copies: 690, views: 4300,
+  },
 ];
 
 export const KIND_META: Record<Asset["kind"], { label: string; blurb: string }> = {
@@ -779,6 +813,18 @@ export const INDUSTRY_SAMPLE_FALLBACK = {
 };
 
 export const CHANGELOG: ChangeLogEntry[] = [
+  {
+    date: "2026-09-09", tag: "Lab", title: "Scroll Lab ships — choreography you can scrub",
+    body: "Sketch enter/pin/exit phases on a playhead, set trigger points, export a recipe with exact thresholds. Motion theory finally has a whiteboard.",
+  },
+  {
+    date: "2026-09-09", tag: "Platform", title: "Learn section launches with four original guides",
+    body: "Hero build-along, easing field guide, reproducible-prompt structure and the a11y checklist — editorial that teaches the craft behind the library.",
+  },
+  {
+    date: "2026-09-09", tag: "Components", title: "Overlay widgets land: Command Palette, Toasts, Sheet Menu",
+    body: "Three touch-first patterns with real keyboard/aria semantics. The admin console can now create drafts locally to rehearse the publish pipeline.",
+  },
   {
     date: "2026-09-09", tag: "Components", title: "Six new context-stage scenes",
     body: "Text Cycle, Tab Morph, Flip Card, Skeleton Profile Feed, Momentum Chart and Avatar Crowd Stack land — each demo now shows a realistic context, not an isolated widget.",

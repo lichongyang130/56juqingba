@@ -1,18 +1,50 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { COMPONENTS, KIND_META } from "@/lib/data";
 import type { Asset, AssetStatus } from "@/lib/types";
 
 const STATUSES: AssetStatus[] = ["draft", "review", "live", "archived"];
+const STORAGE_KEY = "motif-admin-assets-v1";
+
+type Row = Asset & { status: AssetStatus };
 
 export default function AdminAssets() {
   const [kind, setKind] = useState<"all" | Asset["kind"]>("all");
   const [status, setStatus] = useState<"all" | AssetStatus>("all");
   const [q, setQ] = useState("");
-  const [rows, setRows] = useState(() =>
-    COMPONENTS.map((c) => ({ ...c, status: c.status as AssetStatus })),
-  );
+  const [rows, setRows] = useState<Row[]>(() => COMPONENTS.map((c) => ({ ...c, status: c.status as AssetStatus })));
+  const [hydrated, setHydrated] = useState(false);
+
+  // quick-add form
+  const [showForm, setShowForm] = useState(false);
+  const [title, setTitle] = useState("");
+  const [newKind, setNewKind] = useState<Asset["kind"]>("element");
+  const [notice, setNotice] = useState<string | null>(null);
+  const noticeT = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // hydrate from localStorage once (deferred so first paint = seed, then swap)
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw) as Row[];
+          if (Array.isArray(saved) && saved.length) setRows(saved);
+        }
+      } catch { /* corrupted storage — fall back to seed */ }
+      setHydrated(true);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // persist on every change after hydration
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+    } catch { /* storage full / private mode — ignore */ }
+  }, [rows, hydrated]);
 
   const items = useMemo(() => {
     let list = rows;
@@ -33,6 +65,37 @@ export default function AdminAssets() {
     );
   };
 
+  const flash = (msg: string) => {
+    setNotice(msg);
+    if (noticeT.current) clearTimeout(noticeT.current);
+    noticeT.current = setTimeout(() => setNotice(null), 2200);
+  };
+
+  const quickAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    const t = title.trim();
+    if (!t) return;
+    const slug = `${t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "asset"}-${Date.now().toString(36)}`;
+    const base: Row = {
+      slug, kind: newKind, title: t,
+      description: "Fresh submission awaiting the studio audit — description drafted by the author.",
+      tags: [newKind], behaviors: [], stack: ["React"], deps: [],
+      bundleKb: 1, themeable: true, a11yScore: 0, qualityScore: 0,
+      status: "draft", license: "MIT", version: "0.1.0", author: "community",
+      published: "2026-09-09", demo: newKind === "animated" ? "morph-blob" : "prism-switch",
+      props: [], copies: 0, views: 0,
+    };
+    setRows((prev) => [base, ...prev]);
+    setTitle("");
+    setShowForm(false);
+    flash("✓ Draft created — move it through the pipeline by clicking its status.");
+  };
+
+  const reset = () => {
+    setRows(COMPONENTS.map((c) => ({ ...c, status: c.status as AssetStatus })));
+    flash("↺ Demo data restored (all local changes cleared).");
+  };
+
   const pill = (s: AssetStatus) =>
     ({
       live: "border-mint/30 bg-mint/10 text-mint",
@@ -48,10 +111,48 @@ export default function AdminAssets() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight">Assets</h1>
-          <p className="mt-1 text-sm text-ink-dim">Every element, component, section & template — full lifecycle.</p>
+          <p className="mt-1 text-sm text-ink-dim">
+            Every element, component, section &amp; template — full lifecycle. Changes persist in
+            this browser so you can play with a full pipeline (a production DB replaces this layer).
+          </p>
         </div>
-        <button type="button" className="btn btn-primary !py-2 text-xs">+ New asset</button>
+        <div className="flex items-center gap-2">
+          <button type="button" className="btn btn-quiet !py-2 text-xs" onClick={reset} title="Restore demo seed data">↺ Reset</button>
+          <button type="button" className="btn btn-primary !py-2 text-xs" onClick={() => setShowForm((v) => !v)}>
+            {showForm ? "− Close form" : "+ New asset"}
+          </button>
+        </div>
       </div>
+
+      {notice && (
+        <div className="rounded-2xl border border-mint/25 bg-mint/8 px-4 py-3 text-sm font-semibold text-mint">
+          {notice}
+        </div>
+      )}
+
+      {showForm && (
+        <form onSubmit={quickAdd} className="rounded-3xl border border-violet-300/20 bg-violet-400/5 p-5">
+          <div className="flex flex-wrap items-end gap-3">
+            <label className="min-w-52 flex-1">
+              <span className="field-label">Asset title</span>
+              <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Soft ripple text field" required />
+            </label>
+            <label className="w-40">
+              <span className="field-label">Kind</span>
+              <select className="input !cursor-pointer" value={newKind} onChange={(e) => setNewKind(e.target.value as Asset["kind"])}>
+                {(Object.keys(KIND_META) as Asset["kind"][]).map((k) => (
+                  <option key={k} value={k} className="bg-panel">{KIND_META[k].label}</option>
+                ))}
+              </select>
+            </label>
+            <button type="submit" className="btn btn-primary !py-2.5 text-xs">Create draft</button>
+          </div>
+          <p className="mt-3 text-[11px] text-ink-faint">
+            Drafts start as <b>draft</b> with an empty audit — click a status chip to push them through
+            review → live → archived.
+          </p>
+        </form>
+      )}
 
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex rounded-xl border border-white/8 bg-black/30 p-1">

@@ -18,5 +18,6 @@ export const NAV = [
   { href: "/prompts", label: "AI Prompts" },
   { href: "/backgrounds", label: "Backgrounds" },
   { href: "/lab", label: "Lab" },
+  { href: "/learn", label: "Learn" },
   { href: "/pricing", label: "Pricing" },
 ];

@@ -297,6 +297,161 @@ export function SpringLab() {
   );
 }
 
+/* ------------------------------- SCROLL LAB ------------------------------- */
+
+function useRafLoop(active: boolean, fn: (t: number) => void) {
+  useEffect(() => {
+    if (!active) return;
+    let raf = 0;
+    const loop = (t: number) => { fn(t); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [active, fn]);
+}
+
+export function ScrollLab() {
+  const [p, setP] = useState(0.32); // playhead 0..1
+  const [t1, setT1] = useState(0.25); // enter completes
+  const [t2, setT2] = useState(0.55); // pin begins
+  const [t3, setT3] = useState(0.8);  // exit begins
+  const [playing, setPlaying] = useState(false);
+
+  useRafLoop(playing, () => {
+    setP((prev) => {
+      const next = prev + 0.0032;
+      if (next >= 1) { setPlaying(false); return 1; }
+      return next;
+    });
+  });
+
+  // piecewise scene state from playhead + thresholds
+  const phase: "below" | "enter" | "pin" | "exit" = p < t1 ? "below" : p < t2 ? "enter" : p < t3 ? "pin" : "exit";
+  let opacity = 0;
+  let ty = 60;
+  let scale = 0.92;
+  let glow = 0;
+
+  if (p >= t1 && p < t2) {
+    // enter: opacity 0→1, rises, eases in
+    const k = Math.min(1, (p - t1) / Math.max(0.0001, t2 - t1));
+    const ease = 1 - Math.pow(1 - k, 3);
+    opacity = ease;
+    ty = (1 - ease) * 44;
+    scale = 0.94 + ease * 0.06;
+  } else if (p >= t2 && p < t3) {
+    // pin: hold + grow + glow
+    const k = (p - t2) / Math.max(0.0001, t3 - t2);
+    opacity = 1;
+    ty = 0;
+    scale = 1.02 + k * 0.04;
+    glow = k;
+  } else if (p >= t3) {
+    // exit: hand off to the next section
+    const k = Math.min(1, (p - t3) / Math.max(0.0001, 1 - t3));
+    opacity = Math.max(0, 1 - k);
+    ty = -k * 40;
+    scale = 1.06 + k * 0.06;
+    glow = 1 - k;
+  }
+
+  const act = (v: boolean) => (v ? "text-mint border-mint/30 bg-mint/10" : "text-ink-faint border-white/8 bg-white/3");
+  const chip = (c: string) => `chip transition-colors ${c}`;
+
+  const recipe = `ScrollObserver recipe (from your choreography)
+  enter completes ~ ${Math.round(t1 * 100)}%
+  pin window        ${Math.round(t1 * 100)}% → ${Math.round(t2 * 100)}%
+  pin ends          ${Math.round(t2 * 100)}%
+  exit completes  ~ ${Math.round(t3 * 100)}%–100%
+
+  // import { onScroll } from "your-scroll-lib"
+  // hero element:
+  enter: opacity 0→1 · translateY 60→0  (cubic-bezier(.16,1,.3,1))
+  pin:   scale 1.06 · subtle glow, sticky
+  exit:  opacity →0 · translateY →-40
+  // honor prefers-reduced-motion: jump to final state`;
+
+  return (
+    <Panel
+      title="Scroll Lab"
+      blurb="Sketch scroll choreography on a playhead: drag it, set your trigger points, and export the recipe with exact thresholds."
+    >
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <button type="button" className="btn btn-primary !py-2 text-xs" onClick={() => setPlaying((v) => !v)}>
+          {playing ? "❚❚ Pause" : "▶ Play choreography"}
+        </button>
+        <span className="text-xs text-ink-faint">or scrub:</span>
+        <input
+          type="range" min={0} max={1} step={0.002} value={p}
+          onChange={(e) => { setP(Number(e.target.value)); setPlaying(false); }}
+          className="w-44 md:w-56"
+          aria-label="Scroll playhead"
+        />
+        <span className="font-mono text-xs text-cyan-200/80">{Math.round(p * 100)}%</span>
+        <span className={`ml-auto font-mono text-xs ${phase === "exit" ? "text-danger" : phase === "pin" ? "text-mint" : phase === "enter" ? "text-violet-300" : "text-ink-faint"}`}>
+          {phase}
+        </span>
+      </div>
+
+      <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_250px]">
+        {/* stage */}
+        <div className="relative flex h-56 items-center justify-center overflow-hidden rounded-2xl border border-white/7 bg-[radial-gradient(70%_100%_at_50%_100%,rgba(139,92,246,0.2),transparent_60%),#07080d]">
+          <div className="pointer-events-none absolute inset-x-0 top-4 flex justify-between px-4 text-[9px] font-bold uppercase tracking-[0.2em] text-white/25">
+            <span>0%</span>
+            <span className="opacity-60">{Math.round(t1 * 100)}% enter</span>
+            <span className="opacity-60">{Math.round(t2 * 100)}% pin</span>
+            <span className="opacity-60">{Math.round(t3 * 100)}% exit</span>
+            <span>100%</span>
+          </div>
+          <div
+            className="relative w-64 rounded-2xl border border-white/15 bg-white/8 p-4 text-center shadow-2xl backdrop-blur-md transition-[opacity,transform] duration-75"
+            style={{
+              opacity,
+              transform: `translateY(${ty}px) scale(${scale})`,
+              boxShadow: `inset 0 1px 0 rgba(255,255,255,.25), 0 0 ${22 + glow * 34}px rgba(139,92,246,${0.2 + glow * 0.4})`,
+            }}
+          >
+            <div className="text-lg font-black tracking-tight text-white">Pinned hero</div>
+            <div className="mt-1 text-[10px] text-white/55">A card that enters, pins, then hands off to the next section.</div>
+          </div>
+          {/* playhead marker on a vertical ruler */}
+          <div className="absolute inset-y-0 right-0 w-1.5 bg-white/5">
+            <div
+              className="absolute right-0 w-1.5 rounded-full bg-gradient-to-b from-violet-400 to-cyan-300"
+              style={{ top: 0, bottom: `${(1 - p) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* thresholds */}
+        <div className="space-y-4 rounded-2xl border border-white/7 bg-black/20 p-4">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Trigger points</div>
+          {[
+            { l: "Enter completes", v: t1, set: setT1 },
+            { l: "Pin begins", v: t2, set: setT2 },
+            { l: "Exit begins", v: t3, set: setT3 },
+          ].map((r) => (
+            <label key={r.l} className="block">
+              <span className="flex justify-between text-xs">
+                <span className="font-semibold text-ink-dim">{r.l}</span>
+                <span className="font-mono text-violet-300">{Math.round(r.v * 100)}%</span>
+              </span>
+              <input type="range" min={0} max={1} step={0.01} value={r.v}
+                onChange={(e) => r.set(Number(e.target.value))} className="mt-2 w-full" />
+            </label>
+          ))}
+          <div className="mt-4 flex flex-wrap gap-1.5 pt-1">
+            <span className={chip(act(p >= 0 && p < t1))}>below</span>
+            <span className={chip(act(p >= t1 && p < t2))}>enter</span>
+            <span className={chip(act(p >= t2 && p < t3))}>pin</span>
+            <span className={chip(act(p >= t3))}>exit</span>
+          </div>
+        </div>
+      </div>
+      <OutputLine text={recipe} />
+    </Panel>
+  );
+}
+
 /* ------------------------------- GRADIENT FORGE ------------------------------- */
 
 export function GradientForge() {

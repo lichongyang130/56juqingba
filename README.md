@@ -22,7 +22,8 @@ monetization, roadmap).
 | `/prompts` | AI prompt library — every prompt card carries measured fidelity + models run |
 | `/prompts/[slug]` | Full prompt text + per-model **run log** (scores, build errors, recovery notes) |
 | `/backgrounds` | CSS/WebGL texture & motion background gallery with performance tiers |
-| `/lab` | Interactive original tools: **Easing Lab**, **Spring Lab** (real mass–spring–damper), **Gradient Forge** |
+| `/lab` | Interactive original tools: **Easing Lab**, **Spring Lab** (real mass–spring–damper), **Scroll Lab**, **Gradient Forge** |
+| `/learn` | Original editorial guides — hero build-along, easing field guide, prompt structure, a11y checklist |
 | `/pricing` | Freemium tiers (Free / Pro / Team) |
 | `/admin` | Admin console: dashboard, assets lifecycle, prompt release + re-test queue, moderation desk, settings |
 

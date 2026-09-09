@@ -1,4 +1,4 @@
-import { EasingLab, GradientForge, SpringLab } from "@/components/lab-tools";
+import { EasingLab, GradientForge, ScrollLab, SpringLab } from "@/components/lab-tools";
 import { ToolCard } from "@/components/cards";
 import { LAB_TOOLS } from "@/lib/data";
 
@@ -21,6 +21,7 @@ export default function LabPage() {
       <div className="mt-12 space-y-6">
         <EasingLab />
         <SpringLab />
+        <ScrollLab />
         <GradientForge />
       </div>
 

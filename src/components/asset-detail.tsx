@@ -357,6 +357,71 @@ function Bone({ className }) {
 .face { transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
 .stack:hover .face { transform: translateX(var(--nudge, 0)); }`,
   },
+  "command-palette": {
+    react: `// React — filter + selection state; the overlay itself is a dialog
+const filtered = COMMANDS.filter(c =>
+  c.label.toLowerCase().includes(q.trim().toLowerCase()));
+
+<div role="dialog" aria-modal="true" aria-label="Quick actions"
+     className="fixed inset-0 z-50 flex items-start justify-center pt-24">
+  <div className="w-full max-w-md overflow-hidden rounded-2xl border
+              border-white/10 bg-[#0d0f17] shadow-2xl">
+    <input value={q} onChange={e => { setQ(e.target.value); setSel(0); }}
+           placeholder="Type a command…"
+           className="w-full border-b border-white/8 bg-transparent px-4 py-3
+                      text-sm text-white placeholder:text-white/30" />
+    {filtered.map((c, i) => (
+      <button key={c.label}
+        onMouseEnter={() => setSel(i)}
+        className={"flex w-full items-center gap-3 px-4 py-2 text-left text-sm " +
+          (i === sel ? "bg-white/10 text-white" : "text-white/60")}>
+        {c.label}
+      </button>
+    ))}
+  </div>
+</div>`,
+    css: `/* a11y notes baked in: role=dialog + aria-modal, focus first result */
+.kbd { font: inherit; padding: 0 5px; border-radius: 5px;
+       background: rgba(255,255,255,.08); }`,
+  },
+  "toast-stack": {
+    react: `// React — toasts are just state; the container does the announcing
+const [toasts, setToasts] = useState([]);
+const push = () => {
+  const id = ++ref.current;
+  setToasts(t => [...t.slice(-2), { id, text: "Build passed · 3.2s" }]);
+  setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3500);
+};
+
+<div aria-live="polite" className="fixed right-4 bottom-4 flex flex-col gap-2">
+  {toasts.map(t => (
+    <div key={t.id} className="toast rounded-xl border px-4 py-3 text-sm shadow-2xl">
+      {t.text}
+    </div>
+  ))}
+</div>`,
+    css: `/* the entrance: rise + ease; exits handled by state removal */
+.toast { animation: toast-in .3s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) { .toast { animation: none; } }`,
+  },
+  "sheet-menu": {
+    react: `// React — sheet is translate-y, backdrop is a sibling button
+<div className="fixed inset-0 z-40">
+  {open && <button aria-label="Close" onClick={() => setOpen(false)}
+                   className="absolute inset-0" />}
+  <div className={"absolute inset-x-0 bottom-0 z-10 rounded-t-2xl " +
+    (open ? "translate-y-0" : "translate-y-full")}
+    style={{ transition: "transform .32s cubic-bezier(.34,1.4,.4,1)" }}>
+    {/* handle + nav rows */}
+  </div>
+</div>`,
+    css: `/* springy sheet — overshoot at the end sells 'physical' */
+.sheet { transition: transform .32s cubic-bezier(.34, 1.4, .4, 1); }
+.sheet[data-open="false"] { transform: translateY(100%); }
+@media (min-width: 768px) {
+  .sheet { display: none; } /* desktop gets real nav */ }`,
+  },
 };
 
 const FALLBACK = {
@@ -433,6 +498,21 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
   "avatar-stack": {
     why: "The classic social-proof stack is static; parting like a crowd on hover adds a beat of personality and gives each face room to be a person.",
     skip: "On touch there's no hover to part the crowd — make the last avatar a tappable '+N' or the whole stack a link to the team page.",
+  },
+  "command-palette": {
+    why: "Power users don't read your nav — they search it. A command palette turns a docs site or dashboard into something you can operate without looking.",
+    idea: "The filter is a single toLowerCase().includes() pass; the feel comes from arrow-key selection state and grouping, not fuzzy-search libraries.",
+    skip: "Skip it under ~30 commands. A palette with three results is ceremony; a plain search input is honest.",
+  },
+  "toast-stack": {
+    why: "Toasts fail two ways: they're decorative (no aria-live, so screen readers never hear them) or they scream. This stack announces politely and auto-dismisses.",
+    idea: "The accent tone derives from the message type — success/motion/prompt runs all read differently at a glance.",
+    skip: "Every toast is an interruption budget. Batch updates into one toast ('3 assets saved') and never toast errors the user can't act on.",
+  },
+  "sheet-menu": {
+    why: "Hamburger menus that fly in from the left fight the thumb; a bottom sheet sits where the thumb already is. That's the entire argument.",
+    idea: "The springy overshoot on the sheet's transform is what makes it feel like a physical drawer — a plain ease feels like a slide deck.",
+    skip: "On desktop, show the real nav and hide the sheet entirely (the code includes the breakpoint). Don't ship a mobile-only pattern to laptop users.",
   },
 };
 

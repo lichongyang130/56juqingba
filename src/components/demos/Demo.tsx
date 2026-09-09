@@ -1186,6 +1186,203 @@ function AvatarStack({ count = 5, size = 40 }: DemoProps) {
   );
 }
 
+/* ------------------------------ OVERLAY WIDGETS (2026-09) ------------------------------ */
+
+const PALETTE_ITEMS = [
+  { icon: "▦", label: "Open dashboard", grp: "Go" },
+  { icon: "◇", label: "New component", grp: "Create" },
+  { icon: "⧉", label: "Copy aurora snippet", grp: "Library" },
+  { icon: "$", label: "Pricing plans", grp: "Go" },
+  { icon: "◐", label: "Toggle dark mode", grp: "Settings" },
+  { icon: "▲", label: "Deploy preview", grp: "Actions" },
+];
+
+function CommandPalette({ rows = 6 }: DemoProps) {
+  const n = typeof rows === "number" ? Math.max(2, Math.min(8, Math.round(rows))) : 6;
+  const items = PALETTE_ITEMS.slice(0, n);
+  const [q, setQ] = useState("");
+  const [sel, setSel] = useState(0);
+  const filtered = items.filter((it) => it.label.toLowerCase().includes(q.trim().toLowerCase()));
+  const groups = [...new Set(filtered.map((f) => f.grp))];
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(139,92,246,0.16),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/12 bg-[#0d0f17]/95 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl">
+        <div className="flex items-center gap-2.5 border-b border-white/6 px-4 py-3">
+          <span className="text-violet-300">⌘</span>
+          <input
+            autoFocus
+            value={q}
+            onChange={(e) => { setQ(e.target.value); setSel(0); }}
+            placeholder="Search commands, assets, pages…"
+            className="w-full bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
+            aria-label="Command palette search"
+          />
+          <span className="chip !text-[9px] !py-0.5 text-white/40">esc</span>
+        </div>
+        <div className="max-h-44 overflow-y-auto p-2">
+          {filtered.length === 0 && (
+            <p className="px-3 py-5 text-center text-xs text-ink-faint">No command matches “{q}”</p>
+          )}
+          {groups.map((g) => (
+            <div key={g}>
+              <div className="px-3 pb-1 pt-2 text-[9px] font-bold uppercase tracking-[0.25em] text-ink-faint">{g}</div>
+              {filtered.filter((f) => f.grp === g).map((it) => {
+                const idx = filtered.indexOf(it);
+                return (
+                  <button
+                    key={it.label}
+                    type="button"
+                    onMouseEnter={() => setSel(idx)}
+                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[13px] transition-colors ${
+                      sel === idx ? "bg-white/10 text-white" : "text-ink-dim"
+                    }`}
+                  >
+                    <span className="w-4 text-center text-violet-300">{it.icon}</span>
+                    <span className="flex-1 truncate font-medium">{it.label}</span>
+                    {sel === idx && <span className="text-[9px] text-white/35">↵</span>}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-3 border-t border-white/6 px-4 py-2 text-[9px] text-ink-faint">
+          <span><kbd className="rounded bg-white/8 px-1">↑</kbd><kbd className="ml-0.5 rounded bg-white/8 px-1">↓</kbd> navigate</span>
+          <span><kbd className="rounded bg-white/8 px-1">↵</kbd> open</span>
+          <span className="ml-auto">type to filter · this is a widget, not a page</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const TOAST_MESSAGES = [
+  "Saved to your library",
+  "Build passed · 3.2s",
+  "Asset copied to clipboard",
+  "Prompt run finished · 94/100",
+];
+
+function ToastStack({ time = 3.5 }: DemoProps) {
+  const [toasts, setToasts] = useState<{ id: number; text: string; tone: number }[]>([]);
+  const idRef = useRef(0);
+  const ttl = typeof time === "number" ? Math.max(1, Math.min(8, time)) * 1000 : 3500;
+  const push = () => {
+    const id = ++idRef.current;
+    const tone = (id % 3) * 110;
+    setToasts((prev) => [...prev.slice(-2), { id, text: TOAST_MESSAGES[id % TOAST_MESSAGES.length], tone }]);
+    window.setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), ttl);
+  };
+  return (
+    <div className="relative flex h-full w-full items-end justify-end overflow-hidden bg-[radial-gradient(60%_80%_at_80%_100%,rgba(34,211,238,0.12),transparent_60%),#0a0c13] p-5">
+      {/* pretend page corner */}
+      <div className="absolute left-4 top-4 space-y-1.5 opacity-60">
+        <div className="h-2 w-24 rounded-full bg-white/15" />
+        <div className="h-2 w-16 rounded-full bg-white/8" />
+      </div>
+      <button
+        type="button"
+        onClick={push}
+        className="btn btn-primary absolute left-1/2 top-1/2 !px-5 !py-2.5 text-xs -translate-x-1/2 -translate-y-1/2"
+      >
+        Ping a toast
+      </button>
+      <div className="pointer-events-none absolute inset-x-4 bottom-4 flex flex-col items-end gap-2" aria-live="polite">
+        {toasts.map((t) => (
+          <div
+            key={t.id}
+            className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-[#0d0f17]/95 py-2.5 pl-3 pr-4 text-xs font-medium text-white shadow-2xl backdrop-blur-md"
+            style={{ boxShadow: `inset 0 1px 0 rgba(255,255,255,.1), 0 12px 30px -10px hsl(${t.tone} 80% 55% / .45)` }}
+          >
+            <span className="flex h-5 w-5 items-center justify-center rounded-full text-[10px]" style={{ background: `hsl(${t.tone} 85% 60% / .2)`, color: `hsl(${t.tone} 90% 72%)` }}>
+              ✓
+            </span>
+            {t.text}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SheetMenu() {
+  const [open, setOpen] = useState(true);
+  const navs = ["Home", "Library", "AI Prompts", "Lab", "Pricing"];
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(70%_100%_at_50%_0%,rgba(244,114,182,0.14),transparent_60%),#0a0c13] px-6">
+      {/* phone frame */}
+      <div className="relative h-[280px] w-[190px] overflow-hidden rounded-[26px] border border-white/15 bg-[#0b0d14] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.85)]">
+        <div className="flex items-center justify-between px-4 pb-2 pt-4">
+          <span className="text-[11px] font-black tracking-tight text-white">Motif</span>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Open menu"
+            className="flex h-7 w-7 flex-col items-center justify-center gap-[5px] rounded-lg border border-white/10 bg-white/5"
+          >
+            <span className="h-px w-3.5 bg-white/80" />
+            <span className="h-px w-3.5 bg-white/80" />
+            <span className="h-px w-3.5 bg-white/80" />
+          </button>
+        </div>
+        <div className="px-4">
+          <div className="h-2 w-20 rounded-full bg-white/20" />
+          <div className="mt-2 h-2 w-14 rounded-full bg-white/8" />
+          <div className="mt-4 space-y-2">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="flex items-center gap-2 rounded-xl border border-white/6 bg-white/3 p-2">
+                <span className="h-6 w-6 rounded-lg" style={{ background: `linear-gradient(135deg, hsl(${200 + i * 90} 80% 60% / .6), hsl(${(200 + i * 90 + 50) % 360} 80% 50% / .3))` }} />
+                <span className="h-1.5 w-16 rounded-full bg-white/15" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* backdrop under the sheet */}
+        {open && (
+          <button
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setOpen(false)}
+            className="absolute inset-0 z-0 cursor-default"
+            style={{ background: "rgba(0,0,0,0)" }}
+            tabIndex={-1}
+          />
+        )}
+        {/* bottom sheet */}
+        <div
+          className={`absolute inset-x-0 bottom-0 z-10 rounded-t-2xl border-t border-white/12 bg-[#0d0f17]/98 backdrop-blur-xl transition-transform duration-300 ${
+            open ? "translate-y-0" : "translate-y-full"
+          }`}
+          style={{ transitionTimingFunction: "cubic-bezier(.34,1.4,.4,1)" }}
+        >
+          <div className="mx-auto mt-2 h-1 w-8 rounded-full bg-white/15" />
+          <div className="px-3 pb-3 pt-2">
+            {navs.map((nv) => (
+              <button
+                key={nv}
+                type="button"
+                onClick={() => setOpen(false)}
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[12px] font-semibold text-white/85 transition-colors hover:bg-white/6 hover:text-white"
+              >
+                {nv}
+                <span className="text-white/25">›</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="ml-6 hidden max-w-[170px] sm:block">
+        <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-ink-faint">Bottom sheet</div>
+        <div className="mt-2 text-base font-black leading-tight text-white">Tap the ☰ to open, tap a row to close</div>
+        <p className="mt-2 text-[10px] leading-relaxed text-ink-dim">
+          Mobile nav pattern with a springy sheet — draggable handle &amp; backdrop included in the code.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 export const DEMO_KEYS = [
@@ -1195,6 +1392,7 @@ export const DEMO_KEYS = [
   "glass", "noise", "grid", "sorbet", "halftone", "ink",
   "morph-blob", "conic-loader", "glass-pricing", "wipe-reveal", "counter-stats", "dot-draw",
   "text-cycle", "tab-morph", "flip-card", "skeleton-shimmer", "chart-card", "avatar-stack",
+  "command-palette", "toast-stack", "sheet-menu",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -1233,6 +1431,9 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "skeleton-shimmer": return <SkeletonShimmer />;
     case "chart-card": return <ChartCard />;
     case "avatar-stack": return <AvatarStack {...props} />;
+    case "command-palette": return <CommandPalette {...props} />;
+    case "toast-stack": return <ToastStack {...props} />;
+    case "sheet-menu": return <SheetMenu />;
     default: return null;
   }
 }
