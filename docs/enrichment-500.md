@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 231 / 500 shipped (batches 1–31, in order) · Sections 1–5 complete ✅
+## Progress — 239 / 500 shipped (batches 1–32, in order) · Sections 1–5 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -243,6 +243,14 @@ names, behaviours and where they plug into the existing pages.
 | 229 | Course rail — pairs well with prompt | [/components/aurora-veil#pairs-with-prompt](/components/aurora-veil#pairs-with-prompt) |
 | 230 | Course rail — bundled deps disclosure | [/components/aurora-veil#deps-disclosure](/components/aurora-veil#deps-disclosure) |
 | 231 | Course rail — single-file export | [/components/aurora-veil#single-file-export](/components/aurora-veil#single-file-export) |
+| 232 | Course rail — copy-format tabs incl. Vue | [/components/aurora-veil](/components/aurora-veil) |
+| 233 | Course rail — sizing system (3 densities) | [/components/aurora-veil#sizing-system](/components/aurora-veil#sizing-system) |
+| 234 | Course rail — a11y report card | [/components/aurora-veil](/components/aurora-veil) |
+| 235 | Course rail — open-in-sandbox | [/components/aurora-veil#sandbox-open](/components/aurora-veil#sandbox-open) |
+| 236 | Course rail — tutorial transcript panel | [/components/aurora-veil#tutorial-transcript](/components/aurora-veil#tutorial-transcript) |
+| 237 | Course rail — code line walk | [/components/aurora-veil#code-line-walk](/components/aurora-veil#code-line-walk) |
+| 238 | Course rail — size vs quality slider | [/components/aurora-veil#size-quality-slider](/components/aurora-veil#size-quality-slider) |
+| 239 | Course rail — stack-switch cost note | [/components/aurora-veil#stack-switch-cost](/components/aurora-veil#stack-switch-cost) |
 
 
 ---
@@ -528,13 +536,13 @@ names, behaviours and where they plug into the existing pages.
 - **Variant gallery** ✅ (`variant-gallery`): 3–5 rendered variants per component (tone, density, accent) as live mini-stages.
 - **Prop explorer**: every prop as a live control (already on list pages — give it to the detail hero).
 - **Playground on the detail page**: the asset's Lab controls embedded above the code, not just linked.
-- **Copy-format tabs**: React / HTML+CSS / Vue views of the same snippet with dependency badges.
+- **Copy-format tabs** ✅ (React / HTML+CSS / Vue SFC): views of the same snippet with dependency badges.
 - **Usage recipe** ✅ (`usage-recipe`): a 90-second "where this fits" story, not just "why/skip" bullets.
 - **Composition map** ✅ (`composition-map`): which library assets combine well with this one (auto-suggested links).
 - **Theming example** ✅ (`theming-example`): same component re-skinned in two token themes side-by-side.
-- **Sizing system**: 3 text/layout densities with code for each.
+- **Sizing system** ✅ (`sizing-system`): 3 text/layout densities with code for each.
 - **Performance note per asset** ✅ (`perf-note`): paint cost, bundle estimate, and the cheaper alternative.
-- **a11y report card**: what the automated audit checks for this asset, with fixes.
+- **a11y report card** ✅ (audit report, per-check fixes): what the automated audit checks for this asset, with fixes.
 - **Browser support strip** ✅ (`browser-support`): which modern features it needs (backdrop-filter, view-timeline…).
 - **Reduced-motion fallback note** ✅ (`reduced-motion-note`): what the asset does when motion is off.
 - **Keyboard walk demo** ✅ (`keyboard-walk`): pressable step-through of the component's focus flow.
@@ -547,12 +555,12 @@ names, behaviours and where they plug into the existing pages.
 - **"Pairs well with prompt"** ✅ (`pairs-with-prompt`): which AI prompt would build a page containing this asset.
 - **Bundled-deps disclosure** ✅ (`deps-disclosure`): exact dependency tree with sizes.
 - **Export as single file** ✅ (`single-file-export`): one `.tsx` or `.html` download button.
-- **Open in CodeSandbox-style sandbox**: a real runnable copy with the library's CSS injected.
-- **Tutorial transcript**: if the asset ever gets a video, host the written version here.
+- **Open in CodeSandbox-style sandbox** ✅ (`sandbox-open`): a real runnable copy with the library's CSS injected.
+- **Tutorial transcript** ✅ (`tutorial-transcript`): if the asset ever gets a video, host the written version here.
 - **Design rationale panel**: the "why we made the default the default" note.
-- **Code line walk**: annotated key lines of the snippet (why this line matters).
-- **Size vs. quality trade-off slider**: compare the 4KB version and the 12KB "pro" version.
-- **Stack-switch cost note**: what changes if you take the HTML version into React.
+- **Code line walk** ✅ (`code-line-walk`): annotated key lines of the snippet (why this line matters).
+- **Size vs. quality trade-off slider** ✅ (`size-quality-slider`): compare the 4KB version and the 12KB "pro" version.
+- **Stack-switch cost note** ✅ (`stack-switch-cost`): what changes if you take the HTML version into React.
 - **Tag synonyms**: discoverability terms ("dropdown", "select", "picker" → same asset).
 - **Sibling comparison**: two similar assets side-by-side with a "when to pick which" table.
 

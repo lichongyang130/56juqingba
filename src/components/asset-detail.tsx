@@ -6,6 +6,7 @@ import { DemoView } from "@/components/demos/Demo";
 import { AssetCard, CopyCount, Stage } from "@/components/cards";
 import CourseRail from "@/components/course-rail";
 import CourseRailMore from "@/components/course-rail-2";
+import CourseRailThree from "@/components/course-rail-3";
 import { accentCss, COMPONENTS, KIND_META } from "@/lib/data";
 import type { Asset } from "@/lib/types";
 
@@ -2323,7 +2324,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
   });
   const [themeHue, setThemeHue] = useState(262);
   const [copied, setCopied] = useState<string | null>(null);
-  const [tab, setTab] = useState<"react" | "css">("react");
+  const [tab, setTab] = useState<"react" | "css" | "vue">("react");
 
   const snippet = useMemo(() => {
     const s = SNIPPETS[asset.slug] ?? FALLBACK;
@@ -2332,6 +2333,10 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
     if (s.css.includes("{slug}")) out.css = s.css.replaceAll("{slug}", asset.slug);
     return out;
   }, [asset]);
+  const vueSnippet = useMemo(() => {
+    const body = snippet.react.split("\n").slice(0, 3).join("\n");
+    return `<script setup>\n// ${asset.slug} — Vue Single File Component.\n// The styles below are the asset's own CSS; the template\n// is where you drop your markup (the demo structure differs\n// per asset — see the React tab for the shape).\n</script>\n\n<template>\n  <div class="${asset.slug}-host">\n    <!-- paste the rendered markup here -->\n    <slot />\n  </div>\n</template>\n\n<style scoped>\n${snippet.css}\n</style>\n\n<!-- source hint: ${body.replaceAll("\n", " ").slice(0, 90)}… -->`;
+  }, [asset, snippet]);
   const accentColor = accentCss(asset.slug, 85, 68);
 
   const copy = async (label: string, text: string) => {
@@ -2451,7 +2456,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
           <div className="mt-6">
             <div className="mb-3 flex items-center gap-2">
               <div className="flex rounded-xl border border-white/8 bg-black/30 p-1">
-                {(["react", "css"] as const).map((t) => (
+                {(["react", "css", "vue"] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
@@ -2460,16 +2465,20 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
                       tab === t ? "bg-white/10 text-ink" : "text-ink-dim hover:text-ink"
                     }`}
                   >
-                    {t === "react" ? "React + Tailwind" : "HTML / CSS"}
+                    {t === "react" ? "React + Tailwind" : t === "css" ? "HTML / CSS" : "Vue SFC"}
                   </button>
                 ))}
               </div>
-              <span className="text-xs text-ink-faint">stack views: React · HTML/CSS · Vue (soon)</span>
+              <div className="flex flex-wrap gap-1.5">
+                <span className="chip !text-[9px]">deps: {asset.deps.length === 0 ? "zero" : asset.deps.join(", ")}</span>
+                <span className="chip !text-[9px]">{tab === "react" ? "JSX + Tailwind" : tab === "css" ? "vanilla CSS" : "scoped <style>"}</span>
+                <span className="chip !text-[9px]">MIT · original</span>
+              </div>
             </div>
             <CodeBlock
-              title={`${asset.slug}.tsx`}
-              code={snippet[tab]}
-              onCopy={() => copy(tab, snippet[tab])}
+              title={`${asset.slug}.${tab === "vue" ? "vue" : tab === "css" ? "css" : "tsx"}`}
+              code={tab === "vue" ? vueSnippet : snippet[tab]}
+              onCopy={() => copy(tab, tab === "vue" ? vueSnippet : snippet[tab])}
             />
             {DESIGN_NOTES[asset.slug] && (
               <div className="mt-3 rounded-2xl border border-white/8 bg-panel p-5">
@@ -2588,6 +2597,23 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
                 <li className="!text-xs">{asset.themeable ? "100% design-token driven" : "Static palette (token migration planned)"}</li>
                 <li className="!text-xs">Reduced-motion fallback included</li>
               </ul>
+              <div className="mt-3 space-y-2 border-t border-white/6 pt-3">
+                {[
+                  { name: "Contrast AA text", ok: asset.a11yScore >= 92, fix: "darken text tokens by one step on the ramp" },
+                  { name: "Focus visible", ok: asset.a11yScore >= 90, fix: "add a :focus-visible ring to interactive parts" },
+                  { name: "Labels for screen readers", ok: asset.a11yScore >= 90, fix: "aria-label every icon-only control" },
+                  { name: "Motion honours the reduce switch", ok: asset.themeable || asset.kind !== "animated", fix: "ship the reduced branch in the snippet" },
+                ].map((c) => (
+                  <div key={c.name} className="flex items-start justify-between gap-3 text-[11px]">
+                    <span className="text-ink-dim">{c.name}</span>
+                    {c.ok ? (
+                      <span className="shrink-0 font-bold text-mint">pass ✓</span>
+                    ) : (
+                      <span className="shrink-0 text-right font-semibold text-amber-300" title={`fix: ${c.fix}`}>fix: {c.fix}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -2606,6 +2632,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
       {/* course rail — every asset is a small course */}
       <CourseRail asset={asset} />
       <CourseRailMore asset={asset} reactCode={snippet.react} cssCode={snippet.css} />
+      <CourseRailThree asset={asset} cssCode={snippet.css} reactCode={snippet.react} />
 
       {/* related */}
       <div className="mt-16">
