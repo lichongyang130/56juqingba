@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 109 / 500 shipped (batches 1–14, in order) · Sections 1–2 complete ✅
+## Progress — 117 / 500 shipped (batches 1–15, in order) · Sections 1–2 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -121,6 +121,14 @@ names, behaviours and where they plug into the existing pages.
 | 107 | Coffee roaster prompt | [/prompts/coffee-roaster-origin](/prompts/coffee-roaster-origin) |
 | 108 | Boutique hotel prompt | [/prompts/boutique-hotel-amenities](/prompts/boutique-hotel-amenities) |
 | 109 | Craft brewery taproom prompt | [/prompts/brewery-taproom-taps](/prompts/brewery-taproom-taps) |
+| 110 | Bike shop service prompt | [/prompts/bike-shop-service-tiers](/prompts/bike-shop-service-tiers) |
+| 111 | Yoga studio prompt | [/prompts/yoga-studio-first-class](/prompts/yoga-studio-first-class) |
+| 112 | Dog-walking service prompt | [/prompts/dog-walking-service-trust](/prompts/dog-walking-service-trust) |
+| 113 | Bookshop café prompt | [/prompts/bookshop-cafe-staff-picks](/prompts/bookshop-cafe-staff-picks) |
+| 114 | Accounting firm prompt | [/prompts/accounting-firm-plain-language](/prompts/accounting-firm-plain-language) |
+| 115 | Recruiting studio prompt | [/prompts/recruiting-studio-culture](/prompts/recruiting-studio-culture) |
+| 116 | Industrial design prompt | [/prompts/industrial-design-process](/prompts/industrial-design-process) |
+| 117 | Coaching practice prompt | [/prompts/coaching-practice-outcomes](/prompts/coaching-practice-outcomes) |
 
 
 ---
@@ -241,7 +249,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 3. Prompt library — 50 next prompts across industries (24 → 74; 38 shipped so far)
+## 3. Prompt library — 50 next prompts across industries (24 → 74; 46 shipped so far)
 
 ### Growth industries
 - **SaaS onboarding flow prompt** ✅ (`saas-activation-onboarding`): signup → plan → invite → success, in one prompt.
