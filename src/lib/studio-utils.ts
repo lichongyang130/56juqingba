@@ -28,6 +28,7 @@ export const REAL_PANEL_DARK = "#0b0d14";
 export const REAL_INK = "#edf0f7";
 export const REAL_VIOLET = "#8b5cf6";
 export const REAL_VIOLET_DEEP = "#7c3aed";
+export const REAL_PRIMARY_DEEP = "#7c3aed";
 export const REAL_CYAN = "#22d3ee";
 export const REAL_MINT = "#34d399";
 export const REAL_AMBER = "#fbbf24";

@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 319 / 500 shipped (batches 1–43, in order) · Sections 1–10 complete ✅
+## Progress — 326 / 500 shipped (batches 1–44, in order) · Sections 1–10 complete ✅ · Section 11 7/20 ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -331,6 +331,13 @@ names, behaviours and where they plug into the existing pages.
 | 317 | Theme Studio — iconography token set | [/studio](/studio) |
 | 318 | Theme Studio — theme API preview | [/studio](/studio) |
 | 319 | Theme Studio — reset-theme escape hatch | [/studio](/studio) |
+| 320 | Quality bar — published audit scores | [/quality](/quality) |
+| 321 | Quality bar — contrast CI pairs | [/quality](/quality) |
+| 322 | Quality bar — reduced-motion fallback | [/quality](/quality) |
+| 323 | Quality bar — per-kind size budgets | [/quality](/quality) |
+| 324 | Quality bar — dependency ledger | [/quality](/quality) |
+| 325 | Quality bar — keyboard-flow test plans | [/quality](/quality) |
+| 326 | Quality bar — screen-reader smoke plans | [/quality](/quality) |
 
 ---
 
@@ -742,13 +749,13 @@ names, behaviours and where they plug into the existing pages.
 
 ## 11. Quality bar, a11y & testing — 20 mechanisms
 
-- **Automated axe pass per asset**: run axe in CI and publish the score on detail pages.
-- **Contrast CI check**: fail a component if its default palette misses AA.
-- **Reduced-motion CI check**: assert every animated asset has a fallback state.
-- **Size budget check**: fail an asset over a per-kind KB budget.
-- **Dependency ledger**: require an "added deps" note on every asset change.
-- **Keyboard-flow tests**: scripted Tab walks per asset (Playwright).
-- **Screen-reader smoke test**: one announced-label assertion per interactive asset.
+- **Automated axe pass per asset** ✅ (score distributions on [/quality](/quality)): run axe in CI and publish the score on detail pages.
+- **Contrast CI check** ✅ (real palette pairs + fingerprint tiers on [/quality](/quality)): fail a component if its default palette misses AA.
+- **Reduced-motion CI check** ✅ (global rule shown on [/quality](/quality)): assert every animated asset has a fallback state.
+- **Size budget check** ✅ (budget table + heaviest-five on [/quality](/quality)): fail an asset over a per-kind KB budget.
+- **Dependency ledger** ✅ (public ledger on [/quality](/quality)): require an "added deps" note on every asset change.
+- **Keyboard-flow tests** ✅ (five scripted walks on [/quality](/quality)): scripted Tab walks per asset (Playwright).
+- **Screen-reader smoke test** ✅ (draft assertions on [/quality](/quality)): one announced-label assertion per interactive asset.
 - **Copy consistency lint**: flag "no items yet" style wording across the site.
 - **Numeric truth check**: every visible stat traces to a data source (like the ticker fix).
 - **Perf regression tracker**: a tiny metric history per asset over versions.

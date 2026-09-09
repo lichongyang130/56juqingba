@@ -229,7 +229,7 @@ export function Footer() {
     ["Library", ["Elements", "Animated", "Sections", "Templates", "Backgrounds"]],
     ["AI Prompts", ["All prompts", "Verified only", "Prompt builder", "Scoreboard"]],
     ["Lab & Learn", ["Easing Lab", "Spring Lab", "Theme Studio", "Guides & Blog"]],
-    ["Company", ["Pricing", "About", "License", "API docs", "Status"]],
+    ["Company", ["Pricing", "About", "Quality bar", "License", "API docs", "Status"]],
   ];
   return (
     <footer className="mt-24 border-t border-white/6">
@@ -312,7 +312,7 @@ export function Footer() {
             <div className="text-xs font-bold uppercase tracking-widest text-ink-faint">{title}</div>
             <ul className="mt-3 space-y-2">
               {links.map((l) => {
-                const href = l === "About" ? "/mission" : l === "Pricing" ? "/pricing" : null;
+                const href: string | null = { About: "/mission", Pricing: "/pricing", "Quality bar": "/quality" }[l] ?? null;
                 return (
                   <li key={l}>
                     {href ? (
