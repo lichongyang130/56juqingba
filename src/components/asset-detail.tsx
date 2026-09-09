@@ -1537,6 +1537,187 @@ const [pos, setPos] = useState(50);
 .dot { z-index: 1; width: 14px; height: 14px; border-radius: 99px;
   border: 2px solid #67e8f9; background: var(--canvas, #0a0c13); }`,
   },
+  "newsletter-band-tiers": {
+    react: `// React — tier choice is part of the consent
+const [tier, setTier] = useState("weekly digest");
+const [state, setState] = useState("idle");
+const submit = () => valid(email)
+  ? setState("done") : setState("error");
+<div className="tier-pills">
+  {tiers.map(t => (
+    <button aria-pressed={tier === t} onClick={() => setTier(t)}>{t}</button>
+  ))}
+</div>
+<input type="email" aria-label="Email address" … />
+<button onClick={submit}>Subscribe</button>
+<p aria-live="polite">{state === "error" && helpText}</p>
+// the welcome email can now match the promise: say which tier they chose`,
+    css: `.tier-pills { display: flex; gap: 4px; border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px; padding: 4px; background: rgba(0,0,0,.3); }
+.tier-pills button { flex: 1; border-radius: 8px; padding: 6px 8px; font-size: 10px; }
+.tier-pills button[aria-pressed="true"] { background: rgba(52,211,153,.2); color: #d1fae5; }`,
+  },
+  "hero-product-mock": {
+    react: `// React — the frame IS the proof; numbers are data
+<section className="hero">
+  <div className="hero-copy">
+    <h1>your UI, shipped as systems</h1>
+    <CTA />
+  </div>
+  <div className="frame">
+    <div className="chrome" aria-hidden>traffic dots + url</div>
+    <MiniDashboard bars={surfaces} stat={a11y} />
+  </div>
+</section>
+// mini stats render real values from the same store the docs use`,
+    css: `.frame { border: 1px solid rgba(255,255,255,.1); border-radius: 16px;
+  background: rgba(13,16,23,.97); overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+.chrome { display: flex; gap: 8px; padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.06); }
+.bar { border-radius: 2px; transform-origin: bottom;
+  animation: mf-growin .4s ease-out both; }`,
+  },
+  "split-feature-rows": {
+    react: `// React — one observer for all rows
+const [seen, setSeen] = useState(false);
+useEffect(() => { /* IO on the list container, threshold .3 */ }, []);
+{rows.map((r, i) => (
+  <article key={r.k} className={i % 2 ? "row flip" : "row"}
+    style={{ animation: seen ? \`mf-rise .5s ease-out \${i * 140}ms both\` : "none",
+             opacity: seen ? 1 : 0 }}>
+    <Art /> <Copy />
+  </article>
+))}
+// art panel: group-hover zoom via transform, never layout`,
+    css: `.row { display: grid; grid-template-columns: 110px 1fr; gap: 12px; }
+.row.flip { direction: rtl } .row.flip > * { direction: ltr }
+.art { overflow: hidden; border-radius: 12px; }
+.art img, .art span { transition: transform .5s ease; }
+.row:hover .art span { transform: scale(1.25); }
+@media (prefers-reduced-motion: reduce) { .row { opacity: 1 !important; animation: none } }`,
+  },
+  "case-study-header": {
+    react: `// React — four facts as a labelled grid, no prose needed
+const FACTS = [
+  { k: "client", v: "Northwind Retail" },
+  { k: "role", v: "Design system + build" },
+  { k: "year", v: "2026" },
+  { k: "stack", v: "React · Figma · tokens" },
+];
+<header className="study">
+  <div className="chips">case study · design systems</div>
+  <h1>…one system, five squads…</h1>
+  <dl className="facts">
+    {FACTS.map(f => (
+      <div key={f.k}>
+        <dt>{f.k}</dt><dd>{f.v}</dd>
+      </div>
+    ))}
+  </dl>
+  <ReadMore />
+</header>
+// <dl>/<dt>/<dd> = the labelled grid is real definition-list semantics`,
+    css: `.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  border-radius: 12px; }
+.facts div { border: 1px solid rgba(255,255,255,.06); border-radius: 10px;
+  padding: 8px 12px; background: rgba(0,0,0,.2); }
+.facts dt { font-size: 8px; text-transform: uppercase; letter-spacing: .2em; color: var(--color-ink-faint); }
+.facts dd { margin: 2px 0 0; font-size: 11px; font-weight: 700; }`,
+  },
+  "changelog-feed": {
+    react: `// React — one open entry at a time
+const [open, setOpen] = useState("v1.3.0");
+{items.map(it => (
+  <article key={it.ver} className="entry">
+    <button aria-expanded={open === it.ver}
+      onClick={() => setOpen(open === it.ver ? null : it.ver)}>
+      <Version>{it.ver}</Version>
+      <Badge kind={it.kind} />
+      <Title>{it.title}</Title>
+      <Day>{it.day}</Day>
+    </button>
+    {open === it.ver && <p className="body">{it.body}</p>}
+  </article>
+))}
+// badges: feat / fix / asset — colour is redundant with the word`,
+    css: `.entry { border: 1px solid rgba(255,255,255,.06); border-radius: 12px; }
+.entry button { width: 100%; display: flex; gap: 10px; padding: 12px 14px;
+  align-items: center; }
+.badge { border-radius: 99px; padding: 2px 8px; font-size: 8px;
+  font-weight: 800; text-transform: uppercase; letter-spacing: .16em; }
+.body { margin: 0; padding: 0 14px 12px; border-top: 1px solid rgba(255,255,255,.06);
+  font-size: 10.5px; line-height: 1.6; }`,
+  },
+  "resource-download-cards": {
+    react: `// React — badge + size first, action second
+{files.map(f => (
+  <div className="dl" key={f.name}>
+    <span className="fmt">{f.fmt}</span>
+    <div className="meta">
+      <p className="name">{f.name}</p>
+      <p>{f.size} · {f.note}</p>
+    </div>
+    <button onClick={() => setDone(f.name)}>
+      {done[f.name] ? "✓ grabbed" : "Download"}
+    </button>
+  </div>
+))}
+// the state flip is client-only theatre until a real endpoint exists —
+// keep the disabled/aria state honest in production`,
+    css: `.dl { display: flex; gap: 12px; align-items: center;
+  border: 1px solid rgba(255,255,255,.06); border-radius: 12px; padding: 12px 14px;
+  transition: all .2s ease; }
+.dl:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.15);
+  box-shadow: 0 12px 30px rgba(0,0,0,.35); }
+.fmt { width: 36px; height: 36px; border-radius: 8px; display: grid;
+  place-items: center; background: rgba(255,255,255,.08); font-weight: 800;
+  font-size: 7px; }`,
+  },
+  "event-schedule-list": {
+    react: `// React — sticky date headers + expandable sessions
+<div className="agenda">
+  {sessions.map((s, i) => {
+    const sticky = i === 0 || sessions[i-1].date !== s.date;
+    return (
+      <div key={s.when}>
+        {sticky && <h3 className="date sticky">{s.date}</h3>}
+        <button aria-expanded={open === s.id}
+          onClick={() => setOpen(open === s.id ? null : s.id)}>
+          <time>{s.when}</time>
+          <div><h4>{s.t}</h4><p>{s.who} · {s.room}</p></div>
+          <Tag>{s.tag}</Tag>
+        </button>
+      </div>
+    );
+  })}
+</div>`,
+    css: `.agenda { max-height: 100%; overflow-y: auto; }
+.date { position: sticky; top: 0; z-index: 1; background: var(--canvas);
+  padding: 6px 0; font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .22em; border-bottom: 1px solid rgba(255,255,255,.06); }
+.session[aria-expanded="true"] { border-color: rgba(252,211,77,.35); }`,
+  },
+  "map-free-local-band": {
+    react: `// React — local time is real: Intl with the actual timezone
+const now = new Date();
+const t = new Intl.DateTimeFormat("en", { hour: "2-digit", minute: "2-digit",
+  hour12: false, timeZone: "Europe/Amsterdam" }).format(now);
+{cities.map(c => (
+  <div className="office" key={c.city}>
+    <span className={open ? "pulse open" : "pulse closed"} aria-hidden />
+    <div><strong>{c.city}</strong> · {c.note}</div>
+    <time>{t} {late ? "closed" : "open"}</time>
+  </div>
+))}
+// a 30s interval keeps it honest; no map script, no tracker`,
+    css: `.pulse { position: relative; width: 8px; height: 8px; border-radius: 99px; }
+.pulse.open { background: var(--color-mint); }
+.pulse.closed { background: var(--color-amber); }
+.pulse::after { content: ""; position: absolute; inset: 0; border-radius: 99px;
+  animation: mf-glow 2s ease-in-out infinite; background: inherit; }
+time { font-variant-numeric: tabular-nums; }`,
+  },
 };
 
 const FALLBACK = {
@@ -1935,6 +2116,46 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     why: "A vertical timeline lets a story (roadmap, case study, changelog) keep its chronology while cards breathe beside a single spine.",
     idea: "Alternate emphasis rather than alternating sides on small screens — one rail, consistent rhythm, and the 'when' chip always visible.",
     skip: "If your milestones are all the same weight, a numbered list beats a timeline — the rail promises progression, not just order.",
+  },
+  "newsletter-band-tiers": {
+    why: "Email capture that offers a frequency choice converts better and unsubscribes less — the tier IS the consent, stated up front.",
+    idea: "Keep the error line in aria-live and the success state in place; a form that moves its message around makes users hunt for feedback.",
+    skip: "If you can only send one cadence, don't fake three tiers — a single honest 'monthly, unsubscribe anytime' beats theatre.",
+  },
+  "hero-product-mock": {
+    why: "A headline claims; a browser frame demonstrates. The dev-tool hero is the fastest way to show a developer product without a video.",
+    idea: "Numbers inside the mock should be real data from the same source as the rest of the site — a fake dashboard is a liability.",
+    skip: "Don't animate the mock on loop; one quiet entrance and the frame earns its keep. Autoplay reads as a gif, not a product.",
+  },
+  "split-feature-rows": {
+    why: "Alternating image/text rows are the workhorse of feature pages because the eye always knows where to look next.",
+    idea: "Stagger the rows' reveal (140ms apart) instead of releasing them together — sequence is what makes the pattern feel deliberate.",
+    skip: "Alternating sides is meaningless below ~700px; on mobile stack consistently and let the image lead, then the copy.",
+  },
+  "case-study-header": {
+    why: "Readers of a case study ask four questions first — client, role, year, stack. A labelled grid answers all four before a single paragraph.",
+    idea: "Real <dl> semantics make the grid meaningful to SR users, and truncation on one line keeps the header scannable.",
+    skip: "If a fact is empty, drop it — an empty 'client:' cell reads as a secret, and case studies with secrets don't sell.",
+  },
+  "changelog-feed": {
+    why: "Users check changelogs to answer 'did my issue get fixed?' — version chips and type badges let them scan instead of read.",
+    idea: "One-open-at-a-time entries keep the feed compact; version numbers are anchors, so link to them from release notes.",
+    skip: "Don't bury breaking-change warnings inside expandable bodies — breaking changes deserve the badge, not the click.",
+  },
+  "resource-download-cards": {
+    why: "Downloads live or die on trust; format badge, honest size and plain names remove every reason to hesitate.",
+    idea: "Hover lift signals clickability before the button is reached, and the grabbed state gives immediate closure without a fake progress bar.",
+    skip: "If a download isn't actually wired up, say 'coming soon' instead of faking a success state — fake downloads are a support ticket generator.",
+  },
+  "event-schedule-list": {
+    why: "Event pages are time-critical; sticky date headers keep 'which day is this?' answered even mid-scroll.",
+    idea: "Time in a mono column and a type badge (talk/workshop/panel) give three independent scan paths through the same list.",
+    skip: "Don't let sticky headers cover the first session — give the header a background and a hairline border so stacking is readable.",
+  },
+  "map-free-local-band": {
+    why: "An embedded map costs a script, a tracker and a cookie banner; a card per office with real local time answers the actual question — is anyone awake?",
+    idea: "Compute the local time from the true IANA timezone with Intl and refresh on a slow interval; open/closed falls out of the same data.",
+    skip: "If you're open by appointment only, say so in the card — a green 'open' pulse next to 'by appointment' is a contradiction users will notice.",
   },
 };
 

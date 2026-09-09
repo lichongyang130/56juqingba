@@ -5405,6 +5405,486 @@ function TimelineVertical() {
   );
 }
 
+const NB_TIERS = ["weekly digest", "launch only", "deep dives"] as const;
+
+function NewsletterBandTiers() {
+  const [tier, setTier] = useState<(typeof NB_TIERS)[number]>("weekly digest");
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "error" | "done">("idle");
+  const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+  const submit = () => {
+    if (!valid) {
+      setState("error");
+      return;
+    }
+    setState("done");
+  };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(52,211,153,0.12),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md rounded-2xl border border-white/8 bg-white/4 p-6 text-center">
+        <span className="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-emerald-200">
+          the motif post
+        </span>
+        <h3 className="mt-3 text-xl font-black tracking-tight text-white">one useful letter a week</h3>
+        <p className="mx-auto mt-1.5 max-w-[300px] text-[11px] leading-relaxed text-ink-dim">
+          design notes, fresh assets and honest a11y lessons — never a sales blast, unsubscribe in one click.
+        </p>
+        {state === "done" ? (
+          <div className="mt-4 rounded-xl border border-emerald-300/30 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-200" role="status">
+            ✓ You’re subscribed to “{tier}”.
+          </div>
+        ) : (
+          <>
+            <div className="mx-auto mt-4 flex max-w-[340px] gap-1 rounded-xl border border-white/10 bg-black/30 p-1">
+              {NB_TIERS.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTier(t)}
+                  aria-pressed={tier === t}
+                  className={`flex-1 rounded-lg px-2 py-1.5 text-[10px] font-bold capitalize transition-colors ${
+                    tier === t ? "bg-emerald-400/20 text-emerald-100" : "text-ink-faint hover:text-ink-dim"
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+            <div className={`mx-auto mt-3 flex max-w-[340px] items-center gap-2 rounded-xl border px-3 py-2 ${state === "error" ? "border-rose-300/50" : "border-white/10"}`}>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (state !== "idle") setState("idle");
+                }}
+                onKeyDown={(e) => e.key === "Enter" && submit()}
+                placeholder="you@studio.dev"
+                aria-label="Email address"
+                className="min-w-0 flex-1 bg-transparent text-xs text-white outline-none placeholder:text-ink-faint"
+              />
+              <button type="button" onClick={submit} className="shrink-0 rounded-lg bg-emerald-300 px-4 py-1.5 text-[11px] font-black text-[#06120c] transition-colors hover:bg-emerald-200">
+                Subscribe
+              </button>
+            </div>
+            <p aria-live="polite" className="mt-2 h-3 text-[10px] text-rose-200">
+              {state === "error" ? "Please use a real address — e.g. you@studio.dev" : ""}
+            </p>
+          </>
+        )}
+      </div>
+      <p className="mt-4 max-w-md text-center text-[10px] leading-relaxed text-ink-faint">
+        capture = email + frequency choice; the tier pill is part of the promise, so the welcome email can match it.
+      </p>
+    </div>
+  );
+}
+
+function HeroProductMock() {
+  return (
+    <div className="flex h-full w-full flex-col justify-center gap-4 overflow-hidden bg-[radial-gradient(70%_100%_at_70%_0%,rgba(139,92,246,0.18),transparent_55%),#08090f] px-6">
+      <div className="mx-auto w-full max-w-md">
+        <div className="flex items-end justify-between gap-3">
+          <div className="max-w-[220px]">
+            <span className="rounded-full border border-violet-300/25 bg-violet-300/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-violet-200">
+              dev-tool hero
+            </span>
+            <h3 className="mt-2 text-2xl font-black leading-[1.05] tracking-tight text-white">
+              your UI, shipped <span className="text-violet-300">as systems</span>
+            </h3>
+            <p className="mt-2 text-[11px] leading-relaxed text-ink-dim">
+              components, tokens and motion language — assembled, not bolted on.
+            </p>
+            <div className="mt-3 flex gap-2">
+              <button type="button" className="rounded-lg bg-white px-3.5 py-1.5 text-[11px] font-black text-[#0b0c12] transition-transform hover:-translate-y-0.5">
+                Browse assets
+              </button>
+              <button type="button" className="rounded-lg border border-white/15 px-3.5 py-1.5 text-[11px] font-bold text-white/85 transition-colors hover:bg-white/5">
+                Read the essay
+              </button>
+            </div>
+          </div>
+          <p className="pb-1 font-mono text-[9px] text-ink-faint">v0.9 · 93 assets</p>
+        </div>
+        <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-[#0d1017]/95 shadow-[0_30px_80px_rgba(0,0,0,.5)] backdrop-blur">
+          <div className="flex items-center gap-2 border-b border-white/6 px-3 py-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+            <span className="ml-2 flex-1 rounded-md bg-white/5 px-2 py-0.5 font-mono text-[9px] text-ink-faint">motif.ui/demo/aurora</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2 p-3">
+            <div className="col-span-2 flex flex-col gap-2 rounded-xl border border-white/6 bg-white/3 p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-ink-faint">surfaces shipped</span>
+                <span className="font-mono text-[10px] text-violet-300">1,214</span>
+              </div>
+              <div className="flex h-12 items-end gap-1">
+                {[38, 55, 30, 62, 48, 74, 58, 88, 66, 42].map((hgt, i) => (
+                  <span key={i} className="flex-1 rounded-t-sm bg-gradient-to-t from-violet-500/40 to-violet-300/70" style={{ height: `${hgt}%`, animation: `mf-growin .4s ease-out ${i * 40}ms both` }} />
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="rounded-xl border border-white/6 bg-white/3 p-2.5">
+                <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-ink-faint">tokens</span>
+                <span className="mt-1 block text-base font-black text-white">42</span>
+              </div>
+              <div className="rounded-xl border border-white/6 bg-white/3 p-2.5">
+                <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-ink-faint">a11y</span>
+                <span className="mt-1 block text-base font-black text-emerald-300">98</span>
+              </div>
+              <div className="rounded-xl border border-white/6 bg-white/3 p-2.5">
+                <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-ink-faint">runtime</span>
+                <span className="mt-1 block text-base font-black text-cyan-300">0kb</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const SFR_ROWS = [
+  {
+    k: "01",
+    t: "Tokens before components",
+    body: "Colour, type and spacing decided on real screens first — the component palette is a consequence, not a starting point.",
+    tags: ["foundations", "palette"],
+    art: "linear-gradient(150deg, hsl(262 80% 30%), hsl(199 90% 38%))",
+    mark: "◐",
+  },
+  {
+    k: "02",
+    t: "Motion with a budget",
+    body: "Every animation earns its place: under 200ms for feedback, over 500ms only for story beats, and reduced-motion kills the whole theatre.",
+    tags: ["motion", "principles"],
+    art: "linear-gradient(150deg, hsl(172 80% 26%), hsl(199 90% 34%))",
+    mark: "◒",
+  },
+] as const;
+
+function SplitFeatureRows() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) setSeen(true);
+        });
+      },
+      { threshold: 0.3 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">feature rows — scroll for the fade</span>
+        <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] text-ink-faint">{seen ? "revealed" : "waiting…"}</span>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+        <div className="mx-auto max-w-sm space-y-6">
+          {SFR_ROWS.map((r, i) => {
+            const flip = i % 2 === 1;
+            return (
+              <article
+                key={r.k}
+                className={`grid grid-cols-[110px_minmax(0,1fr)] gap-3 ${flip ? "direction-rtl" : ""}`}
+                style={{ animation: seen ? `mf-rise .5s ease-out ${i * 140}ms both` : undefined, opacity: seen ? undefined : 0 }}
+              >
+                <div
+                  className="group relative flex h-28 items-center justify-center overflow-hidden rounded-xl border border-white/10"
+                  style={{ background: r.art }}
+                >
+                  <span className="text-4xl text-white/35 transition-transform duration-500 group-hover:scale-125" aria-hidden>
+                    {r.mark}
+                  </span>
+                  <span aria-hidden className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/10" />
+                </div>
+                <div className="flex min-w-0 flex-col justify-center">
+                  <span className="font-mono text-[9px] text-ink-faint">{r.k}</span>
+                  <h3 className="mt-0.5 text-sm font-black leading-tight tracking-tight text-white">{r.t}</h3>
+                  <p className="mt-1.5 text-[10.5px] leading-relaxed text-ink-dim">{r.body}</p>
+                  <div className="mt-2 flex gap-1.5">
+                    {r.tags.map((t) => (
+                      <span key={t} className="rounded-full border border-white/10 px-2 py-0.5 text-[8px] font-bold uppercase tracking-[0.16em] text-ink-faint">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+          <p className="pb-1 text-center text-[9px] text-ink-faint">each row fades up 140ms after the last — and the art panel zooms gently on hover.</p>
+        </div>
+      </div>
+      <style>{`.direction-rtl { direction: rtl } .direction-rtl > * { direction: ltr }`}</style>
+    </div>
+  );
+}
+
+const CSH_FACTS = [
+  { k: "client", v: "Northwind Retail" },
+  { k: "role", v: "Design system + build" },
+  { k: "year", v: "2026" },
+  { k: "stack", v: "React · Figma · tokens" },
+] as const;
+
+function CaseStudyHeader() {
+  return (
+    <div className="flex h-full w-full flex-col justify-center overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(34,211,238,0.09),transparent_60%),#08090f] px-6">
+      <div className="mx-auto w-full max-w-md rounded-2xl border border-white/8 bg-white/3 p-5">
+        <div className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-ink-faint">
+          <span className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-2 py-0.5 text-cyan-200">case study</span>
+          <span>design systems</span>
+        </div>
+        <h3 className="mt-3 text-xl font-black leading-tight tracking-tight text-white">
+          Bringing 14 storefronts onto one design system — without a freeze
+        </h3>
+        <p className="mt-2 text-[11px] leading-relaxed text-ink-dim">
+          How Northwind’s five squads shipped a token pipeline, a living component set and an a11y bar, all while the roadmap kept moving.
+        </p>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {CSH_FACTS.map((f) => (
+            <div key={f.k} className="rounded-xl border border-white/6 bg-black/20 px-3 py-2">
+              <span className="block text-[8px] font-bold uppercase tracking-[0.2em] text-ink-faint">{f.k}</span>
+              <span className="mt-0.5 block truncate text-[11px] font-bold text-white/90">{f.v}</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 flex items-center justify-between border-t border-white/6 pt-3">
+          <span className="font-mono text-[9px] text-ink-faint">read time · 9 min</span>
+          <button type="button" className="rounded-lg bg-white/10 px-3 py-1.5 text-[10px] font-black text-white transition-colors hover:bg-white/15">
+            Read the study →
+          </button>
+        </div>
+      </div>
+      <p className="mx-auto mt-4 w-full max-w-md text-center text-[9px] leading-relaxed text-ink-faint">
+        the labelled grid does the heavy lifting — client, role, year and stack answer the four questions every reader asks first.
+      </p>
+    </div>
+  );
+}
+
+const CL_ITEMS = [
+  { ver: "v1.3.0", day: "today", kind: "asset", tone: "mint", title: "Bento grid joins the library", body: "Eight marketing sections landed, from logo walls to comparison sliders." },
+  { ver: "v1.2.1", day: "tue", kind: "fix", tone: "amber", title: "Marquee pause on hover", body: "Hovering a testimonial row now pauses both lanes; reduced-motion wraps instead of drifting." },
+  { ver: "v1.2.0", day: "mon", kind: "feat", tone: "violet", title: "Pricing + newsletter sections", body: "Billing toggle, frequency pills — copy and code in one pass." },
+  { ver: "v1.1.0", day: "last week", kind: "asset", tone: "mint", title: "Toast queue with undo", body: "Countdown bars, a batch cap of three, and an Undo action for mis-taps." },
+  { ver: "v1.0.9", day: "last week", kind: "fix", tone: "amber", title: "Faster a11y audit", body: "The screen-reader pass now runs in CI on every demo change." },
+] as const;
+
+function ChangelogFeed() {
+  const [openVer, setOpenVer] = useState<string | null>("v1.3.0");
+  const toneMap: Record<string, string> = {
+    asset: "border-emerald-300/25 bg-emerald-300/10 text-emerald-200",
+    feat: "border-violet-300/25 bg-violet-300/10 text-violet-200",
+    fix: "border-amber-300/25 bg-amber-300/10 text-amber-200",
+  };
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">ship log</span>
+        <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] text-emerald-300">v1.3.0 · live</span>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-3">
+        <div className="mx-auto max-w-sm space-y-2">
+          {CL_ITEMS.map((it) => {
+            const open = openVer === it.ver;
+            return (
+              <div key={it.ver} className={`rounded-xl border px-3.5 py-3 transition-colors ${open ? "border-white/15 bg-white/5" : "border-white/6 bg-white/2 hover:bg-white/4"}`}>
+                <button
+                  type="button"
+                  onClick={() => setOpenVer(open ? null : it.ver)}
+                  aria-expanded={open}
+                  className="flex w-full items-center gap-2.5 text-left"
+                >
+                  <span className="rounded-md bg-white/10 px-2 py-0.5 font-mono text-[9px] font-bold text-white/85">{it.ver}</span>
+                  <span className={`rounded-full border px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.16em] ${toneMap[it.kind]}`}>{it.kind}</span>
+                  <span className="min-w-0 flex-1 truncate text-[11px] font-bold text-white/90">{it.title}</span>
+                  <span className="shrink-0 text-[8px] uppercase tracking-[0.14em] text-ink-faint">{it.day}</span>
+                </button>
+                {open && (
+                  <p className="mt-2 border-t border-white/6 pt-2 text-[10.5px] leading-relaxed text-ink-dim" style={{ animation: "mf-fade .2s ease-out both" }}>
+                    {it.body}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const RD_FILES = [
+  { name: "aurora-tokens.zip", fmt: "ZIP", size: "84 KB", note: "design tokens for Figma + code" },
+  { name: "signature-motion-guide.pdf", fmt: "PDF", size: "2.1 MB", note: "the motion language in 18 pages" },
+  { name: "motif-foundations.sketch", fmt: "FIG", size: "12 MB", note: "full source for the foundations" },
+] as const;
+
+function ResourceDownloadCards() {
+  const [done, setDone] = useState<Record<string, boolean>>({});
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(250,204,21,0.08),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md">
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">downloads · free with the newsletter</p>
+        <div className="mt-3 space-y-2">
+          {RD_FILES.map((f) => (
+            <div
+              key={f.name}
+              className="flex items-center gap-3 rounded-xl border border-white/6 bg-white/3 px-3.5 py-3 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/15 hover:bg-white/5 hover:shadow-[0_12px_30px_rgba(0,0,0,.35)]"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/8 font-mono text-[8px] font-black text-amber-200" style={{ fontSize: 7 }}>
+                {f.fmt}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-mono text-[11px] text-white/90">{f.name}</p>
+                <p className="text-[9px] text-ink-faint">
+                  {f.size} · {f.note}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDone((d) => ({ ...d, [f.name]: true }))}
+                className={`shrink-0 rounded-lg px-3 py-1.5 text-[10px] font-black transition-colors ${
+                  done[f.name] ? "bg-emerald-300/15 text-emerald-300" : "bg-white/10 text-white hover:bg-white/15"
+                }`}
+              >
+                {done[f.name] ? "✓ grabbed" : "Download"}
+              </button>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-center text-[9px] leading-relaxed text-ink-faint">format badge + honest size first, action second — no mystery links, no “subscribe to reveal”.</p>
+      </div>
+    </div>
+  );
+}
+
+const EV_SESSIONS = [
+  { date: "wed · mar 11", when: "09:30", t: "Tokens as the contract", who: "Ada Lin", tag: "talk", room: "hall a" },
+  { date: "wed · mar 11", when: "11:00", t: "Motion without the maths", who: "Rin Sato", tag: "workshop", room: "room 2" },
+  { date: "wed · mar 11", when: "14:00", t: "The a11y audit that ran itself", who: "Temi Okafor", tag: "talk", room: "hall b" },
+  { date: "thu · mar 12", when: "09:00", t: "Design systems on a deadline", who: "Jonas Varga", tag: "panel", room: "hall a" },
+  { date: "thu · mar 12", when: "11:30", t: "Shipping a library in 10 weeks", who: "Nadia Haddad", tag: "talk", room: "room 1" },
+] as const;
+
+function EventScheduleList() {
+  const [pick, setPick] = useState<string | null>(null);
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">summit schedule</span>
+        <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] text-ink-faint">2 days · 5 sessions</span>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-3">
+        <div className="mx-auto max-w-sm">
+          {EV_SESSIONS.map((s, i) => {
+            const sticky = i === 0 || EV_SESSIONS[i - 1].date !== s.date;
+            const active = pick === `${s.date}-${s.when}`;
+            return (
+              <div key={`${s.date}-${s.when}`} className="relative pb-1.5">
+                {sticky && (
+                  <p className="sticky top-0 z-10 border-y border-white/6 bg-[#0a0c13]/95 py-1.5 text-[9px] font-black uppercase tracking-[0.22em] text-ink-dim backdrop-blur">
+                    {s.date}
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setPick(active ? null : `${s.date}-${s.when}`)}
+                  aria-expanded={active}
+                  className={`mt-1.5 flex w-full items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition-colors ${
+                    active ? "border-amber-300/35 bg-amber-300/8" : "border-white/6 bg-white/3 hover:border-white/15"
+                  }`}
+                >
+                  <span className="w-11 shrink-0 font-mono text-[10px] font-bold text-amber-200">{s.when}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[11px] font-bold text-white/90">{s.t}</span>
+                    <span className="block text-[9px] text-ink-faint">
+                      {s.who} · {s.room}
+                    </span>
+                  </span>
+                  <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.14em] ${
+                    s.tag === "workshop" ? "border-cyan-300/25 text-cyan-200" : s.tag === "panel" ? "border-violet-300/25 text-violet-200" : "border-white/10 text-ink-dim"
+                  }`}>
+                    {s.tag}
+                  </span>
+                </button>
+                {active && (
+                  <p className="rounded-b-xl border border-t-0 border-amber-300/20 bg-amber-300/4 px-3.5 py-2 text-[9.5px] leading-relaxed text-ink-dim" style={{ animation: "mf-fade .2s ease-out both" }}>
+                    Seat held for “{EV_SESSIONS.find((x) => x.date === s.date && x.when === s.when)?.t}”. Doors open 15 minutes before — see you there.
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const MF_CITIES = [
+  { city: "Rotterdam", tz: "Europe/Amsterdam", note: "studio + workshop floor", hours: "mon–fri · 9–18" },
+  { city: "Singapore", tz: "Asia/Singapore", note: "APAC hub · by appointment", hours: "tue + thu · 10–16" },
+  { city: "Lisbon", tz: "Europe/Lisbon", note: "the remote-friendly attic", hours: "always online" },
+] as const;
+
+function MapFreeLocalBand() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const t = window.setInterval(() => setNow(new Date()), 30000);
+    return () => window.clearInterval(t);
+  }, []);
+  const time = (tz: string) =>
+    new Intl.DateTimeFormat("en", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(now);
+  return (
+    <div className="flex h-full w-full flex-col justify-center overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(52,211,153,0.09),transparent_60%),#08090f] px-6">
+      <div className="mx-auto w-full max-w-md">
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">where we work · no map, no tracker</p>
+        <div className="mt-3 space-y-2">
+          {MF_CITIES.map((c) => {
+            const t = time(c.tz);
+            const late = Number(t.split(":")[0]) >= 18 || Number(t.split(":")[0]) < 9;
+            return (
+              <div key={c.city} className="flex items-center gap-3 rounded-xl border border-white/6 bg-white/3 px-3.5 py-3">
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className={`absolute inline-flex h-full w-full rounded-full opacity-60 ${late ? "bg-amber-300" : "bg-emerald-300"}`} style={{ animation: "mf-glow 2s ease-in-out infinite" }} />
+                  <span className={`relative inline-flex h-2 w-2 rounded-full ${late ? "bg-amber-300" : "bg-emerald-300"}`} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-[11px] font-black tracking-tight text-white">{c.city}</span>
+                    <span className="shrink-0 font-mono text-[10px] text-ink-dim">
+                      {t}
+                      <span className="ml-1 text-[8px] text-ink-faint">{late ? "closed" : "open"}</span>
+                    </span>
+                  </div>
+                  <p className="truncate text-[9px] text-ink-faint">
+                    {c.note} · {c.hours}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-center text-[9px] leading-relaxed text-ink-faint">
+          local time is computed live from the real timezone — a map-free band that still answers “is anyone awake there?”.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 
@@ -5435,6 +5915,8 @@ export const DEMO_KEYS = [
   "scroll-vignette", "word-by-word-highlight", "shake-on-error-field", "bento-feature-grid",
   "logo-wall-hover-pop", "testimonial-marquee", "pricing-table-three", "stats-band",
   "team-grid-filter", "faq-two-column", "comparison-slider", "timeline-vertical",
+  "newsletter-band-tiers", "hero-product-mock", "split-feature-rows", "case-study-header",
+  "changelog-feed", "resource-download-cards", "event-schedule-list", "map-free-local-band",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -5538,6 +6020,14 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "faq-two-column": return <FaqTwoColumn />;
     case "comparison-slider": return <ComparisonSlider />;
     case "timeline-vertical": return <TimelineVertical />;
+    case "newsletter-band-tiers": return <NewsletterBandTiers />;
+    case "hero-product-mock": return <HeroProductMock />;
+    case "split-feature-rows": return <SplitFeatureRows />;
+    case "case-study-header": return <CaseStudyHeader />;
+    case "changelog-feed": return <ChangelogFeed />;
+    case "resource-download-cards": return <ResourceDownloadCards />;
+    case "event-schedule-list": return <EventScheduleList />;
+    case "map-free-local-band": return <MapFreeLocalBand />;
     default: return null;
   }
 }

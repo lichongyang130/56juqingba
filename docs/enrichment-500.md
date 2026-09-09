@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 56 / 500 shipped (batches 1–7, in order)
+## Progress — 64 / 500 shipped (batches 1–8, in order)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -68,11 +68,19 @@ names, behaviours and where they plug into the existing pages.
 | 54 | FAQ two-column | [/components/faq-two-column](/components/faq-two-column) |
 | 55 | Comparison slider (before/after) | [/components/comparison-slider](/components/comparison-slider) |
 | 56 | Timeline (vertical) | [/components/timeline-vertical](/components/timeline-vertical) |
+| 57 | Newsletter band with tiers | [/components/newsletter-band-tiers](/components/newsletter-band-tiers) |
+| 58 | Hero with product mock frame | [/components/hero-product-mock](/components/hero-product-mock) |
+| 59 | Split feature rows | [/components/split-feature-rows](/components/split-feature-rows) |
+| 60 | Case-study header | [/components/case-study-header](/components/case-study-header) |
+| 61 | Changelog feed | [/components/changelog-feed](/components/changelog-feed) |
+| 62 | Resource/download cards | [/components/resource-download-cards](/components/resource-download-cards) |
+| 63 | Event schedule list | [/components/event-schedule-list](/components/event-schedule-list) |
+| 64 | Map-free local band | [/components/map-free-local-band](/components/map-free-local-band) |
 
 
 ---
 
-## 1. Component library — 70 ideas (56/70 shipped · catalog 39 → 93)
+## 1. Component library — 70 ideas (64/70 shipped · catalog 39 → 101)
 
 ### Form & input elements
 - **Combo box** ✅ (`combo-box`): text input with a live-filtered option list, keyboard navigation and a "no matches" row — slots into every filter on the site.
@@ -139,14 +147,14 @@ names, behaviours and where they plug into the existing pages.
 - **FAQ two-column** ✅ (`faq-two-column`): question list left, answer panel right with animated swap.
 - **Comparison slider (before/after)** ✅ (`comparison-slider`): draggable divider over two visuals.
 - **Timeline (vertical)** ✅ (`timeline-vertical`): milestone rail with breathing cards and gradient spine.
-- **Newsletter band with tiers**: email capture with frequency choice pills ("weekly digest / launch only").
-- **Hero with product mock frame**: a browser-chrome frame containing a mini UI — the classic dev-tool hero.
-- **Split feature rows**: image/text alternating rows with scroll-fade and hover zoom on image.
-- **Case-study header**: client, role, year, stack as a labelled grid under a big title.
-- **Changelog feed**: the home "Ship log" pattern extracted as a reusable section with version chips.
-- **Resource/download cards**: card rows with format badges (PDF, ZIP, Figma) and size.
-- **Event schedule list**: date-sticky list with session cards — useful as a Motif template.
-- **Map-free local band**: "offices/where we work" cards without an embedded map (perf-friendly).
+- **Newsletter band with tiers** ✅ (`newsletter-band-tiers`): email capture with frequency choice pills.
+- **Hero with product mock frame** ✅ (`hero-product-mock`): a browser-chrome frame containing a mini dashboard.
+- **Split feature rows** ✅ (`split-feature-rows`): image/text alternating rows with scroll-fade and hover zoom on the art.
+- **Case-study header** ✅ (`case-study-header`): client, role, year, stack as a labelled grid under a big title.
+- **Changelog feed** ✅ (`changelog-feed`): the "Ship log" pattern extracted as a reusable section with version chips.
+- **Resource/download cards** ✅ (`resource-download-cards`): card rows with format badges (PDF, ZIP, Figma) and size.
+- **Event schedule list** ✅ (`event-schedule-list`): date-sticky list with session cards.
+- **Map-free local band** ✅ (`map-free-local-band`): offices/where-we-work cards with live local time, no map script.
 - **App screenshot tour**: sticky phone frame whose screen swaps with captions.
 
 ### Templates (whole pages)
