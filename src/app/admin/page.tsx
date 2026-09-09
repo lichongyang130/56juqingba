@@ -1,14 +1,19 @@
 import Link from "next/link";
 import { COMPONENTS, PROMPTS } from "@/lib/data";
 
-const KPI = [
-  { label: "Live assets", value: "612", delta: "+31 this week", up: true },
-  { label: "Live prompts", value: "318", delta: "+12", up: true },
-  { label: "Copies (30d)", value: "148.2k", delta: "+12.4%", up: true },
-  { label: "Subscribers (MRR)", value: "$11,842", delta: "+$620", up: true },
-  { label: "Pending moderation", value: "7", delta: "SLA 48h", up: false },
-  { label: "Community contributors", value: "1,204", delta: "+84", up: true },
-];
+export default function AdminDashboard() {
+  const catalog = COMPONENTS.length;
+  const verifiedPrompts = PROMPTS.filter((p) => p.status === "verified" || p.status === "featured").length;
+  const copiesTotal = COMPONENTS.reduce((s, c) => s + c.copies, 0);
+  const avgFidelity = Math.round(PROMPTS.reduce((s, p) => s + p.avgFidelity, 0) / Math.max(1, PROMPTS.length));
+  const KPI = [
+    { label: "Assets in catalog", value: String(catalog), delta: "+8 this drop", up: true },
+    { label: "Prompts live", value: String(PROMPTS.length), delta: `+${verifiedPrompts} verified`, up: true },
+    { label: "Copies (30d)", value: `${(copiesTotal / 1000).toFixed(1)}k`, delta: "+12.4%", up: true },
+    { label: "Avg prompt fidelity", value: `${avgFidelity}/100`, delta: "+0.6 pt", up: true },
+    { label: "Pending moderation", value: "7", delta: "SLA 48h", up: false },
+    { label: "Community contributors", value: "1,204", delta: "+84", up: true },
+  ];
 
 const CATEGORY_COPIES = [
   { label: "Elements", value: 41, color: "bg-violet-400" },
@@ -25,7 +30,6 @@ const PIPELINE = [
   { stage: "Approved", n: 6 },
 ];
 
-export default function AdminDashboard() {
   const recentAssets = [...COMPONENTS].sort((a, b) => (a.published < b.published ? 1 : -1)).slice(0, 5);
   const recentPrompts = [...PROMPTS].sort((a, b) => (a.published < b.published ? 1 : -1)).slice(0, 4);
 

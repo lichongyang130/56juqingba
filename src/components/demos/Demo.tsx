@@ -1383,6 +1383,477 @@ function SheetMenu() {
   );
 }
 
+/* ------------------------------ WAVE 4 SCENES (2026-09) ------------------------------ */
+
+function SegmentedControl({ count = 3 }: DemoProps) {
+  const pool = ["Essential", "Pro", "Scale", "Enterprise"];
+  const n = typeof count === "number" ? Math.max(2, Math.min(5, Math.round(count))) : 3;
+  const opts = pool.slice(0, n);
+  const [sel, setSel] = useState(1);
+  const [hover, setHover] = useState<number | null>(null);
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(34,211,238,0.13),transparent_60%),#08090f] px-6">
+      <div className="relative flex items-center rounded-2xl border border-white/10 bg-white/5 p-1.5 backdrop-blur-md" style={{ gap: 2 }}>
+        {opts.map((o, i) => {
+          const active = sel === i;
+          return (
+            <button
+              key={o}
+              type="button"
+              onMouseEnter={() => setHover(i)}
+              onMouseLeave={() => setHover(null)}
+              onClick={() => setSel(i)}
+              aria-pressed={active}
+              className="relative z-10 rounded-xl px-5 py-2.5 text-sm font-bold transition-colors"
+              style={{ color: active ? "#fff" : hover === i ? "#d7dae3" : "#8a93a6" }}
+            >
+              {o}
+            </button>
+          );
+        })}
+        {/* sliding thumb */}
+        <span
+          className="absolute rounded-xl border border-white/20 bg-white/12 shadow-[0_0_20px_rgba(34,211,238,0.25)]"
+          aria-hidden
+          style={{
+            top: 6, bottom: 6, width: `calc((100% - 12px) / ${n})`,
+            left: `calc(6px + ${sel} * (100% - 12px) / ${n})`,
+            transition: "left .3s cubic-bezier(.65,0,.25,1)",
+          }}
+        />
+      </div>
+      <div className="flex items-center gap-2 text-xs text-ink-dim">
+        <span className="chip !text-[10px] uppercase tracking-wider text-cyan-200/70">selected</span>
+        <span className="font-mono text-cyan-200/90">{opts[sel]}</span>
+        <span className="text-ink-faint">— tap to slide · segmented control</span>
+      </div>
+    </div>
+  );
+}
+
+const NOTIFICATIONS = [
+  { who: "lena.dev", text: "left a like on Aurora Veil", when: "2m", tone: 258 },
+  { who: "Prompt runner", text: "GLM-4.6 finished · fidelity 94/100", when: "14m", tone: 192 },
+  { who: "studio.noir", text: "published a new template", when: "1h", tone: 330 },
+];
+
+function NotificationBell() {
+  const [open, setOpen] = useState(false);
+  const [unread, setUnread] = useState(NOTIFICATIONS.length);
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(60%_80%_at_50%_110%,rgba(244,114,182,0.13),transparent_60%),#0a0c13] px-6">
+      <div className="relative w-full max-w-sm">
+        {/* fake app header */}
+        <div className="flex items-center justify-between rounded-t-2xl border border-white/10 bg-white/4 px-4 py-3 backdrop-blur-sm">
+          <span className="text-sm font-black tracking-tight text-white">Motif Mail</span>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              aria-label={`Notifications, ${unread} unread`}
+              className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/6 text-base transition-all hover:bg-white/10"
+            >
+              🔔
+              {unread > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[9px] font-black text-white">
+                  {unread}
+                </span>
+              )}
+            </button>
+            {open && (
+              <>
+                <button type="button" aria-label="Close" onClick={() => setOpen(false)} className="fixed inset-0 cursor-default" tabIndex={-1} />
+                <div
+                  className="absolute right-0 z-20 mt-2 w-72 origin-top-right overflow-hidden rounded-2xl border border-white/12 bg-[#0d0f17]/98 shadow-2xl backdrop-blur-xl"
+                  style={{ animation: "mf-drop .18s ease-out both" }}
+                >
+                  <style>{`@keyframes mf-drop { from { opacity: 0; transform: translateY(-6px) scale(.98) } }`}</style>
+                  <div className="flex items-center justify-between border-b border-white/6 px-4 py-2.5">
+                    <span className="text-xs font-bold text-ink">Notifications</span>
+                    <button
+                      type="button"
+                      onClick={() => setUnread(0)}
+                      className="text-[10px] font-semibold text-violet-300 hover:text-violet-200"
+                    >
+                      Mark all read
+                    </button>
+                  </div>
+                  <ul className="divide-y divide-white/5">
+                    {NOTIFICATIONS.map((nt, i) => (
+                      <li key={nt.text} className="flex items-start gap-3 px-4 py-3 transition-colors hover:bg-white/4">
+                        <span
+                          className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-black text-white"
+                          style={{ background: `linear-gradient(135deg, hsl(${nt.tone} 85% 60%), hsl(${(nt.tone + 50) % 360} 80% 45%))` }}
+                        >
+                          {nt.who[0].toUpperCase()}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[12px] leading-snug text-ink-dim">
+                            <b className="text-ink">{nt.who}</b> {nt.text}
+                          </span>
+                          <span className="mt-0.5 block text-[10px] text-ink-faint">{nt.when} ago{i < unread ? " · unread" : ""}</span>
+                        </span>
+                        {i < unread && <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-400" />}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="border-t border-white/6 px-4 py-2 text-center text-[10px] font-semibold text-ink-faint">See all activity</div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+        {/* pretend inbox rows */}
+        <div className="divide-y divide-white/4 rounded-b-2xl border border-t-0 border-white/10 bg-white/2 p-2">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="flex items-center gap-3 px-2 py-2.5">
+              <span className="h-8 w-8 rounded-xl" style={{ background: `linear-gradient(135deg, hsl(${200 + i * 70} 75% 60% / .5), hsl(${(200 + i * 70 + 40) % 360} 80% 50% / .2))` }} />
+              <div className="flex-1 space-y-1.5">
+                <div className="h-1.5 w-4/5 rounded-full bg-white/12" />
+                <div className="h-1.5 w-3/5 rounded-full bg-white/6" />
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-center text-[10px] text-ink-faint">click the bell — unread badge, mark-all-read, aria-expanded wiring</p>
+      </div>
+    </div>
+  );
+}
+
+const LONG_FEED = Array.from({ length: 24 }).map((_, i) => ({
+  t: `Post ${String(i + 1).padStart(2, "0")}`,
+  h: 12 + ((i * 37) % 40),
+  c: 180 + i * 14,
+}));
+
+function ScrollProgress({ thickness = 6 }: DemoProps) {
+  const th = typeof thickness === "number" ? Math.max(2, Math.min(12, Math.round(thickness))) : 6;
+  const scroller = useRef<HTMLDivElement>(null);
+  const [prog, setProg] = useState(0);
+  const onScroll = () => {
+    const el = scroller.current;
+    if (!el) return;
+    const max = el.scrollHeight - el.clientHeight;
+    setProg(max > 0 ? el.scrollTop / max : 0);
+  };
+  return (
+    <div className="relative flex h-full w-full flex-col bg-[#0a0c13]">
+      {/* progress rail pinned to the stage's fake window */}
+      <div className="relative z-10 flex items-center gap-2 border-b border-white/6 bg-[#0d1017]/95 px-4 py-2 backdrop-blur">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">Article · scroll to read</span>
+        <span className="ml-auto font-mono text-[10px] text-cyan-200/80">{Math.round(prog * 100)}%</span>
+        <span
+          className="block rounded-full bg-gradient-to-r from-violet-400 via-indigo-300 to-cyan-300"
+          aria-hidden
+          style={{ height: th, width: "100%", maxWidth: 90, boxShadow: "0 0 12px rgba(139,92,246,.4)" }}
+        >
+          <span className="block h-full rounded-full bg-white/20" style={{ width: `${prog * 100}%` }} />
+        </span>
+      </div>
+      <div ref={scroller} onScroll={onScroll} className="relative flex-1 overflow-y-auto px-5 py-4">
+        <div className="mx-auto max-w-sm space-y-3">
+          <div className="h-2.5 w-3/4 rounded-full bg-white/20" />
+          <div className="h-2 w-1/2 rounded-full bg-white/8" />
+          {LONG_FEED.map((f) => (
+            <div key={f.t} className="rounded-xl border border-white/6 bg-white/3 p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-ink-dim">{f.t}</span>
+                <span className="text-[9px] text-ink-faint">reading time · {f.c}s</span>
+              </div>
+              <div className="mt-2 space-y-1.5">
+                <div className="h-1.5 w-full rounded-full bg-white/10" />
+                <div className="h-1.5 w-4/5 rounded-full bg-white/6" style={{ height: f.h > 30 ? 3 : undefined }} />
+              </div>
+            </div>
+          ))}
+          <p className="py-3 text-center text-[10px] text-ink-faint">— scroll inside this window —</p>
+        </div>
+      </div>
+      <div className="absolute inset-y-0 right-0 top-0 z-0 flex w-1 flex-col bg-white/4">
+        <div className="rounded-full bg-gradient-to-b from-violet-400 to-cyan-300 transition-[height] duration-75" style={{ height: `${prog * 100}%`, boxShadow: "0 0 10px rgba(139,92,246,.5)" }} />
+      </div>
+    </div>
+  );
+}
+
+const QUOTES = [
+  { q: "The only library where the demo isn't lying. What you see is what you copy.", who: "Lena K.", role: "Founder · linnea.dev", tone: 258 },
+  { q: "I stopped screenshotting other people's heroes. Everything I need is here, themed to my brand in seconds.", who: "Marco T.", role: "Design engineer", tone: 192 },
+  { q: "The prompt run logs are genius — I pick the model with the highest score and it just works.", who: "Aiko S.", role: "Solo builder", tone: 330 },
+];
+
+function TestimonialRotator({ speed = 5 }: DemoProps) {
+  const sp = typeof speed === "number" ? Math.max(2, Math.min(14, speed)) * 1000 : 5000;
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setI((v) => (v + 1) % QUOTES.length), sp);
+    return () => clearInterval(t);
+  }, [sp]);
+  const q = QUOTES[i];
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(167,139,250,0.15),transparent_60%),#080a11] px-6">
+      <div className="w-full max-w-md text-center">
+        <div className="flex items-center justify-center gap-1 text-violet-300">
+          {Array.from({ length: 5 }).map((_, s) => (
+            <span key={s} className="text-sm">★</span>
+          ))}
+        </div>
+        <blockquote
+          key={i}
+          className="mt-4 text-lg font-semibold leading-snug tracking-tight text-white md:text-xl"
+          style={{ animation: "mf-rise .4s cubic-bezier(.16,1,.3,1) both" }}
+        >
+          “{q.q}”
+        </blockquote>
+        <div key={`${i}-who`} className="mt-4 flex items-center justify-center gap-2.5" style={{ animation: "mf-rise .4s .06s cubic-bezier(.16,1,.3,1) both" }}>
+          <span
+            className="flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-black text-white"
+            style={{ background: `linear-gradient(135deg, hsl(${q.tone} 85% 60%), hsl(${(q.tone + 50) % 360} 80% 45%))` }}
+          >
+            {q.who[0]}
+          </span>
+          <span className="text-left">
+            <span className="block text-xs font-bold text-ink">{q.who}</span>
+            <span className="block text-[10px] text-ink-faint">{q.role}</span>
+          </span>
+        </div>
+        <div className="mt-5 flex items-center justify-center gap-2">
+          <button type="button" aria-label="Previous quote" onClick={() => setI((v) => (v - 1 + QUOTES.length) % QUOTES.length)} className="btn btn-quiet !h-7 !w-7 !rounded-full !p-0 text-xs">←</button>
+          <div className="flex gap-1.5">
+            {QUOTES.map((_, d) => (
+              <button
+                key={d} type="button" aria-label={`Quote ${d + 1}`} onClick={() => setI(d)}
+                className={`h-1.5 rounded-full transition-all ${d === i ? "w-5 bg-violet-300" : "w-1.5 bg-white/20 hover:bg-white/35"}`}
+              />
+            ))}
+          </div>
+          <button type="button" aria-label="Next quote" onClick={() => setI((v) => (v + 1) % QUOTES.length)} className="btn btn-quiet !h-7 !w-7 !rounded-full !p-0 text-xs">→</button>
+        </div>
+        <p className="mt-3 text-[10px] text-ink-faint">auto-rotates every {Math.round(sp / 1000)}s · pauses nothing, respects readers</p>
+      </div>
+    </div>
+  );
+}
+
+const COUNTDOWN_TOTAL_S = 2 * 86400 + 7 * 3600 + 22 * 60 + 19;
+const COUNTDOWN_ENDS_AT = Date.now() + COUNTDOWN_TOTAL_S * 1000;
+
+function CountdownDrop() {
+  const [left, setLeft] = useState(COUNTDOWN_TOTAL_S);
+  useEffect(() => {
+    const t = setInterval(() => {
+      const rem = Math.max(0, Math.round((COUNTDOWN_ENDS_AT - Date.now()) / 1000));
+      setLeft(rem);
+      if (rem === 0) clearInterval(t);
+    }, 1000);
+    return () => clearInterval(t);
+  }, []);
+  const d = Math.floor(left / 86400);
+  const h = Math.floor((left % 86400) / 3600);
+  const m = Math.floor((left % 3600) / 60);
+  const s = left % 60;
+  const cells = [
+    { v: d, l: "days" }, { v: h, l: "hrs" }, { v: m, l: "min" }, { v: s, l: "sec" },
+  ];
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 bg-[radial-gradient(70%_100%_at_50%_100%,rgba(34,211,238,0.16),transparent_62%),#07080d] px-6">
+      <div className="text-center">
+        <div className="chip !mb-2 !text-[9px] uppercase tracking-[0.3em] text-cyan-200/70">DROP 004 · limited run</div>
+        <div className="text-3xl font-black tracking-tight text-white md:text-4xl">The 004 ships in</div>
+      </div>
+      <div className="flex items-center gap-2 md:gap-3">
+        {cells.map((c, idx) => (
+          <div key={c.l} className="flex items-center gap-2 md:gap-3">
+            <div className="relative flex h-16 w-16 flex-col items-center justify-center overflow-hidden rounded-2xl border border-white/12 bg-white/5 backdrop-blur-md md:h-20 md:w-20" style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,.15)" }}>
+              <span key={c.v} className="text-2xl font-black tabular-nums text-white md:text-4xl" style={{ animation: "mf-flipin .4s cubic-bezier(.16,1,.3,1) both" }}>
+                {String(c.v).padStart(2, "0")}
+              </span>
+              <style>{`@keyframes mf-flipin { from { opacity: 0; transform: translateY(-10px) } }`}</style>
+              <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-white/40 md:text-[9px]">{c.l}</span>
+            </div>
+            {idx < cells.length - 1 && <span className="text-lg font-black text-white/30 md:text-2xl">:</span>}
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-3">
+        <span className="btn btn-primary !px-6 !py-2.5 text-xs">Notify me</span>
+        <span className="text-[10px] text-ink-faint">live countdown · 60fps · no deps</span>
+      </div>
+    </div>
+  );
+}
+
+const TERM_LINES = [
+  { t: "$ npx create-motif --template saas", c: "text-emerald-300/90" },
+  { t: "✓ scaffolded in 2.4s · 14 files", c: "text-white/70" },
+  { t: "$ motif add aurora-veil", c: "text-emerald-300/90" },
+  { t: "✓ asset installed (MIT · zero deps)", c: "text-white/70" },
+  { t: "$ motif test prompt dark-saas-launch", c: "text-emerald-300/90" },
+  { t: "claude ······ 95/100 ✓ clean", c: "text-violet-300/90" },
+  { t: "codex ········ 91/100 ✓ clean", c: "text-cyan-300/90" },
+  { t: "glm-4.6 ······· 90/100 ⚠ 1 fix", c: "text-pink-300/80" },
+];
+
+function TerminalHero({ speed = 34 }: DemoProps) {
+  const sp = typeof speed === "number" ? Math.max(12, Math.min(140, Math.round(speed))) : 34;
+  const joined = TERM_LINES.map((l) => l.t).join("\n");
+  const [count, setCount] = useState(0);
+  const done = count >= joined.length;
+  useEffect(() => {
+    if (done) return;
+    const t = setTimeout(() => setCount((c) => c + 1), sp);
+    return () => clearTimeout(t);
+  }, [count, done, sp]);
+  useEffect(() => {
+    if (!done) return;
+    const t = setTimeout(() => setCount(0), 4200);
+    return () => clearTimeout(t);
+  }, [done]);
+  // build displayed segments
+  const typed = joined.slice(0, count);
+  const parts = typed.split("\n");
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(60%_90%_at_50%_0%,rgba(139,92,246,0.16),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-lg">
+        <div className="flex items-center gap-2 border-b border-white/8 bg-[#0d0f17] px-4 py-2.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+          <span className="ml-3 text-[10px] font-mono text-ink-faint">motif — zsh</span>
+          <span className="ml-auto text-[9px] font-bold uppercase tracking-widest text-violet-300/70">dev workflow</span>
+        </div>
+        <div className="h-44 overflow-hidden bg-[#07080d] p-4 font-mono text-[11.5px] leading-[1.8]">
+          {parts.map((ln, idx) => {
+            const base = TERM_LINES[idx];
+            if (!base) return null;
+            return (
+              <div key={idx} className={base.c}>
+                {ln}
+                {idx === parts.length - 1 && !done && <span className="ml-0.5 inline-block h-3 w-1.5 animate-pulse-soft bg-cyan-300 align-middle" />}
+              </div>
+            );
+          })}
+          {done && <span className="inline-block h-3 w-1.5 animate-pulse-soft bg-cyan-300" />}
+          <span className="sr-only" role="status">{done ? "Command sequence finished" : "Typing command sequence"}</span>
+        </div>
+        <p className="mt-2 text-center text-[10px] text-ink-faint">a self-typing terminal story — the AI-tool landing motif, without a video file</p>
+      </div>
+    </div>
+  );
+}
+
+const POLAROID_SHOTS = [
+  { label: "coast / 01", grad: "linear-gradient(135deg,#8b5cf6,#6366f1 55%,#0ea5e9)" },
+  { label: "alpine / 02", grad: "linear-gradient(135deg,#34d399,#0ea5e9 60%,#6366f1)" },
+  { label: "desert / 03", grad: "linear-gradient(135deg,#fbbf24,#f472b6 60%,#8b5cf6)" },
+  { label: "forest / 04", grad: "linear-gradient(135deg,#f472b6,#a78bfa 55%,#34d399)" },
+  { label: "night / 05", grad: "linear-gradient(135deg,#6366f1,#0ea5e9 60%,#34d399)" },
+  { label: "fields / 06", grad: "linear-gradient(135deg,#f59e0b,#ef4444 55%,#a78bfa)" },
+  { label: "tide / 07", grad: "linear-gradient(135deg,#06b6d4,#8b5cf6 60%,#f472b6)" },
+];
+
+function PolaroidStack({ count = 4 }: DemoProps) {
+  const n = typeof count === "number" ? Math.max(2, Math.min(7, Math.round(count))) : 4;
+  const shots = POLAROID_SHOTS.slice(0, n);
+  const [order, setOrder] = useState(shots.map((_, i) => i));
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
+  const bring = (id: number) => setOrder((o) => [id, ...o.filter((x) => x !== id)]);
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(244,114,182,0.12),transparent_62%),#0a0b10] px-6">
+      <div className="relative h-52 w-64">
+        {order.map((shotIdx, pos) => {
+          const shot = shots[shotIdx];
+          const isTop = pos === 0;
+          const rot = (shotIdx - (n - 1) / 2) * 9 + (pos % 2 === 0 ? 2 : -2);
+          const lifted = hoverIdx === shotIdx;
+          return (
+            <button
+              key={shotIdx}
+              type="button"
+              aria-label={`Bring ${shot.label} to front`}
+              onMouseEnter={() => setHoverIdx(shotIdx)}
+              onMouseLeave={() => setHoverIdx(null)}
+              onClick={() => bring(shotIdx)}
+              className="absolute inset-0 origin-bottom rounded-[6px] bg-white p-2 pb-8 text-left shadow-[0_18px_40px_-16px_rgba(0,0,0,0.8)] transition-transform duration-300"
+              style={{
+                transform: `rotate(${rot}deg) ${isTop ? "translateY(-6px) scale(1.06)" : ""} ${lifted ? "translateY(-12px)" : ""}`,
+                zIndex: isTop ? 30 : pos + 1,
+                filter: !isTop && hoverIdx !== null && !lifted ? "brightness(.75)" : undefined,
+                transitionTimingFunction: "cubic-bezier(.34,1.4,.4,1)",
+              }}
+            >
+              <span className="block h-full w-full rounded-[3px]" style={{ background: shot.grad }} />
+              <span className="absolute bottom-2.5 left-3 text-[10px] font-semibold tracking-wide text-black/70">{shot.label}</span>
+            </button>
+          );
+        })}
+      </div>
+      <p className="max-w-xs text-center text-[10px] leading-relaxed text-ink-faint">
+        hover lifts a photo · <b className="text-ink-dim">click brings it to the front</b> — a gallery that feels like a table
+      </p>
+    </div>
+  );
+}
+
+const TEAM_MEMBERS = [
+  { n: "Lena K.", r: "Founder / code", hue: 258 },
+  { n: "Marco T.", r: "Motion design", hue: 192 },
+  { n: "Aiko S.", r: "Systems", hue: 330 },
+  { n: "Dev R.", r: "Infra", hue: 152 },
+  { n: "Noa P.", r: "Content", hue: 28 },
+  { n: "Ivy L.", r: "Research", hue: 210 },
+];
+
+function TeamSpotlightGrid() {
+  const [spot, setSpot] = useState<Record<number, { x: number; y: number }>>({});
+  const [hovered, setHovered] = useState<number | null>(null);
+  return (
+    <div className="flex h-full w-full flex-col justify-center gap-3 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(34,211,238,0.12),transparent_60%),#0a0c13] px-6">
+      <div className="text-center">
+        <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-ink-faint">The people behind the pixels</span>
+      </div>
+      <div className="grid grid-cols-3 gap-2 md:gap-3">
+        {TEAM_MEMBERS.map((m, i) => {
+          const s = spot[i];
+          return (
+            <div
+              key={m.n}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => { setHovered((h) => (h === i ? null : h)); setSpot((p) => { const c = { ...p }; delete c[i]; return c; }); }}
+              onMouseMove={(e) => {
+                const r = e.currentTarget.getBoundingClientRect();
+                setSpot((p) => ({ ...p, [i]: { x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 } }));
+              }}
+              className="group relative flex cursor-default flex-col items-center overflow-hidden rounded-2xl border border-white/8 bg-white/4 px-3 py-5 text-center transition-transform duration-200 hover:scale-[1.03]"
+            >
+              {s && (
+                <span
+                  className="pointer-events-none absolute inset-0"
+                  style={{ background: `radial-gradient(120px circle at ${s.x}% ${s.y}%, hsl(${m.hue} 85% 65% / .28), transparent 65%)` }}
+                />
+              )}
+              <span
+                className="flex h-12 w-12 items-center justify-center rounded-full text-sm font-black text-white transition-shadow duration-200"
+                style={{
+                  background: `linear-gradient(135deg, hsl(${m.hue} 85% 60%), hsl(${(m.hue + 50) % 360} 80% 45%))`,
+                  boxShadow: hovered === i ? `0 0 0 3px hsl(${m.hue} 85% 65% / .3), 0 6px 18px -4px hsl(${m.hue} 85% 55% / .5)` : "none",
+                }}
+              >
+                {m.n.split(" ")[1]?.[0] ?? m.n[0]}
+              </span>
+              <div className="mt-2.5 text-xs font-bold text-white">{m.n}</div>
+              <div className="mt-0.5 text-[9px] font-medium uppercase tracking-wider text-white/40">{m.r}</div>
+            </div>
+          );
+        })}
+      </div>
+      <p className="text-center text-[10px] text-ink-faint">per-card cursor spotlight — a team grid that feels lit, not flat</p>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 export const DEMO_KEYS = [
@@ -1393,6 +1864,8 @@ export const DEMO_KEYS = [
   "morph-blob", "conic-loader", "glass-pricing", "wipe-reveal", "counter-stats", "dot-draw",
   "text-cycle", "tab-morph", "flip-card", "skeleton-shimmer", "chart-card", "avatar-stack",
   "command-palette", "toast-stack", "sheet-menu",
+  "segmented-control", "notification-bell", "scroll-progress", "testimonial-rotator",
+  "countdown-drop", "terminal-hero", "polaroid-stack", "team-spotlight",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -1434,6 +1907,14 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "command-palette": return <CommandPalette {...props} />;
     case "toast-stack": return <ToastStack {...props} />;
     case "sheet-menu": return <SheetMenu />;
+    case "segmented-control": return <SegmentedControl {...props} />;
+    case "notification-bell": return <NotificationBell />;
+    case "scroll-progress": return <ScrollProgress {...props} />;
+    case "testimonial-rotator": return <TestimonialRotator {...props} />;
+    case "countdown-drop": return <CountdownDrop />;
+    case "terminal-hero": return <TerminalHero {...props} />;
+    case "polaroid-stack": return <PolaroidStack {...props} />;
+    case "team-spotlight": return <TeamSpotlightGrid />;
     default: return null;
   }
 }

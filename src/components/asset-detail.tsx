@@ -422,6 +422,150 @@ const push = () => {
 @media (min-width: 768px) {
   .sheet { display: none; } /* desktop gets real nav */ }`,
   },
+  "segmented-control": {
+    react: `// React — the thumb is one absolutely-positioned span, width measured in %
+const OPTIONS = ["Essential", "Pro", "Scale", "Enterprise"];
+<div className="relative flex rounded-2xl border p-1.5">
+  <span aria-hidden className="absolute top-1.5 bottom-1.5"
+    style={{
+      width: \`calc((100% - 12px) / \${OPTIONS.length})\`,
+      left: \`calc(6px + \${sel} * (100% - 12px) / \${OPTIONS.length})\`,
+      transition: "left .3s cubic-bezier(.65,0,.25,1)",
+    }} />
+  {OPTIONS.map((o, i) => (
+    <button key={o} type="button" onClick={() => setSel(i)}
+      aria-pressed={sel === i}
+      className={"relative z-10 rounded-xl px-5 py-2.5 text-sm font-bold " +
+        (sel === i ? "text-white" : "text-white/50")}>
+      {o}
+    </button>
+  ))}
+</div>`,
+    css: `/* thumb layer */
+.segment-thumb { transition: left .3s cubic-bezier(.65, 0, .25, 1); }
+button[aria-pressed="true"] { color: #fff; }`,
+  },
+  "notification-bell": {
+    react: `// React — dropdown + badge; aria-expanded is the part people skip
+<button type="button"
+  onClick={() => setOpen(v => !v)}
+  aria-expanded={open}
+  aria-label={\`Notifications, \${unread} unread\`}>
+  {unread > 0 && <span className="badge">{unread}</span>}
+</button>
+{open && (
+  <>
+    <button aria-label="Dismiss" onClick={() => setOpen(false)}
+            className="fixed inset-0" tabIndex={-1} />
+    <ul role="menu" className="absolute right-0 mt-2 w-72 …">
+      {/* rows */}
+    </ul>
+  </>
+)}`,
+    css: `/* a dismiss backdrop as a real button keeps ESC/focus sane */
+.notif-badge { min-width: 16px; height: 16px; border-radius: 999px; }`,
+  },
+  "scroll-progress": {
+    react: `// React — progress = scrolled / scrollable, driven by one onScroll
+const el = scroller.current;
+const max = el.scrollHeight - el.clientHeight;
+setProgress(max > 0 ? el.scrollTop / max : 0);
+
+<div ref={scroller} onScroll={handle} className="overflow-y-auto …">
+  {content}
+</div>
+<div style={{ transform: \`scaleX(\${progress})\`, transformOrigin: "left" }}
+     className="fixed top-0 left-0 right-0 h-1 origin-left bg-gradient-to-r …" />`,
+    css: `/* scaleX is compositor-friendly; avoid width% on every scroll event */
+.progress-rail { transform-origin: left; will-change: transform; }`,
+  },
+  "testimonial-rotator": {
+    react: `// React — key the quote block so each change replays its entrance
+const [i, setI] = useState(0);
+useEffect(() => {
+  const t = setInterval(() => setI(v => (v + 1) % QUOTES.length), 5000);
+  return () => clearInterval(t);
+}, []);
+
+<blockquote key={i} style={{ animation: "rise .4s cubic-bezier(.16,1,.3,1) both" }}>
+  “{QUOTES[i].q}”
+</blockquote>`,
+    css: `/* the reveal key: same animation replays when React swaps the key */
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) {
+  blockquote { animation: none !important; } }`,
+  },
+  "countdown-drop": {
+    react: `// React — store an end timestamp, tick seconds, format once
+const end = useRef(Date.now() + 2*86400e3 + 7*3600e3);
+useEffect(() => {
+  const t = setInterval(() => {
+    setLeft(Math.max(0, Math.round((end.current - Date.now()) / 1000)));
+  }, 1000);
+  return () => clearInterval(t);
+}, []);
+const d = Math.floor(left/86400), h = Math.floor(left%86400/3600); …`,
+    css: `/* flip-in on each digit change — keep it subtle */
+.cell span { animation: flipin .4s cubic-bezier(.16,1,.3,1) both; }
+@keyframes flipin { from { opacity: 0; transform: translateY(-10px); } }`,
+  },
+  "terminal-hero": {
+    react: `// React — one cursor index advancing on a timer = a typing terminal
+const joined = LINES.map(l => l.text).join("\\n");
+useEffect(() => {
+  if (done) return;
+  const t = setTimeout(() => setCount(c => c + 1), 34);
+  return () => clearTimeout(t);
+}, [count, done]);
+
+<pre aria-label="Terminal demo">
+  {joined.slice(0, count)}
+  {!done && <span className="caret" />}
+</pre>`,
+    css: `/* the caret blinks; the screen is a plain <pre> */
+.caret { display: inline-block; width: 7px; height: 14px;
+        background: #67e8f9; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }`,
+  },
+  "polaroid-stack": {
+    react: `// React — order is state; clicking re-inserts at the front
+const [order, setOrder] = useState(shots.map((_, i) => i));
+const bring = id => setOrder(o => [id, ...o.filter(x => x !== id)]);
+
+{order.map((id, pos) => (
+  <button key={id} onClick={() => bring(id)}
+    className="absolute inset-0"
+    style={{
+      transform: \`rotate(\${rot(id)}deg) translateY(\${pos === 0 ? -6 : 0}px)\`,
+      zIndex: pos === 0 ? 30 : pos + 1,
+      transition: "transform .3s cubic-bezier(.34,1.4,.4,1), filter .2s",
+    }}>
+    <Photo id={id} />
+  </button>
+))}`,
+    css: `/* fan = per-item rotation from order; lift = hover translate */
+.polaroid { position: absolute; inset: 0; transition:
+  transform .3s cubic-bezier(.34,1.4,.4,1), filter .2s; }
+.polaroid--top { transform: translateY(-6px) scale(1.06); }`,
+  },
+  "team-spotlight": {
+    react: `// React — store one {x,y} per card; render a radial where the cursor is
+const [spot, setSpot] = useState({});
+<div onMouseMove={e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  setSpot({ x: (e.clientX - r.left) / r.width * 100,
+            y: (e.clientY - r.top) / r.height * 100 });
+}} className="relative overflow-hidden">
+  <span className="pointer-events-none absolute inset-0" style={{
+    background: \`radial-gradient(120px circle at \${spot.x}% \${spot.y}%,
+                hsl(258 85% 65% / .28), transparent 65%)\` }} />
+  {/* avatar + name + role */}
+</div>`,
+    css: `/* the light follows the cursor via CSS vars set on the card */
+.team-card { --lx: 50%; --ly: 50%; }
+.team-card::after { background: radial-gradient(
+  120px circle at var(--lx) var(--ly), hsl(258 85% 65% / .25), transparent 65%); }`,
+  },
 };
 
 const FALLBACK = {
@@ -513,6 +657,43 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     why: "Hamburger menus that fly in from the left fight the thumb; a bottom sheet sits where the thumb already is. That's the entire argument.",
     idea: "The springy overshoot on the sheet's transform is what makes it feel like a physical drawer — a plain ease feels like a slide deck.",
     skip: "On desktop, show the real nav and hide the sheet entirely (the code includes the breakpoint). Don't ship a mobile-only pattern to laptop users.",
+  },
+  "segmented-control": {
+    why: "Billing toggles are where users decide; a sliding thumb carries the state change visually without a page jump.",
+    skip: "More than 5 options and the segmented idiom breaks — switch to tabs or a select.",
+  },
+  "notification-bell": {
+    why: "The badge count is a promise; mark-all-read and aria-expanded are the parts users (and screen readers) actually feel.",
+    idea: "The dropdown is anchored, dismissible via a real backdrop button and announces nothing until opened — politely.",
+    skip: "Don't auto-pop the dropdown on page load. Badge, wait for the click.",
+  },
+  "scroll-progress": {
+    why: "Reading progress is the cheapest 'this page respects your time' signal a docs site can ship.",
+    idea: "Use scaleX instead of width% on every scroll event — compositor-only, zero layout thrash.",
+    skip: "Skip it on marketing pages where the page is shorter than two screens; a near-instant bar reads as broken.",
+  },
+  "testimonial-rotator": {
+    why: "Static quote walls get skipped; a rotator with a stagger reveal makes the third quote discoverable.",
+    skip: "Never auto-rotate testimonials carrying hard claims (pricing, legal) — users need time to read without a countdown feeling.",
+  },
+  "countdown-drop": {
+    why: "Real deadlines deserve a real clock. Flip-in digit changes make every passing second visible, which is the entire point of urgency.",
+    skip: "Fake urgency is the fastest trust killer in ecommerce. Only count down to a date you will actually honour.",
+  },
+  "terminal-hero": {
+    why: "The AI-tool landing motif usually ships as a 2MB video. A typed DOM terminal tells the same story at ~5 KB and never buffers.",
+    idea: "One cursor index advancing on a timer — no per-key DOM, just slice a joined string and let the pre re-render.",
+    skip: "If your audience isn't developer-adjacent, a terminal says 'not for me'. Save it for dev tools and APIs.",
+  },
+  "polaroid-stack": {
+    why: "Galleries fail when they feel like grids of thumbnails. A fanned stack with lift-and-front click has the tactility of a real table.",
+    idea: "Click-to-front is reordering state, not animation — the CSS transition sells the motion for free.",
+    skip: "For portfolios where every image matters equally, an equal grid is more honest. The stack is for a curated few.",
+  },
+  "team-spotlight": {
+    why: "People pages are where the flat, template look is most visible. A cursor light per card makes six boring cards feel like a designed surface.",
+    idea: "Each card tracks its own cursor coordinate — one shared handler per card, rendered as a radial gradient.",
+    skip: "On touch there's no cursor; keep a gentle static gradient or rely on the hover scale only.",
   },
 };
 

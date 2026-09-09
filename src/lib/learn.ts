@@ -294,6 +294,263 @@ Tone & traps
       },
     ],
   },
+
+  {
+    slug: "glass-is-a-material",
+    kicker: "Field guide",
+    title: "Glass is a material — not a trend",
+    deck: "Backdrop-blur is 2026's drop-shadow: everywhere, mostly wrong. This guide explains the four surfaces that make glass read as expensive instead of dirty frosted plastic.",
+    minutes: 10,
+    level: "Intermediate",
+    tags: ["glass", "glassmorphism", "materials", "css"],
+    updated: "2026-09-09",
+    blocks: [
+      {
+        h: "Why most glass looks bad",
+        body: [
+          "Glass fails when it's just one blurred gradient blob behind a rounded card. Real glass is a stack of decisions: a base that's dark enough to blur, a specular top edge, a hairline border, and content that doesn't fight the frosted field behind it.",
+          "The other failure is light-theme glass. Frosted white-on-white reads as dirty plastic — glass belongs on photographic or gradient canvases, or on a deliberately dark base.",
+        ],
+        links: [
+          { label: "Liquid Glass background", href: "/backgrounds" },
+          { label: "Glass Pricing Trio — glass with real content", href: "/components/glass-pricing" },
+        ],
+      },
+      {
+        h: "The four surfaces of believable glass",
+        bullets: [
+          "Base fill — semi-transparent white/low-single-digit alpha over something with contrast underneath (photo, gradient, motion).",
+          "Specular top edge — an inset 0 1px 0 rgba(255,255,255,.3–.45) highlight. This one line is 50% of the illusion.",
+          "Border strategy — border rgba(255,255,255,.12–.18). Too high = plastic rim; too low = the card vanishes.",
+          "Blur amount — backdrop-blur(12–24px) reads as glass; 4px reads as 'blurry div'. Match blur to the motion behind it: faster motion behind, more blur.",
+        ],
+      },
+      {
+        h: "The recipe we ship",
+        code: {
+          title: "glass-surface.css",
+          lang: "css",
+          text: `.glass {
+  background: linear-gradient(180deg,
+              rgba(255,255,255,.14), rgba(255,255,255,.04));
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.35), /* specular top edge */
+    0 24px 48px -24px rgba(0,0,0,.8);     /* lift, not glow */
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+/* the glow is a privilege, not a default: */
+.glass--hero {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.4),
+              0 0 60px -10px rgba(139,92,246,.55);
+}`,
+        },
+      },
+      {
+        h: "When to skip glass entirely",
+        callout: {
+          type: "warn",
+          title: "Honesty check",
+          text: "If the content behind the card is a flat corporate background, glass has nothing to refract — you're just adding blur for fashion. Use a solid token card with a hairline border and spend the saved GPU on typography.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "css-depth-five-moves",
+    kicker: "Field guide",
+    title: "3D that costs nothing: CSS depth in five moves",
+    deck: "Flip cards, tilting hero cards and orbiting logos — all of it is five CSS properties you already half-know. A cheat sheet with the exact recipes, zero WebGL.",
+    minutes: 11,
+    level: "Intermediate",
+    tags: ["3d", "css", "transform", "flip", "tilt"],
+    updated: "2026-09-08",
+    blocks: [
+      {
+        h: "The five properties",
+        bullets: [
+          "perspective — set on the PARENT (600–1100px feels natural; too small = fisheye).",
+          "transform-style: preserve-3d — lets children keep their own depth planes.",
+          "backface-visibility: hidden — makes the flip card work by hiding the back face.",
+          "rotateX / rotateY / translateZ — the moves themselves; rotate around an axis, translate along Z to layer.",
+          "transform-origin — decide where the pivot sits (bottom for a rise, center for a flip).",
+        ],
+      },
+      {
+        h: "Move 1 — the flip",
+        code: {
+          title: "flip.css",
+          lang: "css",
+          text: `.scene { perspective: 1100px; }
+.flipper {
+  position: relative; height: 220px;
+  transform-style: preserve-3d;
+  transition: transform .7s cubic-bezier(.4,.2,.2,1);
+}
+.flipper.is-flipped { transform: rotateY(180deg); }
+.face {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.face--back { transform: rotateY(180deg); }`,
+        },
+        links: [{ label: "Flip Card demo", href: "/components/flip-card" }],
+      },
+      {
+        h: "Move 2 — the tilt",
+        code: {
+          title: "tilt.css",
+          lang: "css",
+          text: `.tilt-card {
+  transform:
+    perspective(900px)
+    rotateX(calc((50 - var(--my, 50)) * 0.32deg))
+    rotateY(calc((var(--mx, 50) - 50) * 0.32deg));
+  transition: transform 120ms ease-out;
+}
+/* --mx / --my are set from pointermove as 0–100 percentages */`,
+        },
+        links: [{ label: "Tilt Card demo", href: "/components/tilt-card" }],
+      },
+      {
+        h: "Move 3 — the orbit ring",
+        code: {
+          title: "orbit.css",
+          lang: "css",
+          text: `/* one spinning ring, items counter-rotate so they stay readable */
+.ring { animation: spin 14s linear infinite; }
+.ring-item {
+  position: absolute; top: 50%; left: 50%;
+  transform: rotate(var(--a)) translateX(var(--r)) rotate(calc(var(--a) * -1));
+  animation: spin 14s linear infinite reverse;
+}
+@keyframes spin { to { transform: rotate(360deg); } }`,
+        },
+        links: [{ label: "Orbit Deck demo", href: "/components/orbit-deck" }],
+      },
+      {
+        h: "The discipline of 3D",
+        callout: {
+          type: "tip",
+          title: "Less is tectonic",
+          text: "One tilted element per viewport maximum. Two competing 3D moves feel like a funhouse, not a product. And gate tilt/flip to fine pointers: on touch there's no hover, so make the 3D a click or a scroll response.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "scroll-choreography-that-respects",
+    kicker: "Patterns",
+    title: "Scroll choreography that respects the reader",
+    deck: "Scroll-jacking is a sin; scroll choreography is a craft. The difference is intent: does the scroll reveal the story, or does it fight the reader for control?",
+    minutes: 12,
+    level: "Advanced",
+    tags: ["scroll", "animation", "pinning", "patterns"],
+    updated: "2026-09-09",
+    blocks: [
+      {
+        h: "The three scroll verbs",
+        bullets: [
+          "Reveal — content animates in as it crosses the viewport. The default; cheap and safe.",
+          "Pin — a section stays put while the next chapter scrolls over it. High drama, needs restraint.",
+          "Sync — progress through a scene is tied to scroll position (0–100%). The Scroll Lab pattern: enter → pin → exit.",
+        ],
+        links: [{ label: "Play with the Scroll Lab", href: "/lab" }],
+      },
+      {
+        h: "Rules we hold ourselves to",
+        body: [
+          "Never animate layout-affecting properties in a scroll handler. transform and opacity only — width/height/top on scroll is how you get jank nobody can debug.",
+          "Reveal once, never re-trigger. Elements that re-animate when you scroll back up feel broken; let them settle.",
+          "Respect reduced motion by jumping to the final state, not freezing mid-story.",
+          "Keep the story skimmable: someone who scrolls fast should land on complete sections, not 47 half-animated states.",
+        ],
+      },
+      {
+        h: "The choreography skeleton",
+        code: {
+          title: "scroll-recipe.ts",
+          lang: "ts",
+          text: `// enter at 25% of the viewport, pin until 55%, exit by 80%
+const scene = {
+  enter: 0.25,  // opacity 0→1, translateY 60→0
+  pinAt: 0.55,  // hold, scale to 1.06, add glow
+  exitAt: 0.80, // opacity →0, translateY →-40
+};
+
+// exported recipe (copy from the Scroll Lab):
+//  hero: enter cubic-bezier(.16,1,.3,1)
+//        pin: transform scale 1.06
+//        exit: fade up -40px
+//  prefers-reduced-motion: skip all, show final state`,
+        },
+      },
+      {
+        h: "When pinning pays",
+        callout: {
+          type: "pro",
+          title: "Use pinning for one idea",
+          text: "Pin earns its keep when a single idea needs time to land: a product transforming, a number climbing, a route tracing. If the story has three competing pinned sections, you've built a slide deck — scroll should feel like reading, not presenting.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "gradients-that-dont-look-cheap",
+    kicker: "Colour",
+    title: "Gradients that don't look cheap",
+    deck: "Gradient is the most abused CSS property on the web. The difference between 'brand system' and 'Windows 98 wallpaper' is discipline: hue count, direction, and knowing when to stop.",
+    minutes: 9,
+    level: "Beginner",
+    tags: ["gradient", "colour", "design", "css"],
+    updated: "2026-09-07",
+    blocks: [
+      {
+        h: "The three rules",
+        bullets: [
+          "Two hues maximum (three only when one is a near-neutral). Every extra hue multiplies the chance of mud.",
+          "Keep hue steps tight — roughly 60–140° apart on the wheel. The violet→cyan family is 90° apart and safe; violet→red is 40° and reads as one colour's mood swing.",
+          "Never blend through the greys. If two hues sit opposite the wheel, the midpoint goes brown — that's the 'cheap' look, every time.",
+        ],
+        links: [{ label: "Forge gradients in the Lab", href: "/lab" }],
+      },
+      {
+        h: "Text gradients are a specific art",
+        code: {
+          title: "gradient-text.css",
+          lang: "css",
+          text: `.gradient-word {
+  background-image: linear-gradient(100deg,
+                    #c4b5fd, #a5b4fc 34%, #67e8f9 68%, #f9a8d4);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+/* rule: only for display type 40px+. Small text + gradient = shimmer */
+/* rule: keep the lightest stop under 70% lightness for AA on dark */`,
+        },
+        links: [{ label: "Wipe Reveal headline", href: "/components/wipe-reveal" }],
+      },
+      {
+        h: "When solid beats gradient",
+        callout: {
+          type: "warn",
+          title: "The stop rule",
+          text: "If you can't say what the gradient means (brand direction, light source, data encoding), use a solid token colour. Gradients are for atmosphere and hierarchy moments — a whole UI in gradients is a rainbow, not a design system.",
+        },
+        links: [{ label: "Aurora Veil — one atmospheric use", href: "/components/aurora-veil" }],
+      },
+      {
+        h: "Finish with noise",
+        body: [
+          "The most expensive-looking gradients hide banding. A 2–4% film-grain overlay (SVG turbulence or feTurbulence data-URI) breaks up the bands and gives the surface a photographic finish. It's the same trick print designers have used for a century.",
+        ],
+        links: [{ label: "Paper Noise texture", href: "/backgrounds" }],
+      },
+    ],
+  },
 ];
 
 export function learnArticleOf(slug: string): LearnArticle | undefined {

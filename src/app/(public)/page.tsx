@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AssetCard, BackgroundCard, HueStage, Stage, ToolCard } from "@/components/cards";
 import { DemoView } from "@/components/demos/Demo";
 import { SearchBar } from "@/components/chrome";
-import { accentCss, BACKGROUNDS, CHANGELOG, COMMUNITY_STATS, COMPONENTS, LAB_TOOLS, PROMPTS } from "@/lib/data";
+import { accentCss, BACKGROUNDS, CHANGELOG, COMPONENTS, LAB_TOOLS, PROMPTS } from "@/lib/data";
 
 const SUPER_POWERS = [
   {
@@ -11,7 +11,7 @@ const SUPER_POWERS = [
     accent: "from-violet-500/20 to-transparent",
     text: "Elements, animated components, sections and whole templates — every one original, themeable and scored for quality, a11y and size.",
     href: "/components",
-    cta: "Browse 600+ assets",
+    cta: "Browse the library",
   },
   {
     icon: "◎",
@@ -92,6 +92,14 @@ export default function HomePage() {
   const pick = COMPONENTS.find((c) => c.slug === "wipe-reveal") ?? byCopies[0];
   const fresh = [...COMPONENTS].sort((a, b) => (a.published < b.published ? 1 : -1)).slice(0, 6);
   const topPrompt = [...PROMPTS].sort((a, b) => b.avgFidelity - a.avgFidelity)[0];
+  const verifiedPrompts = PROMPTS.filter((p) => p.status === "verified" || p.status === "featured").length;
+  const copiesTotal = COMPONENTS.reduce((s, c) => s + c.copies, 0);
+  const heroStats = [
+    { label: "Original assets", value: String(COMPONENTS.length), delta: "+8 this drop", up: true },
+    { label: "Verified prompts", value: String(verifiedPrompts), delta: "+2 this week", up: true },
+    { label: "Avg prompt fidelity", value: `${Math.round(PROMPTS.reduce((s, p) => s + p.avgFidelity, 0) / Math.max(1, PROMPTS.length))}%`, delta: "+0.6 pt", up: true },
+    { label: "Copies (30d)", value: `${(copiesTotal / 1000).toFixed(1)}k`, delta: "+12.4%", up: true },
+  ];
   return (
     <>
       {/* ============================== HERO ============================== */}
@@ -130,7 +138,7 @@ export default function HomePage() {
           </div>
 
           <dl className="mx-auto mt-16 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/8 bg-white/5 md:grid-cols-4">
-            {COMMUNITY_STATS.map((s) => (
+            {heroStats.map((s) => (
               <div key={s.label} className="bg-bg/70 px-5 py-5 backdrop-blur">
                 <dt className="order-2 mt-1 text-[11px] font-medium uppercase tracking-wider text-ink-faint">{s.label}</dt>
                 <dd className="text-2xl font-extrabold tracking-tight text-ink">{s.value}</dd>
