@@ -15,7 +15,7 @@ import { LEARN_ARTICLES } from "@/lib/learn";
 import { accentHue, COMPONENTS, KIND_META } from "@/lib/data";
 import type { Asset } from "@/lib/types";
 
-function RailSection({ id, title, kicker, children }: { id: string; title: string; kicker: string; children: React.ReactNode }) {
+export function RailSection({ id, title, kicker, children }: { id: string; title: string; kicker: string; children: React.ReactNode }) {
   return (
     <section id={id} className="scroll-mt-24 rounded-3xl border border-white/8 bg-panel p-6">
       <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint">{kicker}</p>

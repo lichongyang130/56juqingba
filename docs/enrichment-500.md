@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 223 / 500 shipped (batches 1–30, in order) · Sections 1–5 complete ✅
+## Progress — 231 / 500 shipped (batches 1–31, in order) · Sections 1–5 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -235,6 +235,14 @@ names, behaviours and where they plug into the existing pages.
 | 221 | Course rail — reduced-motion fallback note | [/components/aurora-veil#reduced-motion-note](/components/aurora-veil#reduced-motion-note) |
 | 222 | Course rail — keyboard walk demo | [/components/aurora-veil#keyboard-walk](/components/aurora-veil#keyboard-walk) |
 | 223 | Course rail — composition map + related essays | [/components/aurora-veil#composition-map](/components/aurora-veil#composition-map) |
+| 224 | Course rail — inspiration context | [/components/aurora-veil#inspiration-context](/components/aurora-veil#inspiration-context) |
+| 225 | Course rail — changelog per asset | [/components/aurora-veil#asset-changelog](/components/aurora-veil#asset-changelog) |
+| 226 | Course rail — copy history sparkline | [/components/aurora-veil#copy-history](/components/aurora-veil#copy-history) |
+| 227 | Course rail — community remixes queue | [/components/aurora-veil#community-remixes](/components/aurora-veil#community-remixes) |
+| 228 | Course rail — save to collection | [/components/aurora-veil#collect-star](/components/aurora-veil#collect-star) |
+| 229 | Course rail — pairs well with prompt | [/components/aurora-veil#pairs-with-prompt](/components/aurora-veil#pairs-with-prompt) |
+| 230 | Course rail — bundled deps disclosure | [/components/aurora-veil#deps-disclosure](/components/aurora-veil#deps-disclosure) |
+| 231 | Course rail — single-file export | [/components/aurora-veil#single-file-export](/components/aurora-veil#single-file-export) |
 
 
 ---
@@ -531,14 +539,14 @@ names, behaviours and where they plug into the existing pages.
 - **Reduced-motion fallback note** ✅ (`reduced-motion-note`): what the asset does when motion is off.
 - **Keyboard walk demo** ✅ (`keyboard-walk`): pressable step-through of the component's focus flow.
 - **Related Learn essays** ✅ (in `composition-map`): the guides that teach the technique behind this asset.
-- **Inspiration context**: one original micro-case of the pattern in the wild (written, not screenshotted).
-- **Changelog per asset**: every version of this component with what changed and why.
-- **Copy history count**: "copied 2.1k times" with a sparkline of the last 30 days.
-- **Community remixes**: alternate versions of this asset submitted by users (future queue).
-- **Star/favourite control**: bookmark an asset into your saved list.
-- **"Pairs well with prompt"**: which AI prompt would build a page containing this asset.
-- **Bundled-deps disclosure**: exact dependency tree with sizes.
-- **Export as single file**: one `.tsx` or `.html` download button.
+- **Inspiration context** ✅ (`inspiration-context`): one original micro-case of the pattern in the wild (written, not screenshotted).
+- **Changelog per asset** ✅ (`asset-changelog`): every version of this component with what changed and why.
+- **Copy history count** ✅ (`copy-history`): "copied 2.1k times" with a sparkline of the last 30 days.
+- **Community remixes** ✅ (`community-remixes`): alternate versions of this asset submitted by users (future queue).
+- **Star/favourite control** ✅ (`collect-star`): bookmark an asset into your saved list.
+- **"Pairs well with prompt"** ✅ (`pairs-with-prompt`): which AI prompt would build a page containing this asset.
+- **Bundled-deps disclosure** ✅ (`deps-disclosure`): exact dependency tree with sizes.
+- **Export as single file** ✅ (`single-file-export`): one `.tsx` or `.html` download button.
 - **Open in CodeSandbox-style sandbox**: a real runnable copy with the library's CSS injected.
 - **Tutorial transcript**: if the asset ever gets a video, host the written version here.
 - **Design rationale panel**: the "why we made the default the default" note.
