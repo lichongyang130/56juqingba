@@ -147,6 +147,20 @@ function hashSeed(key: string) {
   return h;
 }
 
+/** Which Motif scene backs a prompt's concept poster — shared by the poster
+ *  renderer and the detail page's cross-links into the library. */
+export function posterSceneFor(slug: string): string {
+  return POSTER_SCENES[hashSeed(slug) % POSTER_SCENES.length];
+}
+
+export const POSTER_SCENE_META: Record<string, { label: string; href: string; kind: string }> = {
+  "aurora-veil": { label: "Aurora Veil", href: "/components/aurora-veil", kind: "component" },
+  "morph-blob": { label: "Morph Blob", href: "/components/morph-blob", kind: "component" },
+  "star-motes": { label: "Star Motes", href: "/components/star-motes", kind: "component" },
+  "grid": { label: "Grid Drift", href: "/backgrounds", kind: "background" },
+  "glass": { label: "Liquid Glass", href: "/backgrounds", kind: "background" },
+};
+
 function FakeBars({ seed, n = 6, hue }: { seed: string; n?: number; hue: number }) {
   return (
     <div className="flex items-end gap-1">
@@ -170,7 +184,7 @@ function FakeBars({ seed, n = 6, hue }: { seed: string; n?: number; hue: number 
 export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate; hero?: boolean }) {
   const hue = accentHue(prompt.slug);
   const h = hashSeed(prompt.slug);
-  const scene = POSTER_SCENES[h % POSTER_SCENES.length];
+  const scene = posterSceneFor(prompt.slug);
   const layout = h % 3;
   const sample = INDUSTRY_SAMPLES[prompt.industry] ?? INDUSTRY_SAMPLE_FALLBACK;
   const [l1, l2 = ""] = sample.title.split("\n");

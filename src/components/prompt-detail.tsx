@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { PromptCard, PromptPoster } from "@/components/cards";
-import { PROMPTS, fidelityColor, promptStatusMeta } from "@/lib/data";
+import { POSTER_SCENE_META, PromptCard, PromptPoster, posterSceneFor } from "@/components/cards";
+import { PROMPTS, accentHue, fidelityColor, promptStatusMeta } from "@/lib/data";
 import type { PromptTemplate } from "@/lib/types";
 
 export default function PromptDetail({ prompt }: { prompt: PromptTemplate }) {
   const [copied, setCopied] = useState(false);
   const meta = promptStatusMeta(prompt.status);
+  const scene = posterSceneFor(prompt.slug);
+  const accentColor = `hsl(${accentHue(prompt.slug)} 90% 65%)`;
   const related = PROMPTS.filter((p) => p.slug !== prompt.slug && p.industry === prompt.industry)
     .concat(PROMPTS.filter((p) => p.slug !== prompt.slug && p.industry !== prompt.industry))
     .slice(0, 3);
@@ -35,9 +37,20 @@ export default function PromptDetail({ prompt }: { prompt: PromptTemplate }) {
       <div className="mt-5 overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
         <PromptPoster prompt={prompt} hero />
       </div>
-      <p className="mt-2 text-right text-[10px] text-ink-faint">
-        Concept render — composed live from this prompt&apos;s palette & layout. Reproducible with the library, not a stock screenshot.
-      </p>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-[10px] text-ink-faint">
+          Concept render — composed live from this prompt&apos;s palette &amp; layout. Reproducible with the library, not a stock screenshot.
+        </p>
+        {POSTER_SCENE_META[scene] && (
+          <Link
+            href={POSTER_SCENE_META[scene].href}
+            className="chip !cursor-pointer !text-[10px] transition-colors hover:!border-white/30 hover:!text-ink"
+          >
+            <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full" style={{ background: accentColor }} />
+            Concept scene: {POSTER_SCENE_META[scene].label} — open in library →
+          </Link>
+        )}
+      </div>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
         <div>
