@@ -158,9 +158,14 @@ export default function LibraryExplorer({ initialQ, initialStack }: { initialQ: 
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-violet-300">Component library</p>
           <h1 className="mt-2 text-4xl font-extrabold tracking-tight md:text-5xl">Browse the library</h1>
           <p className="mt-3 max-w-2xl text-sm text-ink-dim">
-            Original elements, animated components, sections and templates — audited for quality,
-            accessibility and size. Every asset is themeable and ships in multiple stacks.
+            Start where you are: copy an element, assemble a whole landing page, or re-theme a template.
+            Everything is audited, original and MIT.
           </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href="/components?q=hero" className="chip !cursor-pointer !py-2 !text-xs transition-colors hover:!border-violet-300/40 hover:!text-ink">1 · Copy a hero (2 min)</Link>
+            <Link href="/samples" className="chip !cursor-pointer !py-2 !text-xs transition-colors hover:!border-violet-300/40 hover:!text-ink">2 · Assemble a landing page</Link>
+            <Link href="/templates" className="chip !cursor-pointer !py-2 !text-xs transition-colors hover:!border-violet-300/40 hover:!text-ink">3 · Re-theme a template</Link>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button type="button" onClick={randomPick} className="btn btn-ghost !px-3.5 !py-2 text-xs" title="Surprise me — open a random asset">

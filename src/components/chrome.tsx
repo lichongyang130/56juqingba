@@ -272,11 +272,18 @@ export function Footer() {
           <div key={title}>
             <div className="text-xs font-bold uppercase tracking-widest text-ink-faint">{title}</div>
             <ul className="mt-3 space-y-2">
-              {links.map((l) => (
-                <li key={l}>
-                  <span className="cursor-pointer text-sm text-ink-dim transition-colors hover:text-ink">{l}</span>
-                </li>
-              ))}
+              {links.map((l) => {
+                const href = l === "About" ? "/mission" : l === "Pricing" ? "/pricing" : null;
+                return (
+                  <li key={l}>
+                    {href ? (
+                      <Link href={href} className="text-sm text-ink-dim transition-colors hover:text-ink">{l}</Link>
+                    ) : (
+                      <span className="cursor-pointer text-sm text-ink-dim transition-colors hover:text-ink">{l}</span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}

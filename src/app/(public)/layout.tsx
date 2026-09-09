@@ -1,4 +1,6 @@
 import { CtaRail, Footer, Header } from "@/components/chrome";
+import { ReturningCue } from "@/components/home-cues";
+import { CHANGELOG } from "@/lib/data";
 import { KeyframesStyle } from "@/components/cards";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -9,6 +11,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <main className="flex-1">{children}</main>
       <Footer />
       <CtaRail />
+      <ReturningCue entries={CHANGELOG} />
     </div>
   );
 }

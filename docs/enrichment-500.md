@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 286 / 500 shipped (batches 1–38, in order) · Sections 1–8 complete ✅
+## Progress — 293 / 500 shipped (batches 1–39, in order) · Sections 1–8 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -298,6 +298,14 @@ names, behaviours and where they plug into the existing pages.
 | 284 | Home — builder testimonials → case pages | [/](/) · quotes link /samples |
 | 285 | Home — built-in-an-afternoon timeline | [/](/) · animated 90-min story |
 | 286 | Footer — press & media kit downloads | [/](/) · brand.json + palette.css |
+| 287 | Mission page | [/mission](/mission) |
+| 288 | /components header CTA strip | [/components](/components) |
+| 289 | Home hero search empty-state topics | [/](/search?q=glass) |
+| 290 | Home stats with truth links | [/](/components) · [/prompts](/prompts) |
+| 291 | Interactive changelog (expand/collapse) | [/](/) homepage ship log |
+| 292 | Contrast band → clickable proof links | [/](/) differentiators band |
+| 293 | Returning-visitor cue | all public pages (localStorage) |
+
 
 
 
@@ -672,13 +680,13 @@ names, behaviours and where they plug into the existing pages.
 - **Real testimonials from sample builds** ✅ (quotes → /samples): link out to three made-with-Motif pages.
 - **"Built in an afternoon" timeline** ✅ (animated 90-min story): an animated 90-minute build story (not a fake claim).
 - **Press/kit footer** ✅ (lockup · fact sheet · palette downloads): logo lockup, fact sheet, and brand palette downloads.
-- **Mission page**: a short about page explaining "original only, tested or it doesn't ship".
-- **/components needs a header CTA**: convert the top strip from explanation to action.
-- **Search empty-state on home**: if the hero search has no query yet, offer popular topics.
-- **Home stats with truth links**: each hero stat links to the list that proves it.
-- **Interactive changelog**: expand/collapse older entries instead of a flat list.
-- **Contrast band**: "old way vs. Motif" (already exists) — turn the five rows into clickable case links.
-- **Returning-visitor cue**: subtle "back? here's what's new since last visit" via localStorage.
+- **Mission page** ✅ (`/mission` about + principles + won't-do list): a short about page explaining "original only, tested or it doesn't ship".
+- **/components needs a header CTA** ✅ (action strip under header): convert the top strip from explanation to action.
+- **Search empty-state on home** ✅ (popular-topic chips under hero search): if the hero search has no query yet, offer popular topics.
+- **Home stats with truth links** ✅ (each hero stat links to its proof): each hero stat links to the list that proves it.
+- **Interactive changelog** ✅ (expand/collapse full log): expand/collapse older entries instead of a flat list.
+- **Contrast band** ✅ (differentiator rows link to their proof pages): "old way vs. Motif" (already exists) — turn the five rows into clickable case links.
+- **Returning-visitor cue** ✅ (`Welcome back` since-last-visit card): subtle "back? here's what's new since last visit" via localStorage.
 - **Moodboard entry point**: one "get inspired" tile leading to a shuffle view.
 - **Pricing page anchor honesty**: compare plans with a "what stays free forever" promise block.
 - **Side-by-side pricing demo**: two free/Pro component renders, not just a table.

@@ -5,6 +5,7 @@ import { SearchBar } from "@/components/chrome";
 import { accentCss, BACKGROUNDS, CHANGELOG, COMPONENTS, LAB_TOOLS, PROMPTS } from "@/lib/data";
 import { SAMPLE_BUILDS } from "@/lib/samples";
 import AfternoonTimeline from "@/components/home-story";
+import { ChangelogList } from "@/components/home-cues";
 
 const SUPER_POWERS = [
   {
@@ -52,27 +53,21 @@ const HERO_TICKER = [
   "Scroll-lab exports",
 ];
 
+const HERO_TOPICS = [
+  { q: "glass", label: "glass pricing" },
+  { q: "aurora", label: "aurora hero" },
+  { q: "terminal", label: "terminal hero" },
+  { q: "waitlist", label: "waitlist" },
+  { q: "scramble", label: "scramble text" },
+  { q: "portfolio", label: "portfolio" },
+];
+
 const DIFFERENTIATORS = [
-  {
-    them: "Screenshot-only prompt galleries",
-    us: "Every prompt has a live preview plus multi-model test scores and a public run log.",
-  },
-  {
-    them: "Copy-paste component graveyards",
-    us: "Every asset passes automated a11y, size and dependency audits before it earns a card.",
-  },
-  {
-    them: "Styles welded to the component",
-    us: "100% design-token driven — restyle the whole library from Theme Studio in seconds.",
-  },
-  {
-    them: "One stack or nothing",
-    us: "React, HTML/CSS and Vue views with per-stack dependency notes for most assets.",
-  },
-  {
-    them: "Links to docs, no hand-holding",
-    us: "Interactive labs teach the motion math behind the code you're copying.",
-  },
+  { them: "Screenshot-only prompt galleries", us: "Every prompt has a live preview plus multi-model test scores and a public run log.", href: "/prompts" },
+  { them: "Copy-paste component graveyards", us: "Every asset passes automated a11y, size and dependency audits before it earns a card.", href: "/components" },
+  { them: "Styles welded to the component", us: "100% design-token driven — restyle the whole library from Theme Studio in seconds.", href: "/pricing" },
+  { them: "One stack or nothing", us: "React, HTML/CSS and Vue views with per-stack dependency notes for most assets.", href: "/components" },
+  { them: "Links to docs, no hand-holding", us: "Interactive labs teach the motion math behind the code you're copying.", href: "/lab" },
 ];
 
 export default function HomePage() {
@@ -84,10 +79,10 @@ export default function HomePage() {
   const verifiedPrompts = PROMPTS.filter((p) => p.status === "verified" || p.status === "featured").length;
   const copiesTotal = COMPONENTS.reduce((s, c) => s + c.copies, 0);
   const heroStats = [
-    { label: "Original assets", value: String(COMPONENTS.length), delta: "+8 this drop", up: true },
-    { label: "Verified prompts", value: String(verifiedPrompts), delta: "+2 this week", up: true },
-    { label: "Avg prompt fidelity", value: `${Math.round(PROMPTS.reduce((s, p) => s + p.avgFidelity, 0) / Math.max(1, PROMPTS.length))}%`, delta: "+0.6 pt", up: true },
-    { label: "Copies (30d)", value: `${(copiesTotal / 1000).toFixed(1)}k`, delta: "+12.4%", up: true },
+    { label: "Original assets", value: String(COMPONENTS.length), delta: "+8 this drop", up: true, href: "/components" },
+    { label: "Verified prompts", value: String(verifiedPrompts), delta: "+2 this week", up: true, href: "/prompts" },
+    { label: "Avg prompt fidelity", value: `${Math.round(PROMPTS.reduce((s, p) => s + p.avgFidelity, 0) / Math.max(1, PROMPTS.length))}%`, delta: "+0.6 pt", up: true, href: "/prompts" },
+    { label: "Copies (30d)", value: `${(copiesTotal / 1000).toFixed(1)}k`, delta: "+12.4%", up: true, href: "/search?type=components" },
   ];
   /* feature-math + homepage marketing internals (#281-#285) */
   const avgModels = (PROMPTS.reduce((sum, p) => sum + p.runs.length, 0) / Math.max(1, PROMPTS.length)).toFixed(1);
@@ -134,6 +129,18 @@ export default function HomePage() {
           <div className="mt-9 flex justify-center">
             <SearchBar />
           </div>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5">
+            <span className="text-[11px] text-ink-faint">No query yet? Try</span>
+            {HERO_TOPICS.map((t) => (
+              <Link
+                key={t.q}
+                href={`/search?q=${t.q}`}
+                className="chip !cursor-pointer !py-1 !text-[11px] transition-colors hover:!border-violet-300/40 hover:!text-ink"
+              >
+                {t.label}
+              </Link>
+            ))}
+          </div>
 
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <Link href="/components" className="btn btn-primary px-7 py-3 text-base">Browse the library</Link>
@@ -142,11 +149,14 @@ export default function HomePage() {
 
           <dl className="mx-auto mt-16 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/8 bg-white/5 md:grid-cols-4">
             {heroStats.map((s) => (
-              <div key={s.label} className="bg-bg/70 px-5 py-5 backdrop-blur">
-                <dt className="order-2 mt-1 text-[11px] font-medium uppercase tracking-wider text-ink-faint">{s.label}</dt>
+              <Link key={s.label} href={s.href} className="group bg-bg/70 px-5 py-5 backdrop-blur transition-colors hover:bg-bg/40">
+                <dt className="order-2 mt-1 flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider text-ink-faint">
+                  {s.label}
+                  <span className="translate-x-0 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" aria-hidden>↗</span>
+                </dt>
                 <dd className="text-2xl font-extrabold tracking-tight text-ink">{s.value}</dd>
                 <dd className="mt-0.5 text-[11px] font-semibold text-mint">{s.delta}</dd>
-              </div>
+              </Link>
             ))}
           </dl>
         </div>
@@ -390,16 +400,19 @@ export default function HomePage() {
           </div>
           <ul className="space-y-3">
             {DIFFERENTIATORS.map((d, i) => (
-              <li key={i} className="grid gap-3 rounded-2xl border border-white/7 bg-bg/60 p-5 sm:grid-cols-[1fr_auto] sm:items-center">
-                <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">The old way</div>
-                  <div className="text-sm font-semibold text-ink-dim">{d.them}</div>
-                </div>
-                <div className="hidden h-full w-px bg-white/8 sm:block" aria-hidden />
-                <div className="sm:max-w-sm">
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-mint">Motif UI</div>
-                  <div className="text-sm leading-relaxed text-ink">{d.us}</div>
-                </div>
+              <li key={i}>
+                <Link href={d.href} className="group grid gap-3 rounded-2xl border border-white/7 bg-bg/60 p-5 transition-colors hover:border-white/20 hover:bg-bg/80 sm:grid-cols-[1fr_auto] sm:items-center">
+                  <div>
+                    <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">The old way</div>
+                    <div className="text-sm font-semibold text-ink-dim">{d.them}</div>
+                    <div className="mt-1 text-[10px] font-bold uppercase tracking-wider text-violet-300 opacity-0 transition-opacity group-hover:opacity-100">Open the proof →</div>
+                  </div>
+                  <div className="hidden h-full w-px bg-white/8 sm:block" aria-hidden />
+                  <div className="sm:max-w-sm">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-mint">Motif UI</div>
+                    <div className="text-sm leading-relaxed text-ink">{d.us}</div>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>
@@ -479,24 +492,7 @@ export default function HomePage() {
               Read this week&apos;s full digest <span aria-hidden>→</span>
             </Link>
           </div>
-          <ol className="relative space-y-0 border-l border-white/8 pl-6">
-            {CHANGELOG.slice(0, 6).map((e) => (
-              <li key={e.date + e.title} className="relative pb-6 last:pb-0">
-                <span className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-bg" style={{ background: accentCss(e.title, 85, 62) }} aria-hidden />
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-bold tabular-nums text-ink-dim">{e.date}</span>
-                  <span
-                    className="chip !px-2.5 !text-[9px] font-bold uppercase tracking-wider"
-                    style={{ color: accentCss(e.title, 90, 70), borderColor: `${accentCss(e.title, 90, 70, 0.35)}`, background: `${accentCss(e.title, 90, 70, 0.1)}` }}
-                  >
-                    {e.tag}
-                  </span>
-                </div>
-                <h3 className="mt-1.5 text-[15px] font-bold tracking-tight">{e.title}</h3>
-                <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-ink-dim">{e.body}</p>
-              </li>
-            ))}
-          </ol>
+          <ChangelogList entries={CHANGELOG} />
         </div>
       </section>
 
