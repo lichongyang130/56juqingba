@@ -789,6 +789,63 @@ export const PROMPTS: PromptTemplate[] = [
     promptBody: `A rewilding campaign page that asks for money like an adult.\n• Soil brown + moss green + sky cream; serif for the story, sans for facts.\n• Hero: 'Give land its chorus back.' One field-recording play button instead of a video hero.\n• What your money does: 3 cards with concrete math ($14 = one acre of pollinator corridor).\n• Impact counters: hectares restored, species returning, farmers partnered — counts once, no inflation.\n• Donation tiers as radio cards with one-time / monthly toggle; a note on where 94c of each dollar goes.\n• Newsletter band: 'A letter from the field, twice a season.' Honest cadence.\n• Motion: quiet reveals; no autoplay sound.`,
     author: "Motif Studio", published: "2026-09-06",
   },
+
+  {
+    slug: "indie-studio-wishlist",
+    title: "Indie game studio — wishlist push",
+    industry: "Gaming", vibe: "inky, cinematic, self-aware", stacks: ["HTML", "Next.js"],
+    blocks: ["Announcement hero", "Key art gallery", "Roadmap", "Wishlist band"],
+    status: "verified", avgFidelity: 90, bestModel: "Claude 4.6 Sonnet",
+    runs: [
+      { model: "Claude 4.6 Sonnet", date: "2026-09-08", fidelity: 93, buildError: false, notes: "Key art treatment was genuinely cinematic; captions on-language." },
+      { model: "GLM-4.6 (CN)", date: "2026-09-08", fidelity: 90, buildError: false, notes: "Great wishlist urgency; roadmap lane sizing slightly off." },
+      { model: "Codex", date: "2026-09-09", fidelity: 88, buildError: false, notes: "Clean structure; default glow effects wanted dialling back." },
+    ],
+    promptBody: `A landing page for an indie game studio's announcement that treats wishlists as the currency they are.\n• Near-black ink, one key-art accent pulled from the game's palette, serif for lore lines, mono for version numbers.\n• Hero: key art as a slowly drifting backdrop, title set large, and a single primary action — 'Add to wishlist' with a live-ish counter chip.\n• Why it matters: 3 short cards (releases date to you first, demo drops to wishlisters, patch notes stay open).\n• Key art gallery: 3 full-bleed scenes in a horizontal snap-scroll with small captions.\n• Roadmap: vertical season line with mono dates; no roadmaps-past-90-days (honest indie).\n• End band: Steam/console store buttons + 'a demo is coming — wishlist to be told first.'\n• Motion: parallax only inside the key art; every other reveal is a fade-up.`,
+    author: "Motif Studio", published: "2026-09-09",
+  },
+  {
+    slug: "indie-magazine-issue",
+    title: "Indie magazine — issue 09 landing",
+    industry: "Publishing", vibe: "editorial, tactile, playful", stacks: ["HTML"],
+    blocks: ["Cover hero", "Stories index", "Subscriber tiers", "Back issues"],
+    status: "featured", avgFidelity: 91, bestModel: "GLM-4.6 (CN)",
+    runs: [
+      { model: "GLM-4.6 (CN)", date: "2026-09-05", fidelity: 93, buildError: false, notes: "Cover-as-hero concept landed beautifully; issue spine kept tidy." },
+      { model: "Claude 4.6 Sonnet", date: "2026-09-05", fidelity: 92, buildError: false, notes: "Editorial rhythm excellent; wanted tighter gutters pass." },
+      { model: "Codex", date: "2026-09-06", fidelity: 89, buildError: false, notes: "Good; type scale hierarchy needed one more nudge." },
+    ],
+    promptBody: `A landing page for an indie print magazine's new issue — the cover is the product.\n• Cream paper ground, ink serif display, one fluorescent accent used only for issue details.\n• Hero: the actual cover as a large object with a soft drop shadow and spine visible; 'Issue 09 — out now' set like a masthead.\n• Stories index: numbered list rows that open a two-line synopsis on hover; writer bylines set in small caps.\n• Subscribe: three tiers (print / digital / bundle) with honest per-issue price math, plus a 'gift a subscription' note.\n• Back issues: a shelf of mini-covers, click for a sample PDF link.\n• Motion: a gentle tilt on the cover only; content reveals are page-turn-style. Make it feel like the magazine, not a website about the magazine.`,
+    author: "Motif Studio", published: "2026-09-05",
+  },
+  {
+    slug: "beauty-clean-science",
+    title: "Clean beauty — ingredients over hype",
+    industry: "Beauty", vibe: "clinical, warm, honest", stacks: ["HTML", "React"],
+    blocks: ["Ingredient hero", "Formula cards", "Routine builder", "Store locator"],
+    status: "verified", avgFidelity: 90, bestModel: "Claude 4.6 Sonnet",
+    runs: [
+      { model: "Claude 4.6 Sonnet", date: "2026-09-03", fidelity: 92, buildError: false, notes: "Ingredient-first layout convincing — lab-notebook vibe intact." },
+      { model: "Codex", date: "2026-09-03", fidelity: 89, buildError: false, notes: "Solid; palette drifted pastel on pass two, corrected." },
+      { model: "GLM-4.6 (CN)", date: "2026-09-04", fidelity: 88, buildError: false, notes: "Clean build; routine builder steps wanted clearer numbering." },
+    ],
+    promptBody: `A skincare brand page that lets the formulation sheet do the selling.\n• Warm off-white, ink, sage-green + one terracotta accent. Serif for claims, sans for the science.\n• Hero: 'What's in it, and why.' — a rotating ingredient molecule card instead of a beauty shot.\n• Formula cards: each product lists ingredient %, what it does in one plain sentence, and what it won't do (no fillers list).\n• Routine builder: AM/PM two tracks; pick products, page assembles a routine summary with honest 'use sparingly' notes where actives need it.\n• Store locator band: postal search + 'or ask us anything' contact chip.\n• Claims are footnoted. Every %, every study. Motion is slow and small — lab instruments, not fireworks.`,
+    author: "Motif Studio", published: "2026-09-03",
+  },
+  {
+    slug: "club-season-ticket",
+    title: "Football club — season ticket hub",
+    industry: "Sports", vibe: "loud, proud, organised", stacks: ["HTML", "React"],
+    blocks: ["Fixture hero", "Membership tiers", "Seat map", "Matchday feed"],
+    status: "beta", avgFidelity: 87, bestModel: "Claude 4.6 Sonnet",
+    runs: [
+      { model: "Claude 4.6 Sonnet", date: "2026-08-30", fidelity: 89, buildError: false, notes: "Fixture spine design strong; crowd noise texture on-brand." },
+      { model: "Codex", date: "2026-08-30", fidelity: 86, buildError: false, notes: "Good bones; membership table cramped on mobile, flagging." },
+      { model: "GLM-4.6 (CN)", date: "2026-08-31", fidelity: 85, buildError: true, notes: "Seat-map zoom broke once on pass one; fixed on retry." },
+    ],
+    promptBody: `A season-ticket hub for a football club that makes buying a seat feel like joining the crowd.\n• Club colours on deep charcoal; big condensed numerals everywhere; ticket-stub motifs.\n• Hero: the next home fixture with a 'be there' urgency countdown and the badge crest as a live watermark.\n• Membership tiers: 3 lanes (North Stand / Kop / Family) — each a card listing what's included, not what's excluded.\n• Seat map: an SVG stadium plan; pick a section, see price band and sightline note; zoom without breaking.\n• Matchday feed: last 3 results with mini commentary lines, one tap to the full report.\n• Renewal band: 'Your seat waits until June 1' with a member number lookup. Motion: crowd-bounce on the hero crest only.`,
+    author: "Motif Studio", published: "2026-08-30",
+  },
 ];
 
 export const BACKGROUNDS: BackgroundAsset[] = [
@@ -894,6 +951,10 @@ export const INDUSTRY_SAMPLES: Record<string, { kicker: string; title: string; s
   Legal:       { kicker: "PARTNERS 1987",   title: "Law that reads\nlike a person",  sub: "Plain-spoken practice · team",                cta: "Talk to us" },
   Photography: { kicker: "SERIES 03",       title: "Monochrome,\nnot silent",        sub: "Full-bleed series · print editions",          cta: "See series" },
   Nonprofit:   { kicker: "REWILD / 2026",   title: "Give land\nits chorus back",     sub: "Impact counters · donation tiers",            cta: "Donate" },
+  Gaming:      { kicker: "STUDIO / BUILD 09", title: "Wishlist us\ninto existence",    sub: "Key art drift · roadmap lane · counter chip",  cta: "Add to wishlist" },
+  Publishing:  { kicker: "ISSUE 09 / PRINT", title: "The cover\nis the product",      sub: "Editorial grid · tiers · back-issue shelf",    cta: "Get Issue 09" },
+  Beauty:      { kicker: "FORMULA 004",      title: "What's in it,\nand why",         sub: "Ingredient cards · routine builder · locator", cta: "Shop formulas" },
+  Sports:      { kicker: "KICKOFF / 19:45",  title: "Your seat\nwaits until June",    sub: "Fixture spine · seat map · member tiers",      cta: "Claim your seat" },
 };
 export const INDUSTRY_SAMPLE_FALLBACK = {
   kicker: "MOTIF / CONCEPT",

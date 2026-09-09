@@ -551,6 +551,117 @@ const scene = {
       },
     ],
   },
+
+  {
+    slug: "the-60fps-handshake",
+    kicker: "Performance",
+    title: "The 60fps handshake: what devtools is really telling you",
+    deck: "A frame budget is a contract between the compositor and your paint calls. Learn to read the performance trace the way a negotiator reads a room — and stop guessing which property broke it.",
+    minutes: 10,
+    level: "Advanced",
+    tags: ["performance", "60fps", "devtools", "compositor", "css"],
+    updated: "2026-09-09",
+    blocks: [
+      {
+        h: "The budget, in human terms",
+        bullets: [
+          "At 60fps one frame lasts 16.7ms — and the browser keeps ~6ms for itself. Your script, layout and paint get roughly 10ms.",
+          "A dropped frame isn't the crime; a dropped frame every third scroll is. DevTools paints each over-budget frame red in the FPS graph — look for rhythm, not single spikes.",
+          "Long tasks block input too: a 120ms main-thread task means taps and scrolls queue behind it. Same fix, harsher deadline.",
+        ],
+        links: [{ label: "Measure your scroll choreography", href: "/lab" }],
+      },
+      {
+        h: "Read the three lanes",
+        body: [
+          "Open Performance → record a scroll. You'll see a main-thread lane (purple scripting, green layout, pink paint) and a compositor lane below. The handshake: every time you animate a property the main thread owns — width, height, top, left, box-shadow — the main thread must re-run layout or paint before the compositor can show anything.",
+          "If your frame is red in the compositor lane alone, the browser is struggling to rasterise and upload tiles — usually too many backdrop-blurs or giant repaint regions, not your JavaScript.",
+        ],
+      },
+      {
+        h: "The transform/opacity-only rule, quantified",
+        code: {
+          title: "trace-reading.js",
+          lang: "ts",
+          text: `// red flags in a scroll trace, in order of cost:
+// 1. 'Layout' blocks > 2ms repeating  → animating width/top/height
+// 2. 'Paint' blocks growing each frame → backdrop-blur on a moving layer
+// 3. 'Rasterize' every frame          → layer bigger than the viewport
+// 4. scripting > 8ms in a scroll      → layout-thrash or React re-render
+//
+// the fix checklist:
+//  - move the animated element to its own layer (will-change: transform)
+//  - animate only transform / opacity / filter (perf-tier: yes)
+//  - replace box-shadow motion with a pre-blurred pseudo-element
+//  - once the layer exists, REMOVE will-change — it costs memory`,
+        },
+        links: [{ label: "Scroll Lab lets you isolate one variable", href: "/lab" }],
+      },
+      {
+        h: "The 8ms habit",
+        callout: {
+          type: "pro",
+          title: "Budget in your head",
+          text: "Before writing any animation, ask: which lane does this property live in? If the answer is layout or paint, you've spent the budget before the frame started. transform and opacity are the only properties that skip both — that's not a style preference, it's the compositor's contract.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "empty-states-earn-trust",
+    kicker: "UX writing",
+    title: "Design the empty state first",
+    deck: "The empty state is the first thing a new user ever sees — and the first thing designers delete from the spec. A field guide to turning 'nothing here' into the most convincing screen in your product.",
+    minutes: 9,
+    level: "Beginner",
+    tags: ["ux", "empty states", "copywriting", "onboarding", "patterns"],
+    updated: "2026-09-08",
+    blocks: [
+      {
+        h: "Why empty is a feature",
+        body: [
+          "A blank inbox, an empty dashboard, a fresh account — these are the only moments a product has the user's full attention with zero distraction. Products that fill that moment with a grey box and 'No items yet' are burning their best onboarding surface.",
+          "The empty state has one job: make the next action obvious and make the user feel the product is already working. Two sentences of copy can do both.",
+        ],
+        links: [{ label: "Copy that sells the next click", href: "/learn/prompt-that-reproduces" }],
+      },
+      {
+        h: "The anatomy of a good one",
+        bullets: [
+          "One concrete verb in the headline — 'Set your first goal', not 'No goals yet'.",
+          "A next step that takes under a minute and has a visible reward ('Add a link — your first board appears here').",
+          "A secondary escape hatch ('or import from Notion') for the user who isn't ready.",
+          "The illustration (if any) must depict the filled state — show the destination, not the void.",
+        ],
+      },
+      {
+        h: "The pattern, in copy",
+        code: {
+          title: "empty-state-copy.md",
+          lang: "text",
+          text: `Before                      After
+--------                    -----
+No projects yet             Your first project
+                            takes 40 seconds
+
+Try creating one            Create 'Q3 launch'
+                            — your board appears here
+
+                            or import from Jira →
+`,
+        },
+        links: [{ label: "A hero that does the same job for landing pages", href: "/learn/hero-that-breathes-in-20-min" }],
+      },
+      {
+        h: "The audit trick",
+        callout: {
+          type: "warn",
+          title: "Screenshot every empty state",
+          text: "Open a fresh account in your own product and screenshot every screen that has no data. If any of them shows the word 'no' or 'empty' instead of a verb, that screen is your onboarding leak. Fix copy before you touch the chart.",
+        },
+      },
+    ],
+  },
 ];
 
 export function learnArticleOf(slug: string): LearnArticle | undefined {
