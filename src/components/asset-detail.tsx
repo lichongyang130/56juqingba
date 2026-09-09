@@ -1242,6 +1242,151 @@ const spawnAt = (x, y, n) => {
   animation: mf-sparkle .8s ease-out forwards; }
 /* never let the trail block text: pointer-events none everywhere */`,
   },
+  "ink-stamp-appear": {
+    react: `// React — re-key the element to replay the stamp
+const [run, setRun] = useState(0);
+<div key={run} className="stamp"
+  style={{ animation: "mf-stamp .5s cubic-bezier(.22,.68,.32,1) both" }}>
+  approved
+</div>
+// one press: scale .6 + rotate 14° → overshoot 1.06/-2.5° → settle.
+// optional distress: mask-image radial holes for a worn-ink look`,
+    css: `@keyframes mf-stamp { 0% { transform: scale(.6) rotate(14deg); opacity:0 }
+  55% { transform: scale(1.06) rotate(-2.5deg); opacity:1 }
+  75% { transform: scale(.98) rotate(.8deg) }
+  100% { transform: scale(1) rotate(0); opacity:1 } }
+.stamp { border: 4px solid; border-radius: 14px; padding: .8em 1.4em;
+  text-transform: uppercase; letter-spacing: .32em; }
+@media (prefers-reduced-motion: reduce) { .stamp { animation-duration: .01ms } }`,
+  },
+  "gradient-border-flow": {
+    react: `// React — border angle is a CSS variable, animation is pure CSS
+<div className="border-flow-card">
+  <span className="label">tokens · aurora</span>
+</div>
+// pause = toggling one class on the container:
+// .paused .border-flow-card::before { animation-play-state: paused }`,
+    css: `@property --border-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg }
+.border-flow-card { position: relative; border-radius: 16px; }
+.border-flow-card::before { content: ""; position: absolute; inset: -1px;
+  border-radius: inherit; padding: 1px;
+  background: conic-gradient(from var(--border-angle),
+    transparent, #a78bfa 12%, transparent 30%, #22d3ee 48%,
+    transparent 64%, #f472b6 82%, transparent);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: border-rotate 4s linear infinite; }
+@keyframes border-rotate { to { --border-angle: 360deg } }
+/* @property gives the browser permission to interpolate the angle */`,
+  },
+  "ripple-reveal": {
+    react: `// React — one span per press point, self-removing
+const drop = (x, y) => {
+  const id = ++seq.current;
+  setRipples(r => [...r.slice(-14), { id, x, y }]); // cap
+  setTimeout(() => setRipples(r => r.filter(p => p.id !== id)), 800);
+};
+<button onPointerDown={e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  drop(e.clientX - r.left, e.clientY - r.top);
+}}>
+  {ripples.map(p => <span key={p.id} className="ripple"
+    style={{ left: p.x, top: p.y }} />)}
+</button>`,
+    css: `@keyframes mf-ripple { from { transform: translate(-50%,-50%) scale(.1); opacity:.6 }
+  to { transform: translate(-50%,-50%) scale(1); opacity:0 } }
+.ripple { position: absolute; width: 64px; height: 64px; border-radius: 99px;
+  border: 1.5px solid currentColor; pointer-events: none;
+  animation: mf-ripple .8s cubic-bezier(.22,.68,.32,1) forwards; }
+/* halo variant: add a soft shadow and faint fill; cap visible ripples */`,
+  },
+  "parallax-layered-scene": {
+    react: `// React — pointer deltas become per-layer transforms
+const [pt, setPt] = useState(null);
+const onMove = (e) => {
+  const r = e.currentTarget.getBoundingClientRect();
+  setPt({ x: (e.clientX - r.left) / r.width - .5,
+          y: (e.clientY - r.top) / r.height - .5 });
+};
+// far layer: dx * 46  near layer: dx * 88, clamped, ease-out
+// coarse pointer (touch)? skip pointer math, let CSS sway loops run:
+// matchMedia("(pointer: coarse)") → animation: sway 8s ease-in-out`,
+    css: `.layer { transition: transform .3s cubic-bezier(.22,.68,.32,1); }
+@keyframes sway-a { 0%,100% { transform: translate(0,0) } 50% { transform: translate(9px,-12px) } }
+@keyframes sway-b { 0%,100% { transform: translate(0,0) } 50% { transform: translate(-12px,7px) } }
+/* never attach rAF loops on touch: CSS animation is free */`,
+  },
+  "scroll-vignette": {
+    react: `// React — two opacity values derived from scrollTop
+const onScroll = () => {
+  const el = scroller.current;
+  const max = el.scrollHeight - el.clientHeight;
+  const top = Math.min(1, el.scrollTop / 90);
+  const bottom = Math.max(0, Math.min(1, (el.scrollTop - (max - 90)) / 90));
+  setShades({ top, bottom });
+};
+<div className="scroller" ref={scroller} onScroll={onScroll}>
+  …article…
+  <div style={{ opacity: shades.top }} className="vignette-top" />
+  <div style={{ opacity: shades.bottom }} className="vignette-bottom" />
+</div>`,
+    css: `.vignette-top { position: absolute; inset-inline: 0; top: 0; height: 56px;
+  background: linear-gradient(180deg, #05060a, transparent); pointer-events: none; }
+.vignette-bottom { position: absolute; inset-inline: 0; bottom: 0; height: 56px;
+  background: linear-gradient(0deg, #05060a, transparent); pointer-events: none; }`,
+  },
+  "word-by-word-highlight": {
+    react: `// React — index + timer; words color by comparison
+const [idx, setIdx] = useState(0);
+const [playing, setPlaying] = useState(false);
+useEffect(() => {
+  if (!playing) return;
+  const t = setTimeout(() => idx < words.length
+    ? setIdx(i => i + 1) : setPlaying(false), ms);
+  return () => clearTimeout(t);
+}, [playing, idx, ms]);
+{words.map((w, i) => (
+  <span className={i < idx ? "lit" : i === idx ? "now" : "dim"}>{w}</span>
+))}
+// pause at the end keeps the finished headline readable`,
+    css: `.lit { color: var(--color-mint); }
+.now { color: #fff; } .dim { color: rgba(255,255,255,.22); }
+.lit, .now, .dim { transition: color .18s ease; }
+/* progress rail: width = idx / words.length, 200ms transition */`,
+  },
+  "shake-on-error-field": {
+    react: `// React — validate on submit, announce the error in aria-live
+const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
+const submit = () => valid ? setStatus("ok") : setStatus("error");
+<div key={shakeId} className={status === "error" ? "shake-host" : ""}>
+  <input type="email" … />
+</div>
+<p aria-live="polite">{errorText}</p>
+// bump shakeId to replay the shake; the text never depends on it`,
+    css: `@keyframes mf-shake { 10%,90% { transform: translateX(-1px) }
+  20%,80% { transform: translateX(2px) } 30%,50%,70% { transform: translateX(-3px) }
+  40%,60% { transform: translateX(3px) } }
+.shake-host { animation: mf-shake .45s ease-in-out; }
+@media (prefers-reduced-motion: reduce) { .shake-host { animation: none; } }
+/* 1-3px amplitudes only — a shake that rattles the page reads as anger */`,
+  },
+  "bento-feature-grid": {
+    react: `// React — the centrepiece owns the state; satellites read it
+const [val, setVal] = useState(64); // revenue pace knob
+<svg className="area-chart">
+  <path d={areaPath(val)} fill="url(#area)" />
+  <path d={linePath(val)} stroke={accent} /> // redraw on change
+</svg>
+<input type="range" value={val} onChange={e => setVal(+e.target.value)} />
+// tiles: asymmetric spans (col-span-2 centrepiece), one shared
+// radius + border — a system reads through rhythm, not repetition`,
+    css: `.bento-grid { display: grid; grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1.3fr 1fr; gap: 8px; }
+.bento-card { border: 1px solid var(--color-edge); border-radius: 12px;
+  padding: 12px; }
+.bento--feature { grid-column: 1 / -1; }
+/* accent is one variable so calm ↔ festive is a single swap */`,
+  },
 };
 
 const FALLBACK = {
@@ -1560,6 +1705,46 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     why: "A pointer trail is the cheapest 'premium' feel on a marketing hero, and it doubles as a signal that the page is alive.",
     idea: "Cap the live node count per tier and time every spark's removal — a self-cleaning trail never needs a global cleanup pass.",
     skip: "If your hero carries a real CTA, keep the trail behind it and never let particles intercept pointer events or keyboard focus.",
+  },
+  "ink-stamp-appear": {
+    why: "Status words like 'approved' or 'shipped' lose their force with a polite fade; a stamp has the physical confidence of a decision already made.",
+    idea: "The overshoot is the charm — scale past 1 and rotate back through zero so the stamp reads as pressed, not floated in.",
+    skip: "Stamps are for one-shot confirmations. If the word persists on the page as a label, animate once on mount and never again.",
+  },
+  "gradient-border-flow": {
+    why: "A moving border draws the eye to one card in a row of static ones — the standard trick for 'featured' without a badge.",
+    idea: "Animating a registered CSS angle property is a GPU-cheap loop: one conic-gradient, one keyframe, no scroll or rAF listener.",
+    skip: "Running borders on every card on a page is visual noise — the effect only means something when exactly one thing is in motion.",
+  },
+  "ripple-reveal": {
+    why: "Material proved the ripple is the best 'your click landed here' affordance: it starts at the press point, so it always feels true.",
+    idea: "Self-removing spans with a small cap keep the effect free — no canvas, no library, no global state to leak.",
+    skip: "Ripples on plain text links feel fussy; reserve them for tiles, cards and large buttons where the surface itself is the target.",
+  },
+  "parallax-layered-scene": {
+    why: "Two layers moving at different rates create more depth than any gradient — a hero that leans with your cursor feels dimensional.",
+    idea: "Clamp the offset and ease the return; unclamped parallax is how layers drift out of frame and text decouples from its card.",
+    skip: "On touch there is no cursor to lean with — ship a coarse-pointer fallback (slow CSS drift) instead of dead JS listeners.",
+  },
+  "scroll-vignette": {
+    why: "Long-form readers lose their place; a scrim that strengthens at both ends restores the sense of a page with edges.",
+    idea: "Two derived opacities — distance from top and distance from bottom — are enough; no thresholds, no scroll-trigger libraries.",
+    skip: "Keep the band under 60px and under ~12% opacity; a vignette you can see as a gradient is a design flaw, not a cue.",
+  },
+  "word-by-word-highlight": {
+    why: "The fastest way to force a headline to be read is to read it to you — karaoke lighting paces the eye at speaking speed.",
+    idea: "Light the word being read brightest, keep finished words mint, dim upcoming ones: three states read as progress without a bar.",
+    skip: "If your audience scans (dashboards, search), skip karaoke entirely — it slows reading. Reserve it for pitch pages and launch moments.",
+  },
+  "shake-on-error-field": {
+    why: "A field that shakes on submit says 'here' faster than any border colour — but only if the shake stays subtle and never carries the message alone.",
+    idea: "Pair motion with a real error line in aria-live; under reduced motion the shake dies and the message survives, which is the point of the pair.",
+    skip: "Never shake a field that's already focused mid-keystroke — validate on submit or on blur, then stop shaking while the user types.",
+  },
+  "bento-feature-grid": {
+    why: "A bento grid reads as a product dashboard even in a marketing context: asymmetric tiles imply real data without a screenshot.",
+    idea: "One live centrepiece (a chart with a knob) makes the grid interactive theatre — satellites stay static so the eye knows where the action is.",
+    skip: "Bento collapses under more than ~7 tiles or long labels; if a tile needs a paragraph, it's not a tile, it's a section.",
   },
 };
 

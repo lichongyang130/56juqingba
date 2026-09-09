@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 40 / 500 shipped (batches 1–5, in order)
+## Progress — 48 / 500 shipped (batches 1–6, in order)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -52,11 +52,19 @@ names, behaviours and where they plug into the existing pages.
 | 38 | Staggered list entrance | [/components/staggered-list-entrance](/components/staggered-list-entrance) |
 | 39 | Ken Burns gallery | [/components/shuffle-kenburns-gallery](/components/shuffle-kenburns-gallery) |
 | 40 | Particle trail hero | [/components/particle-trail-hero](/components/particle-trail-hero) |
+| 41 | Ink-stamp appear | [/components/ink-stamp-appear](/components/ink-stamp-appear) |
+| 42 | Gradient border flow | [/components/gradient-border-flow](/components/gradient-border-flow) |
+| 43 | Ripple reveal | [/components/ripple-reveal](/components/ripple-reveal) |
+| 44 | Parallax layered scene | [/components/parallax-layered-scene](/components/parallax-layered-scene) |
+| 45 | Scroll vignette | [/components/scroll-vignette](/components/scroll-vignette) |
+| 46 | Word-by-word highlight | [/components/word-by-word-highlight](/components/word-by-word-highlight) |
+| 47 | Shake-on-error field | [/components/shake-on-error-field](/components/shake-on-error-field) |
+| 48 | Bento feature grid | [/components/bento-feature-grid](/components/bento-feature-grid) |
 
 
 ---
 
-## 1. Component library — 70 ideas (40/70 shipped · catalog 39 → 77)
+## 1. Component library — 70 ideas (48/70 shipped · catalog 39 → 85)
 
 ### Form & input elements
 - **Combo box** ✅ (`combo-box`): text input with a live-filtered option list, keyboard navigation and a "no matches" row — slots into every filter on the site.
@@ -105,16 +113,16 @@ names, behaviours and where they plug into the existing pages.
 - **Staggered list entrance** ✅ (`staggered-list-entrance`): rows that fade-slide in sequence when scrolled into view.
 - **Shuffle/ken-burns gallery** ✅ (`shuffle-kenburns-gallery`): frames that slowly zoom-pan between shots with crossfade.
 - **Particle trail hero** ✅ (`particle-trail-hero`): pointer-following sparkles with a perf tier toggle.
-- **Ink-stamp appear**: a title that appears with a quick scale+rotate "stamp" easing.
-- **Gradient border flow**: border that slowly rotates hue around a card (used sparingly on promo cards).
-- **Ripple reveal**: click-anywhere ripple on cards/buttons.
-- **Parallax layered scene**: two-layer mouse parallax with disabled fallback for touch.
-- **Scroll vignette**: page edges darken as you scroll long content (reading-mode cue).
-- **Word-by-word highlight**: headline words brighten in sequence as a script "reads" them.
-- **Shake-on-error field**: the classic inline validation shake, kept subtle and reduced-motion-aware.
+- **Ink-stamp appear** ✅ (`ink-stamp-appear`): a title that appears with a quick scale+rotate "stamp" easing.
+- **Gradient border flow** ✅ (`gradient-border-flow`): border that slowly rotates a conic gradient around a card.
+- **Ripple reveal** ✅ (`ripple-reveal`): click-anywhere ripple on cards/buttons (ink line or halo glow).
+- **Parallax layered scene** ✅ (`parallax-layered-scene`): two-layer mouse parallax with a CSS-drift fallback for touch.
+- **Scroll vignette** ✅ (`scroll-vignette`): page edges darken as you scroll long content (reading-mode cue).
+- **Word-by-word highlight** ✅ (`word-by-word-highlight`): headline words brighten in sequence as a script "reads" them.
+- **Shake-on-error field** ✅ (`shake-on-error-field`): the classic inline validation shake, kept subtle and reduced-motion-aware.
 
 ### Sections
-- **Bento feature grid**: asymmetric feature tiles with an interactive centrepiece.
+- **Bento feature grid** ✅ (`bento-feature-grid`): asymmetric feature tiles with an interactive centrepiece.
 - **Logo wall with hover pop**: sponsor logos that lift and colourise on hover.
 - **Testimonial marquee row**: the classic dual-row counter-scroll, pausable on hover.
 - **Pricing table (three plans)**: feature comparison with a "most popular" glow and toggle.

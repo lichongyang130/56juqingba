@@ -10,24 +10,28 @@ import { LEARN_ARTICLES } from "@/lib/learn";
 export type DemoProps = Record<string, number | string | boolean>;
 
 const KEYFRAMES = `
-@keyframes mf-dot { 0%,100% { transform: scale(0.55); opacity:.35 } 40% { transform: scale(1); opacity:1 } }
-@keyframes mf-spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
-@keyframes mf-scramble { to { filter: blur(0) } }
-@keyframes mf-gridmove { from { background-position: 0 0 } to { background-position: 0 -48px } }
-@keyframes mf-glow { 0%,100% { opacity:.5; transform: scale(1)} 50% { opacity:.9; transform: scale(1.18)} }
-@keyframes mf-rise { from { opacity:0; transform: translateY(14px)} to { opacity:1; transform:none} }
-@keyframes mf-bob { 0%,100%{ transform: translateY(0) rotate(-1deg)} 50%{ transform: translateY(-10px) rotate(1.5deg)} }
-@keyframes mf-roll { from { transform: translateY(-130%); opacity: 0 } to { transform: none; opacity: 1 } }
-@keyframes mf-pop { 0% { transform: scale(.6); opacity: 0 } 65% { transform: scale(1.08); opacity: 1 } 100% { transform: none; opacity: 1 } }
-@keyframes mf-draw { to { stroke-dashoffset: 0 } }
-@keyframes mf-growin { from { opacity: 0; transform: scale(.96) translateY(4px) } to { opacity: 1; transform: none } }
-@keyframes mf-fade { from { opacity: 0 } to { opacity: 1 } }
-@keyframes mf-liquid { 0% { transform: translate(-50%,-50%) scale(.12); opacity:.55 } 55% { transform: translate(-50%,-50%) scale(1.12); opacity:.5 } 100% { transform: translate(-50%,-50%) scale(2.9); opacity:0 } }
-@keyframes mf-kb-l { from { transform: scale(1) translate(0,0) } to { transform: scale(1.16) translate(-3.5%,-2.5%) } }
-@keyframes mf-kb-r { from { transform: scale(1) translate(0,0) } to { transform: scale(1.16) translate(3.5%,2.5%) } }
-@keyframes mf-sparkle { 0% { opacity:1; transform: translate(0,0) scale(var(--ss,1)) } 100% { opacity:0; transform: translate(var(--sdx,0px),var(--sdy,26px)) scale(.15) } }
+  @keyframes mf-dot { 0%,100% { transform: scale(0.55); opacity:.35 } 40% { transform: scale(1); opacity:1 } }
+  @keyframes mf-spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+  @keyframes mf-scramble { to { filter: blur(0) } }
+  @keyframes mf-gridmove { from { background-position: 0 0 } to { background-position: 0 -48px } }
+  @keyframes mf-glow { 0%,100% { opacity:.5; transform: scale(1)} 50% { opacity:.9; transform: scale(1.18)} }
+  @keyframes mf-rise { from { opacity:0; transform: translateY(14px)} to { opacity:1; transform:none} }
+  @keyframes mf-bob { 0%,100%{ transform: translateY(0) rotate(-1deg)} 50%{ transform: translateY(-10px) rotate(1.5deg)} }
+  @keyframes mf-roll { from { transform: translateY(-130%); opacity: 0 } to { transform: none; opacity: 1 } }
+  @keyframes mf-pop { 0% { transform: scale(.6); opacity: 0 } 65% { transform: scale(1.08); opacity: 1 } 100% { transform: none; opacity: 1 } }
+  @keyframes mf-draw { to { stroke-dashoffset: 0 } }
+  @keyframes mf-growin { from { opacity: 0; transform: scale(.96) translateY(4px) } to { opacity: 1; transform: none } }
+  @keyframes mf-fade { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes mf-liquid { 0% { transform: translate(-50%,-50%) scale(.12); opacity:.55 } 55% { transform: translate(-50%,-50%) scale(1.12); opacity:.5 } 100% { transform: translate(-50%,-50%) scale(2.9); opacity:0 } }
+  @keyframes mf-kb-l { from { transform: scale(1) translate(0,0) } to { transform: scale(1.16) translate(-3.5%,-2.5%) } }
+  @keyframes mf-kb-r { from { transform: scale(1) translate(0,0) } to { transform: scale(1.16) translate(3.5%,2.5%) } }
+  @keyframes mf-sparkle { 0% { opacity:1; transform: translate(0,0) scale(var(--ss,1)) } 100% { opacity:0; transform: translate(var(--sdx,0px),var(--sdy,26px)) scale(.15) } }
+  @keyframes mf-stamp { 0% { transform: scale(.6) rotate(14deg); opacity:0 } 55% { transform: scale(1.06) rotate(-2.5deg); opacity:1 } 75% { transform: scale(.98) rotate(.8deg) } 100% { transform: scale(1) rotate(0); opacity:1 } }
+  @keyframes mf-ripple { from { transform: translate(-50%,-50%) scale(.1); opacity:.6 } to { transform: translate(-50%,-50%) scale(1); opacity:0 } }
+  @keyframes mf-shake { 10%,90% { transform: translateX(-1px) } 20%,80% { transform: translateX(2px) } 30%,50%,70% { transform: translateX(-3px) } 40%,60% { transform: translateX(3px) } }
+  @keyframes mf-sway-a { 0%,100% { transform: translate(0,0) } 50% { transform: translate(9px,-12px) } }
+  @keyframes mf-sway-b { 0%,100% { transform: translate(0,0) } 50% { transform: translate(-12px,7px) } }
 `;
-
 /* ------------------------------ ELEMENTS ------------------------------ */
 
 function PrismSwitch({ size = 42, hueSpeed = 1.4 }: DemoProps) {
@@ -4407,6 +4411,562 @@ function ParticleTrailHero() {
   );
 }
 
+const STAMP_SAMPLES = ["approved", "secure", "v.2 shipped", "demo"] as const;
+
+function InkStampAppear() {
+  const [run, setRun] = useState(0);
+  const [word, setWord] = useState(0);
+  const [distress, setDistress] = useState(false);
+  const next = STAMP_SAMPLES[(word + 1) % STAMP_SAMPLES.length];
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(244,114,182,0.1),transparent_60%),#08090f] px-6">
+      <div className="relative flex w-full max-w-sm flex-col items-center gap-2 rounded-2xl border border-white/8 bg-white/4 px-8 py-10">
+        <span className="absolute right-4 top-4 rounded-full border border-white/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.18em] text-ink-faint">
+          sample {word + 1}/{STAMP_SAMPLES.length}
+        </span>
+        <div
+          key={run}
+          className="rounded-2xl border-4 border-pink-300/90 px-8 py-4 uppercase tracking-[0.32em] text-pink-200"
+          style={{
+            animation: "mf-stamp .5s cubic-bezier(.22,.68,.32,1) both",
+            boxShadow: "0 0 0 3px rgba(244,114,182,.12), inset 0 0 0 1px rgba(244,114,182,.35)",
+            maskImage: distress
+              ? "radial-gradient(120% 140% at 30% 20%, #000 55%, transparent 78%)"
+              : undefined,
+          }}
+        >
+          <span className="text-xl font-black">{STAMP_SAMPLES[word]}</span>
+        </div>
+        <p className="mt-1 max-w-[260px] text-center text-[10px] leading-relaxed text-ink-faint">
+          a stamp appears in one pressed moment — quick scale + rotate with an overshoot settle, never a slow fade.
+        </p>
+      </div>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            setRun((n) => n + 1);
+            setWord((w) => (w + 1) % STAMP_SAMPLES.length);
+          }}
+          className="btn btn-primary !px-4 !py-1.5 !text-[11px]"
+        >
+          Stamp “{next}”
+        </button>
+        <button
+          type="button"
+          onClick={() => setDistress((d) => !d)}
+          aria-pressed={distress}
+          className={`btn ${distress ? "!border-pink-300/30 !bg-pink-300/10 !text-pink-200" : "btn-ghost"} !px-4 !py-1.5 !text-[11px]`}
+        >
+          {distress ? "✓ distressed" : "distress"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function GradientBorderFlow() {
+  const [paused, setPaused] = useState(false);
+  const [card, setCard] = useState(0);
+  const cards = [
+    { tag: "tokens", title: "aurora palette", meta: "42 colours · 3 surfaces", deg: 3 },
+    { tag: "component", title: "bento grid", meta: "live · v1.2", deg: 6 },
+    { tag: "prompt", title: "hero copy bundle", meta: "18 prompts · 1.9k words", deg: 9 },
+  ];
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(99,102,241,0.12),transparent_60%),#08090f] px-6">
+      <style>{`@property --mfb-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg }
+.mfb-card { position: relative; border-radius: 16px; }
+.mfb-card::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
+  background: conic-gradient(from var(--mfb-angle), transparent 0%, #a78bfa 12%, transparent 30%,
+    #22d3ee 48%, transparent 64%, #f472b6 82%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: mfb-spin var(--mfb-speed, 4s) linear infinite; pointer-events: none; }
+.mfb-paused .mfb-card::before { animation-play-state: paused; }
+@keyframes mfb-spin { to { --mfb-angle: 360deg } }`}</style>
+      <div className={`flex w-full max-w-md flex-col gap-3 ${paused ? "mfb-paused" : ""}`}>
+        {cards.map((c, ci) => (
+          <div
+            key={c.tag}
+            className={`mfb-card ${card === ci ? "opacity-100" : "opacity-90"}`}
+            style={{ ["--mfb-speed" as string]: `${6 - c.deg * 0.4}s` }}
+          >
+            <button
+              type="button"
+              onClick={() => setCard(ci)}
+              className={`flex w-full items-center gap-4 rounded-2xl border border-white/8 px-5 py-4 text-left transition-colors hover:bg-white/4 ${
+                card === cards.indexOf(c) ? "bg-white/5" : "bg-black/20"
+              }`}
+            >
+              <span className="rounded-lg border border-white/10 bg-black/30 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.18em] text-indigo-200/80">
+                {c.tag}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-bold text-white">{c.title}</span>
+                <span className="block text-[10px] text-ink-dim">{c.meta}</span>
+              </span>
+              <span className="font-mono text-[9px] text-ink-faint">{card === ci ? "focused" : "select"}</span>
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-3">
+        <button type="button" onClick={() => setPaused((p) => !p)} className="btn btn-primary !px-4 !py-1.5 !text-[11px]">
+          {paused ? "▶ resume the flow" : "❚❚ pause the flow"}
+        </button>
+        <p className="max-w-[220px] text-[10px] leading-relaxed text-ink-faint">
+          a conic border whose angle is a real CSS variable — one animation, three speeds, zero JS per frame.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function RippleReveal() {
+  const seq = useRef(0);
+  const [ripples, setRipples] = useState<{ id: number; x: number; y: number; hue: string; tile: number }[]>([]);
+  const [mode, setMode] = useState<"ink" | "halo">("ink");
+  const tileHues = ["#c4b5fd", "#67e8f9", "#6ee7b7", "#fcd34d", "#fda4af", "#7dd3fc"];
+  const drop = (i: number, x: number, y: number, hue: string) => {
+    seq.current += 1;
+    const id = seq.current;
+    setRipples((prev) => [...prev.slice(-14), { id, x, y, hue, tile: i }]);
+    window.setTimeout(() => {
+      setRipples((prev) => prev.filter((r) => r.id !== id));
+    }, 800);
+  };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(34,211,238,0.1),transparent_60%),#08090f] px-6">
+      <div className="grid w-full max-w-md grid-cols-3 gap-2">
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <button
+            key={i}
+            type="button"
+            aria-label={`Tile ${i + 1} — click for a ripple`}
+            onPointerDown={(e) => {
+              const r = e.currentTarget.getBoundingClientRect();
+              drop(i, e.clientX - r.left, e.clientY - r.top, tileHues[i]);
+            }}
+            className={`relative flex h-24 items-center justify-center overflow-hidden rounded-xl border font-mono text-[10px] uppercase tracking-[0.2em] transition-transform active:scale-[.97] ${
+              mode === "ink"
+                ? "border-white/10 bg-[linear-gradient(150deg,rgba(255,255,255,.06),rgba(255,255,255,.02)_45%,rgba(34,211,238,.08))] text-ink-dim hover:border-white/20"
+                : i === 4
+                  ? "col-span-2 border-cyan-300/30 bg-cyan-400/10 text-cyan-100"
+                  : "border-white/10 bg-white/3 text-ink-dim hover:border-white/20"
+            }`}
+          >
+            t{i + 1}
+            {ripples
+              .filter((r) => r.tile === i)
+              .map((r) => (
+                <span
+                  key={r.id}
+                  aria-hidden
+                  className="pointer-events-none absolute rounded-full"
+                  style={{
+                    left: r.x,
+                    top: r.y,
+                    width: 64,
+                    height: 64,
+                    border: `1.5px solid ${r.hue}`,
+                    boxShadow: mode === "halo" ? `0 0 24px ${r.hue}66` : undefined,
+                    background: mode === "halo" ? `${r.hue}1f` : "transparent",
+                    animation: "mf-ripple .8s cubic-bezier(.22,.68,.32,1) forwards",
+                  }}
+                />
+              ))}
+          </button>
+        ))}
+      </div>
+      <div className="flex w-full max-w-md items-center justify-between">
+        <div className="flex items-center gap-1 rounded-lg border border-white/8 bg-black/30 p-0.5">
+          {(["ink", "halo"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMode(m)}
+              aria-pressed={mode === m}
+              className={`rounded-md px-3 py-1 text-[10px] font-bold ${mode === m ? "bg-cyan-400/20 text-cyan-100" : "text-ink-faint hover:text-ink-dim"}`}
+            >
+              {m === "ink" ? "ink line" : "halo glow"}
+            </button>
+          ))}
+        </div>
+        <p className="max-w-[240px] text-right text-[10px] leading-relaxed text-ink-faint">
+          a ripple from every press point makes any surface feel causal — tap any tile. The halo tile doubles as the grid’s focus card.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ParallaxLayeredScene() {
+  const [pt, setPt] = useState<{ x: number; y: number } | null>(null);
+  const [coarse, setCoarse] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.matchMedia("(pointer: coarse)").matches : false
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: coarse)");
+    const on = (e: MediaQueryListEvent) => setCoarse(e.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  const layer = (factor: number, base: number) => {
+    if (coarse) return undefined;
+    if (!pt) return { transform: "translate3d(0px, 0px, 0)" };
+    const x = Math.max(-base, Math.min(base, (pt.x - 0.5) * factor));
+    const y = Math.max(-base * 0.6, Math.min(base * 0.6, (pt.y - 0.5) * factor));
+    return { transform: `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)` };
+  };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 overflow-hidden bg-[#08090f] px-6">
+      <div
+        className="relative h-64 w-full max-w-md overflow-hidden rounded-2xl border border-white/8 bg-[#0d1020]"
+        onMouseMove={(e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          setPt({ x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height });
+        }}
+        onMouseLeave={() => setPt(null)}
+      >
+        <div className="absolute inset-0" aria-hidden style={{ ...layer(0, 0) }}>
+          <div className="absolute inset-0" style={{ background: "radial-gradient(70% 90% at 30% 20%, rgba(139,92,246,.35), transparent 60%), radial-gradient(60% 80% at 75% 80%, rgba(34,211,238,.22), transparent 55%)" }} />
+        </div>
+        <div className="absolute inset-0" aria-hidden style={{ ...layer(46, 16), transition: "transform .3s cubic-bezier(.22,.68,.32,1)", animation: coarse ? "mf-sway-a 8s ease-in-out infinite" : undefined }}>
+          <span className="absolute left-[14%] top-[22%] h-2 w-2 rounded-full bg-violet-300/80" />
+          <span className="absolute left-[68%] top-[16%] h-1.5 w-1.5 rounded-full bg-cyan-300/70" />
+          <span className="absolute left-[42%] top-[64%] h-1.5 w-1.5 rounded-full bg-pink-300/70" />
+          <span className="absolute left-[24%] top-[70%] h-1 w-1 rounded-full bg-white/40" />
+          <span className="absolute left-[82%] top-[58%] h-1 w-1 rounded-full bg-white/40" />
+          <span className="absolute left-[55%] top-[26%] h-1 w-1 rounded-full bg-white/30" />
+        </div>
+        <div className="absolute inset-0" aria-hidden style={{ ...layer(88, 30), transition: "transform .3s cubic-bezier(.22,.68,.32,1)", animation: coarse ? "mf-sway-b 11s ease-in-out infinite" : undefined }}>
+          <div className="absolute inset-x-0 bottom-[-8%] h-1/2" style={{ background: "linear-gradient(180deg, transparent, rgba(34,211,238,.14) 70%)" }} />
+          <div className="absolute bottom-[18%] left-1/2 h-24 w-40 -translate-x-1/2 rounded-t-[999px] border border-cyan-200/25 bg-cyan-200/5" />
+          <div className="absolute bottom-[6%] left-[16%] h-20 w-24 -translate-x-1/2 rounded-t-[999px] border border-violet-200/20 bg-violet-200/5" />
+        </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between p-4">
+          <div>
+            <p className="text-lg font-black tracking-tight text-white">dune &amp; glass</p>
+            <p className="text-[9px] uppercase tracking-[0.2em] text-white/45">two-layer parallax · {coarse ? "touch drift fallback" : "pointer parallax"}</p>
+          </div>
+          <span className="rounded-full border border-white/12 bg-black/35 px-2 py-0.5 font-mono text-[9px] text-cyan-200/80 backdrop-blur">
+            {coarse ? "auto" : `${pt ? "live" : "idle"}`}
+          </span>
+        </div>
+      </div>
+      <p className="max-w-md text-center text-[10px] leading-relaxed text-ink-faint">
+        far layer drifts a little, near layer a lot. On touch (coarse pointer) the JS parallax steps aside for a slow CSS drift —
+        <span className="text-ink-dim"> no dead motion, no heavy rAF loop.</span>
+      </p>
+    </div>
+  );
+}
+
+const VIG_COPY = [
+  ["Reading mode", "long-form pages deserve the same care as landing pages: the scrim tells you how much story is left."],
+  ["Edge vignette", "The top shade mounts as you scroll away from the start; the bottom shade grows as the end approaches."],
+  ["Why it works", "Your peripheral vision reads the frame before your eyes read the text — a soft cue that costs nothing to compute."],
+  ["Rules", "Keep the darkening under 12% and the band under 60px; anything louder reads as a broken gradient, not a cue."],
+  ["Composition", "Darker at the bottom, softer at the top — reading gravity pulls your eye down the page, not up."],
+] as const;
+
+function ScrollVignette() {
+  const scroller = useRef<HTMLDivElement>(null);
+  const [shades, setShades] = useState<{ top: number; bottom: number }>({ top: 0, bottom: 0 });
+  const onScroll = () => {
+    const el = scroller.current;
+    if (!el) return;
+    const max = Math.max(1, el.scrollHeight - el.clientHeight);
+    const top = Math.min(1, el.scrollTop / 90);
+    const bottom = Math.max(0, Math.min(1, (el.scrollTop - (max - 90)) / 90));
+    setShades({ top, bottom });
+  };
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">reading mode — scroll slowly</span>
+        <span className="rounded-full border border-white/10 px-2.5 py-0.5 font-mono text-[10px] text-amber-200/80">
+          top {shades.top.toFixed(2)} · bottom {shades.bottom.toFixed(2)}
+        </span>
+      </div>
+      <div className="relative min-h-0 flex-1">
+        <div ref={scroller} onScroll={onScroll} className="h-full overflow-y-auto px-6 py-6">
+          <div className="mx-auto max-w-sm space-y-5">
+            {VIG_COPY.map(([t, body]) => (
+              <section key={t}>
+                <h3 className="text-sm font-black tracking-tight text-white">{t}</h3>
+                <p className="mt-1.5 text-[11.5px] leading-relaxed text-white/60">{body}</p>
+              </section>
+            ))}
+          </div>
+        </div>
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-14" style={{ background: "linear-gradient(180deg, #05060a, transparent)", opacity: shades.top }} />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-14" style={{ background: "linear-gradient(0deg, #05060a, transparent)", opacity: shades.bottom }} />
+      </div>
+    </div>
+  );
+}
+
+function WordHighlight() {
+  const words = ["Motif", "ships", "original", "assets,", "one", "idea", "at", "a", "time."];
+  const [idx, setIdx] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [speed, setSpeed] = useState(0);
+  const ms = [340, 200, 120][speed];
+  useEffect(() => {
+    if (!playing) return;
+    const t = window.setTimeout(() => {
+      if (idx >= words.length) {
+        setPlaying(false);
+        return;
+      }
+      setIdx((i) => i + 1);
+    }, ms);
+    return () => window.clearTimeout(t);
+  }, [playing, idx, ms, words.length]);
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(52,211,153,0.1),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-md rounded-2xl border border-white/8 bg-white/4 px-6 py-8">
+        <p className="text-center text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">karaoke headline</p>
+        <p className="mt-4 text-center text-2xl font-black leading-snug tracking-tight">
+          {words.map((w, i) => {
+            const done = i < idx;
+            const now = i === idx;
+            return (
+              <span key={`${w}-${i}`} className="mr-[0.28em] inline-block">
+                <span
+                  className={done ? "text-mint" : now ? "text-white" : "text-white/22"}
+                  style={{ transition: "color .18s ease", textShadow: now || done ? "0 0 18px rgba(52,211,153,.35)" : undefined }}
+                >
+                  {w}
+                </span>
+              </span>
+            );
+          })}
+        </p>
+        <div className="mt-6 h-1 overflow-hidden rounded-full bg-white/8">
+          <div className="h-full rounded-full bg-gradient-to-r from-emerald-300 to-teal-400 transition-[width] duration-200" style={{ width: `${(Math.min(idx, words.length) / words.length) * 100}%` }} />
+        </div>
+        <p className="mt-2 text-right font-mono text-[10px] text-ink-faint">
+          {Math.min(idx, words.length)}/{words.length} words
+        </p>
+      </div>
+      <div className="flex w-full max-w-md items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              if (!playing && idx >= words.length) {
+                setIdx(0);
+              }
+              setPlaying((p) => !p);
+            }}
+            className="btn btn-primary !px-4 !py-1.5 !text-[11px]"
+          >
+            {playing ? "❚❚ pause" : idx >= words.length ? "↻ replay" : "▶ read"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setPlaying(false);
+              setIdx(0);
+            }}
+            className="btn btn-ghost !px-3 !py-1.5 !text-[11px]"
+          >
+            reset
+          </button>
+        </div>
+        <div className="flex items-center gap-1 rounded-lg border border-white/8 bg-black/30 p-0.5">
+          {["calm", "reading", "quick"].map((s, si) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setSpeed(si)}
+              aria-pressed={speed === si}
+              className={`rounded-md px-2.5 py-1 text-[10px] font-bold ${speed === si ? "bg-emerald-400/20 text-emerald-200" : "text-ink-faint hover:text-ink-dim"}`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ShakeField() {
+  const [value, setValue] = useState("");
+  const [status, setStatus] = useState<"idle" | "error" | "ok">("idle");
+  const [shakeId, setShakeId] = useState(0);
+  const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
+  const submit = () => {
+    if (!valid) {
+      setStatus("error");
+      setShakeId((n) => n + 1);
+      return;
+    }
+    setStatus("ok");
+  };
+  const onChange = (v: string) => {
+    setValue(v);
+    if (status !== "idle") setStatus("idle");
+  };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(251,113,133,0.08),transparent_60%),#08090f] px-6">
+      <style>{`@media (prefers-reduced-motion: reduce) { .shake-host { animation: none !important; } }`}</style>
+      <div className="w-full max-w-md rounded-2xl border border-white/8 bg-white/4 p-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">sign-up form · email field</p>
+        <label htmlFor="shake-email" className="mt-4 block text-[11px] font-semibold text-ink-dim">
+          Work email
+        </label>
+        <div
+          key={shakeId}
+          className={`shake-host mt-1.5 flex items-center gap-2 rounded-xl border px-3 py-2.5 transition-colors focus-within:ring-2 ${
+            status === "error"
+              ? "border-rose-300/60 bg-rose-400/8 focus-within:ring-rose-300/20"
+              : "border-white/10 bg-black/20 focus-within:border-violet-300/50 focus-within:ring-violet-300/15"
+          }`}
+          style={{ animation: status === "error" ? "mf-shake .45s ease-in-out" : undefined }}
+        >
+          <input
+            id="shake-email"
+            type="email"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") submit();
+            }}
+            placeholder="you@studio.dev"
+            className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-ink-faint"
+          />
+          <button
+            type="button"
+            onClick={submit}
+            className={`shrink-0 rounded-lg px-3.5 py-1.5 text-[11px] font-black transition-colors ${
+              status === "ok"
+                ? "bg-emerald-400/15 text-emerald-300"
+                : status === "error"
+                  ? "bg-rose-400/15 text-rose-200"
+                  : "bg-white/10 text-white hover:bg-white/15"
+            }`}
+          >
+            {status === "ok" ? "✓ Joined" : "Join"}
+          </button>
+        </div>
+        <p
+          aria-live="polite"
+          className={`mt-2 text-[10.5px] transition-opacity ${status === "idle" ? "opacity-0" : "opacity-100"}`}
+        >
+          {status === "error" && <span className="text-rose-200">That address needs an @ and a domain — try you@studio.dev</span>}
+          {status === "ok" && <span className="text-emerald-300">You’re in — the confirmation email is on its way.</span>}
+        </p>
+        <p className="mt-2 text-[9px] text-ink-faint">
+          the shake is 1–3px and dies under prefers-reduced-motion; the error text never depends on it.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const BENTO_MODE = ["calm", "festive"] as const;
+
+function BentoFeatureGrid() {
+  const [mode, setMode] = useState<(typeof BENTO_MODE)[number]>("calm");
+  const [val, setVal] = useState(64);
+  const accent = mode === "calm" ? "#22d3ee" : "#f472b6";
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(139,92,246,0.12),transparent_60%),#08090f] px-6 py-5">
+      <div className="grid w-full max-w-md flex-1 min-h-0 grid-cols-2 gap-2" style={{ gridTemplateRows: "1fr 1.3fr 1fr" }}>
+        <div className="col-span-1 flex flex-col justify-between rounded-xl border border-white/8 bg-white/4 p-3">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-ink-faint">daily active</span>
+          <span className="text-2xl font-black tracking-tight text-white">12,4k</span>
+          <span className="text-[9px] text-emerald-300">▲ 8.2% vs last week</span>
+        </div>
+        <div className="col-span-1 flex flex-col justify-between rounded-xl border border-white/8 bg-white/4 p-3">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-ink-faint">uptime</span>
+          <span className="text-2xl font-black tracking-tight text-white">99.98<span className="text-xs text-ink-dim">%</span></span>
+          <span className="text-[9px] text-ink-dim">30-day rolling</span>
+        </div>
+        <div className="col-span-2 flex min-h-0 flex-col rounded-xl border p-3" style={{ borderColor: `${accent}33`, background: `${accent}0d` }}>
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: accent }}>
+              the centrepiece · revenue pace
+            </span>
+            <span className="font-mono text-[9px] text-ink-faint">drag the knob</span>
+          </div>
+          <div className="relative mt-1 flex-1 min-h-0 overflow-hidden rounded-lg bg-black/30">
+            <svg viewBox="0 0 320 120" preserveAspectRatio="none" className="h-full w-full">
+              <defs>
+                <linearGradient id="bento-area" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={accent} stopOpacity="0.35" />
+                  <stop offset="100%" stopColor={accent} stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              {[0, 1, 2, 3].map((g) => {
+                const pts = Array.from({ length: 9 }, (_, i) => {
+                  const t = i / 8;
+                  const base = g * 26;
+                  const wave = Math.sin(t * Math.PI * 2 + g) * (val / 6) + t * (120 - base);
+                  return [i * 40, 118 - Math.max(6, Math.min(112, base + wave * 0.4 + 8))] as const;
+                });
+                const d = pts.map((p, i) => `${i === 0 ? "M" : "L"}${p[0]},${p[1]}`).join(" ");
+                return (
+                  <g key={g}>
+                    <path d={`${d} L320,120 L0,120 Z`} fill="url(#bento-area)" opacity={0.5} />
+                    <path d={d} fill="none" stroke={accent} strokeWidth="1.5" opacity="0.7" />
+                  </g>
+                );
+              })}
+            </svg>
+            <input
+              type="range"
+              min={10}
+              max={100}
+              value={val}
+              aria-label="Revenue pace"
+              onChange={(e) => setVal(Number(e.target.value))}
+              className="absolute inset-x-3 bottom-2"
+              style={{ accentColor: accent }}
+            />
+          </div>
+        </div>
+        <div className="col-span-1 flex flex-col justify-center rounded-xl border border-white/8 bg-white/4 p-3">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-ink-faint">export ready</span>
+          <p className="mt-1 text-[10px] leading-relaxed text-ink-dim">SVG + PNG at every breakpoint, tokens included.</p>
+        </div>
+        <div className="col-span-1 flex flex-col justify-center rounded-xl border border-white/8 bg-white/4 p-3">
+          <div className="flex items-baseline justify-between">
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-ink-faint">net new</span>
+            <span className="text-lg font-black" style={{ color: accent }}>
+              +{val / 4}
+            </span>
+          </div>
+          <p className="mt-1 text-[10px] leading-relaxed text-ink-dim">this month — the knob above drives the forecast.</p>
+        </div>
+      </div>
+      <div className="flex w-full max-w-md items-center justify-between">
+        <div className="flex items-center gap-1 rounded-lg border border-white/8 bg-black/30 p-0.5">
+          {BENTO_MODE.map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMode(m)}
+              aria-pressed={mode === m}
+              className={`rounded-md px-3 py-1 text-[10px] font-bold ${mode === m ? "bg-white/10 text-white" : "text-ink-faint hover:text-ink-dim"}`}
+            >
+              {m}
+            </button>
+          ))}
+        </div>
+        <p className="max-w-[260px] text-right text-[10px] leading-relaxed text-ink-faint">
+          asymmetric tiles, one live centrepiece — the layout reads as a system because every tile shares a border radius, not a size.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 
@@ -4433,6 +4993,8 @@ export const DEMO_KEYS = [
   "offline-indicator", "error-boundary-card", "confetti-burst",
   "dot-leader-loading", "live-region-demo", "liquid-button-hover", "magnetic-icon-row",
   "scroll-linked-hue-hero", "staggered-list-entrance", "shuffle-kenburns-gallery", "particle-trail-hero",
+  "ink-stamp-appear", "gradient-border-flow", "ripple-reveal", "parallax-layered-scene",
+  "scroll-vignette", "word-by-word-highlight", "shake-on-error-field", "bento-feature-grid",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -4520,6 +5082,14 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "staggered-list-entrance": return <StaggeredListEntrance />;
     case "shuffle-kenburns-gallery": return <ShuffleKenburnsGallery />;
     case "particle-trail-hero": return <ParticleTrailHero />;
+    case "ink-stamp-appear": return <InkStampAppear />;
+    case "gradient-border-flow": return <GradientBorderFlow />;
+    case "ripple-reveal": return <RippleReveal />;
+    case "parallax-layered-scene": return <ParallaxLayeredScene />;
+    case "scroll-vignette": return <ScrollVignette />;
+    case "word-by-word-highlight": return <WordHighlight />;
+    case "shake-on-error-field": return <ShakeField />;
+    case "bento-feature-grid": return <BentoFeatureGrid />;
     default: return null;
   }
 }
