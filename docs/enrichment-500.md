@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 177 / 500 shipped (batches 1–23, in order) · Sections 1–3 complete ✅
+## Progress — 185 / 500 shipped (batches 1–24, in order) · Sections 1–3 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -189,6 +189,14 @@ names, behaviours and where they plug into the existing pages.
 | 175 | Fidelity is a claim essay | [/learn/fidelity-is-a-claim](/learn/fidelity-is-a-claim) |
 | 176 | The keyboard walk essay | [/learn/the-keyboard-walk](/learn/the-keyboard-walk) |
 | 177 | Screen-reader poetry essay | [/learn/screen-reader-poetry](/learn/screen-reader-poetry) |
+| 178 | Focus order is layout essay | [/learn/focus-order-is-layout](/learn/focus-order-is-layout) |
+| 179 | Contrast on brand colours essay | [/learn/contrast-on-brand-colours](/learn/contrast-on-brand-colours) |
+| 180 | Touch targets beyond 44px essay | [/learn/touch-targets-beyond-44px](/learn/touch-targets-beyond-44px) |
+| 181 | Autoplay is a decision essay | [/learn/autoplay-is-a-decision](/learn/autoplay-is-a-decision) |
+| 182 | Designing for cognitive load essay | [/learn/designing-for-cognitive-load](/learn/designing-for-cognitive-load) |
+| 183 | Forms that fail kindly essay | [/learn/forms-that-fail-kindly](/learn/forms-that-fail-kindly) |
+| 184 | The invisible header essay | [/learn/the-invisible-header](/learn/the-invisible-header) |
+| 185 | Testing with one hand essay | [/learn/testing-with-one-hand](/learn/testing-with-one-hand) |
 
 
 ---
@@ -380,7 +388,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 4. Learn — 50 more essays & formats (currently 10 → 42 live)
+## 4. Learn — 50 more essays & formats (currently 10 → 50 live)
 
 ### Motion & animation theory
 - **Easing cheatsheet deep-dive** ✅ (`easing-cheatsheet-deep-dive`): compare the 8 named curves side-by-side with the Lab embeds.
@@ -421,14 +429,14 @@ names, behaviours and where they plug into the existing pages.
 ### Accessibility & inclusive design
 - **The keyboard walk** ✅ (`the-keyboard-walk`): audit a page with Tab only and find the traps.
 - **Screen-reader poetry** ✅ (`screen-reader-poetry`): writing alt text and labels that respect attention.
-- **Focus order is layout**: why DOM order beats visual order.
-- **Contrast on brand colours**: keeping personality inside AA.
-- **Touch targets beyond 44px**: thumbs, gloves and the real minimum.
-- **Autoplay is a decision**: motion, sound and the users it excludes.
-- **Designing for cognitive load**: chunking, defaults and forgiving forms.
-- **Forms that fail kindly**: inline errors, retries and undo.
-- **The invisible header**: landmarks, headings and why structure is design.
-- **Testing with one hand**: mobile-first accessibility without a device lab.
+- **Focus order is layout** ✅ (`focus-order-is-layout`): why DOM order beats visual order.
+- **Contrast on brand colours** ✅ (`contrast-on-brand-colours`): keeping personality inside AA.
+- **Touch targets beyond 44px** ✅ (`touch-targets-beyond-44px`): thumbs, gloves and the real minimum.
+- **Autoplay is a decision** ✅ (`autoplay-is-a-decision`): motion, sound and the users it excludes.
+- **Designing for cognitive load** ✅ (`designing-for-cognitive-load`): chunking, defaults and forgiving forms.
+- **Forms that fail kindly** ✅ (`forms-that-fail-kindly`): inline errors, retries and undo.
+- **The invisible header** ✅ (`the-invisible-header`): landmarks, headings and why structure is design.
+- **Testing with one hand** ✅ (`testing-with-one-hand`): mobile-first accessibility without a device lab.
 
 ### Career, process & industry
 - **Building a personal UI library**: lessons from Motif for your own site.

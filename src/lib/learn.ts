@@ -2250,6 +2250,364 @@ Complex     <figure> + caption + data table + alt pointing
       },
     ],
   },
+  {
+    slug: "focus-order-is-layout",
+    kicker: "Accessibility",
+    title: "Focus order is layout",
+    deck: "Keyboard users read the page in DOM order, not visual order. When the two disagree, the layout lies to half your users. Why DOM order beats visual order — and the two reordering tools you should almost never use.",
+    minutes: 8,
+    level: "Intermediate",
+    tags: ["a11y", "focus", "dom order", "layout"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The two reading orders",
+        body: [
+          "A sighted mouse user reads a page visually: their eye lands where the design points. A keyboard user reads a page in DOM order: Tab walks the document tree, and every visual trick — CSS grid reordering, fl exbox order, absolutely-positioned sidebars — is invisible to that walk unless the DOM matches the visual. When a layout visually places the product grid left of the filters but the DOM lists the filters first, the keyboard user tabs through forty filter options before reaching the first product. The layout and the keyboard are telling two different stories.",
+        ],
+        code: {
+          title: "the-reorder-trap.html",
+          lang: "html",
+          text: `<!-- visually: products left, filters right (grid areas)
+     DOM order decides Tab order: products FIRST -->
+<div class="shop">
+  <main class="products">  <!-- Tab stops here first -->
+    ...cards...
+  </main>
+  <aside class="filters">  <!-- then here -->
+    ...filters...
+  </aside>
+</div>
+
+<!-- Do NOT fix with tabindex="5" / "6" — fragile, and
+     positive tabindex breaks the natural order for
+     everything after it. Fix the DOM order instead. -->`,
+        },
+      },
+      {
+        h: "The reordering tools, judged",
+        bullets: [
+          "DOM order first: the professional default — write the DOM in reading order and let CSS place it visually (grid areas, flex order do not change the walk).",
+          "tabindex='-1' is the legitimate tool: it makes an element script-focusable without adding it to the Tab sequence — used for focus management in modals and for skip-link targets.",
+          "Positive tabindex (1, 2, 3…) is the trap: it pulls elements to the front of the walk and makes every later element's position depend on it — one positive tabindex is a bug report waiting to happen.",
+          "The skip link is not optional: 'Skip to content' as the first focusable element is how keyboard users skip your nav — without it, every page visit starts with forty nav links.",
+        ],
+      },
+      {
+        h: "The visual-order audit",
+        body: [
+          "The audit is a side-by-side: walk the page with Tab and note each stop's visual position. Draw the path. If the path zigzags — down the sidebar, up to the header, over to the footer — the DOM and the layout disagree. The fix is usually humble: reorder the source so reading order matches visual order, and let the layout do the arranging. When visual order genuinely cannot be the reading order, the visual layout needs the rethink, not the DOM.",
+        ],
+        links: [{ label: "The keyboard walk", href: "/learn/the-keyboard-walk" }],
+      },
+    ],
+  },
+  {
+    slug: "contrast-on-brand-colours",
+    kicker: "Accessibility",
+    title: "Contrast on brand colours",
+    deck: "Your logo colour fails AA on white — almost everyone's does. Keeping personality inside contrast: brand colours for surfaces and large elements, tuned ink variants for text, and the token pattern that makes it automatic.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["a11y", "contrast", "brand", "colour"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The hard truth about brand palettes",
+        body: [
+          "Brand colours are chosen for distinctiveness, memorability and print — rarely for luminance. Run a typical logo blue or red against white and you land between 3:1 and 4.4:1: fine for large type and UI component boundaries (AA large needs 3:1), failing for body copy (AA needs 4.5:1). The result is every marketing site you have ever squinted at: brand-coloured links that look fine and fail their users at exactly the moment they need them.",
+        ],
+        code: {
+          title: "brand-tokens.css",
+          lang: "css",
+          text: `:root {
+  --brand:      #2563c9;   /* the logo — surfaces, large type */
+  --brand-ink:  #16336b;   /* text variant, tuned to 7:1 on white */
+  --brand-tint: #e8effb;   /* background wash — passes as a surface */
+}
+/* rule: text below 24px uses --brand-ink, never --brand.
+   --brand on white stays for icons, borders, large display. */`,
+        },
+      },
+      {
+        h: "The three moves that keep the personality",
+        bullets: [
+          "Tune, don't abandon: the text variant of a brand colour is the same hue, shifted in lightness — the personality survives because hue carries identity; luminance carries legibility.",
+          "Spend the strong colour where AA is lower: large display type, icons, borders, and filled buttons with white text pass at 3:1 — the brand colour gets the loud moments, the tuned variant gets the words.",
+          "White on brand is a separate calculation: a filled brand button needs white text at 4.5:1 — many logo colours fail even that, which is why so many buttons use a darkened hover state that is actually the accessible resting state.",
+          "On dark surfaces the math flips: brand colours that glow on dark often fail against it differently — every dark-mode pair needs its own audit, because luminance contrast is pair-specific.",
+        ],
+      },
+      {
+        h: "The token pattern that makes it automatic",
+        body: [
+          "Encode the decision in the token layer and designers stop re-arguing it per screen: --brand for surfaces and large display, --brand-ink for text, --brand-tint for backgrounds. The rule lives in one comment — 'text below 24px never uses --brand' — and the audit becomes a search for --brand used on small text, which takes a developer ten seconds instead of a designer ten meetings.",
+        ],
+        links: [{ label: "Luminance, computed", href: "/learn/colour-contrast-you-can-compute" }],
+      },
+    ],
+  },
+  {
+    slug: "touch-targets-beyond-44px",
+    kicker: "Accessibility",
+    title: "Touch targets beyond 44px",
+    deck: "44×44 CSS pixels is a floor, not a finish. Thumbs, gloves, tremor, and the person using the phone one-handed on a moving train — the real minimum is a target your user can hit when they are not at their best.",
+    minutes: 8,
+    level: "Beginner",
+    tags: ["a11y", "touch", "mobile", "targets"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Why the standard exists — and what it misses",
+        body: [
+          "The 44×44px recommendation (Apple HIG and WCAG 2.5.5/2.5.8 land near here) comes from thumb-ergonomics research: the average thumb pad covers roughly that area, and smaller targets accumulate misses. But the standard models a calm thumb. The real user is on a bus, one-handed, with a bag in the other hand, possibly with reduced dexterity or a tremor, possibly wearing gloves. A target sized for the calm thumb is a target that fails the tired one.",
+        ],
+        bullets: [
+          "Size for the miss, not the hit: adjacent targets under 44px create the double-tap problem — the user hits the wrong one, then has to undo. Spacing between targets is part of the target; 40px targets with 8px gaps pass where 44px targets touching fail.",
+          "The visual can be smaller than the target: an 18px icon button with 44px of padding and an invisible hit-slot is both pretty and hittable — the affordance and the target are different boxes and both matter.",
+          "Watch the edges: targets at the screen edge benefit from edge-squeeze ergonomics (the thumb rests there) — but targets flush against the edge can be half-covered by phone cases and gestures; inset critical controls 8px.",
+          "Test the real conditions: a target that passes the design-file check at 48px can fail the 2×-density reality check if the CSS is in logical pixels but the hit area is eaten by padding on a parent with overflow.",
+        ],
+        code: {
+          title: "hit-slot.css",
+          lang: "css",
+          text: `.icon-button {
+  width: 24px; height: 24px;          /* the visual */
+  padding: 10px;                       /* grows the hit area */
+  background-clip: content-box;        /* keep the icon visual 24px */
+}
+/* effective target: 44px, visual: 24px, gap between
+   neighbours respected by the padding box. */
+@media (pointer: coarse) {
+  .tight-row > * + * { margin-left: 8px; }  /* space is part of the target */
+}`,
+        },
+      },
+      {
+        h: "The targets people actually miss",
+        body: [
+          "The audit list is short and predictable: icon-only buttons in table rows (the most missed control on the web), close buttons on banners, the little 'x' on chips and tags, checkbox labels that only toggle when you hit the box itself, and pagination's next/prev arrows. Each has the same fix pattern — enlarge the hit area, keep the visual — and each is a two-line change that shows up in every usability test as 'that button is too small'.",
+        ],
+        links: [{ label: "Testing with one hand", href: "/learn/testing-with-one-hand" }],
+      },
+    ],
+  },
+  {
+    slug: "autoplay-is-a-decision",
+    kicker: "Accessibility",
+    title: "Autoplay is a decision",
+    deck: "Motion and sound that start without permission exclude the people who need control most: vestibular-sensitive users, screen-reader users, low-bandwidth users, and anyone in a room where sound is a problem. The decision framework for what may autoplay and what must ask.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["a11y", "autoplay", "motion", "media"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Who autoplay excludes",
+        body: [
+          "Autoplay is never neutral; it is a decision about who is welcome. A hero video that starts itself is unwatchable for a user who has set prefers-reduced-motion — they asked the whole system for calm, and the video ignores them. Sound that starts itself is a wall for screen-reader users, whose audio channel is already occupied by your page being read to them — the video voice and the screen reader voice fight. And motion that starts itself consumes bandwidth and battery for users who pay for both by the megabyte.",
+        ],
+        bullets: [
+          "Video: the default is a poster with a play button — the user's tap is the permission. Autoplay muted video, when genuinely atmospheric, must respect prefers-reduced-motion and stop at the first user scroll if it is decorative.",
+          "Sound: never autoplay sound, ever — muted-by-default with a one-tap unmute is the only defensible pattern, and the unmute control must be visible and labelled, not a hidden hover icon.",
+          "Carousels: auto-advancing carousels are autoplay for attention — they move content the user may be reading. Pause on hover and focus, provide prev/next, and never auto-advance faster than a reader can finish the longest slide's text.",
+          "Animation loops: an infinite decorative animation (a drifting aurora, a pulsing badge) is autoplay too — it must pause under reduced motion and ideally under document.hidden, because animating an invisible tab is a battery tax on a user who is not even looking.",
+        ],
+      },
+      {
+        h: "The permission framework",
+        code: {
+          title: "autoplay-decision.md",
+          lang: "text",
+          text: `May it autoplay?
+  Is it sound?              -> NO. Muted + one-tap unmute.
+  Does the user need it?    -> No: poster + play button.
+                             Yes (a demo, a map): muted autoplay
+                             acceptable IF it stops on scroll.
+  Does it move continuously?-> Must pause under:
+                             prefers-reduced-motion,
+                             :hover / :focus, hidden tab.
+  Would it fight the reader?-> Never auto-advance reading content.`,
+        },
+      },
+      {
+        h: "The calm default",
+        body: [
+          "The professional pattern is boring on purpose: nothing moves or speaks until the user asks. The hero holds a beautiful still; the video waits behind a play button; the carousel waits for an arrow. Calm is not a lack of features — it is the default state that lets the user choose their own pace, and for the users autoplay excludes, it is the difference between a page they can use and a page that uses them.",
+        ],
+        links: [{ label: "Reduced motion as a second design", href: "/learn/reduced-motion-beyond-the-switch" }],
+      },
+    ],
+  },
+  {
+    slug: "designing-for-cognitive-load",
+    kicker: "Accessibility",
+    title: "Designing for cognitive load",
+    deck: "Chunking, defaults and forgiving forms: the interface techniques that help everyone and are non-negotiable for users with executive-function differences, anxiety, or a browser with eleven tabs open.",
+    minutes: 10,
+    level: "Beginner",
+    tags: ["a11y", "cognitive load", "forms", "ux"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Working memory is the real viewport",
+        body: [
+          "Every interface runs on the user's working memory — the handful of items a person can hold in mind at once. A checkout with twelve fields, four of which are conditional on a choice made two screens ago, is not twelve fields; it is a memory test. Cognitive accessibility is the discipline of never making the user remember what the interface already knows: the page holds the context, so the user's working memory stays free for the decision at hand.",
+        ],
+        bullets: [
+          "Chunk everything: group fields into named steps (Contact, Delivery, Payment), show progress in steps not fields ('Step 2 of 3' beats '12 of 37 fields'), and let each step stand alone — the user should never hold step 1's answers in mind while filling step 3.",
+          "Defaults are decisions you make for the user: pre-select the sensible option (country from locale, delivery = billing address), and make every default visible and changeable — a hidden default is a decision the user did not make.",
+          "Forgiving forms: save drafts, never clear a field on error, keep the user's input when validation fails — losing typed data is the single most cognitively expensive moment in any product, and it is always the product's fault.",
+          "One thing per screen: a screen that asks one question (or one group of related questions) is easier than a screen that asks six — length is not the enemy, unrelatedness is.",
+        ],
+      },
+      {
+        h: "The language of the page is load too",
+        body: [
+          "Jargon is a cognitive tax levied on everyone who has not already paid it. 'We'll send a 2FA code to your primary device' costs a thought; 'we'll text you a code' costs none. Error messages that say what happened, what it means and what to do next ('That email is already registered — log in or reset the password') close the loop in one reading. Every sentence that requires a second read is working-memory spent on the interface instead of the task.",
+        ],
+        callout: {
+          type: "tip",
+          title: "The tired-user test",
+          text: "Design for the user at 11pm after a long day — the one who misreads, mis-taps, and gives up. If the flow survives that user, it works for everyone. Cognitive accessibility is not a special case; it is the spec for the real world.",
+        },
+        links: [{ label: "Forms that fail kindly", href: "/learn/forms-that-fail-kindly" }],
+      },
+    ],
+  },
+  {
+    slug: "forms-that-fail-kindly",
+    kicker: "Accessibility",
+    title: "Forms that fail kindly",
+    deck: "Everyone makes mistakes; good forms make mistakes cheap. Inline errors that explain, retries that keep your data, and undo where it matters — the patterns that turn validation from a punishment into a conversation.",
+    minutes: 9,
+    level: "Beginner",
+    tags: ["a11y", "forms", "validation", "errors"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Validation is a conversation, not a verdict",
+        body: [
+          "A form error is the interface saying 'I could not understand this' — and the kind version of that sentence includes what to do next. The unkind version is the classic wall of red at the top: 'Please correct the errors below' with no map to the errors, or worse, a page reload that has wiped every field. Failing kindly means three promises: the error appears where the problem is, it says what is wrong in plain words, and nothing the user typed is lost.",
+        ],
+        bullets: [
+          "Inline, next to the field: the message sits under the field that failed, in text plus icon (never colour alone), and the field receives focus or is linked from the error summary.",
+          "Live but not nagging: validate after the user leaves a field (on blur) or on submit — never after every keystroke of an unfinished answer; 'too early' validation feels like a supervisor watching you type.",
+          "Explain the rule, not just the failure: 'Password needs 8+ characters' teaches; 'Invalid password' accuses. The kind error names the requirement the input missed.",
+          "Keep the data: on any failure, the form returns with every field populated and focus on the first invalid field — a form that wipes itself on error has failed twice.",
+          "The error summary is a map: at the top, '3 fields need attention' with links that jump to each — for screen readers and keyboard users, the summary is how they find the failures at all.",
+        ],
+        code: {
+          title: "kind-error.html",
+          lang: "html",
+          text: `<label for="email">Email</label>
+<input id="email" name="email" type="email"
+       aria-describedby="email-error" aria-invalid="true"
+       value="not-an-email">
+<p id="email-error" role="alert">
+  That doesn't look like an email — try name@example.com.
+</p>
+<!-- role="alert" announces to screen readers;
+     aria-invalid tells AT this field failed;
+     the value survives the error. -->`,
+        },
+      },
+      {
+        h: "Undo is the kindest validation",
+        body: [
+          "Some failures are not validation failures at all — they are the user changing their mind. Deleting a row, removing an item, submitting a destructive action: the kind form offers undo ('Row removed — Undo') instead of a confirm dialog that interrupts everyone to protect against the one misclick. Undo is cheaper than confirmation, kinder than a modal, and it is the pattern users describe as 'the product just feels safe' — which is the actual goal of all this kindness.",
+        ],
+        links: [{ label: "Designing for cognitive load", href: "/learn/designing-for-cognitive-load" }],
+      },
+    ],
+  },
+  {
+    slug: "the-invisible-header",
+    kicker: "Accessibility",
+    title: "The invisible header",
+    deck: "Landmarks, headings and structure are the header of a page that has no visual header — the outline screen-reader users navigate by. Why structure is design, and the ten-second outline audit that finds missing landmarks.",
+    minutes: 8,
+    level: "Beginner",
+    tags: ["a11y", "landmarks", "headings", "structure"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The page has two interfaces",
+        body: [
+          "Sighted users navigate by scanning: they see the sidebar, the hero, the footer. Screen-reader users navigate by structure: landmarks (header, nav, main, footer) and headings (h1, h2, h3) form the outline they jump through — the equivalent of a table of contents that the page generates from your HTML. A page with a beautiful visual layout but no landmarks is, to a screen-reader user, an unlabeled warehouse: everything is in there, and nothing says where.",
+        ],
+        code: {
+          title: "landmarks.html",
+          lang: "html",
+          text: `<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>           <!-- banner landmark -->
+    <nav aria-label="Main">…</nav>
+  </header>
+  <main id="main">
+    <h1>Page title</h1>      <!-- exactly one h1 -->
+    <section aria-labelledby="s1"><h2 id="s1">Latest work</h2>…</section>
+    <aside aria-label="Related">…</aside>
+  </main>
+  <footer>           <!-- contentinfo landmark -->
+</body>`,
+        },
+      },
+      {
+        h: "The outline audit",
+        bullets: [
+          "One h1 per page, and it names the page: the h1 is what the screen-reader user hears first when they jump to the top — 'About us' beats 'Welcome to our website, where innovation meets excellence' for actually saying where they are.",
+          "Headings are a ladder with no skipped rungs: h1 → h2 → h3 in order, and heading levels reflect structure, not font size — the visual style of an h3-sized h2 does not change what the outline says.",
+          "Landmarks announce regions: a screen-reader user can jump 'to main', 'to navigation', 'to the complementary content' — pages without landmarks force them to walk every element in order, which is like reading a book with no chapters, no contents and no page numbers.",
+          "aria-label on navs that repeat: two navs on a page both announce as 'navigation' — label them ('Main', 'Footer') so the outline distinguishes them.",
+        ],
+      },
+      {
+        h: "Structure is design",
+        body: [
+          "The outline is not an accessibility afterthought bolted onto a finished layout; it is the layout of the page for a whole class of users. When a redesign is planned, the outline audit is part of the design review: does the new visual hierarchy match the heading hierarchy? When a component library ships a card, it ships the heading level the card expects. Designing structure first is not extra work — it is doing the visual design with the outline open, which is how you discover that the sidebar was never really part of the story.",
+        ],
+        links: [{ label: "The keyboard walk", href: "/learn/the-keyboard-walk" }],
+      },
+    ],
+  },
+  {
+    slug: "testing-with-one-hand",
+    kicker: "Accessibility",
+    title: "Testing with one hand",
+    deck: "Mobile accessibility without a device lab: one-handed phone testing, pinch-and-zoom checks, landscape rotation, and the five-minute physical audit that finds what automated tools cannot.",
+    minutes: 9,
+    level: "Beginner",
+    tags: ["a11y", "mobile", "testing", "touch"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The physical audit",
+        body: [
+          "Automated tools catch contrast ratios and missing alt text. They cannot catch the experience of holding the phone. The physical audit takes five minutes, needs only your own phone, and finds a class of failures no linter will ever report: the target you cannot reach with your thumb, the text that is legible at 100% zoom and gone at the pinch the user actually needs, the control that hides under your palm.",
+        ],
+        bullets: [
+          "One hand, real grip: hold the phone as you actually do and reach every control — anything in the top third that is not navigation is a stretch; the audit's finding is 'move it down or make it reachable'.",
+          "Zoom to 200%: most mobile browsers let users pinch-zoom; at 200% the layout must still be usable — text reflows, no horizontal scroll trap, controls reachable. If the viewport meta or fixed-width layout breaks zoom, that is a WCAG 1.4.4 failure and a real-user failure.",
+          "Landscape, both ways: rotate and check — many layouts are only tested portrait; landscape exposes fixed-height heroes that clip, keyboards that cover the submit, and sidebars that eat the viewport.",
+          "Thumb + glove simulation: try the flow with your non-dominant hand, then with a thick sleeve over your thumb — the miss rate on 40px targets doubles, and the audit turns 'it works' into 'it works when conditions are perfect'.",
+          "Bright sun: take the phone outside — the contrast that passed in the design tool at 500 nits fails at noon. The audit is where 'AA on paper' meets 'AA in sunlight'.",
+        ],
+      },
+      {
+        h: "The screen-reader lap",
+        body: [
+          "Switch on the platform screen reader (VoiceOver / TalkBack) and do one real task — add an item, submit a form. The lap finds what code review cannot: unlabeled icon buttons ('button, button, button'), the image carousel that reads every slide's alt text aloud as one run-on sentence, the custom dropdown that announces nothing. Ten minutes of the lap beats a week of arguing about whether aria-labels are 'really necessary'.",
+        ],
+        callout: {
+          type: "pro",
+          title: "The five-minute cadence",
+          text: "Keep a phone with the screen reader on and a sticky note of three core tasks beside your desk. Every Friday, run the three tasks one-handed, zoomed, and with the reader on. Five minutes a week finds regressions the day they land — not the quarter they ship.",
+        },
+        links: [{ label: "Touch targets beyond 44px", href: "/learn/touch-targets-beyond-44px" }],
+      },
+    ],
+  },
 ];
 
 export function learnArticleOf(slug: string): LearnArticle | undefined {
