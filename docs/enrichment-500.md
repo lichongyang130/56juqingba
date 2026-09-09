@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 32 / 500 shipped (batches 1–4, in order)
+## Progress — 40 / 500 shipped (batches 1–5, in order)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -44,11 +44,19 @@ names, behaviours and where they plug into the existing pages.
 | 30 | Offline indicator | [/components/offline-indicator](/components/offline-indicator) |
 | 31 | Error-boundary card | [/components/error-boundary-card](/components/error-boundary-card) |
 | 32 | Confetti burst | [/components/confetti-burst](/components/confetti-burst) |
+| 33 | Dot leader loading | [/components/dot-leader-loading](/components/dot-leader-loading) |
+| 34 | Live region lab | [/components/live-region-demo](/components/live-region-demo) |
+| 35 | Liquid button hover | [/components/liquid-button-hover](/components/liquid-button-hover) |
+| 36 | Magnetic icon row | [/components/magnetic-icon-row](/components/magnetic-icon-row) |
+| 37 | Scroll-linked hue hero | [/components/scroll-linked-hue-hero](/components/scroll-linked-hue-hero) |
+| 38 | Staggered list entrance | [/components/staggered-list-entrance](/components/staggered-list-entrance) |
+| 39 | Ken Burns gallery | [/components/shuffle-kenburns-gallery](/components/shuffle-kenburns-gallery) |
+| 40 | Particle trail hero | [/components/particle-trail-hero](/components/particle-trail-hero) |
 
 
 ---
 
-## 1. Component library — 70 ideas (32/70 shipped · catalog 39 → 69)
+## 1. Component library — 70 ideas (40/70 shipped · catalog 39 → 77)
 
 ### Form & input elements
 - **Combo box** ✅ (`combo-box`): text input with a live-filtered option list, keyboard navigation and a "no matches" row — slots into every filter on the site.
@@ -80,23 +88,23 @@ names, behaviours and where they plug into the existing pages.
 
 ### Feedback, status & loaders
 - **Skeleton profile card** ✅ (`skeleton-card`): shimmering placeholders for avatars + lines, then content swaps in.
-- **Toast queue**: stacked notifications that enter right, auto-dismiss with timer bars, support undo actions.
-- **Inline status banner**: success/error/info/warn banners that announce to screen readers and can be dismissed.
-- **Spinner with status text**: loader that swaps label ("Saving… → Saved ✓") without layout shift.
-- **Empty-state trio**: the Learn essay pattern as three copyable cards (illustration, verb headline, escape hatch).
-- **Offline indicator**: a banner that appears on `online/offline` events with a reconnect pulse.
-- **Error boundary card**: friendly fallback with "reload" and "copy error" actions.
-- **Confetti burst**: a tasteful celebratory burst (toggled, never autoplay) for "shipped!" moments.
-- **Dot leader loading**: terminal-style "installing…" with animated dots for CLI-adjacent pages.
-- **Live region demo**: a hidden-but-announced status that shows how to update screen readers politely.
+- **Toast queue** ✅ (`toast-stack` v1.1): stacked notifications that enter right, auto-dismiss with countdown bars and an undo action, capped at three on screen.
+- **Inline status banner** ✅ (`status-banner`): four dismissible tone rows — success/error/warning/info — that announce politely.
+- **Spinner with status text** ✅ (`spinner-status`): loader that swaps label ("Saving… → Saved ✓") without layout shift.
+- **Empty-state trio** ✅ (`empty-state-trio`): the Learn essay pattern as three copyable cards (illustration, verb headline, escape hatch).
+- **Offline indicator** ✅ (`offline-indicator`): a banner that appears on `online/offline` events with a reconnect pulse.
+- **Error boundary card** ✅ (`error-boundary-card`): friendly fallback with retry, "copy error report" and expandable details.
+- **Confetti burst** ✅ (`confetti-burst`): a tasteful celebratory burst (toggled, never autoplay) for "shipped!" moments.
+- **Dot leader loading** ✅ (`dot-leader-loading`): terminal-style "installing…" with animated dots for CLI-adjacent pages.
+- **Live region demo** ✅ (`live-region-demo`): a hidden-but-announced status that shows how to update screen readers politely.
 
 ### Animated signature pieces
-- **Liquid button hover**: a filled blob that wipes across on hover (already teased in guides — make it an asset).
-- **Magnetic icon row**: social icons that lean toward the cursor within a radius.
-- **Scroll-linked hue hero**: a section whose background hue shifts as you scroll (port the admin nav idea to a demo).
-- **Staggered list entrance**: rows that fade-slide in sequence when scrolled into view (reusable for indexes).
-- **Shuffle/ken-burns gallery**: background images that slowly zoom-pan between frames.
-- **Particle trail hero**: pointer-following sparkles with a perf tier toggle.
+- **Liquid button hover** ✅ (`liquid-button-hover`): a filled blob that starts from your cursor and washes across on hover.
+- **Magnetic icon row** ✅ (`magnetic-icon-row`): social icons that lean toward the cursor within a radius.
+- **Scroll-linked hue hero** ✅ (`scroll-linked-hue-hero`): a section whose background hue shifts as you scroll.
+- **Staggered list entrance** ✅ (`staggered-list-entrance`): rows that fade-slide in sequence when scrolled into view.
+- **Shuffle/ken-burns gallery** ✅ (`shuffle-kenburns-gallery`): frames that slowly zoom-pan between shots with crossfade.
+- **Particle trail hero** ✅ (`particle-trail-hero`): pointer-following sparkles with a perf tier toggle.
 - **Ink-stamp appear**: a title that appears with a quick scale+rotate "stamp" easing.
 - **Gradient border flow**: border that slowly rotates hue around a card (used sparingly on promo cards).
 - **Ripple reveal**: click-anywhere ripple on cards/buttons.

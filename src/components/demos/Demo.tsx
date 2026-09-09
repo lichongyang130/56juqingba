@@ -22,6 +22,10 @@ const KEYFRAMES = `
 @keyframes mf-draw { to { stroke-dashoffset: 0 } }
 @keyframes mf-growin { from { opacity: 0; transform: scale(.96) translateY(4px) } to { opacity: 1; transform: none } }
 @keyframes mf-fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes mf-liquid { 0% { transform: translate(-50%,-50%) scale(.12); opacity:.55 } 55% { transform: translate(-50%,-50%) scale(1.12); opacity:.5 } 100% { transform: translate(-50%,-50%) scale(2.9); opacity:0 } }
+@keyframes mf-kb-l { from { transform: scale(1) translate(0,0) } to { transform: scale(1.16) translate(-3.5%,-2.5%) } }
+@keyframes mf-kb-r { from { transform: scale(1) translate(0,0) } to { transform: scale(1.16) translate(3.5%,2.5%) } }
+@keyframes mf-sparkle { 0% { opacity:1; transform: translate(0,0) scale(var(--ss,1)) } 100% { opacity:0; transform: translate(var(--sdx,0px),var(--sdy,26px)) scale(.15) } }
 `;
 
 /* ------------------------------ ELEMENTS ------------------------------ */
@@ -3733,6 +3737,676 @@ function ConfettiBurst() {
   );
 }
 
+function DotLeaderLoading() {
+  const [phase, setPhase] = useState<"idle" | "running" | "done">("idle");
+  useEffect(() => {
+    if (phase !== "running") return;
+    const t = window.setTimeout(() => setPhase("done"), 2500);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+  return (
+    <div className="flex h-full w-full flex-col justify-center gap-4 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(52,211,153,0.09),transparent_60%),#08090f] px-6">
+      <div className="mx-auto w-full max-w-md overflow-hidden rounded-2xl border border-white/8 bg-black/45 font-mono text-[11px] leading-relaxed shadow-[0_24px_60px_rgba(0,0,0,.5)] backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 border-b border-white/6 px-3.5 py-2.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+          <span className="ml-2 text-[9px] uppercase tracking-[0.22em] text-ink-faint">install.sh</span>
+        </div>
+        <div className="space-y-2.5 px-4 py-4 text-ink-dim">
+          <p>
+            <span className="text-mint">$</span> npm run motif:install{" "}
+            <span className="text-ink-faint">-- --theme aurora --registry ui</span>
+          </p>
+          {phase === "idle" && <p className="text-ink-faint">waiting for the first install…</p>}
+          {phase === "running" && (
+            <p role="status" className="flex items-center gap-2 text-emerald-200/90">
+              installing 42 theme tokens
+              <span aria-hidden className="flex gap-[3px]">
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    className="h-[3px] w-[3px] rounded-full bg-emerald-300"
+                    style={{ animation: `mf-dot .9s ease-in-out ${i * 0.18}s infinite` }}
+                  />
+                ))}
+              </span>
+            </p>
+          )}
+          {phase === "done" && (
+            <>
+              <p className="text-emerald-300">✔ 42 tokens installed · 1.4s</p>
+              <p className="text-ink-dim">
+                next: npm run motif:doctor <span className="text-ink-faint">— checks peer deps</span>
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+      <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3">
+        <p className="text-[10px] text-ink-faint">the leader reads as process — three beats, not a guessing spinner</p>
+        <button
+          type="button"
+          onClick={() => setPhase("running")}
+          disabled={phase === "running"}
+          className="btn btn-primary shrink-0 !px-4 !py-1.5 !text-[11px] disabled:opacity-60"
+        >
+          {phase === "running" ? "running…" : phase === "done" ? "Run again" : "Run install"}
+        </button>
+      </div>
+      <p role="status" className="sr-only">
+        {phase === "running" ? "installing theme tokens" : phase === "done" ? "install finished" : ""}
+      </p>
+    </div>
+  );
+}
+
+const LRD_ACTIONS = [
+  { label: "✓ Snippet copied", tone: "ok", assertive: false },
+  { label: "⏳ Loading 4 of 12 surfaces", tone: "busy", assertive: false },
+  { label: "✕ Payment failed — card declined", tone: "err", assertive: true },
+  { label: "✦ 3 updates are waiting for you", tone: "info", assertive: false },
+] as const;
+
+function LiveRegionDemo() {
+  const [log, setLog] = useState<{ id: number; label: string; tone: string; assertive: boolean }[]>([]);
+  const [reveal, setReveal] = useState(false);
+  const seq = useRef(0);
+  const fire = (a: (typeof LRD_ACTIONS)[number]) => {
+    seq.current += 1;
+    setLog((prev) => [...prev.slice(-5), { id: seq.current, label: a.label, tone: a.tone, assertive: a.assertive }]);
+  };
+  const last = log.length > 0 ? log[log.length - 1] : null;
+  const toneCls = (t: string) => {
+    if (t === "ok") return "border-emerald-300/25 bg-emerald-300/10 text-emerald-200";
+    if (t === "err") return "border-rose-300/25 bg-rose-300/10 text-rose-200";
+    if (t === "busy") return "border-amber-300/25 bg-amber-300/10 text-amber-200";
+    return "border-sky-300/25 bg-sky-300/10 text-sky-200";
+  };
+  return (
+    <div className="flex h-full w-full flex-col justify-center gap-3 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(99,102,241,0.11),transparent_60%),#08090f] px-6">
+      <div className="mx-auto w-full max-w-md rounded-2xl border border-white/8 bg-white/4 p-4">
+        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">live region lab</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {LRD_ACTIONS.map((a) => (
+            <button
+              key={a.label}
+              type="button"
+              onClick={() => fire(a)}
+              className={`rounded-lg border px-3 py-1.5 text-[11px] font-semibold transition-transform active:scale-95 ${toneCls(a.tone)}`}
+            >
+              {a.label}
+            </button>
+          ))}
+        </div>
+        <div className="mt-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">announcer log</span>
+            <span className="font-mono text-[9px] text-ink-faint">
+              {last ? (last.assertive ? "role=alert · assertive" : "role=status · polite") : "idle"}
+            </span>
+          </div>
+          {log.length === 0 ? (
+            <p className="rounded-lg border border-dashed border-white/10 py-3 text-center text-[10px] text-ink-faint">
+              nothing announced yet — press a button above
+            </p>
+          ) : (
+            log.map((l, idx) => (
+              <p
+                key={l.id}
+                className={`rounded-lg border px-3 py-2 text-[11px] ${
+                  idx === log.length - 1
+                    ? "border-indigo-300/30 bg-indigo-300/10 text-indigo-100"
+                    : "border-white/6 bg-black/25 text-ink-dim"
+                }`}
+              >
+                {l.assertive ? "⚠ " : "· "}
+                {l.label}
+              </p>
+            ))
+          )}
+        </div>
+        <label className="mt-3 flex cursor-pointer items-center justify-between gap-3 border-t border-white/6 pt-3 text-[10px] text-ink-dim">
+          <span>reveal the hidden announcer — the text screen readers hear</span>
+          <input type="checkbox" checked={reveal} onChange={(e) => setReveal(e.target.checked)} className="accent-indigo-400" />
+        </label>
+      </div>
+      {reveal && (
+        <div className="mx-auto w-full max-w-md rounded-xl border border-dashed border-indigo-300/30 bg-indigo-950/40 px-3.5 py-2 font-mono text-[10px] text-indigo-200/90">
+          {last ? last.label : "…"}
+        </div>
+      )}
+      {/* the real regions stay mounted; announcing works even while visually hidden */}
+      <div aria-live="polite" role="status" className={reveal ? "hidden" : "sr-only"}>
+        {last && !last.assertive ? last.label : ""}
+      </div>
+      <div aria-live="assertive" role="alert" className={reveal ? "hidden" : "sr-only"}>
+        {last && last.assertive ? last.label : ""}
+      </div>
+    </div>
+  );
+}
+
+const LIQ_ITEMS = [
+  { id: "ship", label: "Ship it", cls: "from-emerald-400 to-teal-500" },
+  { id: "pro", label: "Get motif pro", cls: "from-violet-400 to-indigo-500" },
+  { id: "draft", label: "Save draft", cls: "from-amber-300 to-orange-400" },
+] as const;
+
+function LiquidButtonHover() {
+  const [pos, setPos] = useState<Record<string, { x: number; y: number }>>({});
+  const [hover, setHover] = useState<Record<string, boolean>>({});
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(167,139,250,0.12),transparent_60%),#08090f] px-6">
+      <div className="flex w-full max-w-md flex-wrap items-center justify-center gap-3">
+        {LIQ_ITEMS.map((it) => {
+          const p = pos[it.id];
+          const hot = hover[it.id];
+          return (
+            <button
+              key={it.id}
+              type="button"
+              onMouseMove={(e) => {
+                const r = e.currentTarget.getBoundingClientRect();
+                setPos((prev) => ({ ...prev, [it.id]: { x: e.clientX - r.left, y: e.clientY - r.top } }));
+              }}
+              onMouseEnter={() => setHover((prev) => ({ ...prev, [it.id]: true }))}
+              onMouseLeave={() => setHover((prev) => ({ ...prev, [it.id]: false }))}
+              className={`relative overflow-hidden rounded-xl bg-gradient-to-r ${it.cls} px-6 py-3 text-xs font-black text-[#0b0c12] shadow-[0_10px_30px_rgba(0,0,0,.35)] transition-transform duration-150 hover:-translate-y-0.5 active:scale-95`}
+            >
+              {hot && p && (
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute block h-28 w-28 rounded-full bg-white/60 mix-blend-overlay"
+                  style={{ left: p.x, top: p.y, animation: "mf-liquid .75s cubic-bezier(.22,.68,.32,1) forwards" }}
+                />
+              )}
+              <span className="relative">{it.label}</span>
+            </button>
+          );
+        })}
+      </div>
+      <p className="max-w-md text-center text-[11px] leading-relaxed text-ink-dim">
+        the fill starts where your cursor lands — liquid geometry, not a full-width sweep. Under{" "}
+        <code className="rounded bg-white/8 px-1 py-0.5 font-mono text-[10px] text-violet-200">prefers-reduced-motion</code>{" "}
+        the blob collapses to a plain opacity fade.
+      </p>
+    </div>
+  );
+}
+
+const MAG_ITEMS: { id: string; label: string; cls: string; clip?: string }[] = [
+  { id: "blob", label: "Blob", cls: "h-5 w-5 rounded-full bg-violet-300" },
+  { id: "gem", label: "Gem", cls: "h-5 w-5 rotate-45 rounded-[4px] bg-cyan-300" },
+  { id: "cone", label: "Cone", cls: "h-5 w-5 bg-emerald-300", clip: "polygon(50% 0%, 0% 100%, 100% 100%)" },
+  { id: "orbit", label: "Orbit", cls: "h-5 w-5 rounded-full border-2 border-amber-300" },
+  { id: "cross", label: "Cross", cls: "h-5 w-5 bg-rose-300", clip: "polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)" },
+];
+
+function MagneticIconRow() {
+  const iconRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const [moves, setMoves] = useState<Record<number, { x: number; y: number; s: number }>>({});
+  const [field, setField] = useState<{ x: number; y: number } | null>(null);
+  const reset = () => {
+    setMoves({});
+    setField(null);
+  };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 overflow-hidden bg-[radial-gradient(60%_90%_at_50%_0%,rgba(34,211,238,0.1),transparent_60%),#08090f] px-6">
+      <div
+        className="relative flex w-full max-w-md items-center justify-center gap-5 rounded-2xl border border-white/6 py-10"
+        onMouseMove={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          setField({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+          const next: Record<number, { x: number; y: number; s: number }> = {};
+          iconRefs.current.forEach((el, i) => {
+            if (!el) return;
+            const r = el.getBoundingClientRect();
+            const dx = e.clientX - (r.left + r.width / 2);
+            const dy = e.clientY - (r.top + r.height / 2);
+            const dist = Math.hypot(dx, dy);
+            if (dist < 130 && dist > 0.01) {
+              const pull = 1 - dist / 130;
+              next[i] = { x: dx * pull * 0.55, y: dy * pull * 0.55, s: 1 + 0.1 * pull };
+            } else {
+              next[i] = { x: 0, y: 0, s: 1 };
+            }
+          });
+          setMoves(next);
+        }}
+        onMouseLeave={reset}
+      >
+        {field && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/10"
+            style={{ left: field.x, top: field.y }}
+          />
+        )}
+        {MAG_ITEMS.map((it, i) => {
+          const m = moves[i];
+          return (
+            <span key={it.id} className="flex flex-col items-center gap-2">
+              <span
+                ref={(el) => {
+                  iconRefs.current[i] = el;
+                }}
+                className="flex h-12 w-12 items-center justify-center"
+                style={{
+                  transform: m ? `translate3d(${m.x.toFixed(1)}px, ${m.y.toFixed(1)}px, 0) scale(${m.s.toFixed(3)})` : "none",
+                  transition: "transform .22s cubic-bezier(.22,.68,.32,1)",
+                  willChange: "transform",
+                }}
+              >
+                <span aria-hidden className={`block ${it.cls}`} style={it.clip ? { clipPath: it.clip } : undefined} />
+              </span>
+              <span className="text-[9px] uppercase tracking-[0.18em] text-ink-faint">{it.label}</span>
+            </span>
+          );
+        })}
+      </div>
+      <p className="max-w-md text-center text-[11px] leading-relaxed text-ink-dim">
+        each icon leans toward the pointer inside a 130px field and settles back with an ease-out — pure transform math, no library.
+        <span className="text-ink-faint"> Icons stay decorative, so the row never competes with real links.</span>
+      </p>
+    </div>
+  );
+}
+
+function ScrollLinkedHueHero() {
+  const scroller = useRef<HTMLDivElement>(null);
+  const [hue, setHue] = useState(224);
+  const onScroll = () => {
+    const el = scroller.current;
+    if (!el) return;
+    const max = Math.max(1, el.scrollHeight - el.clientHeight);
+    setHue(Math.round(212 + (el.scrollTop / max) * 130));
+  };
+  const h = hue;
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">aurora/hero — scroll to repaint</span>
+        <span
+          className="rounded-full border px-2.5 py-0.5 font-mono text-[10px]"
+          style={{ color: `hsl(${h} 90% 72%)`, borderColor: `hsl(${h} 90% 45% / .4)` }}
+        >
+          hue {h}°
+        </span>
+      </div>
+      <div ref={scroller} onScroll={onScroll} className="relative flex-1 overflow-y-auto">
+        <div
+          className="px-5 pb-6 pt-8 transition-[background] duration-150"
+          style={{
+            background: `linear-gradient(160deg, hsl(${h} 85% 12%) 0%, hsl(${(h + 55) % 360} 70% 20%) 58%, hsl(${(h + 110) % 360} 80% 9%) 100%)`,
+          }}
+        >
+          <div className="mx-auto max-w-sm">
+            <span className="rounded-full border border-white/15 bg-black/25 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.22em] text-white/70 backdrop-blur">
+              scroll-linked
+            </span>
+            <h3 className="mt-3 text-xl font-black tracking-tight text-white">the skyline repaints as you read</h3>
+            <p className="mt-2 text-[11px] leading-relaxed text-white/60">
+              Hue is treated as data: one scroll handler converts scrollTop into a colour angle, and the section repaints
+              through the whole journey — from indigo dusk to ember orange.
+            </p>
+            <div className="mt-4 space-y-2">
+              {["read the caption", "watch the hue chip", "hit the bottom call-to-action"].map((t, i) => (
+                <div key={t} className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/25 px-3 py-2.5 backdrop-blur-sm">
+                  <span className="font-mono text-[10px]" style={{ color: `hsl(${(h + i * 36) % 360} 90% 72%)` }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-[11px] text-white/75">{t}</span>
+                </div>
+              ))}
+            </div>
+            <div
+              className="mt-5 rounded-2xl border border-white/10 p-4 text-center backdrop-blur-md"
+              style={{
+                background: `hsl(${(h + 140) % 360} 80% 55% / .14)`,
+                boxShadow: `0 0 60px hsl(${(h + 140) % 360} 90% 60% / .25)`,
+              }}
+            >
+              <p className="text-[11px] font-bold text-white">CTA block — its glow is the same hue variable</p>
+              <p className="mt-1 text-[9px] text-white/50">one variable drives sky, chip and glow; nothing else changes.</p>
+            </div>
+            <p className="mt-6 pb-2 text-center text-[9px] text-white/35">end of scroll · hue {h}° — scroll back up to rewind it</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StaggeredListEntrance() {
+  const scroller = useRef<HTMLDivElement>(null);
+  const sentinel = useRef<HTMLDivElement>(null);
+  const [seen, setSeen] = useState(false);
+  const [run, setRun] = useState(0);
+  useEffect(() => {
+    const el = sentinel.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) setSeen(true);
+        });
+      },
+      { threshold: 0.4 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const rows = [
+    { name: "surface-aurora.svg", meta: "48KB · vector", dot: "#c4b5fd" },
+    { name: "readme-quickstart.mdx", meta: "12KB · docs", dot: "#67e8f9" },
+    { name: "theme-aurora.tokens.json", meta: "4KB · tokens", dot: "#6ee7b7" },
+    { name: "og-aurora-1200x630.png", meta: "310KB · raster", dot: "#fcd34d" },
+    { name: "motion-a11y-checklist.md", meta: "8KB · notes", dot: "#fda4af" },
+    { name: "changelog-0.9.2.md", meta: "3KB · release", dot: "#a5b4fc" },
+  ];
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">index rows — scroll to trigger</span>
+        <button
+          type="button"
+          onClick={() => {
+            setSeen(false);
+            setRun((n) => n + 1);
+            window.setTimeout(() => scroller.current?.scrollTo({ top: 9999, behavior: "smooth" }), 60);
+            window.setTimeout(() => setSeen(true), 620);
+          }}
+          className="btn btn-ghost !px-3 !py-1 !text-[10px]"
+        >
+          ↻ Replay entrance
+        </button>
+      </div>
+      <div ref={scroller} className="relative flex-1 overflow-y-auto px-5 py-4">
+        <div className="mx-auto max-w-sm">
+          <p className="text-[11px] leading-relaxed text-ink-dim">
+            rows wait below the fold. Scroll down and each row rises in sequence — the classic index entrance, driven by
+            one IntersectionObserver watching a sentinel.
+          </p>
+          <div style={{ height: 420 }} aria-hidden />
+          <div ref={sentinel} className="h-px" aria-hidden />
+          <div className="space-y-2">
+            {seen &&
+              rows.map((r, i) => (
+                <div
+                  key={`${run}-${r.name}`}
+                  className="flex items-center gap-3 rounded-xl border border-white/6 bg-white/3 px-3.5 py-2.5"
+                  style={{ animation: `mf-rise .5s cubic-bezier(.22,.68,.32,1) ${i * 70}ms both` }}
+                >
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: r.dot }} />
+                  <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-ink">{r.name}</span>
+                  <span className="shrink-0 text-[9px] text-ink-faint">{r.meta}</span>
+                </div>
+              ))}
+            {seen && (
+              <p className="pt-1 text-center text-[9px] text-ink-faint">
+                {rows.length} rows · 70ms cascade · played {run > 0 ? `${run + 1}×` : "once"}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const KB_FRAMES = [
+  {
+    name: "Nebula gate",
+    caption: "frame 01 · dust lanes",
+    spec: "radial-gradient(120% 90% at 20% 15%, hsl(265 90% 34%) 0%, transparent 55%), radial-gradient(90% 70% at 85% 70%, hsl(190 90% 40%) 0%, transparent 60%), #0b0a18",
+    mark: "◈",
+    accent: "#c4b5fd",
+  },
+  {
+    name: "Dune sea",
+    caption: "frame 02 · quiet hours",
+    spec: "radial-gradient(140% 120% at 50% 115%, hsl(28 90% 45%) 0%, transparent 60%), linear-gradient(180deg, hsl(260 60% 12%) 0%, hsl(300 70% 16%) 100%)",
+    mark: "〰",
+    accent: "#fbbf24",
+  },
+  {
+    name: "Prism stack",
+    caption: "frame 03 · refracted",
+    spec: "conic-gradient(from 210deg at 50% 40%, hsl(165 90% 40%) 0deg, hsl(220 90% 45%) 90deg, hsl(300 80% 45%) 180deg, hsl(180 90% 38%) 270deg, hsl(165 90% 40%) 360deg)",
+    mark: "✦",
+    accent: "#67e8f9",
+  },
+  {
+    name: "Last light",
+    caption: "frame 04 · long exposure",
+    spec: "linear-gradient(180deg, hsl(250 60% 8%) 0%, hsl(230 70% 22%) 45%, hsl(20 95% 55%) 100%)",
+    mark: "●",
+    accent: "#fb7185",
+  },
+] as const;
+
+function ShuffleKenburnsGallery() {
+  const [order, setOrder] = useState<number[]>(KB_FRAMES.map((_, i) => i));
+  const [idx, setIdx] = useState(0);
+  const [playing, setPlaying] = useState(true);
+  const [stamp, setStamp] = useState(0);
+  useEffect(() => {
+    if (!playing) return;
+    const t = window.setTimeout(() => {
+      setIdx((i) => (i + 1) % order.length);
+    }, 6200);
+    return () => window.clearTimeout(t);
+  }, [playing, idx, order.length]);
+  return (
+    <div className="flex h-full w-full flex-col bg-[#0a0c13]">
+      <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">ken burns gallery</span>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            aria-label={playing ? "Pause slideshow" : "Play slideshow"}
+            onClick={() => setPlaying((p) => !p)}
+            className="btn btn-ghost !px-2.5 !py-1 !text-[10px]"
+          >
+            {playing ? "❚❚ pause" : "▶ play"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setOrder(KB_FRAMES.map((_, i) => i).sort(() => Math.random() - 0.5));
+              setIdx(0);
+              setStamp((n) => n + 1);
+            }}
+            className="btn btn-ghost !px-2.5 !py-1 !text-[10px]"
+          >
+            ⇄ shuffle
+          </button>
+        </div>
+      </div>
+      <div className="relative flex-1 overflow-hidden">
+        {order.map((fi, slot) => {
+          const f = KB_FRAMES[fi];
+          const active = slot === idx;
+          return (
+            <div
+              key={`${stamp}-${fi}`}
+              aria-hidden={active ? undefined : true}
+              className="absolute inset-0 transition-opacity duration-700"
+              style={{ opacity: active ? 1 : 0, pointerEvents: active ? "auto" : "none" }}
+            >
+              <div
+                className="absolute inset-0"
+                style={{ background: f.spec, animation: active ? `mf-kb-${slot % 2 === 0 ? "l" : "r"} 9s ease-out forwards` : "none" }}
+              />
+              <span
+                aria-hidden
+                className="absolute left-[8%] top-[10%] select-none font-black leading-none text-white/10"
+                style={{ fontSize: 130, transform: "rotate(-8deg)" }}
+              >
+                {f.mark}
+              </span>
+              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/75 to-transparent px-5 pb-4 pt-16">
+                <div>
+                  <p className="text-lg font-black tracking-tight text-white">{f.name}</p>
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/55">{f.caption}</p>
+                </div>
+                <span className="font-mono text-[10px]" style={{ color: f.accent }}>
+                  {String(order[idx] + 1).padStart(2, "0")} / {String(KB_FRAMES.length).padStart(2, "0")}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+        <div className="absolute bottom-3 right-4 flex gap-1.5">
+          {order.map((fi, slot) => (
+            <button
+              key={`dot-${fi}`}
+              type="button"
+              aria-label={`Go to ${KB_FRAMES[fi].name}`}
+              onClick={() => setIdx(slot)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${slot === idx ? "w-5 bg-white/80" : "w-1.5 bg-white/30 hover:bg-white/50"}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const PT_COLORS = ["#c4b5fd", "#67e8f9", "#6ee7b7", "#fcd34d", "#fda4af"];
+const PT_TIERS = [
+  { id: "lite", label: "Lite", max: 26, every: 42 },
+  { id: "pro", label: "Pro", max: 70, every: 13 },
+] as const;
+
+function ParticleTrailHero() {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const seq = useRef(0);
+  const lastSpawn = useRef(0);
+  const timeouts = useRef<number[]>([]);
+  const [sparks, setSparks] = useState<{ id: number; x: number; y: number; c: string; big: boolean; dx: number }[]>([]);
+  const [tier, setTier] = useState<(typeof PT_TIERS)[number]>(PT_TIERS[0]);
+  const [helper, setHelper] = useState(true);
+  useEffect(() => {
+    const all = timeouts.current;
+    return () => {
+      all.forEach((t) => window.clearTimeout(t));
+      all.length = 0;
+    };
+  }, []);
+  const spawnAt = (x: number, y: number, n: number) => {
+    const now = performance.now();
+    if (n === 1 && now - lastSpawn.current < tier.every) return;
+    lastSpawn.current = now;
+    const startId = seq.current + 1;
+    seq.current += n;
+    setSparks((prev) => {
+      const drop = Math.max(0, prev.length + n - tier.max);
+      const base = drop > 0 ? prev.slice(drop) : prev;
+      const fresh = Array.from({ length: n }, (_, k) => ({
+        id: startId + k,
+        x: x + (Math.random() - 0.5) * 22,
+        y: y + (Math.random() - 0.5) * 22,
+        c: PT_COLORS[Math.floor(Math.random() * PT_COLORS.length)],
+        big: Math.random() < 0.22,
+        dx: (Math.random() - 0.5) * 60,
+      }));
+      return [...base, ...fresh];
+    });
+    for (let k = 0; k < n; k += 1) {
+      const id = startId + k;
+      timeouts.current.push(
+        window.setTimeout(() => {
+          setSparks((prev) => prev.filter((sp) => sp.id !== id));
+        }, 850)
+      );
+    }
+  };
+  return (
+    <div className="flex h-full w-full flex-col gap-3 overflow-hidden bg-[radial-gradient(70%_100%_at_50%_0%,rgba(139,92,246,0.14),transparent_60%),#08090f] px-6 py-4">
+      <div className="mx-auto flex w-full max-w-md items-center justify-between">
+        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">pointer trail · DOM sparkles</p>
+        <div className="flex items-center gap-1 rounded-lg border border-white/8 bg-black/30 p-0.5">
+          {PT_TIERS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTier(t)}
+              aria-pressed={tier.id === t.id}
+              className={`rounded-md px-2.5 py-1 text-[9px] font-bold transition-colors ${
+                tier.id === t.id ? "bg-violet-400/20 text-violet-200" : "text-ink-faint hover:text-ink-dim"
+              }`}
+            >
+              {t.label} · {t.max}/s
+            </button>
+          ))}
+        </div>
+      </div>
+      <div
+        ref={stageRef}
+        onPointerMove={(e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          spawnAt(e.clientX - r.left, e.clientY - r.top, 1);
+        }}
+        onPointerDown={(e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          spawnAt(e.clientX - r.left, e.clientY - r.top, 10);
+        }}
+        className="relative mx-auto min-h-0 w-full max-w-md flex-1 overflow-hidden rounded-2xl border border-white/8 bg-black/25"
+        style={{ touchAction: "none", cursor: "crosshair" }}
+      >
+        <div className="pointer-events-none absolute inset-0 flex select-none flex-col items-center justify-center gap-2">
+          <p className="text-lg font-black tracking-tight text-white/85">paint the sky</p>
+          <p className="max-w-[250px] text-center text-[10px] leading-relaxed text-white/40">
+            {helper
+              ? "move your cursor or drag across the stage — the trail is capped and self-cleaning"
+              : "stage is live; sparks are capped per tier and cleaned after ~0.9s"}
+          </p>
+        </div>
+        {sparks.map((sp) => (
+          <span
+            key={sp.id}
+            aria-hidden
+            className="pointer-events-none absolute block"
+            style={{
+              left: sp.x,
+              top: sp.y,
+              width: sp.big ? 7 : 4,
+              height: sp.big ? 7 : 4,
+              background: sp.c,
+              borderRadius: sp.big ? 2 : 99,
+              animation: "mf-sparkle .8s ease-out forwards",
+              ["--sdx" as string]: `${sp.dx.toFixed(1)}px`,
+              ["--sdy" as string]: `${(26 + Math.abs(sp.dx) * 0.3).toFixed(1)}px`,
+            }}
+          />
+        ))}
+      </div>
+      <div className="mx-auto flex w-full max-w-md items-center justify-between">
+        <button
+          type="button"
+          onClick={() => {
+            const r = stageRef.current?.getBoundingClientRect();
+            spawnAt(r ? r.width / 2 : 120, r ? r.height / 2 : 60, 14);
+          }}
+          className="btn btn-primary !px-3 !py-1.5 !text-[10px]"
+        >
+          ✨ Burst (keyboard)
+        </button>
+        <button
+          type="button"
+          onClick={() => setHelper((h) => !h)}
+          className="btn btn-ghost !px-3 !py-1.5 !text-[10px]"
+        >
+          {helper ? "hide" : "show"} helper
+        </button>
+        <span className="font-mono text-[9px] text-ink-faint">{sparks.length} live</span>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 
@@ -3757,6 +4431,8 @@ export const DEMO_KEYS = [
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
   "status-banner", "progress-ring", "spinner-status", "empty-state-trio",
   "offline-indicator", "error-boundary-card", "confetti-burst",
+  "dot-leader-loading", "live-region-demo", "liquid-button-hover", "magnetic-icon-row",
+  "scroll-linked-hue-hero", "staggered-list-entrance", "shuffle-kenburns-gallery", "particle-trail-hero",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -3836,6 +4512,14 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "offline-indicator": return <OfflineIndicator />;
     case "error-boundary-card": return <ErrorBoundaryCard {...props} />;
     case "confetti-burst": return <ConfettiBurst />;
+    case "dot-leader-loading": return <DotLeaderLoading />;
+    case "live-region-demo": return <LiveRegionDemo />;
+    case "liquid-button-hover": return <LiquidButtonHover />;
+    case "magnetic-icon-row": return <MagneticIconRow />;
+    case "scroll-linked-hue-hero": return <ScrollLinkedHueHero />;
+    case "staggered-list-entrance": return <StaggeredListEntrance />;
+    case "shuffle-kenburns-gallery": return <ShuffleKenburnsGallery />;
+    case "particle-trail-hero": return <ParticleTrailHero />;
     default: return null;
   }
 }

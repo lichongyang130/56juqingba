@@ -1085,6 +1085,163 @@ const fire = () => setBurst(b => b + 1);
   border-radius: 2px; }
 @media (prefers-reduced-motion: reduce) { .confetti { display: none; } }`,
   },
+  "dot-leader-loading": {
+    react: `// React — a phase machine: idle → running → done
+const [phase, setPhase] = useState("idle");
+useEffect(() => {
+  if (phase !== "running") return;
+  const t = setTimeout(() => setPhase("done"), 2400);
+  return () => clearTimeout(t);
+}, [phase]);
+
+// the terminal card renders one of three lines:
+//   idle    → waiting for the first install…
+//   running → installing 42 theme tokens  • • •   (mf-dot beats)
+//   done    → ✔ 42 tokens installed · 1.4s
+// each phase change is announced through a hidden role=status`,
+    css: `/* the dots are a beat, not a spinner: same pulse, offset delay */
+.dot { width: 3px; height: 3px; border-radius: 99px;
+  animation: mf-dot .9s ease-in-out infinite; }
+.dot:nth-child(2) { animation-delay: .18s }
+.dot:nth-child(3) { animation-delay: .36s }
+/* keep the ✓ line readable while it fades in */
+.done-line { animation: mf-fade .25s ease-out both }`,
+  },
+  "live-region-demo": {
+    react: `// React — one polite region, one assertive, always mounted
+<div aria-live="polite" role="status" className="sr-only">
+  {lastPolite}
+</div>
+<div aria-live="assertive" role="alert" className="sr-only">
+  {lastAssertive}
+</div>
+// Announce BY WRITING TEXT, not by calling a toast library.
+// polite = soft nudges ("Snippet copied"), assertive = true errors
+// ("Payment failed"). Never announce raw progress ticks: batch
+// "Loading 4 of 12" into stage changes, not every percent.`,
+    css: `/* the announcer must stay hidden but mounted — never display:none
+   via a class that also removes it from the a11y tree */
+.sr-only { position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* a reveal box (dashed) is handy in dev: show devs what SR hear */`,
+  },
+  "liquid-button-hover": {
+    react: `// React — remember where the cursor landed on the button
+<button
+  onMouseMove={e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    setPos({ x: e.clientX - r.left, y: e.clientY - r.top });
+  }}
+  className="btn-liquid">
+  {pos && <span className="liquid-blob" style={{ left: pos.x, top: pos.y }} />}
+  <span className="label">Ship it</span>
+</button>`,
+    css: `/* the blob is one span; the keyframe does the liquid work */
+.btn-liquid { position: relative; overflow: hidden; }
+.liquid-blob { position: absolute; width: 112px; height: 112px;
+  border-radius: 99px; background: rgba(255,255,255,.6);
+  mix-blend-mode: overlay; pointer-events: none;
+  animation: mf-liquid .75s cubic-bezier(.22,.68,.32,1) forwards; }
+@keyframes mf-liquid { 0% { transform: translate(-50%,-50%) scale(.12); opacity:.55 }
+  55% { transform: translate(-50%,-50%) scale(1.12); opacity:.5 }
+  100% { transform: translate(-50%,-50%) scale(2.9); opacity:0 } }
+@media (prefers-reduced-motion: reduce) {
+  .liquid-blob { animation: none; opacity: .18 } }`,
+  },
+  "magnetic-icon-row": {
+    react: `// React — per-icon pull, no library
+const onMove = (e) => {
+  iconRefs.current.forEach((el, i) => {
+    const r = el.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width / 2);
+    const dy = e.clientY - (r.top + r.height / 2);
+    const dist = Math.hypot(dx, dy);
+    const pull = dist < 130 ? (1 - dist / 130) : 0;
+    el.style.transform =
+      \`translate3d(\${(dx * pull * .55).toFixed(1)}px, \${(dy * pull * .55).toFixed(1)}px, 0)
+       scale(\${(1 + .1 * pull).toFixed(3)})\`;
+  });
+};
+// onMouseLeave resets transforms to none.
+// Icons are decorative: aria-hidden, real links live elsewhere.`,
+    css: `.mag-icon { transition: transform .22s cubic-bezier(.22,.68,.32,1);
+  will-change: transform; }
+/* a soft radial 'field' that follows the pointer helps explain
+   the effect; keep it pointer-events: none */`,
+  },
+  "scroll-linked-hue-hero": {
+    react: `// React — hue is derived state from scrollTop
+const onScroll = () => {
+  const el = scroller.current;
+  const max = el.scrollHeight - el.clientHeight;
+  setHue(Math.round(212 + (el.scrollTop / max) * 130)); // 212° → 342°
+};
+<div ref={scroller} onScroll={onScroll} className="overflow-y-auto">
+  <section style={{ background: \`linear-gradient(160deg,
+    hsl(\${h} 85% 12%), hsl(\${(h + 55) % 360} 70% 20%), hsl(\${(h + 110) % 360} 80% 9%))\` }}>
+    …copy and CTA…
+  </section>
+</div>
+// the same h drives the hue chip and the CTA glow → one variable,
+// one repaint budget. Guard with a rAF/throttle for heavy sections.`,
+    css: `/* keep the repaint on the gradient layer only */
+.hero-hue { transition: background .15s linear; will-change: background; }
+/* respect reduced motion: the repaint is scroll-derived, not motion,
+   so it may stay — but drop any decorative crossfades on top */`,
+  },
+  "staggered-list-entrance": {
+    react: `// React — one IntersectionObserver on a sentinel
+const [seen, setSeen] = useState(false);
+useEffect(() => {
+  const io = new IntersectionObserver((es) => {
+    es.forEach(en => en.isIntersecting && setSeen(true));
+  }, { threshold: 0.4 });
+  io.observe(sentinel.current);
+  return () => io.disconnect();
+}, []);
+// rows mount only after seen → each runs mf-rise with i * 70ms delay
+// replay: bump a run key to remount the rows under the same stagger`,
+    css: `@keyframes mf-rise { from { opacity: 0; transform: translateY(14px) }
+  to { opacity: 1; transform: none } }
+.stagger-row { animation: mf-rise .5s cubic-bezier(.22,.68,.32,1) both; }
+.stagger-row:nth-child(2) { animation-delay: 70ms } /* …and so on */
+@media (prefers-reduced-motion: reduce) { .stagger-row { animation: none } }`,
+  },
+  "shuffle-kenburns-gallery": {
+    react: `// React — active frame gets the slow zoom, others fade out
+{order.map((fi, slot) => (
+  <div key={stamp + "-" + fi}
+    style={{ opacity: slot === idx ? 1 : 0, transition: "opacity .7s" }}>
+    <div style={{ background: frame.spec, animation: slot === idx
+      ? \`mf-kb-\${slot % 2 ? "r" : "l"} 9s ease-out forwards\` : "none" }} />
+  </div>
+))}
+// autoplay = a 6.2s timer that advances idx; pause stops the timer;
+// shuffle re-orders and re-keys so the zoom restarts cleanly`,
+    css: `@keyframes mf-kb-l { from { transform: scale(1) } to { transform: scale(1.16) translate(-3.5%,-2.5%) } }
+@keyframes mf-kb-r { from { transform: scale(1) } to { transform: scale(1.16) translate(3.5%,2.5%) } }
+@media (prefers-reduced-motion: reduce) { [data-kb] { animation: none !important } }
+/* zoom target lives on a layer above the caption so text never blurs */`,
+  },
+  "particle-trail-hero": {
+    react: `// React — capped spawn + timed removal keeps DOM tiny
+const spawnAt = (x, y, n) => {
+  const id = ++seq.current;
+  setSparks(prev => {
+    const drop = Math.max(0, prev.length + n - TIER_MAX); // cap
+    return [...(drop ? prev.slice(drop) : prev), ...freshPieces(x, y, n)];
+  });
+  setTimeout(() => setSparks(prev => prev.filter(s => s.id !== id)), 850);
+};
+// pointermove spawns 1, pointerdown bursts 10, the ✨ button is the
+// keyboard path. Tiers trade density for node budget (26 vs 70).`,
+    css: `@keyframes mf-sparkle { 0% { opacity: 1; transform: translate(0,0) }
+  100% { opacity: 0; transform: translate(var(--sdx,0px), var(--sdy,26px)) scale(.15) } }
+.spark { position: absolute; border-radius: 99px; pointer-events: none;
+  animation: mf-sparkle .8s ease-out forwards; }
+/* never let the trail block text: pointer-events none everywhere */`,
+  },
 };
 
 const FALLBACK = {
@@ -1363,6 +1520,46 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     why: "Milestones deserve a moment; a small DOM burst is the cheapest way to make 'shipped' feel like a win without pulling in a canvas library.",
     idea: "Taste is in the throttle: one burst per real milestone, ~35 pieces, reduced-motion off, and the stage cleans itself so it never lingers.",
     skip: "Never autoplay confetti on load or loop it — the second burst reads as a carnival, and the third makes users reach for the mute button.",
+  },
+  "dot-leader-loading": {
+    why: "Installers and CLI-adjacent pages need progress that matches their voice; three beating dots say 'a process is running' more honestly than a spinner that implies motion without steps.",
+    idea: "The state machine is the design: idle → running → done lines replace each other, the ✓ line is the reward, and each phase announces itself to assistive tech.",
+    skip: "Dots only work when the process reliably finishes — pair them with a timeout that surfaces a failure line, never an infinite beat.",
+  },
+  "live-region-demo": {
+    why: "Most 'accessible' toasts are decorative divs; the screen reader never hears them. A real live region turns a status change into an announcement by writing text.",
+    idea: "Keep two regions mounted — polite for recoveries, assertive for errors — and batch updates into meaningful sentences instead of per-second ticks.",
+    skip: "Don't make everything assertive: if every toast shouts role=alert, none of them matter. Announcement volume should match stakes.",
+  },
+  "liquid-button-hover": {
+    why: "A hover that starts under the cursor feels direct — the button acknowledges your pointer instead of sweeping it away with a full-width wipe.",
+    idea: "One absolutely-positioned blob + one keyframe does the whole effect; mix-blend-mode keeps it readable over any gradient.",
+    skip: "Cursor-position effects are mouse-only by nature — keep the default (plain hover) for touch and ensure the click still works without hover state.",
+  },
+  "magnetic-icon-row": {
+    why: "Social icons are the most hovered 40px on a marketing page; a magnetic pull turns an idle row into something that responds to the visitor.",
+    idea: "Distance-falloff math in one handler — no library, no pointer-events gymnastics, and a .22s ease-out makes the settle feel physical.",
+    skip: "Never put real links inside the magnetic layer if the pull can outrun a click; keep the row decorative and let genuine CTAs stay calm.",
+  },
+  "scroll-linked-hue-hero": {
+    why: "Long hero sections get scrolled past; when the skyline repaints with the journey, reading position becomes a visual event instead of a mystery.",
+    idea: "Treat hue as derived scroll data: one variable drives sky, accents and glow, which keeps the section coherent at every position.",
+    skip: "If the section is above the fold only, scroll-linking is dead weight — reserve it for sections that genuinely take a few viewports to read.",
+  },
+  "staggered-list-entrance": {
+    why: "An index that appears all at once is forgettable; rows that rise in sequence give the eye a rhythm and the page a sense of order.",
+    idea: "Trigger on one sentinel with IntersectionObserver rather than on mount, so the effect only spends itself when the list is actually seen.",
+    skip: "Stagger is noise on short lists and in dense tables — reserve it for editorial indexes and dashboards where each row is a destination.",
+  },
+  "shuffle-kenburns-gallery": {
+    why: "A static gallery grid is a catalogue; slow zoom-pan frames turn the same images into a story, which is why film and TV never hold a still.",
+    idea: "Alternate zoom direction per frame so the eye travels, crossfade on a 700ms overlap, and let autoplay pause for anyone who wants to read.",
+    skip: "Ken burns is motion theatre — without a pause control and reduced-motion fallback it is an accessibility regression, not a feature.",
+  },
+  "particle-trail-hero": {
+    why: "A pointer trail is the cheapest 'premium' feel on a marketing hero, and it doubles as a signal that the page is alive.",
+    idea: "Cap the live node count per tier and time every spark's removal — a self-cleaning trail never needs a global cleanup pass.",
+    skip: "If your hero carries a real CTA, keep the trail behind it and never let particles intercept pointer events or keyboard focus.",
   },
 };
 
