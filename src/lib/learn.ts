@@ -2608,6 +2608,331 @@ Complex     <figure> + caption + data table + alt pointing
       },
     ],
   },
+  {
+    slug: "building-a-personal-ui-library",
+    kicker: "Career & process",
+    title: "Building a personal UI library",
+    deck: "Everything Motif ships is a lesson in the same craft: a personal library is how a designer compounds taste. What to collect, how to document it, and why your own library beats every framework's.",
+    minutes: 11,
+    level: "Intermediate",
+    tags: ["library", "process", "career", "design systems"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The library is a second brain with a grid",
+        body: [
+          "A personal UI library is where the patterns you have shipped — the ones that worked, the ones you rescued, the ones you swore never to repeat — live in reusable form. It is a second brain, but better organised: every entry has a job, a code shape and a note on when it earned its place. Frameworks give you a hundred components and zero memory of why yours are yours; a personal library is the opposite — small, opinionated, and full of scar tissue.",
+        ],
+        bullets: [
+          "Collect by job, not by novelty: the library holds patterns with a named function (settle an entrance, confirm a delete, show progress) — a component without a job sentence is decoration with storage.",
+          "Steal shamelessly, credit always: half of any good library is patterns seen elsewhere and remade better — the note field records where the idea came from, because provenance is how taste compounds.",
+          "Document the scar: each entry carries its failure history — 'v1 had no focus ring, v2 added it after a keyboard audit' — the scar is the teaching, and it is what makes the entry yours.",
+          "Keep it shippable: a personal library earns its keep only if entries are copy-pasteable in under a minute — every entry ships as code plus tokens plus the one-line 'when to use'.",
+        ],
+      },
+      {
+        h: "The Motif lesson: document in public",
+        body: [
+          "Motif's own library works because every entry is a page — code, notes, run logs, fidelity scores — and those pages are the site. The lesson transfers: a personal library that documents in public (a portfolio, a blog, a small site) stops being a private folder and becomes a reputation. The act of writing the 'when to use' note is where the learning actually happens; the folder was just the excuse.",
+        ],
+        code: {
+          title: "library-entry.md",
+          lang: "text",
+          text: `# Pattern: confirm-before-destructive
+Job      let the user take back a misclick
+Code     [link/code block]
+When     destructive actions only; never for routine submits
+Scars    v1 used a modal -> interrupted everyone
+         v2 used inline 'Delete? / Confirm' -> better
+         v3 added Undo toast for the reversible cases
+Origin   seen in a checkout flow, rebuilt with tokens`,
+        },
+        links: [{ label: "A library entry, live", href: "/components/halo-button" }],
+      },
+    ],
+  },
+  {
+    slug: "copy-paste-guilt-is-a-feature",
+    kicker: "Career & process",
+    title: "Copy-paste guilt is a feature",
+    deck: "Every craft begins in imitation. The guilt that says 'I should build it from scratch' is the ego protecting itself from learning — stealing good patterns, deliberately and with credit, is how craft actually spreads.",
+    minutes: 8,
+    level: "Beginner",
+    tags: ["craft", "learning", "process", "originality"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The guilt, examined",
+        body: [
+          "Designers and developers feel a specific shame about copying: 'real' practitioners originate, and copying is for beginners. The guilt is a category error. Painters copy the old masters for years before a brushstroke of their own appears; musicians learn standards before they write originals; the web's best design systems are explicit remixes of the systems that preceded them. Copying is not the opposite of originality — it is the prerequisite for it.",
+        ],
+        bullets: [
+          "Copy with intent: the useful copy is not the drag-and-drop of a whole page but the deliberate rebuild of a single pattern — type the code, change the tokens, break it, fix it. Typing is the part that teaches.",
+          "Copy the decision, not the pixels: 'why is this card's shadow this soft?' is the question; the answer (elevation scale, rung 2) is what transfers. Pixels without the decision behind them are a costume.",
+          "Credit is part of the craft: a note in the code or the README ('pattern adapted from X') is not weakness — it is how provenance spreads, and provenance is how the pattern improves.",
+          "The guilt returns as growth: when copying feels wrong, it is because you can now see what to change — that is the moment the copy becomes yours. Steal until you can improve, then improve.",
+        ],
+      },
+      {
+        h: "Why this site exists",
+        body: [
+          "Motif is built on the premise that copying is fast and knowing why is faster — every component ships with the 'why' exposed, because a pattern with its reasoning attached is teachable and a pattern without it is a trap. The library is not a wall against copying; it is an invitation to copy well. The guilt is the only thing this site is designed to remove.",
+        ],
+        links: [{ label: "The library, built on that premise", href: "/" }],
+      },
+    ],
+  },
+  {
+    slug: "designing-in-the-open",
+    kicker: "Career & process",
+    title: "Designing in the open",
+    deck: "A changelog people actually read is not a list of fixes — it is a public design diary that turns users into collaborators and turns your process into your marketing. What to write, what to leave out, and the cadence that works.",
+    minutes: 9,
+    level: "Beginner",
+    tags: ["changelog", "process", "marketing", "transparency"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The changelog as a design document",
+        body: [
+          "Most changelogs are post-hoc lists: 'fixed a bug in the export modal' — useful to nobody, read by nobody. A changelog people actually read is written forward, in the language of decisions: what changed, why it changed, what was considered instead, and what the trade-off was. It is the public record of a design conversation, and users read it because it treats them as participants in that conversation rather than as recipients of updates.",
+        ],
+        bullets: [
+          "Lead with the why: 'the export modal now keeps your filters' beats 'fixed export filters'; the first sentence should make a reader who does not use export understand why the change matters to someone who does.",
+          "Name the trade-offs: 'we made the dashboard denser to fit the new chart; the cost is a busier first screen, and we are watching the feedback' — honesty about costs is what builds the trust a changelog is really for.",
+          "Credit the source: 'this change came from a support thread about…' turns users into contributors and proves the log is a conversation, not a broadcast.",
+          "Show the work: a sketch, a before/after, a run log — a changelog entry with a visual is a case study; text-only entries are filings.",
+        ],
+      },
+      {
+        h: "The cadence that works",
+        body: [
+          "The cadence question kills more changelogs than the writing: too frequent and entries thin out into noise; too rare and the log becomes archaeology. The pattern that works for a solo or small team is small and frequent — ship a change, write the entry the same day, publish weekly or biweekly. The discipline is that the entry is part of shipping, not a chore after it: if a change is not worth a changelog line, it is worth asking whether it should ship at all.",
+        ],
+        code: {
+          title: "entry-template.md",
+          lang: "text",
+          text: `## [date] — [the change in one plain sentence]
+
+Why      [the problem, in user language]
+What     [the change, with the trade-off]
+Who      [the users this helps most]
+Source   [thread / audit / idea that prompted it]
+Scars    [what we tried first and why it failed]`,
+        },
+        links: [{ label: "A changelog component built for this", href: "/components/changelog-feed" }],
+      },
+    ],
+  },
+  {
+    slug: "first-90-days-of-a-content-site",
+    kicker: "Career & process",
+    title: "The first 90 days of a content site",
+    deck: "Motif's own early playbook, told honestly: what a content-and-library site should do in its first quarter — the 90-day plan of shipping, listening and pruning that turns a library into a destination.",
+    minutes: 10,
+    level: "Beginner",
+    tags: ["content", "launch", "process", "indie web"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "Days 1–30: ship the proof, not the promise",
+        body: [
+          "The first month has one job: prove the premise with real, shippable work. A library site that launches with a promise and three components is a brochure; one that launches with thirty components, each documented and demoed, is a resource. The honest version of Motif's first month: fewer polished pages, more shipped assets, every one with code and notes — because a content site's first product is its archive, and an archive is built by shipping, not by planning.",
+        ],
+        bullets: [
+          "Ship in public from day one: the changelog starts before the site is 'ready' — early readers follow the build, and followers become the first testers.",
+          "Every asset ships with its 'why': a component without a note on when to use it is inventory; with the note it is teaching — and teaching is what makes people return.",
+          "Count the right things: in month one the metric is shipped assets and returning visitors, not traffic — a content site that nobody returns to is a content site that taught nothing.",
+        ],
+      },
+      {
+        h: "Days 31–60: listen to what got copied",
+        body: [
+          "The second month is listening season. The signal is not comments or traffic — it is what people copy, screenshot and remix. Which components appear in other people's work? Which essays get linked? The copies are the market research: they say what was useful enough to steal, and the site's job is to double down on exactly that, shipping more of the thing being stolen and making the stealing easier (better copy buttons, cleaner code).",
+        ],
+        callout: {
+          type: "tip",
+          title: "The copy audit",
+          text: "Every month, search for your own patterns in the wild — components, code snippets, phrases from your essays. Each sighting is a vote. Build the roadmap from votes, not from your own curiosity about what to make next.",
+        },
+      },
+      {
+        h: "Days 61–90: prune with evidence",
+        body: [
+          "The third month is pruning season: cut what the evidence did not reward. The essay nobody finished, the component nobody copied, the page that only you visit — each gets a decision: fix it (the idea is good, the execution missed), fold it (the idea belongs inside another asset), or cut it (the idea was yours, not the audience's). Pruning with evidence is how a content site develops taste as an institution, not just as an individual — and the 90-day rhythm of ship, listen, prune is the operating system for everything after.",
+        ],
+        links: [{ label: "Designing in the open", href: "/learn/designing-in-the-open" }],
+      },
+    ],
+  },
+  {
+    slug: "performance-budgets-for-solo-builders",
+    kicker: "Career & process",
+    title: "Performance budgets for solo builders",
+    deck: "The 200ms / 60fps contract is achievable without a team — if the budget is a rule you set once instead of a fight you have every sprint. A solo builder's performance system: targets, tools, and the audit that takes ten minutes.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["performance", "budgets", "solo", "process"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The two numbers that matter",
+        body: [
+          "For a solo builder, two numbers cover most of the contract. Interaction latency: the interface answers a tap within 200ms (the click window, filled with instant press feedback while slow work happens off the main thread). Frame rate: motion holds 60fps, meaning no frame over 16.7ms and no layout or paint inside animations. A team argues about these in meetings; a solo builder encodes them as rules in the codebase and lets the tools enforce them.",
+        ],
+        code: {
+          title: "solo-budget.md",
+          lang: "text",
+          text: `THE CONTRACT (two lines, printed above the desk):
+1. Tap -> visible answer in 200ms (press state counts)
+2. Motion -> 60fps (transform/opacity only, no layout per frame)
+
+THE ENFORCEMENT (set up once):
+- Lighthouse CI: budget JS <= 170kb gzip, LCP <= 2.5s
+- A build-time rule: warn on any transition of
+  width/height/top/left (the layout-animators)
+- A dev audit: record one animation in DevTools,
+  check for yellow layout blocks, run it weekly`,
+        },
+      },
+      {
+        h: "The solo audit, ten minutes a week",
+        body: [
+          "The solo performance audit is short because the codebase is small: record one core interaction (open the main page, run the main motion), and check three things in the trace — no yellow layout blocks inside the animation, no long task over 50ms on the critical path, and the network waterfall's biggest item is your own code, not a 2MB library. Ten minutes a week finds regressions the day they land. The budget is not a report card — it is the early-warning system that keeps a solo site from slowly rotting under dependencies nobody remembers adding.",
+        ],
+        bullets: [
+          "Budget the dependencies: every library is a monthly payment in bytes; a solo builder's rule of thumb is 'add it only when the code to replace it would be longer than the library'.",
+          "Watch the third-party list: analytics, fonts, chat widgets — three 'small' scripts routinely outweigh the entire app; the audit's question is which ones the users actually need on first load.",
+          "The 60fps rule is a CSS rule: transform and opacity only, will-change for long animations only, GPU layers counted — the same discipline as the team version, minus the meetings.",
+        ],
+        links: [{ label: "Why 60fps feels like 24fps", href: "/learn/why-60fps-feels-like-24fps" }],
+      },
+    ],
+  },
+  {
+    slug: "portfolio-pieces-that-get-you-hired",
+    kicker: "Career & process",
+    title: "Portfolio pieces that get you hired",
+    deck: "Hiring designers and developers do not want to see everything you made — they want to see you make one decision well. The motion-spec case study that interviews better than any other format, and how to build one.",
+    minutes: 10,
+    level: "Intermediate",
+    tags: ["portfolio", "career", "case study", "motion"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "What a hiring designer actually screens for",
+        body: [
+          "A portfolio review is a search for evidence of three things: taste (do the decisions hold together), judgement (are the decisions justified by constraints), and resilience (are the failures documented). Screenshots prove taste weakly — anyone can polish a still. What interviews best is the *spec*: a document that shows a problem, the considered options, the chosen solution and the trade-off, because a spec is a decision made visible, and hiring is a search for good decision-makers.",
+        ],
+        code: {
+          title: "the-winning-format.md",
+          lang: "text",
+          text: `MOTION-SPEC CASE STUDY (2 pages, 6 minutes of reading)
+
+1. The moment     one screen, one interaction, named
+2. The problem    the default felt wrong — and why
+                 ('the modal appeared but nothing said where
+                  it came from')
+3. The options    2-3 real alternatives with their trade-offs
+4. The spec       timing table + easing curves + reduced
+                 motion branch — buildable by a developer
+5. The evidence   before/after or a run log; what users said`,
+        },
+      },
+      {
+        h: "Why the motion spec wins",
+        body: [
+          "A motion spec compresses more signal per page than any other format. It proves you can name a feeling as parameters (durations, curves, ranges — the language of implementation). It proves you thought in systems (a reduced-motion branch is a system thought; a pretty hover is not). And it gives an interviewer something concrete to talk about: 'why 300ms and not 200?' is a question every good spec answers in advance, and the interview becomes a conversation about your decisions instead of small talk about your tools.",
+        ],
+        bullets: [
+          "One deep piece beats ten shallow ones: a hiring manager would rather read one spec that shows a full decision than a grid of case studies that each stop at the screenshot.",
+          "Show the failure frame: the version that did not work, with the note on why it did not — resilience is the trait portfolios lie about most and evidence proves best.",
+          "Ship the code: a link to a runnable page or repo beats an embedded video — the reviewer who can open devtools is the reviewer who can hire you.",
+          "Write for the skim: headings carry the argument; a reviewer spends ninety seconds on the first pass, and the spec should survive that ninety seconds intact.",
+        ],
+        links: [{ label: "A motion spec built as a page", href: "/learn/motion-spec-only" }],
+      },
+    ],
+  },
+  {
+    slug: "freemium-that-isnt-a-lie",
+    kicker: "Career & process",
+    title: "Freemium that isn't a lie",
+    deck: "Most freemium products are free trials with extra steps: the free tier exists to be frustrating. The honest free/pro line is a decision about what the free user genuinely gets — and it is the only line that builds the trust a paid tier needs.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["freemium", "business", "pricing", "honesty"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The two kinds of free",
+        body: [
+          "There is free-as-a-trial — a time-boxed or feature-crippled version whose entire design goal is to end — and free-as-a-tier — a version that is genuinely useful forever, missing only what the paid tier adds. Users can tell the difference within a session, because a trial advertises its own ending (watermarks, export blocks, 'upgrade to remove') while a tier simply is what it is. Freemium that is not a lie is the second kind: the free tier must be a product someone would recommend even if the paid tier did not exist.",
+        ],
+        bullets: [
+          "Draw the line at depth, not at usefulness: the free tier offers the core job with limits that are honest ('50 components, all exportable' beats 'components visible, export locked').",
+          "The pro tier adds capabilities, not removals: 'pro adds versioning, teams and private collections' is a line that respects the free user; 'pro removes the watermark' is a ransom note.",
+          "Make the upgrade moment a decision, not a trap: the user who hits the free limit should be told what pro costs, what it adds, and given a real choice — the honest moment converts better than the artificial one.",
+          "Grandfather what you promised: changing the free tier's terms is the fastest way to prove the whole thing was a lie; the free line is a promise with a memory.",
+        ],
+      },
+      {
+        h: "The trust arithmetic",
+        body: [
+          "The free tier is marketing spend, and the honest version is cheaper than the dishonest one. A free user who was never tricked becomes the referral engine; a free user who felt the trial's squeeze becomes the bad review. The arithmetic that matters: the paid tier's value must be visible from inside the free tier — the free user should be able to see exactly what they are missing and judge it worth the price. That visibility is the whole pitch, and it only works if the free tier was never a lie.",
+        ],
+        callout: {
+          type: "pro",
+          title: "The line-drawing test",
+          text: "For every feature, ask: would the free tier still be worth recommending without this? If yes, it can sit behind the line. If no — the feature is the product's core, and gating it makes the free tier a trial wearing a tier's clothes.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "animated-storytelling-for-nonprofits",
+    kicker: "Career & process",
+    title: "Animated storytelling for non-profits",
+    deck: "Emotion is a non-profit's most honest asset and its most dangerous one. The ethics of animated storytelling: when motion serves a cause and when it manipulates, with patterns that respect the audience's agency.",
+    minutes: 9,
+    level: "Intermediate",
+    tags: ["nonprofits", "storytelling", "ethics", "motion"],
+    updated: "2026-09-10",
+    blocks: [
+      {
+        h: "The power and the problem",
+        body: [
+          "A non-profit's page has one job that a commercial page does not: to move people — to make a distant problem feel close enough to act on. Animation is the most efficient tool for that job ever built: a slow zoom into a face, a counter climbing through a fundraising goal, a map filling as donations arrive. The power is real, and so is the problem: the same techniques that make a cause feel urgent are the techniques of manipulation, and an audience that feels manipulated by a cause it supports has been hurt twice — once by the world and once by the page.",
+        ],
+        bullets: [
+          "Motion that shows reality, not melodrama: the slow zoom and the swelling score are the grammar of advertising; a non-profit's motion should carry information — the counter, the map, the before-and-after — and let the information carry the emotion.",
+          "Consent is part of the ethics: autoplaying an emotional video without a play button is coercion; a poster with a play button is an invitation. The audience's agency is the line between moved and manipulated.",
+          "Reduced motion is not optional: the user who has asked their device for calm may be the very user whose story this page tells — vestibular sensitivity and trauma both argue for the calm version being first-class.",
+          "Numbers animate honestly: a fundraising counter that eases toward its goal is a picture of progress; one that overshoots or loops is a lie in motion. The counter's curve should match the campaign's reality.",
+        ],
+      },
+      {
+        h: "The ethical pattern set",
+        code: {
+          title: "honest-emotion.md",
+          lang: "text",
+          text: `DO                        AVOID
+-----------------------    ---------------------------
+animate the evidence       autoplay the tragedy
+(counting goal, map,       (let the user press play)
+timeline of impact)
+make the ask calm and      guilt-trip sequencing
+specific                   (shame before the donate
+                           button)
+respect reduced motion     manipulative pacing
+(calm = first-class)       (slow zooms on suffering)
+show the outcome moving    fake urgency
+(what the money did)       (fake countdowns)`,
+        },
+        links: [{ label: "Reduced motion as a second design", href: "/learn/reduced-motion-beyond-the-switch" }],
+      },
+    ],
+  },
 ];
 
 export function learnArticleOf(slug: string): LearnArticle | undefined {

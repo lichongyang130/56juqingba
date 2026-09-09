@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 185 / 500 shipped (batches 1–24, in order) · Sections 1–3 complete ✅
+## Progress — 193 / 500 shipped (batches 1–25, in order) · Sections 1–3 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -197,6 +197,14 @@ names, behaviours and where they plug into the existing pages.
 | 183 | Forms that fail kindly essay | [/learn/forms-that-fail-kindly](/learn/forms-that-fail-kindly) |
 | 184 | The invisible header essay | [/learn/the-invisible-header](/learn/the-invisible-header) |
 | 185 | Testing with one hand essay | [/learn/testing-with-one-hand](/learn/testing-with-one-hand) |
+| 186 | Building a personal UI library essay | [/learn/building-a-personal-ui-library](/learn/building-a-personal-ui-library) |
+| 187 | Copy-paste guilt is a feature essay | [/learn/copy-paste-guilt-is-a-feature](/learn/copy-paste-guilt-is-a-feature) |
+| 188 | Designing in the open essay | [/learn/designing-in-the-open](/learn/designing-in-the-open) |
+| 189 | First 90 days of a content site essay | [/learn/first-90-days-of-a-content-site](/learn/first-90-days-of-a-content-site) |
+| 190 | Performance budgets for solo builders essay | [/learn/performance-budgets-for-solo-builders](/learn/performance-budgets-for-solo-builders) |
+| 191 | Portfolio pieces that get you hired essay | [/learn/portfolio-pieces-that-get-you-hired](/learn/portfolio-pieces-that-get-you-hired) |
+| 192 | Freemium that isn't a lie essay | [/learn/freemium-that-isnt-a-lie](/learn/freemium-that-isnt-a-lie) |
+| 193 | Animated storytelling for non-profits essay | [/learn/animated-storytelling-for-nonprofits](/learn/animated-storytelling-for-nonprofits) |
 
 
 ---
@@ -388,7 +396,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 4. Learn — 50 more essays & formats (currently 10 → 50 live)
+## 4. Learn — 50 more essays & formats (currently 10 → 58 live)
 
 ### Motion & animation theory
 - **Easing cheatsheet deep-dive** ✅ (`easing-cheatsheet-deep-dive`): compare the 8 named curves side-by-side with the Lab embeds.
@@ -439,14 +447,14 @@ names, behaviours and where they plug into the existing pages.
 - **Testing with one hand** ✅ (`testing-with-one-hand`): mobile-first accessibility without a device lab.
 
 ### Career, process & industry
-- **Building a personal UI library**: lessons from Motif for your own site.
-- **Copy-paste guilt is a feature**: why stealing good patterns is how craft spreads.
-- **Designing in the open**: shipping a changelog people actually read.
-- **The first 90 days of a content site**: what Motif would do differently.
-- **Performance budgets for solo builders**: the 200ms/60fps contract without a team.
-- **Portfolio pieces that get you hired**: motion specs that interview well.
-- **Freemium that isn't a lie**: where to draw the free/pro line honestly.
-- **Animated storytelling for non-profits**: emotion with ethics.
+- **Building a personal UI library** ✅ (`building-a-personal-ui-library`): lessons from Motif for your own site.
+- **Copy-paste guilt is a feature** ✅ (`copy-paste-guilt-is-a-feature`): why stealing good patterns is how craft spreads.
+- **Designing in the open** ✅ (`designing-in-the-open`): shipping a changelog people actually read.
+- **The first 90 days of a content site** ✅ (`first-90-days-of-a-content-site`): what Motif would do differently.
+- **Performance budgets for solo builders** ✅ (`performance-budgets-for-solo-builders`): the 200ms/60fps contract without a team.
+- **Portfolio pieces that get you hired** ✅ (`portfolio-pieces-that-get-you-hired`): motion specs that interview well.
+- **Freemium that isn't a lie** ✅ (`freemium-that-isnt-a-lie`): where to draw the free/pro line honestly.
+- **Animated storytelling for non-profits** ✅ (`animated-storytelling-for-nonprofits`): emotion with ethics.
 - **Dark mode is a design system**: not a filter, a second system.
 - **Naming is design**: component names that make APIs feel inevitable.
 
