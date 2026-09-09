@@ -5,6 +5,45 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NAV, SITE } from "@/lib/site";
 
+/* One-line newsletter promise, shown in every footer. Cadence honesty included. */
+export function NewsletterLine() {
+  const [email, setEmail] = useState("");
+  const [done, setDone] = useState(false);
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      window.localStorage.setItem("motif:newsletter-demo", email.trim().toLowerCase());
+    } catch {
+      /* private mode */
+    }
+    setDone(true);
+  };
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+      <p className="max-w-md text-xs leading-relaxed text-ink-dim">
+        <span className="font-bold text-ink">The Motif letter</span> — one email a month: new assets, one
+        build story and the honest numbers. No weekly spam; the next issue ships on the first Friday.
+      </p>
+      {done ? (
+        <span className="text-xs font-bold text-emerald-300">✓ You&apos;re on the list (demo save)</span>
+      ) : (
+        <form onSubmit={submit} className="flex w-full max-w-sm items-center gap-2">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            aria-label="Email for the monthly letter"
+            className="input !rounded-xl !py-2 text-xs"
+          />
+          <button type="submit" className="btn btn-ghost !rounded-xl !px-3.5 !py-2 text-xs">Join</button>
+        </form>
+      )}
+    </div>
+  );
+}
+
 /* Subtle bottom CTA rail — marketing pages only; dismissed once per browser. */
 export function CtaRail() {
   const [gone, setGone] = useState(false);
@@ -287,6 +326,11 @@ export function Footer() {
             </ul>
           </div>
         ))}
+      </div>
+      <div className="border-t border-white/5 px-5 py-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <NewsletterLine />
+        </div>
       </div>
       <div className="border-t border-white/5 py-5 text-center text-xs text-ink-faint">
         © 2026 {SITE.name}. Built for people who ship. · {SITE.twitter}

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { DemoView } from "@/components/demos/Demo";
+import { Stage } from "@/components/cards";
 
 const PLANS = [
   {
@@ -71,11 +73,36 @@ export default function PricingPage() {
         </p>
       </div>
 
+      {/* what stays free forever */}
+      <div id="free-forever" className="mx-auto mt-12 max-w-5xl rounded-3xl border border-emerald-300/20 bg-emerald-400/[.04] p-6 md:p-7">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">The free-forever promise</p>
+            <h2 className="mt-2 text-xl font-extrabold tracking-tight">What stays free, in writing</h2>
+            <p className="mt-2 text-[13px] leading-relaxed text-ink-dim">
+              The core library — elements, animated assets, backgrounds and sections — is MIT-licensed, copyable
+              without an account, and free forever. No watermark, no code paywall, no &ldquo;free for 14 days&rdquo;.
+              Pro sells leverage, never the code itself.
+            </p>
+          </div>
+          <Link href="#free" className="btn btn-ghost !px-3.5 !py-2 text-xs">Jump to the Free plan ↓</Link>
+        </div>
+        <ul className="prose-list mt-5 grid list-none gap-x-8 gap-y-2 text-[13px] sm:grid-cols-2">
+          <li className="!text-[13px]">✓ All 100+ component cards, MIT license, forever</li>
+          <li className="!text-[13px]">✓ No account needed to copy code</li>
+          <li className="!text-[13px]">✓ No watermark on any asset, free or paid</li>
+          <li className="!text-[13px]">✓ Dependency-free CSS stays in every free card</li>
+          <li className="!text-[13px]">✓ Public collections and community badges</li>
+          <li className="!text-[13px]">✓ If the core ever changes, we&apos;ll say so loudly, first</li>
+        </ul>
+      </div>
+
       <div className="mx-auto mt-12 grid max-w-5xl gap-5 lg:grid-cols-3">
         {PLANS.map((p) => (
           <div
             key={p.name}
-            className={`relative rounded-3xl border p-7 ${
+            id={p.name.toLowerCase()}
+            className={`relative scroll-mt-28 rounded-3xl border p-7 ${
               p.featured
                 ? "border-violet-300/40 bg-gradient-to-b from-violet-500/10 to-panel shadow-[0_0_70px_-18px_rgba(139,92,246,0.5)]"
                 : "border-white/8 bg-panel"
@@ -116,6 +143,45 @@ export default function PricingPage() {
           </div>
         ))}
       </div>
+
+      {/* side-by-side: Free vs Pro, live in the browser */}
+      <section id="side-by-side" className="mx-auto mt-16 max-w-5xl">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-amber-300">Not just a table</p>
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight">Free vs Pro, rendered side by side</h2>
+          </div>
+          <Link href="#pro" className="text-xs font-semibold text-ink-faint hover:text-ink">Compare the full lists ↓</Link>
+        </div>
+        <div className="mt-6 grid gap-5 md:grid-cols-2">
+          <div className="overflow-hidden rounded-3xl border border-emerald-300/20 bg-panel">
+            <div className="flex items-center justify-between border-b border-white/6 px-5 py-3">
+              <span className="text-sm font-extrabold text-emerald-300">Free — the core, live</span>
+              <span className="chip !text-[10px]">MIT · no account</span>
+            </div>
+            <Stage className="rounded-none border-0">
+              <DemoView demo="tab-morph" props={{}} />
+            </Stage>
+            <p className="px-5 py-4 text-xs leading-relaxed text-ink-dim">
+              Every element and animated asset you see in the cards is yours: unlimited copy, zero packages for
+              the CSS-first cards, restyle it all from your own tokens.
+            </p>
+          </div>
+          <div className="overflow-hidden rounded-3xl border border-violet-300/25 bg-gradient-to-b from-violet-500/[.08] to-panel">
+            <div className="flex items-center justify-between border-b border-white/6 px-5 py-3">
+              <span className="text-sm font-extrabold text-violet-200">Pro — the leverage, live</span>
+              <span className="chip !text-[10px]">$19/mo</span>
+            </div>
+            <Stage className="rounded-none border-0">
+              <DemoView demo="command-palette" props={{}} />
+            </Stage>
+            <p className="px-5 py-4 text-xs leading-relaxed text-ink-dim">
+              Multi-model test reports, whole-template installs and Theme Studio kits — the tools that save
+              hours. The demo below is real too; Pro just ships you more of the workflow.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <div className="mx-auto mt-16 max-w-3xl">
         <h2 className="text-center text-2xl font-extrabold tracking-tight">Questions, answered</h2>

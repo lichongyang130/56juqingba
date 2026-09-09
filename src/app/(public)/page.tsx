@@ -381,6 +381,31 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ============================== GET INSPIRED TILE ============================== */}
+      <section className="mx-auto max-w-7xl px-5 py-14 lg:px-8">
+        <Link href="/shuffle" className="card-hover group relative block overflow-hidden rounded-[2rem] border border-violet-300/20 bg-gradient-to-br from-violet-500/10 via-panel to-cyan-500/5 p-8 md:p-10">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-600/20 blur-[90px] transition-opacity group-hover:opacity-150" aria-hidden />
+          <div className="relative flex flex-wrap items-center justify-between gap-6">
+            <div className="max-w-xl">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-violet-300">Get inspired</p>
+              <h2 className="mt-2 text-2xl font-extrabold tracking-tight md:text-3xl">Stuck on a blank canvas?</h2>
+              <p className="mt-2 text-sm leading-relaxed text-ink-dim">
+                Let the library pick six assets at random and shuffle until something sparks — a moodboard
+                that opens into real, copyable code.
+              </p>
+              <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-violet-200 transition-transform group-hover:translate-x-1">
+                Open the shuffle <span aria-hidden>→</span>
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-2" aria-hidden>
+              {COMPONENTS.slice(0, 6).map((c) => (
+                <span key={c.slug} className="h-9 w-9 rounded-xl border border-white/10 shadow-lg" style={{ background: `linear-gradient(135deg, ${accentCss(c.slug, 85, 62)}, ${accentCss(c.slug, 85, 62, 0.35)})` }} />
+              ))}
+            </div>
+          </div>
+        </Link>
+      </section>
+
       {/* ============================== DIFFERENTIATORS ============================== */}
       <section className="border-y border-white/6 bg-panel/40">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-[0.9fr_1.3fr] lg:px-8">

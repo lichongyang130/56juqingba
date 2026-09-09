@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 293 / 500 shipped (batches 1–39, in order) · Sections 1–8 complete ✅
+## Progress — 299 / 500 shipped (batches 1–40, in order) · Sections 1–9 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -305,6 +305,13 @@ names, behaviours and where they plug into the existing pages.
 | 291 | Interactive changelog (expand/collapse) | [/](/) homepage ship log |
 | 292 | Contrast band → clickable proof links | [/](/) differentiators band |
 | 293 | Returning-visitor cue | all public pages (localStorage) |
+| 294 | Get-inspired shuffle entry | [/shuffle](/shuffle) |
+| 295 | Pricing free-forever promise block | [/pricing#free-forever](/pricing#free-forever) |
+| 296 | Pricing side-by-side live demo | [/pricing#side-by-side](/pricing#side-by-side) |
+| 297 | Newsletter promise in every footer | every public page (cadence honesty) |
+| 298 | Designed 404 → search with broken path | any missing route |
+| 299 | Localised landing copy test (/es) | [/es](/es) |
+
 
 
 
@@ -671,7 +678,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 9. Homepage & marketing pages — 20 upgrades
+## 9. Homepage & marketing pages — 20 upgrades ✅
 
 - **Sticky CTA rail** ✅ (`CtaRail` bottom bar, dismiss once): a subtle bottom bar on scroll for first-time visitors.
 - **Feature math section** ✅ (data-derived receipts band): copy the honesty ("every prompt has test scores") into concrete numbers.
@@ -687,12 +694,12 @@ names, behaviours and where they plug into the existing pages.
 - **Interactive changelog** ✅ (expand/collapse full log): expand/collapse older entries instead of a flat list.
 - **Contrast band** ✅ (differentiator rows link to their proof pages): "old way vs. Motif" (already exists) — turn the five rows into clickable case links.
 - **Returning-visitor cue** ✅ (`Welcome back` since-last-visit card): subtle "back? here's what's new since last visit" via localStorage.
-- **Moodboard entry point**: one "get inspired" tile leading to a shuffle view.
-- **Pricing page anchor honesty**: compare plans with a "what stays free forever" promise block.
-- **Side-by-side pricing demo**: two free/Pro component renders, not just a table.
-- **Newsletter promise on every page footer**: one-line capture with cadence honesty.
-- **Error pages designed**: a 404 that routes you to search with the broken path pre-filled.
-- **Localised landing copy test**: one translated page to prove the i18n path before committing.
+- **Moodboard entry point** ✅ (`/shuffle` + homepage tile): one "get inspired" tile leading to a shuffle view.
+- **Pricing page anchor honesty** ✅ (`#free-forever` promise + plan anchors): compare plans with a "what stays free forever" promise block.
+- **Side-by-side pricing demo** ✅ (`#side-by-side` live renders): two free/Pro component renders, not just a table.
+- **Newsletter promise on every page footer** ✅ (monthly cadence, demo save): one-line capture with cadence honesty.
+- **Error pages designed** ✅ (404 pre-fills search with the broken path): a 404 that routes you to search with the broken path pre-filled.
+- **Localised landing copy test** ✅ (`/es` translated landing): one translated page to prove the i18n path before committing.
 
 ---
 
