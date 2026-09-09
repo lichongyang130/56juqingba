@@ -1,26 +1,40 @@
 # 500 ways to make Motif richer
 
 _A living idea bank for Motif UI — every item is original, specific and intended to be
-actionable against the current site (as of 2026-09: 39 components · 24 prompts ·
+actionable against the current site (as of 2026-09: 47 components · 24 prompts ·
 10 Learn essays · 8 backgrounds · 8 lab tools · a /search hub · a persistent admin)._
 
 How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
+## Progress — 8 / 500 shipped (batch 1, in order)
+
+| # | Idea | Shipped as |
+|---|------|-----------|
+| 1 | Combo box | [/components/combo-box](/components/combo-box) |
+| 2 | Odometer counter | [/components/odometer-counter](/components/odometer-counter) |
+| 3 | Star rating input | [/components/star-rating](/components/star-rating) |
+| 4 | Tag input | [/components/tag-input](/components/tag-input) |
+| 5 | Slider with live ticks | [/components/slider-ticks](/components/slider-ticks) |
+| 6 | Checkbox card | [/components/checkbox-card](/components/checkbox-card) |
+| 7 | Quantity stepper | [/components/quantity-stepper](/components/quantity-stepper) |
+| 8 | Radio pills with focus ring | [/components/radio-pills](/components/radio-pills) |
+
+
 ---
 
-## 1. Component library — 70 new assets to build (currently 39)
+## 1. Component library — 70 new assets to build (39 → 47 shipped; 62 remain)
 
 ### Form & input elements
-- **Combo box**: text input with a live-filtered option list, keyboard navigation and a "no matches" row — slots into every filter on the site.
-- **Odometer counter**: rolling digit wheels for numbers (price tickers, followers) — complements the existing count-up scenes with mechanical charm.
-- **Star rating input**: five-star interactive picker with half-star precision and a clear-selection reset.
-- **Tag input**: type a word, press Enter, it becomes a chip; backspace removes the last chip (like the admin quick-add but reusable).
-- **Slider with live ticks**: range slider that shows min/max labels and a floating value bubble while dragging.
-- **Checkbox card**: an entire option card that is selectable, with checkmark that draws in — for pricing/plan pickers.
-- **Quantity stepper**: − / + stepper with long-press repeat, used by cart rows and ticket seats.
-- **Radio pills with focus ring**: keyboard-first segmented radios that announce the checked option.
+- **Combo box** ✅ (`combo-box`): text input with a live-filtered option list, keyboard navigation and a "no matches" row — slots into every filter on the site.
+- **Odometer counter** ✅ (`odometer-counter`): rolling digit wheels for numbers (price tickers, followers) — complements the existing count-up scenes with mechanical charm.
+- **Star rating input** ✅ (`star-rating`): five-star interactive picker with half-star precision and a clear-selection reset.
+- **Tag input** ✅ (`tag-input`): type a word, press Enter, it becomes a chip; backspace removes the last chip (like the admin quick-add but reusable).
+- **Slider with live ticks** ✅ (`slider-ticks`): range slider that shows min/max labels and a floating value bubble while dragging.
+- **Checkbox card** ✅ (`checkbox-card`): an entire option card that is selectable, with checkmark that draws in — for pricing/plan pickers.
+- **Quantity stepper** ✅ (`quantity-stepper`): − / + stepper with long-press repeat, used by cart rows and ticket seats.
+- **Radio pills with focus ring** ✅ (`radio-pills`): keyboard-first segmented radios that announce the checked option.
 - **Textarea auto-grow**: a textarea that expands as you type with a subtle char budget meter.
 - **Date presets picker**: Today / 7d / 30d / custom pill row for dashboards.
 - **File drop zone**: drag-and-drop surface with a dash-bordered highlight state and fake progress.

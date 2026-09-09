@@ -15,6 +15,10 @@ const KEYFRAMES = `
 @keyframes mf-glow { 0%,100% { opacity:.5; transform: scale(1)} 50% { opacity:.9; transform: scale(1.18)} }
 @keyframes mf-rise { from { opacity:0; transform: translateY(14px)} to { opacity:1; transform:none} }
 @keyframes mf-bob { 0%,100%{ transform: translateY(0) rotate(-1deg)} 50%{ transform: translateY(-10px) rotate(1.5deg)} }
+@keyframes mf-roll { from { transform: translateY(-130%); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes mf-pop { 0% { transform: scale(.6); opacity: 0 } 65% { transform: scale(1.08); opacity: 1 } 100% { transform: none; opacity: 1 } }
+@keyframes mf-draw { to { stroke-dashoffset: 0 } }
+@keyframes mf-growin { from { opacity: 0; transform: scale(.96) translateY(4px) } to { opacity: 1; transform: none } }
 `;
 
 /* ------------------------------ ELEMENTS ------------------------------ */
@@ -1854,7 +1858,451 @@ function TeamSpotlightGrid() {
   );
 }
 
+
+const COMBO_POOL = [
+  { v: "wipe-reveal", l: "Wipe Reveal", m: "section · CSS only" },
+  { v: "aurora-veil", l: "Aurora Veil", m: "background · layered" },
+  { v: "tilt-card", l: "Tilt Card", m: "element · pointer" },
+  { v: "terminal-hero", l: "Terminal Hero", m: "section · typed" },
+  { v: "counter-stats", l: "Counter Stats", m: "animated · data" },
+  { v: "sheet-menu", l: "Sheet Menu", m: "element · mobile" },
+];
+
+function ComboBox() {
+  const [q, setQ] = useState("");
+  const [open, setOpen] = useState(false);
+  const [act, setAct] = useState(0);
+  const [sel, setSel] = useState<string | null>(COMBO_POOL[0].v);
+  const needle = q.trim().toLowerCase();
+  const list = COMBO_POOL.filter(
+    (o) => !needle || o.l.toLowerCase().includes(needle) || o.m.includes(needle) || o.v.includes(needle),
+  );
+  const pick = (v: string) => { setSel(v); setQ(""); setOpen(false); setAct(0); };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(139,92,246,0.14),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/70">
+          <span>Add to build</span>
+          <span className="normal-case tracking-normal text-ink-faint">6 components</span>
+        </div>
+        <div className="relative">
+          <svg className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" strokeLinecap="round" />
+          </svg>
+          <input
+            value={q}
+            onChange={(e) => { setQ(e.target.value); setOpen(true); setAct(0); }}
+            onFocus={() => setOpen(true)}
+            onBlur={() => setOpen(false)}
+            onKeyDown={(e) => {
+              const len = Math.max(1, list.length);
+              if (e.key === "ArrowDown") { e.preventDefault(); setOpen(true); setAct((a) => (a + 1) % len); }
+              else if (e.key === "ArrowUp") { e.preventDefault(); setOpen(true); setAct((a) => (a - 1 + len) % len); }
+              else if (e.key === "Enter") { e.preventDefault(); const hit = list[act] ?? list[0]; if (hit) pick(hit.v); }
+              else if (e.key === "Escape") setOpen(false);
+            }}
+            role="combobox"
+            aria-expanded={open}
+            aria-controls="cb-list"
+            aria-activedescendant={open && list[act] ? `cb-${list[act].v}` : undefined}
+            className="input !rounded-xl !py-2.5 !pl-10 !pr-9"
+            placeholder="Find a component…"
+          />
+          <svg className="pointer-events-none absolute right-3 top-1/2 h-3 w-3 -translate-y-1/2 text-ink-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+            <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {open && (
+            <ul
+              id="cb-list"
+              role="listbox"
+              aria-label="Components"
+              className="absolute inset-x-0 top-[calc(100%+6px)] z-10 overflow-hidden rounded-xl border border-white/10 bg-[#0d0f17] py-1 shadow-2xl"
+              style={{ animation: "mf-growin .14s ease-out both" }}
+            >
+              {list.length === 0 && <li className="px-3.5 py-3 text-xs text-ink-faint">No matches — try “aurora” or “card”.</li>}
+              {list.map((o, i) => (
+                <li
+                  key={o.v}
+                  id={`cb-${o.v}`}
+                  role="option"
+                  aria-selected={act === i}
+                  onMouseEnter={() => setAct(i)}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => pick(o.v)}
+                  className={`flex cursor-pointer items-center justify-between gap-3 px-3.5 py-2 text-sm ${act === i ? "bg-violet-400/12 text-ink" : "text-ink-dim"}`}
+                >
+                  <span>
+                    <span className="font-semibold">{o.l}</span>
+                    <span className="ml-2 text-[10px] uppercase tracking-wider text-ink-faint">{o.m}</span>
+                  </span>
+                  {sel === o.v && <span className="text-violet-300">✓</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <p className="mt-2 text-[11px] text-ink-faint">↑↓ move · ↵ choose · esc close · typed filtering with a no-match row</p>
+      </div>
+      <div className="flex items-center gap-2 text-xs">
+        <span className="chip !text-[10px] uppercase tracking-wider text-violet-200/70">selected</span>
+        <span className="font-mono text-violet-100/90">{COMBO_POOL.find((o) => o.v === sel)?.l ?? "—"}</span>
+      </div>
+    </div>
+  );
+}
+
+function OdometerCounter({ target = 18624 }: DemoProps) {
+  const goal = typeof target === "number" ? Math.max(100, Math.min(999999, Math.round(target))) : 18624;
+  const [v, setV] = useState(0);
+  const done = v >= goal;
+  useEffect(() => {
+    if (done) return;
+    const per = Math.max(1, Math.round(goal / 110));
+    const t = setInterval(
+      () => setV((p) => { const n = p + per + Math.round(Math.random() * 3); return n >= goal ? goal : n; }),
+      42,
+    );
+    return () => clearInterval(t);
+  }, [done, goal]);
+  const cells = String(v).padStart(6, "0").split("");
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_100%,rgba(52,211,153,0.13),transparent_62%),#08090f] px-6">
+      <div className="chip !border-mint/25 !bg-mint/10 !text-mint">RUN 07 · copies this month</div>
+      <div className="flex items-center gap-1.5" role="img" aria-label={`${v.toLocaleString("en-US")} copies`}>
+        {cells.map((d, i) => (
+          <span
+            key={i}
+            className="relative flex h-12 w-8 items-center justify-center overflow-hidden rounded-lg border border-white/12 bg-black/40 md:h-14 md:w-9"
+            style={{ boxShadow: "inset 0 2px 7px rgba(0,0,0,.75), inset 0 -2px 7px rgba(0,0,0,.55)" }}
+          >
+            <span key={`${i}-${d}`} className="relative flex h-full w-full items-center justify-center font-mono text-xl font-black tabular-nums text-white md:text-2xl" style={{ animation: "mf-roll .18s cubic-bezier(.2,.7,.3,1) both" }}>
+              {d}
+            </span>
+            <span aria-hidden className="pointer-events-none absolute -top-3.5 inset-x-0 flex justify-center font-mono text-lg font-black tabular-nums text-white/25 blur-[1.5px]">{(Number(d) + 9) % 10}</span>
+            <span aria-hidden className="pointer-events-none absolute -bottom-3.5 inset-x-0 flex justify-center font-mono text-lg font-black tabular-nums text-white/25 blur-[1.5px]">{(Number(d) + 1) % 10}</span>
+          </span>
+        ))}
+      </div>
+      <div className="flex items-center gap-2 text-[11px] text-ink-dim">
+        {done ? (
+          <span className="font-bold text-mint">✓ counted to {v.toLocaleString("en-US")}</span>
+        ) : (
+          <span className="text-ink-faint">counting… mechanical wheels, no easing shortcut</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StarRating() {
+  const [rating, setRating] = useState(3.5);
+  const [hover, setHover] = useState<number | null>(null);
+  const shown = Math.max(0, Math.min(5, hover ?? rating));
+  const pct = (shown / 5) * 100;
+  const valueFromEvent = (e: React.MouseEvent<HTMLElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const seg = r.width / 5;
+    const i = Math.max(0, Math.min(4, Math.floor((e.clientX - r.left) / seg)));
+    const half = e.clientX - r.left - i * seg < seg / 2;
+    return i + (half ? 0.5 : 1);
+  };
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(251,191,36,0.12),transparent_60%),#08090f] px-6">
+      <div className="chip !border-amber-300/25 !bg-amber-400/10 !text-amber-200">rating input · half-star precision</div>
+      <div
+        role="slider"
+        tabIndex={0}
+        aria-label="Rate this component"
+        aria-valuemin={0}
+        aria-valuemax={5}
+        aria-valuenow={shown}
+        aria-valuetext={`${shown} out of 5 stars`}
+        className="relative inline-block cursor-pointer select-none text-[46px] leading-none outline-none"
+        onMouseMove={(e) => setHover(valueFromEvent(e))}
+        onMouseLeave={() => setHover(null)}
+        onClick={(e) => setRating(valueFromEvent(e))}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight") { e.preventDefault(); setRating((r) => Math.min(5, Math.round((r + 0.5) * 10) / 10)); }
+          else if (e.key === "ArrowLeft") { e.preventDefault(); setRating((r) => Math.max(0, Math.round((r - 0.5) * 10) / 10)); }
+          else if (e.key === "Home") { e.preventDefault(); setRating(0); }
+          else if (e.key === "End") { e.preventDefault(); setRating(5); }
+        }}
+      >
+        <span className="tracking-[0.12em] text-white/12" aria-hidden>★★★★★</span>
+        <span className="absolute inset-0 overflow-hidden whitespace-nowrap" style={{ width: `${pct}%` }} aria-hidden>
+          <span className="tracking-[0.12em] text-amber-300" style={{ textShadow: "0 0 14px rgba(251,191,36,.45)" }}>★★★★★</span>
+        </span>
+      </div>
+      <div className="flex items-center gap-3 text-xs">
+        <span className="font-mono text-amber-100/90">{shown.toFixed(1)} / 5</span>
+        <button type="button" onClick={() => setRating(0)} className="rounded-full border border-white/12 px-2.5 py-1 text-[10px] font-semibold text-ink-faint transition-colors hover:border-white/30 hover:text-ink">
+          Clear ↺
+        </button>
+        <span className="text-ink-faint">← hover to preview · click to set · arrows nudge</span>
+      </div>
+    </div>
+  );
+}
+
+const TAG_POOL = ["motion", "dark", "glass", "svg", "vue", "3d"];
+
+function TagInput({ limit = 4 }: DemoProps) {
+  const lim = typeof limit === "number" ? Math.max(2, Math.min(6, Math.round(limit))) : 4;
+  const [tags, setTags] = useState<string[]>(["motion", "glass"]);
+  const [val, setVal] = useState("");
+  const add = (raw: string) => {
+    const t = raw.trim().toLowerCase().replace(/,+$/, "");
+    if (!t || tags.includes(t) || tags.length >= lim) return;
+    setTags((p) => [...p, t]);
+  };
+  const remove = (t: string) => setTags((p) => p.filter((x) => x !== t));
+  const pool = TAG_POOL.filter((t) => !tags.includes(t));
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(34,211,238,0.12),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-cyan-300/70">Filter tags</div>
+        <div className="flex flex-wrap items-center gap-1.5 rounded-xl border border-white/10 bg-white/4 p-2 backdrop-blur-md">
+          {tags.map((t) => (
+            <span key={t} className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-300/30 bg-cyan-400/10 px-2.5 py-1 text-xs font-semibold text-cyan-100" style={{ animation: "mf-pop .18s cubic-bezier(.34,1.56,.64,1) both" }}>
+              {t}
+              <button type="button" aria-label={`Remove ${t}`} onClick={() => remove(t)} className="text-cyan-200/60 transition-colors hover:text-white">×</button>
+            </span>
+          ))}
+          <input
+            value={val}
+            onChange={(e) => setVal(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add(val); setVal(""); }
+              else if (e.key === "Backspace" && val === "" && tags.length) remove(tags[tags.length - 1]);
+            }}
+            placeholder={tags.length >= lim ? "full" : "add…"}
+            disabled={tags.length >= lim}
+            aria-label="Add a tag"
+            className="input min-w-20 flex-1 !rounded-lg !border-transparent !bg-transparent !px-2 !py-1 !text-xs !shadow-none focus:!border-transparent disabled:opacity-40"
+          />
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] uppercase tracking-wider text-ink-faint">suggested</span>
+          {pool.map((t) => (
+            <button key={t} type="button" onClick={() => add(t)} className="chip !cursor-pointer !text-[10px] transition-colors hover:!border-cyan-300/40 hover:!text-cyan-100">
+              + {t}
+            </button>
+          ))}
+        </div>
+        <p className="mt-3 text-[11px] text-ink-faint">
+          {tags.length}/{lim} used · Enter or comma adds · backspace removes the last chip
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function SliderWithTicks({ initial = 62 }: DemoProps) {
+  const iv = typeof initial === "number" ? Math.max(0, Math.min(100, Math.round(initial))) : 62;
+  const [v, setV] = useState(iv);
+  const [drag, setDrag] = useState(false);
+  const ticks = [0, 25, 50, 75, 100];
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 bg-[radial-gradient(60%_90%_at_50%_100%,rgba(139,92,246,0.13),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 flex items-baseline justify-between">
+          <span className="text-xs font-semibold text-ink-dim">Reveal threshold</span>
+          <span className="font-mono text-sm font-extrabold text-violet-100">{v}%</span>
+        </div>
+        <div className="relative pt-9">
+          {drag && (
+            <span
+              className={`pointer-events-none absolute top-0 -translate-x-1/2 rounded-md border px-2 py-0.5 font-mono text-[10px] font-bold ${drag ? "border-violet-300/50 bg-violet-500/90 text-white" : "border-white/15 bg-black/70 text-ink"}`}
+              style={{ left: `${v}%` }}
+            >
+              {v}%
+            </span>
+          )}
+          <input
+            type="range"
+            min={0}
+            max={100}
+            step={1}
+            value={v}
+            aria-label="Reveal threshold percentage"
+            onChange={(e) => setV(Number(e.target.value))}
+            onPointerDown={() => setDrag(true)}
+            onPointerUp={() => setDrag(false)}
+            onPointerLeave={() => setDrag(false)}
+            className="relative w-full"
+          />
+          <div className="relative mx-0.5 mt-1.5 h-1.5">
+            {ticks.map((t) => (
+              <span key={t} aria-hidden className={`absolute top-0 h-1.5 w-px -translate-x-1/2 ${t <= v ? "bg-violet-300/70" : "bg-white/20"}`} style={{ left: `${t}%` }} />
+            ))}
+          </div>
+          <div className="mt-1 flex justify-between text-[9px] font-semibold text-ink-faint">
+            <span>0%</span>
+            <span>100%</span>
+          </div>
+        </div>
+        <p className="mt-4 text-[11px] text-ink-faint">ticks mark quarter steps · the bubble rides the thumb while you drag</p>
+      </div>
+    </div>
+  );
+}
+
+const PERK_OPTS = [
+  { id: "tokens", glyph: "◍", t: "Token theming", d: "Restyle via CSS variables." },
+  { id: "motion", glyph: "∿", t: "Motion presets", d: "Easings + spring packs." },
+  { id: "logs", glyph: "☰", t: "Run logs", d: "Tested on 3 models." },
+  { id: "export", glyph: "⇣", t: "Export kit", d: "Figma vars + Tailwind preset." },
+];
+
+function CheckboxCard() {
+  const [on, setOn] = useState<string[]>(["tokens"]);
+  const toggle = (id: string) => setOn((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+  const all = on.length === PERK_OPTS.length;
+  const toggleAll = () => setOn(all ? [] : PERK_OPTS.map((o) => o.id));
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(52,211,153,0.12),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-mint">Bundle add-ons</span>
+          <button type="button" onClick={toggleAll} className="text-[11px] font-semibold text-ink-dim transition-colors hover:text-ink">
+            {all ? "Clear all" : "Select all"}
+          </button>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {PERK_OPTS.map((o) => {
+            const active = on.includes(o.id);
+            return (
+              <button
+                key={o.id}
+                type="button"
+                role="checkbox"
+                aria-checked={active}
+                onClick={() => toggle(o.id)}
+                className={`relative rounded-xl border p-3 text-left transition-all duration-200 ${active ? "border-mint/50 bg-mint/10 shadow-[0_0_24px_-8px_rgba(52,211,153,.4)]" : "border-white/8 bg-white/4 hover:border-white/18"}`}
+              >
+                <span className="flex items-center gap-2">
+                  <span className={`text-base ${active ? "text-mint" : "text-ink-faint"}`}>{o.glyph}</span>
+                  <span className="text-xs font-bold">{o.t}</span>
+                </span>
+                <span className={`mt-1 block text-[10px] leading-snug ${active ? "text-mint/80" : "text-ink-faint"}`}>{o.d}</span>
+                <span className={`absolute right-2.5 top-2.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border ${active ? "border-mint/60 bg-mint/20" : "border-white/15"}`} aria-hidden>
+                  {active && (
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m5 12.5 4.5 4.5L19 7.5" style={{ strokeDasharray: 14, strokeDashoffset: 14, animation: "mf-draw .25s ease-out forwards" }} />
+                    </svg>
+                  )}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-[11px] text-ink-faint">
+          {on.length} of {PERK_OPTS.length} selected · a checkbox, not a radio — any mix is fair
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function QuantityStepper({ step = "1" }: DemoProps) {
+  const st = Math.max(1, Math.min(5, Number(step) || 1));
+  const [qty, setQty] = useState(3);
+  const [hold, setHold] = useState<1 | -1 | null>(null);
+  const clamp = (n: number) => Math.max(1, Math.min(24, n));
+  useEffect(() => {
+    if (hold === null) return;
+    const t = setInterval(() => setQty((p) => clamp(p + hold * st)), 110);
+    return () => clearInterval(t);
+  }, [hold, st]);
+  const stepBtn = (d: 1 | -1) => (
+    <button
+      type="button"
+      aria-label={d === 1 ? "Increase quantity" : "Decrease quantity"}
+      disabled={(d === -1 && qty <= 1) || (d === 1 && qty >= 24)}
+      onPointerDown={(e) => { e.preventDefault(); setQty((p) => clamp(p + d * st)); setHold(d); }}
+      onPointerUp={() => setHold(null)}
+      onPointerLeave={() => setHold(null)}
+      onPointerCancel={() => setHold(null)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setQty((p) => clamp(p + d * st)); }
+      }}
+      className="flex h-11 w-11 select-none items-center justify-center rounded-xl border border-white/10 bg-white/5 text-lg font-bold text-ink transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+    >
+      {d === 1 ? "+" : "−"}
+    </button>
+  );
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_100%,rgba(244,114,182,0.12),transparent_60%),#08090f] px-6">
+      <div className="chip !border-pink-300/25 !bg-pink-400/10 !text-pink-200">quantity stepper · step +{st}</div>
+      <div className="flex items-center gap-3">
+        {stepBtn(-1)}
+        <div className="w-16 text-center">
+          <div key={qty} className="text-4xl font-black tabular-nums" style={{ animation: "mf-pop .16s cubic-bezier(.34,1.56,.64,1) both" }}>{qty}</div>
+          <div className="text-[9px] uppercase tracking-widest text-ink-faint">tickets</div>
+        </div>
+        {stepBtn(1)}
+      </div>
+      <div className="flex items-center gap-2 text-xs">
+        <span className="text-ink-faint">subtotal</span>
+        <span className="font-mono text-sm font-extrabold text-pink-100">${qty * 32}</span>
+        <span className="chip !text-[9px] uppercase">£32 / ticket</span>
+      </div>
+      <p className="text-[11px] text-ink-faint">press and hold to repeat · pointer and keyboard both work</p>
+    </div>
+  );
+}
+
+const PLAN_POOL = [
+  { n: "Starter", p: 0, d: "Community licence · MIT assets", f: ["39 components", "10 Learn guides", "Community prompts"] },
+  { n: "Studio", p: 19, d: "For one solo builder shipping daily", f: ["Everything in Starter", "Prompt run logs + retries", "All Lab exports"] },
+  { n: "Team", p: 49, d: "Up to 5 seats, shared library", f: ["Everything in Studio", "Team licence", "Private collections"] },
+  { n: "Scale", p: 99, d: "Unlimited seats + component API", f: ["Everything in Team", "Component API", "Token-sync endpoints"] },
+];
+
+function RadioPills({ count = 3 }: DemoProps) {
+  const n = typeof count === "number" ? Math.max(2, Math.min(4, Math.round(count))) : 3;
+  const opts = PLAN_POOL.slice(0, n);
+  const [sel, setSel] = useState(1);
+  const cur = opts[Math.min(sel, opts.length - 1)];
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(244,114,182,0.11),transparent_60%),#08090f] px-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-pink-300/70">Choose a plan</div>
+        <fieldset className="flex gap-2" aria-label="Choose a plan">
+          {opts.map((o, i) => (
+            <label
+              key={o.n}
+              className={`flex-1 cursor-pointer rounded-xl border px-3 py-2.5 text-center transition-all focus-within:ring-2 focus-within:ring-violet-400/80 ${sel === i ? "border-pink-300/50 bg-pink-400/12" : "border-white/10 bg-white/4 hover:border-white/20"}`}
+            >
+              <input type="radio" name="plan-demo" value={o.n} checked={sel === i} onChange={() => setSel(i)} className="sr-only" />
+              <span className={`block text-xs font-bold ${sel === i ? "text-white" : "text-ink-dim"}`}>{o.n}</span>
+              <span className={`mt-0.5 block font-mono text-[10px] ${sel === i ? "text-pink-200" : "text-ink-faint"}`}>${o.p}/mo</span>
+            </label>
+          ))}
+        </fieldset>
+        <div key={cur.n} className="mt-3 rounded-xl border border-white/8 bg-black/25 p-4" style={{ animation: "mf-growin .18s ease-out both" }}>
+          <div className="flex items-baseline justify-between">
+            <span className="text-sm font-extrabold">{cur.n}</span>
+            <span className="font-mono text-lg font-black text-pink-200">${cur.p}</span>
+          </div>
+          <p className="mt-0.5 text-[11px] text-ink-dim">{cur.d}</p>
+          <ul className="mt-2 space-y-1">
+            {cur.f.map((f) => (
+              <li key={f} className="flex items-center gap-1.5 text-[11px] text-ink-dim">
+                <span className="text-mint">✓</span> {f}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <p className="mt-3 text-[11px] text-ink-faint">role=radiogroup — arrow keys move the check · focus ring is visible</p>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
+
 
 export const DEMO_KEYS = [
   "prism-switch", "halo-button", "pulse-loader", "nav-dock",
@@ -1866,6 +2314,8 @@ export const DEMO_KEYS = [
   "command-palette", "toast-stack", "sheet-menu",
   "segmented-control", "notification-bell", "scroll-progress", "testimonial-rotator",
   "countdown-drop", "terminal-hero", "polaroid-stack", "team-spotlight",
+  "combo-box", "odometer-counter", "star-rating", "tag-input",
+  "slider-ticks", "checkbox-card", "quantity-stepper", "radio-pills",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -1915,6 +2365,14 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "terminal-hero": return <TerminalHero {...props} />;
     case "polaroid-stack": return <PolaroidStack {...props} />;
     case "team-spotlight": return <TeamSpotlightGrid />;
+        case "combo-box": return <ComboBox />;
+    case "odometer-counter": return <OdometerCounter {...props} />;
+    case "star-rating": return <StarRating />;
+    case "tag-input": return <TagInput {...props} />;
+    case "slider-ticks": return <SliderWithTicks {...props} />;
+    case "checkbox-card": return <CheckboxCard />;
+    case "quantity-stepper": return <QuantityStepper {...props} />;
+    case "radio-pills": return <RadioPills {...props} />;
     default: return null;
   }
 }

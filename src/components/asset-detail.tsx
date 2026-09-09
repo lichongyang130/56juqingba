@@ -566,6 +566,152 @@ const [spot, setSpot] = useState({});
 .team-card::after { background: radial-gradient(
   120px circle at var(--lx) var(--ly), hsl(258 85% 65% / .25), transparent 65%); }`,
   },
+  "combo-box": {
+    react: `// React — the filter + keyboard loop, trimmed to the essentials
+const [q, setQ] = useState("");
+const [act, setAct] = useState(0);
+const list = OPTIONS.filter(o =>
+  o.label.toLowerCase().includes(q.trim().toLowerCase()));
+
+// on the input:
+//   onChange   → setQ(v); setOpen(true)
+//   onKeyDown  → ArrowDown: setAct(a => (a + 1) % list.length)
+//                Enter: pick(list[act] ?? list[0])
+//                Escape: setOpen(false)
+// list rows render role="option" + aria-selected; the pick
+// commits on click (with onMouseDown preventDefault so blur
+// doesn't close the panel first).`,
+    css: `/* panel + no-match row stay cheap */
+.cb-panel { position: absolute; inset-inline: 0; top: calc(100% + 6px);
+  border-radius: 12px; border: 1px solid var(--color-edge);
+  background: #0d0f17; box-shadow: 0 24px 60px -20px #000;
+  animation: cb-in .14s ease-out both; }
+.cb-empty { padding: 12px 14px; font-size: 12px; opacity: .6; }
+@keyframes cb-in { from { opacity: 0; transform: translateY(4px) scale(.98) } }`,
+  },
+  "odometer-counter": {
+    react: `// React — each digit cell re-keys on change, so the CSS runs per roll
+const str = String(v).padStart(6, "0").split("");
+<div className="odometer" role="img" aria-label={\`\${v} copies\`}>
+  {str.map((d, i) => (
+    <span key={i} className="od-cell">
+      <span key={d} className="od-digit">{d}</span>
+    </span>
+  ))}
+</div>
+// counting loop: setInterval bumps by target/110 until done`,
+    css: `.od-cell { position: relative; overflow: hidden;
+  width: 2rem; height: 3rem; border-radius: 8px; background: #0006;
+  box-shadow: inset 0 2px 7px #000c, inset 0 -2px 7px #0009; }
+.od-digit { display: grid; place-items: center; height: 100%;
+  font: 900 1.4rem/1 ui-monospace, monospace;
+  animation: od-roll .18s cubic-bezier(.2,.7,.3,1) both; }
+@keyframes od-roll { from { transform: translateY(-130%); opacity: 0 } }`,
+  },
+  "star-rating": {
+    react: `// React — one slider element, two star layers, clip by value
+<div role="slider" tabIndex={0} aria-valuemin={0} aria-valuemax={5}
+     aria-valuenow={v} aria-label="Rating"
+     onMouseMove={e => { /* map clientX to 0.5 steps */ }}
+     onClick={commit}
+     onKeyDown={arrows → v ± 0.5, Home → 0, End → 5}>
+  <span className="sr-base">★★★★★</span>
+  <span style={{ width: \`\${v / 5 * 100}%\` }} className="sr-fill">★★★★★</span>
+</div>`,
+    css: `.sr-base { color: rgba(255,255,255,.12); letter-spacing: .12em; }
+.sr-fill { position: absolute; inset: 0; overflow: hidden;
+  white-space: nowrap; color: #fbbf24; letter-spacing: .12em;
+  text-shadow: 0 0 14px rgba(251,191,36,.45); }`,
+  },
+  "tag-input": {
+    react: `// React — chips + one input; Enter commits, backspace pops
+const add = (raw) => {
+  const t = raw.trim().toLowerCase();
+  if (!t || tags.includes(t) || tags.length >= limit) return;
+  setTags(p => [...p, t]);
+};
+// onKeyDown of the input:
+//   Enter | "," → preventDefault; add(value); setValue("")
+//   Backspace && value === "" → remove last chip
+// chips render a × button per tag; animate with a pop keyframe`,
+    css: `.tag-chip { display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  animation: tag-pop .18s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes tag-pop { from { transform: scale(.6); opacity: 0 } }`,
+  },
+  "slider-ticks": {
+    react: `// React — native range keeps a11y free; bubble rides the thumb
+<input type="range" min={0} max={100} value={v} aria-label="Threshold"
+  onChange={e => setV(Number(e.target.value))}
+  onPointerDown={() => setDrag(true)}
+  onPointerUp={() => setDrag(false)} />
+<span className="slider-bubble" style={{ left: \`\${v}%\` }}>
+  {v}%
+</span>
+// ticks are absolute 1px marks at 0/25/50/75/100% under the rail`,
+    css: `.slider-bubble { position: absolute; top: 0; transform: translateX(-50%);
+  font: 700 10px ui-monospace, monospace; padding: 2px 8px;
+  border-radius: 6px; background: var(--color-accent); color: #fff; }
+.slider-tick { position: absolute; top: 0; width: 1px; height: 6px;
+  background: rgba(255,255,255,.25); transform: translateX(-50%); }`,
+  },
+  "checkbox-card": {
+    react: `// React — cards as checkbox buttons with a drawn check
+<button type="button" role="checkbox" aria-checked={on}
+  onClick={() => toggle(id)}
+  className={on ? "opt-card opt-card--on" : "opt-card"}>
+  {/* the drawn check remounts on select so the dash animates */}
+  {on && (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5"
+      strokeLinecap="round" strokeLinejoin="round">
+      <path d="m5 12.5 4.5 4.5L19 7.5"
+        style={{ strokeDasharray: 14, strokeDashoffset: 14,
+                 animation: "check-draw .25s ease-out forwards" }} />
+    </svg>
+  )}
+</button>`,
+    css: `.opt-card { border: 1px solid rgba(255,255,255,.08);
+  transition: border-color .2s, background .2s, box-shadow .2s; }
+.opt-card--on { border-color: color-mix(in srgb, var(--color-mint) 50%, transparent);
+  background: color-mix(in srgb, var(--color-mint) 10%, transparent);
+  box-shadow: 0 0 24px -8px color-mix(in srgb, var(--color-mint) 40%, transparent); }
+@keyframes check-draw { to { stroke-dashoffset: 0 } }`,
+  },
+  "quantity-stepper": {
+    react: `// React — press-and-hold repeat without abusing click
+const [hold, setHold] = useState(null);
+useEffect(() => {
+  if (hold === null) return;
+  const t = setInterval(() => setQty(p => clamp(p + hold * step)), 110);
+  return () => clearInterval(t);
+}, [hold, step]);
+
+// on the − / + buttons:
+//   onPointerDown → bump once; setHold(dir)   (start repeat)
+//   onPointerUp / onPointerLeave → setHold(null)
+//   onKeyDown(Enter|Space) → bump once        (keyboard path)`,
+    css: `/* the digit pops on change — key the span by the value */
+.stepper-value { animation: mf-pop .16s cubic-bezier(.34,1.56,.64,1) both; }
+.step-btn:disabled { opacity: .3; cursor: not-allowed; }`,
+  },
+  "radio-pills": {
+    react: `// React — real radios, visually hidden, styled via peer-checked
+<fieldset aria-label="Choose a plan">
+  {plans.map((p, i) => (
+    <label key={p.name} className="radio-pill">
+      <input type="radio" name="plan" value={p.name}
+        checked={sel === i} onChange={() => setSel(i)} className="sr-only" />
+      <span className="radio-pill-hit">{p.name}</span>
+    </label>
+  ))}
+</fieldset>
+// arrow keys work for free (native radios); focus shows via
+// focus-within ring on the label — never guess the focus state`,
+    css: `.radio-pill:focus-within { outline: 2px solid color-mix(
+  in srgb, var(--color-accent) 80%, transparent); outline-offset: 2px; }
+.radio-pill-hit:has(~ input:checked) { /* or peer-checked:… */ }`,
+  },
 };
 
 const FALLBACK = {
@@ -694,6 +840,46 @@ const DESIGN_NOTES: Record<string, { why: string; skip: string; idea?: string }>
     why: "People pages are where the flat, template look is most visible. A cursor light per card makes six boring cards feel like a designed surface.",
     idea: "Each card tracks its own cursor coordinate — one shared handler per card, rendered as a radial gradient.",
     skip: "On touch there's no cursor; keep a gentle static gradient or rely on the hover scale only.",
+  },
+  "combo-box": {
+    why: "Every filter that hides behind a scrollable <select> of forty items is a decision you made for the user. A typed combo box turns that into a two-key interaction.",
+    idea: "Keep the option list filtered and the active row visible; Enter picks what the arrows point at, never 'whatever is first'.",
+    skip: "For two or three fixed options a select or pills is lighter — don't build a search where there's nothing to search.",
+  },
+  "odometer-counter": {
+    why: "Count-up numbers are everywhere; the odometer's mechanical roll is the version that says 'this number is real and still moving'.",
+    idea: "Neighbours sell the illusion: a blurred ghost digit above and below each wheel makes a flat number read as a physical counter.",
+    skip: "Reserve wheels for the one hero number. Five odometers on a page read as a slot machine, not a dashboard.",
+  },
+  "star-rating": {
+    why: "Ratings are the one input everyone knows how to use — a slider in disguise that needs zero instruction.",
+    idea: "Two stacked star layers with a clipped top layer is simpler and smoother than per-star sprites, and halves the DOM.",
+    skip: "If a decision is consequential (a payment review, a content-moderation flag), stars undersell the stakes — use an explicit scale.",
+  },
+  "tag-input": {
+    why: "Free-form metadata entry fails when users must learn a syntax. Chips + Enter teach the pattern in one interaction.",
+    idea: "Backspace-on-empty pops the last chip — the one affordance that makes tag lists feel reversible and safe.",
+    skip: "If tags come from a fixed taxonomy, a combo box of existing tags beats free typing; you get consistency, not duplicates.",
+  },
+  "slider-ticks": {
+    why: "A bare slider with no marks is a guess; ticks turn it into a measurement.",
+    idea: "Let the value bubble ride the thumb only while dragging — a permanently visible bubble becomes noise the user stops reading.",
+    skip: "More than six ticks and you're building a ruler; discrete choices deserve segmented controls instead.",
+  },
+  "checkbox-card": {
+    why: "When an option deserves a sentence of explanation, a checkbox row can't carry it — the whole card must be the target.",
+    idea: "The drawn checkmark is the feedback that says 'your tap registered' — animate it, don't just change a border.",
+    skip: "If the options are mutually exclusive (one plan), that's a radio, not checkboxes — mislabelling the semantics breaks screen readers.",
+  },
+  "quantity-stepper": {
+    why: "Quantity is the rare field where typing is slower than pressing; the stepper turns cart math into two taps.",
+    idea: "Long-press repeat is the power feature, but only if releasing stops instantly — pointerup/cancel/leave must all clear the timer.",
+    skip: "For quantities over ~30 (inventory, seats, tokens) a stepper is the wrong tool — show a number field with a max hint.",
+  },
+  "radio-pills": {
+    why: "Pills compress a 3–5 option decision into one visual row and still behave like real radios, which is what assistive tech expects.",
+    idea: "Hide the native input visually (sr-only) and style the pill from the checked state — you keep native arrow-key behaviour for free.",
+    skip: "More than five options and pills become a wall of chips; a vertical radio list reads better and is easier to scan.",
   },
 };
 
