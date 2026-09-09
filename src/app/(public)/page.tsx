@@ -3,6 +3,7 @@ import { AssetCard, BackgroundCard, HueStage, Stage, ToolCard } from "@/componen
 import { DemoView } from "@/components/demos/Demo";
 import { SearchBar } from "@/components/chrome";
 import { accentCss, BACKGROUNDS, CHANGELOG, COMPONENTS, LAB_TOOLS, PROMPTS } from "@/lib/data";
+import { SAMPLE_BUILDS } from "@/lib/samples";
 
 const SUPER_POWERS = [
   {
@@ -36,30 +37,6 @@ const SUPER_POWERS = [
     text: "Interactive labs for easing, springs and scroll choreography. Tune the physics, watch it move, export the code.",
     href: "/lab",
     cta: "Open the Lab",
-  },
-];
-
-const SAMPLE_BUILDS = [
-  {
-    title: "Launchpad — SaaS waitlist",
-    by: "linnea.dev",
-    used: ["wipe-reveal", "halo-button", "tilt-card", "marquee-logos", "conic-loader"],
-    kb: 41,
-    note: "Wipe headline over a tilt signup card; the loader doubles as the 'saving' state. Five assets, one coherent dark product.",
-  },
-  {
-    title: "Nightfolio — 3D portfolio",
-    by: "mikef.builds",
-    used: ["orbit-deck", "scramble-text", "star-motes", "flip-card"],
-    kb: 34,
-    note: "Orbit ring of case cards above a starfield; scramble reveals on scroll. Flip cards tuck the case notes out of sight.",
-  },
-  {
-    title: "Wavelength — dev-tool landing",
-    by: "studio.noir",
-    used: ["morph-blob", "tab-morph", "chart-card", "counter-stats"],
-    kb: 27,
-    note: "Morph backdrop behind a tab-morph product tour; the momentum chart does the convincing where copy would oversell.",
   },
 ];
 
@@ -410,9 +387,14 @@ export default function HomePage() {
               Real pages, assembled from the library
             </h2>
           </div>
-          <Link href="/components" className="text-sm font-semibold text-ink-dim hover:text-ink">
-            Start your own build →
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/samples" className="text-sm font-semibold text-emerald-300 hover:text-emerald-200">
+              All case studies →
+            </Link>
+            <Link href="/components" className="text-sm font-semibold text-ink-dim hover:text-ink">
+              Start your own build →
+            </Link>
+          </div>
         </div>
         <p className="mt-3 max-w-2xl text-sm text-ink-dim">
           Sample builds show the pattern: pick a scene, drop in your copy, re-theme with tokens.
@@ -444,12 +426,20 @@ export default function HomePage() {
                   ) : null;
                 })}
               </div>
-              <Link
-                href={`/components/${b.used[0]}`}
-                className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-ink-dim transition-colors group-hover:text-ink"
-              >
-                Open the recipe <span className="transition-transform group-hover:translate-x-1">→</span>
-              </Link>
+              <div className="mt-5 flex items-center justify-between gap-2">
+                <Link
+                  href={`/components/${b.used[0]}`}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-dim transition-colors group-hover:text-ink"
+                >
+                  Open the recipe <span className="transition-transform group-hover:translate-x-1">→</span>
+                </Link>
+                <Link
+                  href={`/samples/${b.slug}`}
+                  className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-300/90 transition-colors hover:text-emerald-200"
+                >
+                  Case study ↗
+                </Link>
+              </div>
             </div>
           ))}
         </div>

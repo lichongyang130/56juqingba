@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 252 / 500 shipped (batches 1–34, in order) · Sections 1–6 complete ✅
+## Progress — 259 / 500 shipped (batches 1–35, in order) · Sections 1–7 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -264,6 +264,14 @@ names, behaviours and where they plug into the existing pages.
 | 250 | Template kit — section swap explorer | [/components/template-landing-saas#section-swap-explorer](/components/template-landing-saas#section-swap-explorer) |
 | 251 | Template kit — blank-canvas pack | [/components/template-landing-saas#blank-canvas-pack](/components/template-landing-saas#blank-canvas-pack) |
 | 252 | Template kit — JSON build spec export | [/components/template-landing-saas#build-spec-export](/components/template-landing-saas#build-spec-export) |
+| 253 | Made with Motif — case-study pages | [/samples/launchpad](/samples/launchpad) |
+| 254 | Template kit — recipe cards | [/components/template-landing-saas#recipe-cards](/components/template-landing-saas#recipe-cards) |
+| 255 | Template gallery — full-page preview iframe | [/templates#template-preview-iframe](/templates#template-preview-iframe) |
+| 256 | Template kit — one-click stack selector diff | [/components/template-landing-saas#stack-selector-diff](/components/template-landing-saas#stack-selector-diff) |
+| 257 | Template gallery — mood & stack filtering | [/templates#template-gallery-filters](/templates#template-gallery-filters) |
+| 258 | Template kit — community submissions flow | [/components/template-landing-saas#community-submissions](/components/template-landing-saas#community-submissions) |
+| 259 | Template kit — offline bundle zip download | [/components/template-landing-saas#template-bundle-downloads](/components/template-landing-saas#template-bundle-downloads) |
+
 
 
 ---
@@ -579,15 +587,15 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 7. Templates & sample builds — 15 more
+## 7. Templates & sample builds — 15 more ✅
 
-- **"Made with Motif" case studies**: expand the three samples into full case pages (challenge → assets used → result).
-- **Recipe cards on templates**: each template shows the exact assets it composes with links.
-- **Template preview iframe**: render the full template inline before opening it.
-- **One-click stack selector**: toggle a template between React and HTML views and see the diff.
-- **Template gallery filtering**: filter templates by mood, stack or section count.
-- **Community template submissions**: accept and moderate template builds (ties to the queue).
-- **Template bundle downloads**: a zip of assets + README for offline use.
+- **"Made with Motif" case studies** ✅ (`/samples` gallery + per-case pages): expand the three samples into full case pages (challenge → assets used → result).
+- **Recipe cards on templates** ✅ (`recipe-cards`): each template shows the exact assets it composes with links.
+- **Template preview iframe** ✅ (`template-preview-iframe`): render the full template inline before opening it.
+- **One-click stack selector** ✅ (`stack-selector-diff`): toggle a template between React and HTML views and see the diff.
+- **Template gallery filtering** ✅ (`template-gallery-filters`): filter templates by mood, stack or section count.
+- **Community template submissions** ✅ (`community-submissions`): accept and moderate template builds (ties to the queue).
+- **Template bundle downloads** ✅ (`template-bundle-downloads`): a zip of assets + README for offline use.
 - **Time-to-build meter** ✅ (`time-to-build`): "this template assembles in ~6 copies" — honest effort cues.
 - **Rebrand playbacks** ✅ (`rebrand-playback`): swap the demo template into two token themes live.
 - **Case-study numbers** ✅ (`case-study-numbers`): what each sample build's page weights and how many requests.
