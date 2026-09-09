@@ -4,7 +4,7 @@
 // none of the code is taken from third-party component libraries.
 
 import { useEffect, useRef, useState } from "react";
-import { COMPONENTS, PROMPTS } from "@/lib/data";
+import { BACKGROUNDS, COMPONENTS, PROMPTS } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
 
 export type DemoProps = Record<string, number | string | boolean>;
@@ -3200,10 +3200,10 @@ function DisclosureList() {
 }
 
 const OVERLAY_LINKS = [
-  { t: "Components", m: "54 assets · themed" },
-  { t: "AI Prompts", m: "24 tested briefs" },
-  { t: "Backgrounds", m: "8 living canvases" },
-  { t: "Learn", m: "10 craft guides" },
+  { t: "Components", m: `${COMPONENTS.length} assets · themed` },
+  { t: "AI Prompts", m: `${PROMPTS.length} tested briefs` },
+  { t: "Backgrounds", m: `${BACKGROUNDS.length} living canvases` },
+  { t: "Learn", m: `${LEARN_ARTICLES.length} craft guides` },
   { t: "The Lab", m: "physics you can touch" },
   { t: "Pricing", m: "free core, Pro power" },
 ];
@@ -5504,7 +5504,7 @@ function HeroProductMock() {
               </button>
             </div>
           </div>
-          <p className="pb-1 font-mono text-[9px] text-ink-faint">v0.9 · 93 assets</p>
+          <p className="pb-1 font-mono text-[9px] text-ink-faint">v0.9 · {COMPONENTS.length} assets</p>
         </div>
         <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-[#0d1017]/95 shadow-[0_30px_80px_rgba(0,0,0,.5)] backdrop-blur">
           <div className="flex items-center gap-2 border-b border-white/6 px-3 py-2">
@@ -6027,7 +6027,7 @@ function TemplateDocsSite() {
               ["overview", "A library that reads like a book", "Every asset page ships code, tokens and a design note in one place, so onboarding is one scroll instead of five tabs."],
               ["install", "npm i motif-ui", "One command, no peer-dependency maze. The package is 4 kB gzipped and carries zero runtime."],
               ["tokens", "Tokens before themes", "Colour, type and spacing are data first; dark mode is a token swap, not a stylesheet rewrite."],
-              ["components", "93 assets and counting", "Inputs, sections and signature motion pieces — each with an original demo, copy snippet and a11y score."],
+              ["components", `${COMPONENTS.length} assets and counting`, "Inputs, sections and signature motion pieces — each with an original demo, copy snippet and a11y score."],
               ["motion", "A motion language, not a toolbox", "Under 200ms for feedback, 500ms+ for story beats, and reduced-motion kills the theatre — by design."],
             ].map(([id, t, b]) => (
               <section key={id} data-sec={id} className="scroll-mt-4">
@@ -6317,7 +6317,7 @@ function TemplateGallery() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="filter 101 assets…"
+          placeholder={`filter ${COMPONENTS.length} assets…`}
           aria-label="Filter templates"
           className="min-w-0 flex-1 rounded-lg border border-white/10 bg-black/25 px-3 py-1.5 text-[11px] text-white outline-none placeholder:text-ink-faint focus:border-violet-300/40"
         />
@@ -6359,6 +6359,362 @@ function TemplateGallery() {
   );
 }
 
+/* ---------------- backgrounds: batch #71-78 ---------------- */
+
+function contourRingPath(cx: number, cy: number, r: number, phase: number, k = 3): string {
+  const pts: string[] = [];
+  const n = 64;
+  for (let i = 0; i <= n; i++) {
+    const a = (i / n) * Math.PI * 2;
+    const rr = r + Math.sin(a * k + phase) * r * 0.16 + Math.sin(a * (k + 2) + phase * 1.7) * r * 0.09;
+    pts.push(`${(cx + Math.cos(a) * rr).toFixed(1)},${(cy + Math.sin(a) * rr * 0.84).toFixed(1)}`);
+  }
+  return `M${pts.join(" L")} Z`;
+}
+
+const TC_HILLS = [
+  { cx: 118, cy: 118, rings: [16, 24, 33, 42, 52, 63, 75, 88], phase: 0.6 },
+  { cx: 322, cy: 84, rings: [14, 23, 33, 44, 56, 69], phase: 2.4 },
+  { cx: 250, cy: 196, rings: [12, 20, 29, 39, 50], phase: 4.1 },
+] as const;
+
+function TopographicContours() {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#08090f]">
+      <svg viewBox="0 0 420 236" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full">
+        <defs>
+          <linearGradient id="tc-a" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#a78bfa" />
+            <stop offset="100%" stopColor="#22d3ee" />
+          </linearGradient>
+        </defs>
+        {TC_HILLS.map((h, hi) =>
+          h.rings.map((r, ri) => {
+            const d = contourRingPath(h.cx, h.cy, r, h.phase + ri * 0.7);
+            const near = ri >= h.rings.length - 2;
+            return (
+              <path
+                key={`${hi}-${ri}`}
+                d={d}
+                fill="none"
+                stroke={near ? "url(#tc-a)" : undefined}
+                style={{ stroke: near ? undefined : `rgba(167,139,250,${(0.06 + (ri % 3) * 0.045).toFixed(3)})`, strokeWidth: near ? 1.2 : 1 }}
+                opacity={near ? 0.75 : 1}
+                className="tc-ring"
+              />
+            );
+          }),
+        )}
+      </svg>
+      <style>{`@keyframes mf-tc-bob { from { transform: translateY(0) } to { transform: translateY(-3px) } }
+.tc-ring { animation: mf-tc-bob 9s ease-in-out infinite alternate; }
+.tc-ring:nth-of-type(2n) { animation-duration: 12s; animation-delay: -4s }
+.tc-ring:nth-of-type(3n) { animation-duration: 7s; animation-delay: -2s }
+@media (prefers-reduced-motion: reduce) { .tc-ring { animation: none } }`}</style>
+    </div>
+  );
+}
+
+const BP_CROSSHAIRS = [
+  { x: 72, y: 68, r: 26 },
+  { x: 250, y: 130, r: 34 },
+  { x: 336, y: 50, r: 20 },
+  { x: 152, y: 172, r: 30 },
+] as const;
+
+function BlueprintGrid() {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#0a1a30]" style={{ backgroundImage: "linear-gradient(rgba(96,165,250,.09) 1px, transparent 1px), linear-gradient(90deg, rgba(96,165,250,.09) 1px, transparent 1px), linear-gradient(rgba(125,211,252,.22) 1px, transparent 1px), linear-gradient(90deg, rgba(125,211,252,.22) 1px, transparent 1px)", backgroundSize: "16px 16px, 16px 16px, 80px 80px, 80px 80px" }}>
+      <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 400 225">
+        {BP_CROSSHAIRS.map((c, i) => (
+          <g key={i} stroke="rgba(186,230,253,.5)" strokeWidth="1">
+            <circle cx={c.x} cy={c.y} r={c.r} fill="none" strokeDasharray="4 4" opacity="0.8" />
+            <circle cx={c.x} cy={c.y} r="2" fill="#bae6fd" stroke="none" />
+            <line x1={c.x} y1={c.y - c.r - 8} x2={c.x} y2={c.y + c.r + 8} opacity="0.45" />
+            <line x1={c.x - c.r - 8} y1={c.y} x2={c.x + c.r + 8} y2={c.y} opacity="0.45" />
+          </g>
+        ))}
+        <g stroke="#7dd3fc" strokeWidth="1.2" opacity="0.9">
+          {[
+            [18, 18],
+            [382, 18],
+            [18, 207],
+            [382, 207],
+          ].map(([x, y], i) => (
+            <g key={i}>
+              <line x1={x - 10} y1={y} x2={x + 10} y2={y} />
+              <line x1={x} y1={y - 10} x2={x} y2={y + 10} />
+            </g>
+          ))}
+        </g>
+        <text x="30" y="200" fill="rgba(186,230,253,.55)" fontSize="7" fontFamily="ui-monospace, monospace" letterSpacing="2">
+          MOTIF/ENG — PLATE 07 · GRID 16/80 · N 34°03
+        </text>
+        <text x="330" y="30" fill="rgba(186,230,253,.4)" fontSize="7" fontFamily="ui-monospace, monospace">
+          A-1 · B-2 · C-3
+        </text>
+      </svg>
+      <span aria-hidden className="bp-scan absolute inset-x-0 h-px bg-cyan-200/50" style={{ boxShadow: "0 0 18px rgba(165,243,252,.8)", animation: "mf-bp-scan 5.5s linear infinite" }} />
+      <style>{`@keyframes mf-bp-scan { 0% { top: -2% } 100% { top: 102% } }
+@media (prefers-reduced-motion: reduce) { .bp-scan { animation: none } }`}</style>
+    </div>
+  );
+}
+
+const CF_HUES = ["#c4b5fd", "#67e8f9", "#6ee7b7", "#fcd34d", "#fda4af", "#7dd3fc"];
+const CF_PIECES = (n: number) =>
+  Array.from({ length: n }, (_, i) => ({
+    left: (i * 61 + 7) % 100,
+    c: CF_HUES[i % CF_HUES.length],
+    w: i % 3 === 0 ? 8 : 5,
+    h: i % 4 === 0 ? 12 : 7,
+    round: i % 4 === 0,
+    dur: 6.4 + (i % 5) * 1.7,
+    delay: -((i * 13) % 70) / 10,
+    sway: (i % 7) - 3,
+  }));
+
+function ConfettiField() {
+  const [tier, setTier] = useState<"lite" | "pro">("lite");
+  const pieces = CF_PIECES(tier === "lite" ? 26 : 46);
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[radial-gradient(80%_90%_at_50%_110%,rgba(139,92,246,.16),transparent_60%),#0a0c13]">
+      <div className="absolute inset-0">
+        {pieces.map((p, i) => (
+          <span key={`${tier}-${i}`} aria-hidden className="absolute" style={{ left: `${p.left}%`, top: "-14px", animation: `mf-cf-fall ${p.dur}s linear ${p.delay}s infinite`, ["--sw" as string]: `${p.sway * 18}px` }}>
+            <span
+              className="block"
+              style={{
+                width: p.w,
+                height: p.h,
+                background: p.c,
+                borderRadius: p.round ? "99px" : "1px",
+                animation: `mf-cf-spin ${p.dur / 2}s linear ${p.delay}s infinite`,
+                boxShadow: `0 0 10px ${p.c}44`,
+              }}
+            />
+          </span>
+        ))}
+      </div>
+      <div className="absolute right-2 top-2 flex overflow-hidden rounded-md border border-white/10 bg-black/40 text-[8px] font-bold backdrop-blur">
+        {(["lite", "pro"] as const).map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setTier(t)}
+            aria-pressed={tier === t}
+            className={`px-2 py-1 uppercase tracking-[0.12em] ${tier === t ? "bg-white/15 text-white" : "text-ink-faint hover:text-ink-dim"}`}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      <style>{`@keyframes mf-cf-fall { 0% { top: -14px } 100% { top: 104% } }
+@keyframes mf-cf-spin { from { transform: rotate(0) } to { transform: rotate(400deg) } }
+@media (prefers-reduced-motion: reduce) { span[style*="mf-cf"] { animation: none !important; } }`}</style>
+    </div>
+  );
+}
+
+const BK_FAR = [
+  { l: 12, t: 16, s: 90, c: "rgba(139,92,246,.5)", o: 0.7 },
+  { l: 74, t: 8, s: 70, c: "rgba(34,211,238,.45)", o: 0.6 },
+  { l: 44, t: 60, s: 120, c: "rgba(236,72,153,.34)", o: 0.5 },
+  { l: 88, t: 62, s: 60, c: "rgba(52,211,153,.35)", o: 0.55 },
+] as const;
+const BK_MID = [
+  { l: 30, t: 22, s: 54, c: "rgba(244,114,182,.6)", o: 0.8 },
+  { l: 8, t: 64, s: 48, c: "rgba(56,189,248,.55)", o: 0.75 },
+  { l: 60, t: 76, s: 64, c: "rgba(167,139,250,.5)", o: 0.7 },
+] as const;
+const BK_NEAR = [
+  { l: 44, t: 40, s: 30, c: "rgba(255,255,255,.5)", o: 0.9 },
+  { l: 24, t: 80, s: 26, c: "rgba(165,243,252,.55)", o: 0.85 },
+  { l: 78, t: 32, s: 22, c: "rgba(254,215,170,.5)", o: 0.8 },
+] as const;
+
+function BokehDepthField() {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#06070c]">
+      <div className="absolute inset-0" style={{ background: "radial-gradient(60% 80% at 50% 0%, rgba(30,27,75,.9), transparent 70%)" }} />
+      <div className="absolute inset-0" aria-hidden>
+        {BK_FAR.map((o, i) => (
+          <span key={`f${i}`} className="absolute rounded-full" style={{ left: `${o.l}%`, top: `${o.t}%`, width: o.s, height: o.s, background: `radial-gradient(circle at 35% 30%, ${o.c}, transparent 72%)`, filter: "blur(18px)", opacity: o.o, animation: `mf-bk-drift ${26 + i * 5}s ease-in-out ${-i * 4}s infinite alternate` }} />
+        ))}
+      </div>
+      <div className="absolute inset-0" aria-hidden>
+        {BK_MID.map((o, i) => (
+          <span key={`m${i}`} className="absolute rounded-full" style={{ left: `${o.l}%`, top: `${o.t}%`, width: o.s, height: o.s, background: `radial-gradient(circle at 35% 30%, ${o.c}, transparent 70%)`, filter: "blur(10px)", opacity: o.o, animation: `mf-bk-drift ${16 + i * 4}s ease-in-out ${-i * 3}s infinite alternate` }} />
+        ))}
+      </div>
+      <div className="absolute inset-0" aria-hidden>
+        {BK_NEAR.map((o, i) => (
+          <span key={`n${i}`} className="absolute rounded-full" style={{ left: `${o.l}%`, top: `${o.t}%`, width: o.s, height: o.s, background: `radial-gradient(circle at 35% 30%, ${o.c}, transparent 70%)`, filter: "blur(4px)", opacity: o.o, animation: `mf-bk-drift ${9 + i * 3}s ease-in-out ${-i * 2}s infinite alternate` }} />
+        ))}
+      </div>
+      <style>{`@keyframes mf-bk-drift { from { transform: translate3d(0,0,0) scale(1) } to { transform: translate3d(26px,-18px,0) scale(1.18) } }
+@media (prefers-reduced-motion: reduce) { .bk-only { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function GlassShards() {
+  const shards = Array.from({ length: 14 }, (_, i) => {
+    const left = (i * 71 + 4) % 92;
+    const top = (i * 43 + 6) % 78;
+    const w = 46 + ((i * 29) % 62);
+    const h = 24 + ((i * 17) % 44);
+    const rot = ((i * 47) % 120) - 56;
+    const tilt = (i % 2 ? 1 : -1) * (2 + (i % 4));
+    return { left, top, w, h, rot, delay: -(i % 6) * 1.3, dur: 11 + (i % 5) * 2.4, tilt };
+  });
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[radial-gradient(90%_100%_at_50%_-10%,#131a2e,transparent_55%),#0b0e16]">
+      {shards.map((s, i) => (
+        <span
+          key={i}
+          aria-hidden
+          className="absolute"
+          style={{
+            left: `${s.left}%`,
+            top: `${s.top}%`,
+            width: s.w,
+            height: s.h,
+            background: "linear-gradient(115deg, rgba(255,255,255,.22), rgba(255,255,255,.04) 42%, rgba(139,92,246,.16) 100%)",
+            border: "1px solid rgba(255,255,255,.16)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,.35), 0 10px 26px rgba(0,0,0,.35)",
+            backdropFilter: "blur(7px)",
+            transform: `rotate(${s.rot}deg)`,
+            borderRadius: "4px",
+            ["--dr" as string]: `${s.tilt * 9}px`,
+            ["--dy" as string]: `${s.tilt * 6}px`,
+            ["--r0" as string]: `${s.rot}deg`,
+            ["--r1" as string]: `${(s.tilt * 0.9).toFixed(1)}deg`,
+            animation: `mf-gs-float ${s.dur}s ease-in-out ${s.delay}s infinite alternate`,
+          }}
+        />
+      ))}
+      <span aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 40%, transparent 55%, rgba(4,6,10,.55))" }} />
+      <style>{`@keyframes mf-gs-float { from { transform: rotate(var(--r0)) translate3d(0,0,0) } to { transform: rotate(var(--r1)) translate3d(var(--dr),var(--dy),0) } }
+@media (prefers-reduced-motion: reduce) { .gs-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function LavaLampBlobs() {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#07060f]">
+      <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(80% 90% at 50% 120%, rgba(49,46,129,.9), transparent 60%)" }} />
+      <div aria-hidden className="absolute -left-[8%] top-[6%] h-[55%] w-[55%] mix-blend-screen" style={{ background: "radial-gradient(circle at 42% 40%, #7c3aed 0%, #c026d3 45%, transparent 72%)", filter: "blur(34px)", animation: "mf-ll-a 11s ease-in-out infinite alternate" }} />
+      <div aria-hidden className="absolute -right-[6%] bottom-[4%] h-[58%] w-[58%] mix-blend-screen" style={{ background: "radial-gradient(circle at 58% 60%, #f59e0b 0%, #ef4444 40%, transparent 70%)", filter: "blur(36px)", animation: "mf-ll-b 14s ease-in-out -5s infinite alternate" }} />
+      <div aria-hidden className="absolute inset-0">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <span
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              left: `${18 + i * 16}%`,
+              bottom: "-8%",
+              width: 5 + (i % 2) * 3,
+              height: 5 + (i % 2) * 3,
+              background: i % 2 ? "rgba(251,191,36,.7)" : "rgba(192,132,252,.7)",
+              filter: "blur(1px)",
+              animation: `mf-ll-rise ${7 + (i % 3) * 2}s linear ${-i * 1.4}s infinite`,
+            }}
+          />
+        ))}
+      </div>
+      <style>{`@keyframes mf-ll-a { 0% { border-radius: 58% 42% 55% 45% / 45% 60% 40% 55%; transform: translate3d(0,0,0) rotate(0deg) scale(1) }
+  50% { border-radius: 45% 55% 38% 62% / 62% 42% 58% 40%; transform: translate3d(9%, -5%, 0) rotate(9deg) scale(1.14) }
+  100% { border-radius: 60% 40% 62% 38% / 40% 58% 42% 62%; transform: translate3d(-4%, 6%, 0) rotate(-5deg) scale(.96) } }
+@keyframes mf-ll-b { 0% { border-radius: 42% 58% 60% 40% / 55% 45% 62% 38%; transform: translate3d(0,0,0) rotate(0deg) scale(1) }
+  50% { border-radius: 60% 40% 45% 55% / 40% 60% 38% 62%; transform: translate3d(-8%, -6%, 0) rotate(-10deg) scale(1.1) }
+  100% { border-radius: 44% 56% 38% 62% / 58% 42% 60% 40%; transform: translate3d(5%, 5%, 0) rotate(7deg) scale(.95) } }
+@keyframes mf-ll-rise { 0% { transform: translateY(0) scale(1); opacity: 0 } 12% { opacity: .8 } 100% { transform: translateY(-180px) scale(.6); opacity: 0 } }
+@media (prefers-reduced-motion: reduce) { .ll-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function PaperGrain() {
+  return (
+    <div className="relative h-full w-full overflow-hidden" style={{ background: "linear-gradient(165deg, #f6efe1 0%, #efdfc6 55%, #e8d3ae 100%)" }}>
+      <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(90% 70% at 28% 18%, rgba(255,250,235,.9), transparent 60%), radial-gradient(80% 70% at 80% 90%, rgba(146,98,46,.18), transparent 62%)" }} />
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='pg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23pg)'/%3E%3C/svg%3E\")",
+          backgroundSize: "220px 220px",
+          mixBlendMode: "multiply",
+          opacity: 0.4,
+          animation: "mf-pg-jitter .5s steps(2) infinite",
+        }}
+      />
+      <div aria-hidden className="absolute inset-0" style={{ boxShadow: "inset 0 0 90px rgba(112,74,32,.35)" }} />
+      <style>{`@keyframes mf-pg-jitter { 0% { background-position: 0 0 } 25% { background-position: -2px 3px } 50% { background-position: 3px -1px } 75% { background-position: -1px -3px } 100% { background-position: 2px 2px } }
+@media (prefers-reduced-motion: reduce) { .pg-anim { animation: none } }`}</style>
+    </div>
+  );
+}
+
+function silkWavePath(base: number, amp: number, phase: number): string {
+  const pts: string[] = [];
+  const tile = 800;
+  for (let x = 0; x <= 1600; x += 8) {
+    const y = base + amp * Math.sin((x * Math.PI * 2) / tile + phase);
+    pts.push(`${x},${y.toFixed(1)}`);
+  }
+  return `M0,${base} L${pts.join(" L")} L1600,300 L0,300 Z`;
+}
+
+function SilkWave() {
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#080a12]" style={{ ["--hue" as string]: "0deg" }}>
+      <div aria-hidden className="absolute inset-0 mf-silk-hue">
+        <div className="absolute inset-x-0 top-0 h-[38%] opacity-70" style={{ animation: "mf-sw-drift 26s linear infinite" }}>
+          <svg viewBox="0 0 1600 120" preserveAspectRatio="none" className="h-full w-full">
+            <path d={silkWavePath(58, 24, 0.4)} fill="url(#swg-violet)" />
+          </svg>
+        </div>
+        <div className="absolute inset-x-0 top-[26%] h-[36%] opacity-80" style={{ animation: "mf-sw-drift 34s linear -11s infinite" }}>
+          <svg viewBox="0 0 1600 120" preserveAspectRatio="none" className="h-full w-full">
+            <path d={silkWavePath(62, 20, 2.1)} fill="url(#swg-cyan)" />
+          </svg>
+        </div>
+        <div className="absolute inset-x-0 top-[52%] h-[44%] opacity-70" style={{ animation: "mf-sw-drift 22s linear -6s infinite" }}>
+          <svg viewBox="0 0 1600 120" preserveAspectRatio="none" className="h-full w-full">
+            <path d={silkWavePath(66, 18, 4.0)} fill="url(#swg-pink)" />
+          </svg>
+        </div>
+        <svg width="0" height="0" className="absolute">
+          <defs>
+            <linearGradient id="swg-violet" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(139,92,246,.6)" />
+              <stop offset="100%" stopColor="rgba(139,92,246,0)" />
+            </linearGradient>
+            <linearGradient id="swg-cyan" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(34,211,238,.55)" />
+              <stop offset="100%" stopColor="rgba(34,211,238,0)" />
+            </linearGradient>
+            <linearGradient id="swg-pink" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(244,114,182,.45)" />
+              <stop offset="100%" stopColor="rgba(244,114,182,0)" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <style>{`@keyframes mf-sw-drift { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+@media (prefers-reduced-motion: no-preference) {
+  .mf-silk-hue { animation: mf-sw-hue 30s ease-in-out infinite alternate; }
+}
+@keyframes mf-sw-hue { from { filter: hue-rotate(0deg) } to { filter: hue-rotate(48deg) } }
+@media (prefers-reduced-motion: reduce) { .mf-silk-hue, .mf-silk-hue > div { animation: none !important; } }`}</style>
+    </div>
+  );
+}
+
 /* ------------------------------ RENDERER ------------------------------ */
 
 
@@ -6393,6 +6749,8 @@ export const DEMO_KEYS = [
   "changelog-feed", "resource-download-cards", "event-schedule-list", "map-free-local-band",
   "app-screenshot-tour", "template-docs-site", "template-landing-saas", "template-waitlist",
   "template-changelog", "template-gallery",
+  "topographic-contours", "blueprint-grid", "confetti-field", "bokeh-depth-field",
+  "glass-shards", "lava-lamp-blobs", "paper-grain", "silk-wave",
 ] as const;
 
 export type DemoKey = (typeof DEMO_KEYS)[number];
@@ -6510,6 +6868,14 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "template-waitlist": return <TemplateWaitlist />;
     case "template-changelog": return <TemplateChangelogJournal />;
     case "template-gallery": return <TemplateGallery />;
+    case "topographic-contours": return <TopographicContours />;
+    case "blueprint-grid": return <BlueprintGrid />;
+    case "confetti-field": return <ConfettiField />;
+    case "bokeh-depth-field": return <BokehDepthField />;
+    case "glass-shards": return <GlassShards />;
+    case "lava-lamp-blobs": return <LavaLampBlobs />;
+    case "paper-grain": return <PaperGrain />;
+    case "silk-wave": return <SilkWave />;
     default: return null;
   }
 }

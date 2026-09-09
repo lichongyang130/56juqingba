@@ -1190,7 +1190,7 @@ export const COMPONENTS: Asset[] = [
   },
   {
     slug: "template-gallery", kind: "section", title: "Template Gallery Page",
-    description: "A gallery that filters the REAL catalog — 101 assets searchable by title, tag and kind, each tile offering a one-click slug copy.",
+    description: "A gallery that filters the REAL catalog — every asset searchable by title, tag and kind, each tile offering a one-click slug copy.",
     tags: ["gallery", "template", "filter", "catalog", "search"], behaviors: ["click", "keyboard"],
     stack: ["React"], deps: [], bundleKb: 1.2, themeable: true,
     a11yScore: 97, qualityScore: 96, status: "live", license: "MIT", version: "1.0.0",
@@ -1555,6 +1555,14 @@ export const BACKGROUNDS: BackgroundAsset[] = [
   { slug: "ink-aurora", title: "Ink Aurora", category: "animated", tech: ["WebGL"], perf: "high", themeable: true, bundleKb: 8.7, copies: 2870, demo: "ink", description: "WebGL ink fields — heavy but hypnotic. Low-tier fallback included." },
   { slug: "sorbet", title: "Sorbet Sweep", category: "gradient", tech: ["CSS"], perf: "low", themeable: true, bundleKb: 0.9, copies: 7740, demo: "sorbet", description: "Six-stop pastel sweep for light brand sections." },
   { slug: "halftone", title: "Halftone Bloom", category: "texture", tech: ["CSS", "SVG"], perf: "mid", themeable: true, bundleKb: 2.2, copies: 2410, demo: "halftone", description: "Retro halftone bloom pattern, modern palette." },
+  { slug: "topographic-contours", title: "Topographic Contours", category: "animated", tech: ["CSS", "SVG"], perf: "low", themeable: true, bundleKb: 2.4, copies: 1890, demo: "topographic-contours", description: "Contour-map rings over two hills with a slow quiet current — SVG strokes, zero JS." },
+  { slug: "blueprint-grid", title: "Blueprint Grid", category: "texture", tech: ["CSS", "SVG"], perf: "low", themeable: true, bundleKb: 1.7, copies: 2260, demo: "blueprint-grid", description: "Engineering-paper grid with crosshairs and registration marks for architecture and atelier vibes." },
+  { slug: "confetti-field", title: "Confetti Field", category: "particles", tech: ["CSS"], perf: "low", themeable: true, bundleKb: 1.9, copies: 3120, demo: "confetti-field", description: "Slow-falling confetti with two perf tiers — Lite caps the DOM, Pro fills the frame." },
+  { slug: "bokeh-depth-field", title: "Bokeh Depth Field", category: "animated", tech: ["CSS"], perf: "low", themeable: true, bundleKb: 2.0, copies: 1740, demo: "bokeh-depth-field", description: "Blurred orbs drifting at three depth layers — background life without motion sickness." },
+  { slug: "glass-shards", title: "Glass Shards", category: "texture", tech: ["CSS"], perf: "low", themeable: true, bundleKb: 2.3, copies: 1430, demo: "glass-shards", description: "Angled translucent panes that catch light as they float — frosted refraction, no WebGL." },
+  { slug: "lava-lamp-blobs", title: "Lava Lamp Blobs", category: "animated", tech: ["CSS"], perf: "low", themeable: true, bundleKb: 2.1, copies: 2680, demo: "lava-lamp-blobs", description: "Two slow-morphing colour blobs on a dark base with rising bubbles — pure border-radius physics." },
+  { slug: "paper-grain", title: "Paper Grain", category: "texture", tech: ["CSS", "SVG"], perf: "low", themeable: false, bundleKb: 1.4, copies: 1980, demo: "paper-grain", description: "Heavy photographic grain with a film jitter over warm paper — editorial and print sections." },
+  { slug: "silk-wave", title: "Silk Wave", category: "animated", tech: ["CSS", "SVG"], perf: "low", themeable: true, bundleKb: 2.6, copies: 2410, demo: "silk-wave", description: "Layered sine bands in brand hues with a slow hue-shift — seamless, CSS only." },
 ];
 
 export const LAB_TOOLS: LabTool[] = [

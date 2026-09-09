@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 70 / 500 shipped (batches 1–9, in order) · Section 1 (component library) complete ✅
+## Progress — 78 / 500 shipped (batches 1–10, in order) · Section 1 (component library) complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -82,6 +82,14 @@ names, behaviours and where they plug into the existing pages.
 | 68 | Waitlist template | [/components/template-waitlist](/components/template-waitlist) |
 | 69 | Changelog/journal template | [/components/template-changelog](/components/template-changelog) |
 | 70 | Template gallery page | [/components/template-gallery](/components/template-gallery) |
+| 71 | Topographic contour lines | `topographic-contours` on [/backgrounds](/backgrounds) |
+| 72 | Blueprint grid | `blueprint-grid` on [/backgrounds](/backgrounds) |
+| 73 | Confetti field | `confetti-field` on [/backgrounds](/backgrounds) |
+| 74 | Bokeh depth field | `bokeh-depth-field` on [/backgrounds](/backgrounds) |
+| 75 | Glass shards | `glass-shards` on [/backgrounds](/backgrounds) |
+| 76 | Lava lamp blobs | `lava-lamp-blobs` on [/backgrounds](/backgrounds) |
+| 77 | Paper grain close-up | `paper-grain` on [/backgrounds](/backgrounds) |
+| 78 | Silk wave | `silk-wave` on [/backgrounds](/backgrounds) |
 
 
 ---
@@ -172,16 +180,16 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 2. Backgrounds & textures — 25 additions (currently 8)
+## 2. Backgrounds & textures — 25 additions (8 → 33; 16/25 shipped so far)
 
-- **Topographic contour lines**: SVG contour map motif with quiet animated flow.
-- **Blueprint grid**: engineering-paper grid with crosshairs for architecture/atelier vibes.
-- **Confetti field**: slow-falling confetti with two perf tiers (DOM vs. gradient trick).
-- **Bokeh depth field**: large blurred circles drifting at different speeds/layers.
-- **Glass shards**: angled translucent panes that catch light as they float.
-- **Lava lamp blobs**: two slow-morphing colour blobs on a dark base (echoes the moderation card).
-- **Paper grain close-up**: heavy photographic grain for editorial/print sections.
-- **Silk wave**: layered sine waves in brand hues with hue-shift over time.
+- **Topographic contour lines** ✅ (`topographic-contours`): SVG contour map motif with a quiet animated current.
+- **Blueprint grid** ✅ (`blueprint-grid`): engineering-paper grid with crosshairs for architecture/atelier vibes.
+- **Confetti field** ✅ (`confetti-field`): slow-falling confetti with two DOM-capped perf tiers.
+- **Bokeh depth field** ✅ (`bokeh-depth-field`): large blurred circles drifting at different speeds/layers.
+- **Glass shards** ✅ (`glass-shards`): angled translucent panes that catch light as they float.
+- **Lava lamp blobs** ✅ (`lava-lamp-blobs`): two slow-morphing colour blobs on a dark base with rising bubbles.
+- **Paper grain close-up** ✅ (`paper-grain`): heavy photographic grain with a film jitter for editorial/print sections.
+- **Silk wave** ✅ (`silk-wave`): layered sine waves in brand hues with a slow hue-shift.
 - **Star field with parallax**: three depth layers of stars responding to scroll.
 - **Scanline CRT**: subtle scanlines + vignette for retro/terminal aesthetics.
 - **Liquid gradient mesh**: a slow-moving mesh gradient with `background-position` animation.
