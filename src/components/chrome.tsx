@@ -232,7 +232,7 @@ export function Footer() {
     ["Library", ["Elements", "Animated", "Sections", "Templates", "Backgrounds"]],
     ["AI Prompts", ["All prompts", "Verified only", "Prompt builder", "Scoreboard"]],
     ["Lab & Learn", ["Easing Lab", "Spring Lab", "Theme Studio", "Guides & Blog"]],
-    ["Company", ["Pricing", "About", "Community", "Quality bar", "License", "API docs", "Status"]],
+    ["Company", ["Pricing", "About", "Community", "Quality bar", "Integrations", "License", "API docs", "Status"]],
   ];
   return (
     <footer className="mt-24 border-t border-white/6">
@@ -363,6 +363,7 @@ export function Footer() {
                     Pricing: "/pricing",
                     Community: "/community",
                     "Quality bar": "/quality",
+                    Integrations: "/integrations",
                     License: "/pro/licence",
                     "API docs": "/pro/api",
                     "Theme Studio": "/studio",

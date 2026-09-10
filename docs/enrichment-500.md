@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 414 / 500 shipped (batches 1–56, in order) · Sections 1–15 complete ✅ · Section 16 next
+## Progress — 419 / 500 shipped (batches 1–57, in order) · Sections 1–15 complete ✅ · Section 16 in progress (5/15)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -426,6 +426,11 @@ names, behaviours and where they plug into the existing pages.
 | 412 | Perf badge on changelog | [/#changelog](/#changelog) · every entry from 2026-09-10 carries its measured delta; earlier entries read "size not recorded" |
 | 413 | Build-time page | [/perf/build](/perf/build) · 94 routes, 84 prerendered, 42 chunks, 103 HTML files — read from .next, never typed |
 | 414 | Service worker plan | [/perf/service-worker](/perf/service-worker) · what would be cached, how it would be versioned, why it ships after the API |
+| 415 | Design-token JSON endpoint | [/api/exports/tokens.json](/api/exports/tokens.json) · 14 colours, 5 radii and 3 font stacks in W3C design-token format, parsed from the stylesheet this site compiles |
+| 416 | Tailwind preset package | [/api/exports/motif-preset.cjs](/api/exports/motif-preset.cjs) · a real CommonJS preset with the site's tokens, generated from the same parse |
+| 417 | Figma variable sync | [/integrations/figma](/integrations/figma) · 19 variables in Figma's import shape, with anything unrepresentable listed instead of coerced |
+| 418 | Catalog metadata endpoint | [/api/exports/catalog.json](/api/exports/catalog.json) · 107 components and 74 prompts with their stored scores, so a claim can be diffed rather than screenshotted |
+| 419 | VS Code snippet pack | [/api/exports/motif.code-snippets](/api/exports/motif.code-snippets) · 5 snippets using the site's real utility classes, with the components excluded and the reason stated |
 
 ---
 
@@ -990,7 +995,7 @@ The cache work is the section's other carry-forward. `src/lib/cache-rules.ts` ho
 
 ---
 
-## 16. Integrations & exports — 15 bridges
+## 16. Integrations & exports — 15 bridges — 5/15 shipped, in progress
 
 - **VS Code snippet pack**: install Motif snippets as editor completions.
 - **Figma variable sync**: export tokens as Figma variables (documented format).
