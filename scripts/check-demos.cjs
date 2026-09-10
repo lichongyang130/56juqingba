@@ -55,6 +55,10 @@ const NEW_SCENES = [
   { slug: "reading-dots", marker: "Reading progress", behaviors: ["scroll", "click", "keyboard"] },
   { slug: "pulse-graph", marker: "Cross-link graph", behaviors: ["hover", "click", "keyboard"] },
   { slug: "easing-icons", marker: "Easing, as icons", behaviors: ["click", "keyboard"] },
+  { slug: "preloader-handoff", marker: "Preloader choreography", behaviors: ["click", "keyboard"] },
+  { slug: "ripple-dots", marker: "Ripple nav dots", behaviors: ["click", "keyboard"] },
+  { slug: "tilted-cta", marker: "Tilted hero CTA", behaviors: ["hover", "click", "keyboard"] },
+  { slug: "success-burst", marker: "Success-state celebration", behaviors: ["click", "keyboard"] },
 ];
 
 (async () => {
@@ -102,7 +106,12 @@ const NEW_SCENES = [
     rows === headline + extras && rows > 0,
     `table ${rows}, headline ${headline} + ${extras} extra`,
   );
-  const shipped = Number((ledger.match(/Section 17 in progress \((\d+)\/25\)/) || [])[1] || 0);
+  // Section 17 reads "in progress (n/25)" while it is open and "complete
+  // (25/25 shipped)" once it closes, so both shapes have to count.
+  const s17Head = (ledger.match(/^## 17\.[^\n]*$/m) || [])[0] || "";
+  const shipped = /complete \(25\/25 shipped ✅\)/.test(s17Head)
+    ? 25
+    : Number((s17Head.match(/(\d+)\/25/) || [])[1] || 0);
   const inSection17 = NEW_SCENES.filter((s) => s.section !== 1).length;
   ok(
     "the ledger's Section 17 count matches the scenes verified here",
@@ -114,7 +123,9 @@ const NEW_SCENES = [
     const page = await get(`/components/${scene.slug}`);
     ok(`/components/${scene.slug} renders the scene`, page.status === 200 && page.text.includes(scene.marker), String(page.status));
     const embed = await get(`/embed/${scene.slug}`);
-    ok(`/embed/${scene.slug} renders it without chrome`, embed.status === 200 && !embed.text.includes("Skip to content"));
+    // The chrome marker is the header/footer logo, not the words "Skip to
+    // content": a demo is free to use that phrase in its own copy.
+    ok(`/embed/${scene.slug} renders it without chrome`, embed.status === 200 && !embed.text.includes('id="mf-logo"'));
   }
 
   // The counter band is the one scene whose content is a number, so it has to

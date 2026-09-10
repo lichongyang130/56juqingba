@@ -101,7 +101,12 @@ function parseCheck(label, source) {
     nums.length > 0 && nums.every((n, i) => n === i + 1),
     `${nums.length} rows, max ${Math.max(...nums)}`,
   );
-  ok("sections 1–16 are marked complete", /Sections 1–16 complete/.test(doc) && /15\/15 shipped ✅/.test(doc));
+  const secHeads = [...doc.matchAll(/^## (\d+)\. ([^\n]*)$/gm)].filter((m) => Number(m[1]) <= 16);
+  ok(
+    "sections 1–16 are marked complete",
+    secHeads.length === 16 && secHeads.every((m) => /complete|✅/.test(m[2])),
+    `${secHeads.length} headings, ${secHeads.filter((m) => /complete|✅/.test(m[2])).length} complete`,
+  );
 
   /* ---------- the library and the hub ---------- */
 

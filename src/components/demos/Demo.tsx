@@ -7218,17 +7218,21 @@ import {
   InfiniteChase,
   LinkedCards,
   MorphIcons,
+  PreloaderHandoff,
   PulseGraph,
   ReadingDots,
   ReorderList,
+  RippleDots,
   ScrollPin,
   SearchWalk,
   ShareSheet,
   ShimmerReveal,
   SlugField,
   SplitPane,
+  SuccessBurst,
   SwipeDeck,
   ThemeDrop,
+  TiltedCta,
   ZoomLens,
 } from "./scenes-17";
 
@@ -7256,6 +7260,7 @@ export const DEMO_KEYS = [
   "bezier-drawer", "counter-band", "linked-cards",
   "share-sheet", "theme-drop", "search-walk",
   "reading-dots", "pulse-graph", "easing-icons",
+  "preloader-handoff", "ripple-dots", "tilted-cta", "success-burst",
   "slug-field",
   "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
@@ -7361,6 +7366,10 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "reading-dots": return <ReadingDots />;
     case "pulse-graph": return <PulseGraph />;
     case "easing-icons": return <EasingIcons />;
+    case "preloader-handoff": return <PreloaderHandoff />;
+    case "ripple-dots": return <RippleDots />;
+    case "tilted-cta": return <TiltedCta />;
+    case "success-burst": return <SuccessBurst />;
     case "slug-field": return <SlugField />;
     case "breadcrumb-trail": return <BreadcrumbTrail />;
     case "pagination-ellipsis": return <PaginationEllipsis {...props} />;

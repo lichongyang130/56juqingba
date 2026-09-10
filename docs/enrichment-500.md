@@ -15,7 +15,7 @@ the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet c
 harness reads the `ledger-extra-rows` marker above and allows that difference, which means
 the table ends at #501 on the day the headline reads 500 / 500._
 
-## Progress — 451 / 500 shipped (batches 1–68, in order) · Sections 1–16 complete ✅ · Section 17 in progress (21/25)
+## Progress — 455 / 500 shipped (batches 1–69, in order) · Sections 1–17 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -471,6 +471,10 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 450 | Reading-time progress dots | [/components/reading-dots](/components/reading-dots) · a rail of labelled 24px dots with three states that also fills from real scrolling; the copy says it counts sections reached, not attention |
 | 451 | Pulse network graph | [/components/pulse-graph](/components/pulse-graph) · ten assets and twelve cross-links drawn from the catalog, each edge's reason on record, node size from copy counts, pulse pausable and off under reduced motion |
 | 452 | Easing icon families | [/components/easing-icons](/components/easing-icons) · the Lab's four curves racing real balls through the animation API, with each glyph generated from the curve's own 25% and 75% samples |
+| 453 | Preloader choreography | [/components/preloader-handoff](/components/preloader-handoff) · three loaders (skeleton shell, dot leader, shimmer sweep) handing off inside one reserved box; the bar is a labelled timer and the counters that land are the library's build-time totals — the stage copy names the catalog asset each loader borrows from |
+| 454 | Ripple nav dots | [/components/ripple-dots](/components/ripple-dots) · a five-dot rail whose ring travels from the dot you left to the dot you picked while the section text swaps in the same frame; arrow keys walk it, `aria-current` marks the dot, and reduced motion snaps the ring without travel |
+| 455 | Tilted hero CTA | [/components/tilted-cta](/components/tilted-cta) · a real link that tips toward the pointer inside an 8° cap, label counter-rotated so the words stay level; arrow keys tilt it for keyboard readers, Escape/0 resets, locks and reduced motion leave it upright |
+| 456 | Success-state celebration | [/components/success-burst](/components/success-burst) · an account-created panel with twelve particles fired once per deliberate submit (never on load); the copy states nothing is posted or stored, and reduced motion drops the particles so the check mark carries it |
 
 ---
 
@@ -1060,33 +1064,33 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 17. More interactive scenes & motion — 25 demos — 21/25 shipped, in progress
+## 17. More interactive scenes & motion — 25 demos — complete (25/25 shipped ✅)
 
-- **Drag-to-reorder list**: rows that glide when you drag, with a11y keyboard reorder.
-- **Swipeable cards (deck)**: tinder-style stack with undo and reduced-motion note.
-- **Split-pane resizer**: draggable divider between two live panels.
-- **Zoom-on-hover image map**: an image that magnifies under the cursor.
-- **Range-linked chart scrubber**: a chart that scrubs as you drag the range (chart-card sibling).
-- **Scroll-jack by choice**: a section that pins once with explicit "next" affordances.
-- **Interactive bezier drawer**: drag the control points of a cubic-bezier (lab meets asset).
-- **Springy 3D flip stack**: cards that flip on hover with Z layering.
-- **Draw-on-scroll path**: an SVG path that traces itself as it enters view.
-- **Morphing icon set**: icons that morph between two glyphs on toggle (play→pause).
-- **Infinite logo chase**: logos that stream vertically in a column layout.
-- **Shimmer text reveal**: text that sparkles through once on view (tasteful, not unicorn).
-- **Progress ring with threshold ticks**: a ring that stops at milestones with labels.
-- **Animated counters in a row**: a stats band demo using the odometer (asset-to-asset cross-link).
-- **Hover-linked cards**: hovering one card dims its siblings (focus-the-story pattern).
-- **Share-sheet overlay**: mobile share sheet with spring entry (pattern echo).
-- **Drag-theme chip onto a card**: a playful theme-picker interaction for the catalog.
-- **Inline search highlight walk**: typing scrolls and highlights occurrences across a doc demo.
-- **Reading-time progress dots**: a sidebar that fills dot-by-dot as you read.
-- **Pulse network graph**: a tiny node graph whose edges pulse (data-viz style).
-- **Easing icon families**: each easing rendered as a bouncing ball icon (Learn + Lab bridge).
-- **Preloader choreography**: 3 loaders that hand off to content on a fake "load".
-- **Ripple nav dots**: page-position dots that ripple on change.
-- **Tilted hero CTA**: a hero button that subtly orients to the pointer.
-- **Success-state celebration**: an account-created screen with a restrained burst.
+- **Drag-to-reorder list**: rows that glide when you drag, with a11y keyboard reorder. ✅
+- **Swipeable cards (deck)**: tinder-style stack with undo and reduced-motion note. ✅
+- **Split-pane resizer**: draggable divider between two live panels. ✅
+- **Zoom-on-hover image map**: an image that magnifies under the cursor. ✅
+- **Range-linked chart scrubber**: a chart that scrubs as you drag the range (chart-card sibling). ✅
+- **Scroll-jack by choice**: a section that pins once with explicit "next" affordances. ✅
+- **Interactive bezier drawer**: drag the control points of a cubic-bezier (lab meets asset). ✅
+- **Springy 3D flip stack**: cards that flip on hover with Z layering. ✅
+- **Draw-on-scroll path**: an SVG path that traces itself as it enters view. ✅
+- **Morphing icon set**: icons that morph between two glyphs on toggle (play→pause). ✅
+- **Infinite logo chase**: logos that stream vertically in a column layout. ✅
+- **Shimmer text reveal**: text that sparkles through once on view (tasteful, not unicorn). ✅
+- **Progress ring with threshold ticks**: a ring that stops at milestones with labels. ✅
+- **Animated counters in a row**: a stats band demo using the odometer (asset-to-asset cross-link). ✅
+- **Hover-linked cards**: hovering one card dims its siblings (focus-the-story pattern). ✅
+- **Share-sheet overlay**: mobile share sheet with spring entry (pattern echo). ✅
+- **Drag-theme chip onto a card**: a playful theme-picker interaction for the catalog. ✅
+- **Inline search highlight walk**: typing scrolls and highlights occurrences across a doc demo. ✅
+- **Reading-time progress dots**: a sidebar that fills dot-by-dot as you read. ✅
+- **Pulse network graph**: a tiny node graph whose edges pulse (data-viz style). ✅
+- **Easing icon families**: each easing rendered as a bouncing ball icon (Learn + Lab bridge). ✅
+- **Preloader choreography**: 3 loaders that hand off to content on a fake "load" ✅
+- **Ripple nav dots**: page-position dots that ripple on change ✅
+- **Tilted hero CTA**: a hero button that subtly orients to the pointer ✅
+- **Success-state celebration**: an account-created screen with a restrained burst ✅
 
 ---
 

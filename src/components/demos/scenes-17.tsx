@@ -12,7 +12,7 @@
 // Easing Lab and the drawer both need the same numbers.
 
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { COMPONENTS, PROMPTS } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
 import { contrastChecks, THEME_PRESETS, type ThemeValues } from "@/lib/admin-ops";
@@ -2989,3 +2989,650 @@ export function EasingIcons() {
   );
 }
 
+/* ---------------------- 17.22 Preloader choreography ---------------------- */
+
+// Three loaders handing off to content. Every stage names the catalog asset it
+// borrows its shape from, so the choreography is a tour of real components and
+// the numbers that land at the end are the library's own totals.
+const PRELOAD_STAGES = [
+  { id: "shell", label: "Skeleton shell", source: "skeleton-card" },
+  { id: "chase", label: "Dot leader", source: "dot-leader-loading" },
+  { id: "sweep", label: "Shimmer sweep", source: "shimmer-text" },
+];
+
+const STAGE_MS = 420;
+
+const sourceLine = (slug: string) => {
+  const c = COMPONENTS.find((x) => x.slug === slug);
+  return c ? `${c.title} · ${c.bundleKb.toFixed(1)} KB` : slug;
+};
+
+const LIBRARY_TOTALS = [
+  { label: "components", value: COMPONENTS.length },
+  { label: "prompts", value: PROMPTS.length },
+  { label: "guides", value: LEARN_ARTICLES.length },
+];
+
+export function PreloaderHandoff() {
+  const reduced = useReducedMotion();
+  const [stage, setStage] = useState(0);
+  const [running, setRunning] = useState(false);
+  const [note, setNote] = useState("Press run: three loaders hand off to the content panel. Nothing is fetched.");
+  const hostRef = useRef<HTMLDivElement>(null);
+  const elapsedRef = useRef(0);
+
+  useEffect(() => {
+    if (!running) return;
+    const id = window.setInterval(() => {
+      elapsedRef.current += STAGE_MS;
+      const next = Math.min(PRELOAD_STAGES.length, Math.floor(elapsedRef.current / STAGE_MS));
+      setStage(next);
+      if (next >= PRELOAD_STAGES.length) {
+        setRunning(false);
+        setNote("Content in. The three loaders passed the frame along without a jump between them.");
+      }
+    }, STAGE_MS);
+    return () => window.clearInterval(id);
+  }, [running]);
+
+  // The loaders loop through the animation API so the loops can be cancelled
+  // the moment a stage ends (and so nothing runs at all under reduced motion).
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host || reduced || !running) return;
+    const anims: Animation[] = [];
+    host.querySelectorAll<HTMLElement>("[data-pulse]").forEach((el, i) => {
+      anims.push(
+        el.animate([{ opacity: 0.2 }, { opacity: 1 }], {
+          duration: 640,
+          delay: i * 120,
+          iterations: Infinity,
+          direction: "alternate",
+        }),
+      );
+    });
+    const sweep = host.querySelector<HTMLElement>("[data-sweep]");
+    if (sweep) {
+      anims.push(
+        sweep.animate([{ transform: "translateX(-80%)" }, { transform: "translateX(150%)" }], {
+          duration: 1100,
+          iterations: Infinity,
+        }),
+      );
+    }
+    return () => anims.forEach((a) => a.cancel());
+  }, [running, stage, reduced]);
+
+  const run = () => {
+    if (reduced) {
+      setStage(PRELOAD_STAGES.length);
+      setRunning(false);
+      setNote("Reduced motion: the three stages land in one frame, no movement between them.");
+      return;
+    }
+    elapsedRef.current = 0;
+    setStage(0);
+    setRunning(true);
+    setNote(`Running — ${PRELOAD_STAGES.length} stages, ${STAGE_MS} ms each.`);
+  };
+
+  const active = PRELOAD_STAGES[Math.min(stage, PRELOAD_STAGES.length - 1)];
+  const loaded = stage >= PRELOAD_STAGES.length;
+  const progress = Math.round((Math.min(stage, PRELOAD_STAGES.length) / PRELOAD_STAGES.length) * 100);
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(56,189,248,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-sky-300/80">Preloader choreography</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">{progress}% of the fake load</p>
+        </div>
+
+        <div ref={hostRef} className="overflow-hidden rounded-2xl border border-white/10 bg-white/[.02]">
+          <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
+            <span className="flex gap-1" aria-hidden>
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+            </span>
+            <span className="font-mono text-[10px] text-ink-faint">motif.local · fake load, no network</span>
+            <span className="ml-auto font-mono text-[10px] tabular-nums text-sky-200/80">{progress}%</span>
+          </div>
+
+          <div className="h-56 p-3">
+            {!loaded ? (
+              <div className="flex h-full flex-col">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">
+                  Stage {stage + 1} of {PRELOAD_STAGES.length} · {active.label}
+                </p>
+                <p className="mt-0.5 font-mono text-[10px] text-ink-faint">borrowed from {sourceLine(active.source)}</p>
+
+                <div className="mt-3 flex-1">
+                  {active.id === "shell" ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span data-pulse className="h-8 w-8 rounded-full bg-sky-300/25" />
+                        <span data-pulse className="h-2.5 w-28 rounded-full bg-sky-200/20" />
+                      </div>
+                      <span data-pulse className="block h-2 w-full rounded-full bg-white/10" />
+                      <span data-pulse className="block h-2 w-5/6 rounded-full bg-white/10" />
+                      <span data-pulse className="block h-2 w-2/3 rounded-full bg-white/10" />
+                    </div>
+                  ) : active.id === "chase" ? (
+                    <div className="flex items-center gap-2 font-mono text-[12px] text-sky-100">
+                      <span>installing the shell</span>
+                      <span className="flex gap-1" aria-hidden>
+                        <span data-pulse className="h-1.5 w-1.5 rounded-full bg-sky-300" />
+                        <span data-pulse className="h-1.5 w-1.5 rounded-full bg-sky-300" />
+                        <span data-pulse className="h-1.5 w-1.5 rounded-full bg-sky-300" />
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="relative mt-4 h-3 overflow-hidden rounded-full bg-white/10">
+                      <span data-sweep className="absolute inset-y-0 w-1/3 rounded-full bg-gradient-to-r from-transparent via-sky-200/70 to-transparent" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/[.06]">
+                  <span className="block h-full rounded-full bg-sky-300/70 transition-[width] duration-300" style={{ width: `${progress}%` }} />
+                </div>
+              </div>
+            ) : (
+              <div className="flex h-full flex-col justify-center">
+                <p className="text-[12px] font-bold text-ink">Everything is in place</p>
+                <p className="mt-1 text-[11px] leading-relaxed text-ink-dim">
+                  Three stages, {PRELOAD_STAGES.length * STAGE_MS} ms of waiting, and the panel behind this line never shifted: each loader
+                  reserved the same box the content now fills.
+                </p>
+                <dl className="mt-3 grid grid-cols-3 gap-2">
+                  {LIBRARY_TOTALS.map((t) => (
+                    <div key={t.label} className="rounded-xl border border-white/10 bg-white/[.03] px-2 py-1.5">
+                      <dt className="text-[9px] uppercase tracking-widest text-ink-faint">{t.label}</dt>
+                      <dd className="font-mono text-[13px] tabular-nums text-sky-100">{t.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+                  Those three numbers are read from the library at build time — the waiting is the only theatre here, and it is labelled as
+                  such above.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <button type="button" onClick={run} className="btn btn-ghost !px-3 !py-1.5 text-[10px]">
+            {loaded ? "Run it again" : "Run the hand-off"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setStage(PRELOAD_STAGES.length);
+              setRunning(false);
+              setNote("Skipped the remaining stages. That skip is the same path the reduced-motion setting takes.");
+            }}
+            disabled={loaded}
+            className="btn btn-ghost !px-3 !py-1.5 text-[10px] disabled:opacity-40"
+          >
+            Skip the rest
+          </button>
+        </div>
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-sky-200/80">
+          {note}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          Loader choreography is usually where a site lies about speed, so this one is explicit: no request is made, the bar is a timer, and
+          the first three rows name the catalog asset each stage borrows its motion from.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------- 17.23 Ripple nav dots ------------------------- */
+
+const RIPPLE_SECTIONS = [
+  { id: "brief", title: "The brief", line: "One sentence the whole page can be checked against before you write a line of markup." },
+  { id: "catalog", title: "The catalog", line: "Cards counted from the library at build time, never typed into a paragraph by hand." },
+  { id: "motion", title: "Motion", line: "Every loop on this page is cancellable, and the ones that move are off under reduced motion." },
+  { id: "quality", title: "Quality", line: "Scores come from the same numbers the audits print, so a claim can be traced." },
+  { id: "ship", title: "Ship", line: "The last section is the one that says exactly what changed and what did not." },
+];
+
+export function RippleDots() {
+  const [active, setActive] = useState(0);
+  const [notice, setNotice] = useState("Five sections. Click a dot, or focus the rail and use the arrow keys.");
+  const reduced = useReducedMotion();
+  const ringRef = useRef<HTMLSpanElement>(null);
+  const dotsRef = useRef<Record<number, HTMLButtonElement | null>>({});
+  const toc = COMPONENTS.find((c) => c.slug === "toc-spine");
+
+  useLayoutEffect(() => {
+    const ring = ringRef.current;
+    const dot = dotsRef.current[active];
+    if (ring && dot) ring.style.transform = `translateY(${dot.offsetTop}px)`;
+  }, [active]);
+
+  const go = (index: number, how: string) => {
+    const next = Math.max(0, Math.min(RIPPLE_SECTIONS.length - 1, index));
+    if (next === active) {
+      setNotice(`${how}: section ${next + 1} is already showing, so there is nowhere for the ring to travel.`);
+      return;
+    }
+    const from = active;
+    const distance = Math.abs(next - from);
+    setActive(next);
+    setNotice(
+      `${how}: section ${from + 1} → ${next + 1}, ${distance} dot${distance === 1 ? "" : "s"}. The words swapped in the same frame — the ring is only a cue.`,
+    );
+    const ring = ringRef.current;
+    const a = dotsRef.current[from];
+    const b = dotsRef.current[next];
+    if (!ring || !a || !b || reduced) return;
+    ring.animate(
+      [
+        { transform: `translateY(${a.offsetTop}px) scale(.6)`, opacity: 0.9 },
+        { transform: `translateY(${b.offsetTop}px) scale(1.9)`, opacity: 0 },
+      ],
+      { duration: 300 + distance * 70, easing: "cubic-bezier(.22,.61,.36,1)" },
+    );
+  };
+
+  const section = RIPPLE_SECTIONS[active];
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_100%,rgba(167,139,250,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/80">Ripple nav dots</p>
+          <p className="text-[10px] text-ink-faint">
+            {reduced ? "reduced motion: the ring snaps, nothing travels" : "the ring carries the change"}
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <ol
+            aria-label="Page sections"
+            onKeyDown={(e) => {
+              const step = e.key === "ArrowDown" ? 1 : e.key === "ArrowUp" ? -1 : 0;
+              const jump = e.key === "Home" ? -RIPPLE_SECTIONS.length : e.key === "End" ? RIPPLE_SECTIONS.length : step;
+              if (!jump) return;
+              e.preventDefault();
+              const next = Math.max(0, Math.min(RIPPLE_SECTIONS.length - 1, active + jump));
+              go(next, e.key === "Home" || e.key === "End" ? `${e.key} key` : "Arrow key");
+              dotsRef.current[next]?.focus();
+            }}
+            className="relative flex flex-col gap-2 py-1"
+          >
+            <span
+              ref={ringRef}
+              aria-hidden
+              className="pointer-events-none absolute left-0 top-0 h-6 w-6 rounded-full border border-violet-300/70"
+            />
+            {RIPPLE_SECTIONS.map((s, i) => (
+              <li key={s.id}>
+                <button
+                  ref={(el) => {
+                    dotsRef.current[i] = el;
+                  }}
+                  type="button"
+                  onClick={() => go(i, "Click")}
+                  aria-current={active === i ? "true" : undefined}
+                  aria-label={`Section ${i + 1}: ${s.title}`}
+                  className="grid h-6 w-6 place-items-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400"
+                >
+                  <span
+                    className="block rounded-full transition-[width,height,background-color] duration-200"
+                    style={{
+                      width: active === i ? 12 : 6,
+                      height: active === i ? 12 : 6,
+                      background: i <= active ? "#a78bfa" : "rgba(255,255,255,.18)",
+                    }}
+                  />
+                </button>
+              </li>
+            ))}
+          </ol>
+
+          <div className="min-h-[10.5rem] flex-1 rounded-2xl border border-white/10 bg-white/[.02] p-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">
+              Section {active + 1} of {RIPPLE_SECTIONS.length}
+            </p>
+            <p className="mt-0.5 text-[12px] font-bold text-ink">{section.title}</p>
+            <p className="mt-1 text-[11px] leading-relaxed text-ink-dim">{section.line}</p>
+            <p className="mt-2 font-mono text-[10px] text-ink-faint">
+              {RIPPLE_SECTIONS.map((s, i) => (i === active ? `[${s.id}]` : s.id)).join(" · ")}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <button type="button" onClick={() => go(active - 1, "Previous")} disabled={active === 0} className="btn btn-ghost !px-3 !py-1.5 text-[10px] disabled:opacity-40">
+            Previous
+          </button>
+          <button
+            type="button"
+            onClick={() => go(active + 1, "Next")}
+            disabled={active === RIPPLE_SECTIONS.length - 1}
+            className="btn btn-ghost !px-3 !py-1.5 text-[10px] disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-violet-200/80">
+          {notice}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          The rail is the catalog&apos;s Table of Contents Spine with a ring on it — {toc ? `${toc.title}, ${toc.bundleKb.toFixed(1)} KB` : "the spine component"} for
+          the real article, this five-dot mock for the effect. The dots are 24-pixel buttons, each labelled with its section, and the ring
+          never blocks the pointer.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------- 17.24 Tilted hero CTA ------------------------- */
+
+const TILT_MAX = 8;
+
+const clampTilt = (v: number) => Math.max(-TILT_MAX, Math.min(TILT_MAX, v));
+
+export function TiltedCta() {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [locked, setLocked] = useState(false);
+  const [note, setNote] = useState("Move the pointer across the card: the CTA tips toward it, capped at 8°.");
+  const reduced = useReducedMotion();
+  const tiltCss = `perspective(700px) rotateX(${tilt.x.toFixed(1)}deg) rotateY(${tilt.y.toFixed(1)}deg)`;
+  const labelCss = `rotateY(${(-tilt.y).toFixed(1)}deg) rotateX(${(-tilt.x).toFixed(1)}deg)`;
+
+  const nudge = (key: string) => {
+    if (reduced) {
+      setNote("Reduced motion is on, so the arrow keys leave the button upright.");
+      return;
+    }
+    if (locked) {
+      setNote("The tilt is locked — unlock it to steer with the arrow keys.");
+      return;
+    }
+    const step = 2;
+    const next =
+      key === "ArrowUp"
+        ? { x: clampTilt(tilt.x - step), y: tilt.y }
+        : key === "ArrowDown"
+          ? { x: clampTilt(tilt.x + step), y: tilt.y }
+          : key === "ArrowLeft"
+            ? { x: tilt.x, y: clampTilt(tilt.y - step) }
+            : key === "ArrowRight"
+              ? { x: tilt.x, y: clampTilt(tilt.y + step) }
+              : { x: 0, y: 0 };
+    setTilt(next);
+    setNote(
+      next.x === 0 && next.y === 0
+        ? "Returned to upright — the same state the pointer-leave handler leaves behind."
+        : `Keyboard tilt: rotateX ${next.x}°, rotateY ${next.y}° — the same 8° ceiling the pointer gets.`,
+    );
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(80%_90%_at_20%_0%,rgba(45,212,191,0.12),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-teal-300/80">Tilted hero CTA</p>
+          <p className="font-mono text-[10px] tabular-nums text-ink-faint">
+            rotateX {tilt.x.toFixed(0)}° · rotateY {tilt.y.toFixed(0)}° · cap ±{TILT_MAX}°
+          </p>
+        </div>
+
+        <div
+          onPointerMove={(e) => {
+            if (locked || reduced) return;
+            const r = e.currentTarget.getBoundingClientRect();
+            const px = (e.clientX - r.left) / r.width - 0.5;
+            const py = (e.clientY - r.top) / r.height - 0.5;
+            setTilt({ x: clampTilt(-py * 2 * TILT_MAX), y: clampTilt(px * 2 * TILT_MAX) });
+          }}
+          onPointerLeave={() => {
+            if (locked || reduced) return;
+            setTilt({ x: 0, y: 0 });
+            setNote("Pointer gone; the button eases back to upright.");
+          }}
+          className="rounded-2xl border border-white/10 bg-white/[.02] p-4"
+        >
+          <p className="text-[12px] font-bold text-ink">A hero that answers the pointer</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-ink-dim">
+            One button, one tilt, and a hard ceiling: past about ten degrees a hero stops looking deliberate and starts looking seasick.
+          </p>
+
+          <div className="mt-4 flex items-center gap-3">
+            <Link
+              href="/components"
+              onKeyDown={(e) => {
+                if (!e.key.startsWith("Arrow") && e.key !== "Escape" && e.key !== "0") return;
+                e.preventDefault();
+                nudge(e.key);
+              }}
+              onFocus={() => setNote("Focused. Arrow keys tilt it by 2° a press; Enter follows the link.")}
+              onBlur={() => setTilt({ x: 0, y: 0 })}
+              style={{ transform: tiltCss, transformStyle: "preserve-3d" }}
+              className="btn btn-primary !px-4 !py-2 text-[11px] transition-transform duration-100 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-300"
+            >
+              <span style={{ transform: labelCss, display: "inline-block" }}>Browse the catalog →</span>
+            </Link>
+            <span className="text-[10px] leading-relaxed text-ink-faint">
+              The label counter-rotates by the same two angles, so the words stay readable while the button tips.
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <label className="flex items-center gap-2 text-[10px] text-ink-dim">
+            <input
+              type="checkbox"
+              checked={locked}
+              onChange={(e) => {
+                setLocked(e.target.checked);
+                setNote(e.target.checked ? "Tilt locked: the pointer no longer moves the button." : "Tilt unlocked.");
+              }}
+              className="h-3.5 w-3.5"
+            />
+            Lock the tilt
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              setTilt({ x: 0, y: 0 });
+              setNote("Reset to upright.");
+            }}
+            className="btn btn-ghost !px-3 !py-1.5 text-[10px]"
+          >
+            Reset
+          </button>
+        </div>
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-teal-200/80">
+          {note}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          The button is a real link to the catalog: the tilt is decoration on top of a working control, it is skipped entirely under reduced
+          motion, and the keyboard gets the same effect through the arrow keys rather than a pointer-only flourish.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------- 17.25 Success-state celebration ------------------- */
+
+const NEXT_STEPS = [
+  { href: "/components", label: "Open the catalog", meta: `${COMPONENTS.length} components` },
+  { href: "/learn", label: "Read a guide", meta: `${LEARN_ARTICLES.length} essays` },
+  { href: "/lab", label: "Try the Lab", meta: "free tools, no sign-in" },
+];
+
+const BURST_PARTICLES = 12;
+
+export function SuccessBurst() {
+  const [email, setEmail] = useState("");
+  const [created, setCreated] = useState(false);
+  const [error, setError] = useState("");
+  const [burst, setBurst] = useState(0);
+  const reduced = useReducedMotion();
+  const hostRef = useRef<HTMLDivElement>(null);
+
+  // One shot per submit, twelve particles, and nothing at all under reduced
+  // motion — the check mark itself is the whole celebration there.
+  useEffect(() => {
+    if (!burst || reduced) return;
+    const host = hostRef.current;
+    if (!host) return;
+    const particles = host.querySelectorAll<HTMLElement>("[data-particle]");
+    const anims: Animation[] = [];
+    particles.forEach((el, i) => {
+      const angle = (i / Math.max(1, particles.length)) * Math.PI * 2;
+      const distance = 46 + (i % 3) * 10;
+      anims.push(
+        el.animate(
+          [
+            { transform: "translate(0px, 0px) scale(1)", opacity: 1 },
+            {
+              transform: `translate(${Math.round(Math.cos(angle) * distance)}px, ${Math.round(Math.sin(angle) * distance)}px) scale(.35)`,
+              opacity: 0,
+            },
+          ],
+          { duration: 620, easing: "cubic-bezier(.22,.61,.36,1)" },
+        ),
+      );
+    });
+    return () => anims.forEach((a) => a.cancel());
+  }, [burst, reduced]);
+
+  const submit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      setError("Type an address first — nothing is sent either way.");
+      return;
+    }
+    setError("");
+    setCreated(true);
+    setBurst((b) => b + 1);
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_100%,rgba(52,211,153,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-emerald-300/80">Success-state celebration</p>
+          <p className="text-[10px] text-ink-faint">
+            {reduced ? "reduced motion: no burst, check only" : `${BURST_PARTICLES} particles, one shot, 620 ms`}
+          </p>
+        </div>
+
+        <div ref={hostRef} className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[.02] p-4">
+          {created ? (
+            <div className="relative">
+              <div className="relative mx-auto grid h-10 w-10 place-items-center" aria-hidden>
+                <span className="absolute inset-0 rounded-full bg-emerald-400/15" />
+                <svg viewBox="0 0 24 24" className="h-5 w-5">
+                  <path d="M5 12.5 10 17.5 19 7" fill="none" stroke="rgba(110,231,183,.95)" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                {!reduced &&
+                  Array.from({ length: BURST_PARTICLES }).map((_, i) => (
+                    <span
+                      key={i}
+                      data-particle
+                      className="absolute h-1 w-1 rounded-full bg-emerald-300/80"
+                      style={{ top: "50%", left: "50%" }}
+                    />
+                  ))}
+              </div>
+              <p className="mt-2 text-center text-[12px] font-bold text-ink">Account created — in this panel only</p>
+              <p className="mt-1 text-center text-[11px] leading-relaxed text-ink-dim">
+                No request left the page and nothing was written to storage: reload and the form is empty again. The celebration is a picture of
+                the moment, not a receipt for one.
+              </p>
+              <ul className="mt-3 space-y-1.5">
+                {NEXT_STEPS.map((step) => (
+                  <li key={step.href} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[.03] px-3 py-1.5">
+                    <Link href={step.href} className="text-[11px] font-medium text-emerald-100 hover:underline">
+                      {step.label}
+                    </Link>
+                    <span className="font-mono text-[10px] text-ink-faint">{step.meta}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <form onSubmit={submit} className="space-y-2">
+              <p className="text-[12px] font-bold text-ink">Create a demo account</p>
+              <p className="text-[11px] leading-relaxed text-ink-dim">
+                A success state is worth designing properly: it is the screen people screenshot. This one runs in the panel with no backend
+                behind it.
+              </p>
+              <label className="block text-[10px] uppercase tracking-widest text-ink-faint" htmlFor="success-email">
+                Email
+              </label>
+              <input
+                id="success-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@studio.example"
+                className="w-full rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-[11px] text-ink placeholder:text-ink-faint focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-300"
+              />
+              {error ? (
+                <p className="text-[10px] text-rose-300/90">{error}</p>
+              ) : (
+                <p className="text-[10px] text-ink-faint">Press Enter or the button — both paths do the same thing.</p>
+              )}
+              <button type="submit" className="btn btn-primary !px-4 !py-2 text-[11px]">
+                Create account (demo)
+              </button>
+            </form>
+          )}
+        </div>
+
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setCreated(false);
+              setEmail("");
+              setError("");
+            }}
+            disabled={!created}
+            className="btn btn-ghost !px-3 !py-1.5 text-[10px] disabled:opacity-40"
+          >
+            Start over
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setCreated(true);
+              setBurst((b) => b + 1);
+            }}
+            className="btn btn-ghost !px-3 !py-1.5 text-[10px]"
+          >
+            Fire the burst again
+          </button>
+        </div>
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-emerald-200/80">
+          {created
+            ? reduced
+              ? "Success state, no burst: with reduced motion the check mark is the entire celebration."
+              : `Success state, burst fired ${burst} time${burst === 1 ? "" : "s"} — capped at ${BURST_PARTICLES} particles and never on load.`
+            : "Waiting for a submit. The burst cannot fire on page load or on a loop."}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          Restraint is the design brief: one burst per deliberate action, no confetti behind the content, and the reduced-motion version
+          drops the particles rather than shrinking them. The three next steps link to pages that exist.
+        </p>
+      </div>
+    </div>
+  );
+}
