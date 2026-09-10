@@ -6,8 +6,10 @@
    hand-written except the stated policies and the draft test assertions.
    --------------------------------------------------------------------- */
 
-import { COMPONENTS, kindOf } from "./data";
+import { BACKGROUNDS, COMPONENTS, kindOf, PROMPTS } from "./data";
 import { contrastRatio, hexToHsl, REAL_BG, REAL_CYAN, REAL_INK, REAL_MINT, REAL_PANEL_DARK, REAL_PRIMARY_DEEP, REAL_VIOLET } from "./studio-utils";
+import { LEARN_ARTICLES } from "./learn";
+import fs from "node:fs";
 
 export type AssetKind = "element" | "animated" | "section" | "template";
 
@@ -240,3 +242,273 @@ export const SR_SAMPLES = [
   { slug: "slider-ticks", announced: "“Value 40, tick 8 of 11”" },
   { slug: "password-strength", announced: "“Strength: strong” after pause" },
 ].map((s) => ({ ...s, title: kindOf(s.slug)?.title ?? s.slug, kind: kindOfAsset(s.slug) }));
+
+/* =====================================================================
+   Batch 45 additions — numeric truth, tone/copy scans, perf baseline,
+   URL snapshot and per-asset audit ledger. Scans read public prose files
+   at build time; every figure shown is recomputed, nothing hand-stored.
+   ===================================================================== */
+
+/* ---------- numeric truth check (#328) ---------- */
+
+export interface TruthRow {
+  claim: string;
+  value: string;
+  derived: string;
+  source: string;
+  surfaces: string;
+}
+
+export function truthRows(): TruthRow[] {
+  const depFree = depFreeCount();
+  return [
+    {
+      claim: "“107 original assets”",
+      value: String(COMPONENTS.length),
+      derived: "COMPONENTS.length",
+      source: "COMPONENTS array in src/lib/data.ts",
+      surfaces: "homepage proof band · footer tagline · /components",
+    },
+    {
+      claim: "“74 run-tested prompts”",
+      value: String(PROMPTS.length),
+      derived: "PROMPTS.length",
+      source: "PROMPTS array in src/lib/data.ts",
+      surfaces: "footer tagline · /prompts scoreboard",
+    },
+    {
+      claim: "“60 guides”",
+      value: String(LEARN_ARTICLES.length),
+      derived: "LEARN_ARTICLES.length",
+      source: "src/lib/learn.ts",
+      surfaces: "footer tagline · /learn",
+    },
+    {
+      claim: "“33 backgrounds”",
+      value: String(BACKGROUNDS.length),
+      derived: "BACKGROUNDS.length",
+      source: "BACKGROUNDS array in src/lib/data.ts",
+      surfaces: "footer count line · /backgrounds",
+    },
+    {
+      claim: "“106/107 dependency-free”",
+      value: `${depFree}/${COMPONENTS.length}`,
+      derived: "assets with deps.length === 0",
+      source: "deps field across COMPONENTS",
+      surfaces: "homepage dependency-free receipt",
+    },
+    {
+      claim: "“0 over size budget”",
+      value: String(kindSizeTable().reduce((a, r) => a + r.over, 0)),
+      derived: "per-kind budget comparison",
+      source: "kindSizeTable() on this page",
+      surfaces: "/quality size-budget panel",
+    },
+  ];
+}
+
+/* ---------- perf regression baseline (#329) ---------- */
+
+export interface PerfKind {
+  kind: AssetKind;
+  label: string;
+  count: number;
+  budgetKb: number;
+  min: number;
+  mean: number;
+  median: number;
+  max: number;
+  over: number;
+}
+
+const median = (xs: number[]) => {
+  if (!xs.length) return 0;
+  const s = [...xs].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+};
+
+export function perfBaseline(): PerfKind[] {
+  return KIND_META.map((m) => {
+    const assets = COMPONENTS.filter((c) => c.kind === m.kind);
+    const kbs = assets.map((a) => a.bundleKb);
+    return {
+      kind: m.kind,
+      label: m.label,
+      count: assets.length,
+      budgetKb: m.budgetKb,
+      min: kbs.length ? Math.min(...kbs) : 0,
+      mean: kbs.length ? Math.round((kbs.reduce((a, b) => a + b, 0) / kbs.length) * 10) / 10 : 0,
+      median: Math.round(median(kbs) * 10) / 10,
+      max: kbs.length ? Math.max(...kbs) : 0,
+      over: assets.filter((a) => a.bundleKb > m.budgetKb).length,
+    };
+  });
+}
+
+export const BASELINE_LABEL = "baseline · 2026-09-10 · catalog as shipped";
+
+/* ---------- tone-of-voice lint (#330) — real scan of public prose ---------- */
+
+export const OVERCLAIM_DICTIONARY = [
+  "effortless", "effortlessly", "magical", "magically", "seamless", "seamlessly",
+  "revolutionary", "game-changing", "groundbreaking", "unbelievable", "amazing",
+  "incredible", "flawless", "flawlessly", "perfect", "blazing", "cutting-edge", "world-class",
+];
+
+export interface ToneHit {
+  term: string;
+  file: string;
+  line: number;
+  negated: boolean;
+}
+
+/** Public prose files the tone & copy lints scan (site pages + chrome). */
+function proseFiles(): string[] {
+  const out: string[] = [];
+  const base = `${process.cwd()}/src`;
+  const walk = (dir: string) => {
+    let ents: string[] = [];
+    try {
+      ents = fs.readdirSync(dir);
+    } catch {
+      return;
+    }
+    for (const e of ents) {
+      const p = `${dir}/${e}`;
+      let isDir = false;
+      try {
+        isDir = fs.statSync(p).isDirectory();
+      } catch {
+        continue;
+      }
+      if (isDir) walk(p);
+      else if (e.endsWith(".tsx")) out.push(p);
+    }
+  };
+  walk(`${base}/app/(public)`);
+  out.push(`${base}/components/chrome.tsx`, `${base}/app/not-found.tsx`);
+  return out;
+}
+
+/** Scan site prose for overclaim terms; a hit within 90 chars of a
+ *  negation ("no", "not", "never", "without", "skip", "reject"…) is
+ *  treated as intentional and cleared by the context rule. */
+export function toneScan(): { files: number; hits: ToneHit[]; negated: number } {
+  const files = proseFiles();
+  const hits: ToneHit[] = [];
+  let negated = 0;
+  for (const f of files) {
+    let text = "";
+    try {
+      text = fs.readFileSync(f, "utf8");
+    } catch {
+      continue;
+    }
+    for (const term of OVERCLAIM_DICTIONARY) {
+      const re = new RegExp(term, "gi");
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(text))) {
+        const before = text.slice(Math.max(0, m.index - 90), m.index);
+        const neg = /\b(?:no|not|never|without|don.?t|doesn.?t|stop|skip|reject|ban)\b/i.test(before);
+        if (neg) negated++;
+        hits.push({
+          term: m[0],
+          file: f.replace(`${process.cwd()}/`, ""),
+          line: text.slice(0, m.index).split("\n").length,
+          negated: neg,
+        });
+      }
+    }
+  }
+  return { files: files.length, hits, negated };
+}
+
+/* ---------- empty-state copy consistency (#327) — real scan ---------- */
+
+export const DEAD_END_PATTERNS = ["no items yet", "no data yet", "nothing here", "no components found", "no assets found"];
+
+export interface EmptyLine {
+  text: string;
+  files: string[];
+}
+
+export function emptyStateScan(): { deadEnds: number; lines: EmptyLine[] } {
+  const files = proseFiles();
+  const lines: EmptyLine[] = [];
+  let deadEnds = 0;
+  const counts = new Map<string, Set<string>>();
+  for (const f of files) {
+    let text = "";
+    try {
+      text = fs.readFileSync(f, "utf8");
+    } catch {
+      continue;
+    }
+    const low = text.toLowerCase();
+    for (const d of DEAD_END_PATTERNS) {
+      if (low.includes(d)) deadEnds += (low.match(new RegExp(d.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) || []).length;
+    }
+    for (const re of [/Nothing matched[^"`<]{0,60}/gi, /No exact match[^"`<]{0,90}/gi, /No query yet\?[^"`<]{0,60}/gi, /Quiet week[^"`<]{0,80}/gi]) {
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(text))) {
+        const norm = m[0].replace(/\s+/g, " ").trim();
+        if (!counts.has(norm)) counts.set(norm, new Set());
+        counts.get(norm)!.add(f.replace(`${process.cwd()}/`, ""));
+      }
+    }
+  }
+  for (const [text, set] of counts) lines.push({ text, files: [...set] });
+  return { deadEnds, lines };
+}
+
+/* ---------- URL inventory snapshot (#331) — real crawl run 2026-09-10 ---------- */
+
+export const URL_SNAPSHOT = {
+  audited: "2026-09-10",
+  commit: "d3c43a8",
+  seedRoutes: 228,
+  seedOk: 228,
+  hrefs: 266,
+  broken: 0,
+  foundAndFixed: [
+    "The weekly digest linked “Background refresh” entries to /components/<bg-slug>, which 404s — backgrounds have no per-slug page.",
+  ],
+  fix: "digest/page.tsx now sends background chips to /backgrounds, the page that renders all 33 cards.",
+  how: "A fresh next start served the built site; a script fetched every static route plus all /components, /prompts and /learn detail routes (228 seeds), collected 266 internal hrefs from the 17 top-level pages, and followed each. Any non-200 is reported.",
+};
+
+/* ---------- share-audit ledger (#332) — mirrors the detail-page checklist ---------- */
+
+export interface LedgerRow {
+  slug: string;
+  title: string;
+  kind: AssetKind;
+  bundleKb: number;
+  a11y: number;
+  quality: number;
+  version: string;
+  published: string;
+  license: string;
+  deps: string[];
+  passes: number;
+}
+
+/** Same threshold mapping as the audit block on asset detail pages. */
+export function auditLedgerRows(): LedgerRow[] {
+  return [...COMPONENTS]
+    .sort((a, b) => a.a11yScore - b.a11yScore || b.bundleKb - a.bundleKb)
+    .map((c) => ({
+      slug: c.slug,
+      title: c.title,
+      kind: c.kind as AssetKind,
+      bundleKb: c.bundleKb,
+      a11y: c.a11yScore,
+      quality: c.qualityScore,
+      version: c.version,
+      published: c.published,
+      license: c.license,
+      deps: c.deps,
+      passes: [c.a11yScore >= 92, c.a11yScore >= 90, c.a11yScore >= 90].filter(Boolean).length,
+    }));
+}

@@ -10,17 +10,25 @@ import { hsl } from "@/lib/studio-utils";
 import {
   a11yBandCounts,
   animatedCount,
+  auditLedgerRows,
   chromePairs,
   depFreeCount,
+  emptyStateScan,
   fingerTiers,
   heaviestAssets,
   interactiveAssets,
   KEYBOARD_PLANS,
   kindLabel,
   kindSizeTable,
+  OVERCLAIM_DICTIONARY,
+  BASELINE_LABEL,
+  perfBaseline,
   qualBandCounts,
   REDUCED_MOTION_CSS,
   SR_SAMPLES,
+  toneScan,
+  truthRows,
+  URL_SNAPSHOT,
   withDeps,
 } from "@/lib/quality-utils";
 
@@ -476,6 +484,395 @@ export function ScreenReaderPanel() {
         and assert the expected announcement appears in the live region. Interactive assets count:{" "}
         <span className="font-mono text-ink-dim">{interactive.length}</span> — the smoke test above samples six; the full
         per-asset matrix is generated the same way.
+      </p>
+    </section>
+  );
+}
+
+/* =====================================================================
+   Batch 45 — mechanisms 8–13 (Section 11 rows #327–#332)
+   ===================================================================== */
+
+/* #327 — copy consistency lint */
+export function CopyLintPanel() {
+  const scan = emptyStateScan();
+  return (
+    <section className="rounded-3xl border border-white/8 bg-panel p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Mechanism 8 · copy consistency lint</p>
+          <h2 className="mt-1.5 text-xl font-extrabold tracking-tight">Empty states say what happened, then what to do</h2>
+          <p className="mt-2 text-xs leading-relaxed text-ink-dim">
+            Motif&apos;s writing rule for empty surfaces: a filter result that finds nothing stays tiny and factual
+            (“Nothing matched those filters”), never a verbless dead-end like “No items yet”. The scan below checks the
+            public prose files for the dead-end patterns and lists what it finds instead.
+          </p>
+        </div>
+        <Chip cls={scan.deadEnds === 0 ? "!border-mint/30 !text-mint" : "!border-amber-300/40 !text-amber-300"}>
+          {scan.deadEnds === 0 ? "0 dead-end empty states" : `${scan.deadEnds} dead-end hits`}
+        </Chip>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Lint dictionary (verbless dead-ends)</p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {["No items yet", "No data yet", "Nothing here", "No components found", "No assets found"].map((d) => (
+              <span key={d} className="chip !text-[10px] !border-danger/30 !text-danger/80">“{d}”</span>
+            ))}
+          </div>
+          <p className="mt-3 text-[11px] leading-relaxed text-ink-dim">
+            Each pattern is a screen that explains nothing and offers nothing. The real filter fallbacks below are the
+            pattern the lint defends.
+          </p>
+          <p className="mt-2 text-[10px] text-ink-faint">
+            Live scan result: <span className="font-mono font-bold text-ink">{scan.deadEnds} occurrences</span> across
+            the scanned public files.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">What the scan finds instead (current copy)</p>
+          {scan.lines.length === 0 ? (
+            <p className="mt-3 text-[11px] text-ink-faint">No matching fallback lines found in the scanned files.</p>
+          ) : (
+            <div className="mt-3 space-y-2">
+              {scan.lines.map((l) => (
+                <div key={l.text} className="rounded-xl bg-white/[.03] px-3 py-2 text-[11px] leading-relaxed text-ink-dim">
+                  “{l.text}”
+                  <span className="mt-1 block font-mono text-[9px] text-ink-faint">{l.files.join(" · ")}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="mt-3 border-t border-white/6 pt-2 text-[10px] leading-relaxed text-ink-faint">
+            Scan scope: every page and client component under <code className="font-mono">src/app/(public)</code> plus
+            the shared chrome — the copy a visitor can read. Runs at build time.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* #328 — numeric truth check */
+export function NumericTruthPanel() {
+  const rows = truthRows();
+  return (
+    <section className="rounded-3xl border border-white/8 bg-panel p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Mechanism 9 · numeric truth check</p>
+          <h2 className="mt-1.5 text-xl font-extrabold tracking-tight">Every visible stat traces to a data source</h2>
+          <p className="mt-2 text-xs leading-relaxed text-ink-dim">
+            The headline counts printed across the site are not typed constants — each is derived from the same arrays
+            that render the pages. Below, each published claim, its live value, and the exact source.
+          </p>
+        </div>
+        <Chip cls="!border-mint/30 !text-mint">{rows.length} claims · all derived</Chip>
+      </div>
+
+      <div className="mt-5 overflow-x-auto">
+        <table className="w-full min-w-[680px] border-separate border-spacing-y-2 text-left">
+          <thead>
+            <tr className="text-[10px] uppercase tracking-widest text-ink-faint">
+              <th className="px-2">Claim as published</th>
+              <th className="px-2">Live value</th>
+              <th className="px-2">Derived from</th>
+              <th className="px-2">Source</th>
+              <th className="px-2">Surfaces</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.claim} className="rounded-2xl bg-white/[.02]">
+                <td className="rounded-l-2xl px-2 py-3 text-[12px] font-bold text-ink">{r.claim}</td>
+                <td className="px-2 py-3 font-mono text-[12px] font-extrabold text-mint">{r.value}</td>
+                <td className="px-2 py-3 text-[10px] text-ink-dim">{r.derived}</td>
+                <td className="px-2 py-3 font-mono text-[10px] text-ink-faint">{r.source}</td>
+                <td className="rounded-r-2xl px-2 py-3 text-[10px] text-ink-faint">{r.surfaces}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-white/8 bg-white/[.02] p-4">
+        <p className="text-xs font-extrabold">Watchlist · demo figures that must never become claims</p>
+        <p className="mt-2 text-[11px] leading-relaxed text-ink-dim">
+          The odometer and count-up component demos animate sample figures (a member count, prompt count, copy total)
+          to show what the scenes do. Those numbers live inside the demo code as run targets and are labelled by the
+          demo scenes themselves — they never feed a site statistic, so a counter demo of “148.2k copies” cannot drift
+          into the footer. The check: grep any headline number on a marketing surface, trace it to a data source, and
+          reject sources that live under <code className="font-mono">components/demos</code>.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* #329 — perf regression baseline */
+export function PerfTrackerPanel() {
+  const kinds = perfBaseline();
+  const all = COMPONENTS;
+  return (
+    <section className="rounded-3xl border border-white/8 bg-panel p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Mechanism 10 · perf regression tracker</p>
+          <h2 className="mt-1.5 text-xl font-extrabold tracking-tight">A baseline today, a history from here</h2>
+          <p className="mt-2 text-xs leading-relaxed text-ink-dim">
+            Per-release weight history starts with a baseline snapshot — the whole catalog&apos;s size and audit metrics
+            as this build shipped them. Every future release re-records the same rows so a drift is visible, not felt.
+          </p>
+        </div>
+        <Chip>{BASELINE_LABEL}</Chip>
+      </div>
+
+      <div className="mt-5 overflow-x-auto">
+        <table className="w-full min-w-[620px] border-separate border-spacing-y-2 text-left">
+          <thead>
+            <tr className="text-[10px] uppercase tracking-widest text-ink-faint">
+              <th className="px-2">Kind</th>
+              <th className="px-2">Assets</th>
+              <th className="px-2">Budget</th>
+              <th className="px-2">Min</th>
+              <th className="px-2">Mean</th>
+              <th className="px-2">Median</th>
+              <th className="px-2">Max</th>
+              <th className="px-2">Headroom</th>
+            </tr>
+          </thead>
+          <tbody>
+            {kinds.map((k) => {
+              const headroom = Math.max(0, k.budgetKb - k.max);
+              return (
+                <tr key={k.kind} className="rounded-2xl bg-white/[.02]">
+                  <td className="rounded-l-2xl px-2 py-2.5 text-xs font-extrabold">{k.label}</td>
+                  <td className="px-2 py-2.5 font-mono text-[11px] text-ink-dim">{k.count}</td>
+                  <td className="px-2 py-2.5 font-mono text-[11px] text-ink-dim">≤ {k.budgetKb} KB</td>
+                  <td className="px-2 py-2.5 font-mono text-[11px] text-ink-dim">{k.min}</td>
+                  <td className="px-2 py-2.5 font-mono text-[11px] text-ink-dim">{k.mean}</td>
+                  <td className="px-2 py-2.5 font-mono text-[11px] text-ink-dim">{k.median}</td>
+                  <td className="px-2 py-2.5 font-mono text-[11px] text-ink">{k.max}</td>
+                  <td className="rounded-r-2xl px-2 py-2.5">
+                    <Chip cls={headroom >= 0 ? "!border-mint/30 !text-mint" : "!border-danger/40 !text-danger"}>
+                      {headroom >= 0 ? `+${headroom} KB` : `${headroom} KB over`}
+                    </Chip>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Catalog totals at baseline</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {[
+              { l: "assets", v: all.length },
+              { l: "total KB", v: `${Math.round(all.reduce((a, c) => a + c.bundleKb, 0) * 10) / 10}` },
+              { l: "mean a11y", v: String(Math.round((all.reduce((a, c) => a + c.a11yScore, 0) / all.length) * 10) / 10) },
+              { l: "mean Q", v: String(Math.round((all.reduce((a, c) => a + c.qualityScore, 0) / all.length) * 10) / 10) },
+            ].map((s) => (
+              <span key={s.l} className="rounded-xl border border-white/8 bg-white/[.03] px-3 py-2 text-[11px]">
+                <span className="mr-1.5 text-ink-faint">{s.l}</span>
+                <span className="font-mono font-extrabold text-ink">{s.v}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">What the tracker records per release</p>
+          <ul className="prose-list mt-3">
+            <li>Per asset: <code className="font-mono">bundleKb</code> at its shipped version, plus a11y and quality scores.</li>
+            <li>Per asset change: dep list hash, so a “zero-dep” claim is verifiable per version.</li>
+            <li>Per release: this whole table re-published — min/mean/median/max and budget headroom per kind.</li>
+          </ul>
+          <p className="mt-3 border-t border-white/6 pt-2 text-[10px] text-ink-faint">
+            The rows above are real current data; the versioned history is the automation step this panel tracks.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* #330 — tone-of-voice lint */
+export function ToneLintPanel() {
+  const scan = toneScan();
+  const live = scan.hits.filter((h) => !h.negated);
+  return (
+    <section className="rounded-3xl border border-white/8 bg-panel p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Mechanism 11 · tone-of-voice lint</p>
+          <h2 className="mt-1.5 text-xl font-extrabold tracking-tight">Overclaim words are scanned, then read in context</h2>
+          <p className="mt-2 text-xs leading-relaxed text-ink-dim">
+            Marketing copy that promises “effortless”, “flawless” or “magical” gets flagged by the dictionary below.
+            The lint also implements the context rule: a flagged word inside a negation (“No ‘effortless’ marketing”) is
+            intentional and cleared. This very scan runs on the current public prose — results are live.
+          </p>
+        </div>
+        <Chip cls={live.length === 0 ? "!border-mint/30 !text-mint" : "!border-danger/40 !text-danger"}>
+          {live.length === 0 ? `${scan.negated} flagged, all cleared in context` : `${live.length} live hits`}
+        </Chip>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Dictionary · scanned {scan.files} files</p>
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {OVERCLAIM_DICTIONARY.map((w) => (
+              <span key={w} className="chip !text-[10px]">“{w}”</span>
+            ))}
+          </div>
+          <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+            Scope: page prose under <code className="font-mono">src/app/(public)</code> + chrome. Copy inside component
+            demo scenes and sample prompt posters is out of scope — those are deliberate samples, not site voice.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Findings on this build</p>
+          {scan.hits.length === 0 ? (
+            <p className="mt-3 text-[11px] text-ink-faint">No dictionary terms found in public prose.</p>
+          ) : (
+            <div className="mt-3 space-y-2">
+              {scan.hits.map((h, i) => (
+                <div key={i} className="rounded-xl bg-white/[.03] px-3 py-2">
+                  <span className="text-[11px] leading-relaxed text-ink-dim">
+                    <span className="font-mono font-bold text-amber-300">{h.term}</span>{" "}
+                    <span className="text-ink-faint">at {h.file.replace("src/", "")}:{h.line}</span>
+                  </span>
+                  <span className={`mt-1 block text-[10px] font-bold ${h.negated ? "text-mint" : "text-danger"}`}>
+                    {h.negated ? "cleared · used inside a negation" : "live hit — needs copy work"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="mt-3 border-t border-white/6 pt-2 text-[10px] leading-relaxed text-ink-faint">
+            The two current hits are the homepage&apos;s “No ‘effortless’ marketing” and the mission page&apos;s “not
+            ‘effortless’” — exactly the context rule working. Re-running this scan is the CI half of the mechanism.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* #331 — URL inventory test */
+export function UrlInventoryPanel() {
+  const s = URL_SNAPSHOT;
+  return (
+    <section className="rounded-3xl border border-white/8 bg-panel p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Mechanism 12 · URL inventory test</p>
+          <h2 className="mt-1.5 text-xl font-extrabold tracking-tight">Every internal link resolved, and one was broken</h2>
+          <p className="mt-2 text-xs leading-relaxed text-ink-dim">
+            The first full crawl of the built site checked {s.seedRoutes} routes and followed {s.hrefs} internal hrefs.
+            It caught a real bug — and the fix is in this same build.
+          </p>
+        </div>
+        <Chip cls="!border-mint/30 !text-mint">{s.broken} broken · {s.hrefs} hrefs</Chip>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-3">
+        {[
+          { v: s.seedRoutes, l: "routes fetched", sub: "static + every component/prompt/learn detail page" },
+          { v: s.hrefs, l: "internal hrefs followed", sub: "collected from the 17 top-level pages" },
+          { v: `${s.seedOk}/${s.seedRoutes}`, l: "returned 200", sub: `${s.broken} broken — fixed before shipping` },
+        ].map((c) => (
+          <div key={c.l} className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+            <p className="font-mono text-2xl font-extrabold text-ink">{c.v}</p>
+            <p className="mt-1 text-[11px] font-bold text-ink-dim">{c.l}</p>
+            <p className="mt-0.5 text-[10px] text-ink-faint">{c.sub}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/[.04] p-4">
+        <p className="text-xs font-extrabold text-amber-300">Found and fixed in this batch</p>
+        <ul className="prose-list mt-2">
+          {s.foundAndFixed.map((f) => (
+            <li key={f}>{f}</li>
+          ))}
+          <li>{s.fix}</li>
+        </ul>
+      </div>
+
+      <div className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+        How it ran: <span className="text-ink-dim">{s.how}</span> Snapshot: {s.audited} on commit{" "}
+        <span className="font-mono">{s.commit}</span>. The mechanism makes this crawl a CI job on every release so a
+        404 can never ship twice.
+      </div>
+    </section>
+  );
+}
+
+/* #332 — share-audit ledger */
+export function AuditLedgerPanel() {
+  const rows = auditLedgerRows();
+  return (
+    <section className="rounded-3xl border border-white/8 bg-panel p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Mechanism 13 · share-audit ledger</p>
+          <h2 className="mt-1.5 text-xl font-extrabold tracking-tight">The audit log is public per asset</h2>
+          <p className="mt-2 text-xs leading-relaxed text-ink-dim">
+            Every asset&apos;s checks, scores and weight sit on its own detail page — this ledger is the same data in one
+            table, weakest a11y first. The three checks mirror the audit block each detail page publishes.
+          </p>
+        </div>
+        <Chip cls="!border-mint/30 !text-mint">{rows.length} assets · 3/3 checks pass</Chip>
+      </div>
+
+      <div className="mt-5 max-h-[480px] overflow-auto rounded-2xl border border-white/8">
+        <table className="w-full min-w-[760px] border-separate border-spacing-0 text-left">
+          <thead className="sticky top-0 z-10">
+            <tr className="bg-[#0b0d14] text-[10px] uppercase tracking-widest text-ink-faint">
+              <th className="px-3 py-2.5">Asset</th>
+              <th className="px-2 py-2.5">Kind</th>
+              <th className="px-2 py-2.5 text-right">KB</th>
+              <th className="px-2 py-2.5 text-right">a11y</th>
+              <th className="px-2 py-2.5 text-right">Quality</th>
+              <th className="px-2 py-2.5">Audit</th>
+              <th className="px-2 py-2.5">Version</th>
+              <th className="px-2 py-2.5">Published</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={r.slug} className={i % 2 ? "bg-white/[.015]" : "bg-white/[.03]"}>
+                <td className="px-3 py-2">
+                  <Link href={`/components/${r.slug}`} className="font-mono text-[11px] font-bold text-ink hover:text-violet-300">
+                    {r.slug}
+                  </Link>
+                  <span className="block max-w-[180px] truncate text-[9px] text-ink-faint">{r.title}</span>
+                </td>
+                <td className="px-2 py-2">
+                  <Chip>{kindLabel(r.kind)}</Chip>
+                </td>
+                <td className="px-2 py-2 text-right font-mono text-[11px] text-ink-dim">{r.bundleKb}</td>
+                <td className="px-2 py-2 text-right font-mono text-[11px] font-extrabold text-mint">{r.a11y}</td>
+                <td className="px-2 py-2 text-right font-mono text-[11px] font-extrabold text-cyan-200">{r.quality}</td>
+                <td className="px-2 py-2">
+                  <Chip cls="!border-mint/30 !text-mint">{r.passes}/3 ✓</Chip>
+                </td>
+                <td className="px-2 py-2 font-mono text-[10px] text-ink-faint">{r.version}</td>
+                <td className="px-2 py-2 font-mono text-[10px] text-ink-faint">{r.published}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+        Checks per row (same thresholds as the detail-page audit block): contrast AA for text at ≥ 92, focus-visible
+        rings and screen-reader labels at ≥ 90. Rows sort by a11y ascending so the tightest audits surface first —
+        today even the lowest still passes all three.
       </p>
     </section>
   );

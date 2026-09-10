@@ -136,7 +136,7 @@ export default function DigestPage() {
           <h2 className="border-b border-white/6 pb-3 text-xs font-bold uppercase tracking-[0.24em] text-pink-300">Background refresh</h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {bgFresh.map((b) => (
-              <Link key={b.slug} href={`/components/${b.slug}`} className="card-hover flex items-center gap-2 rounded-xl border border-white/8 bg-panel px-3 py-2.5 text-xs">
+              <Link key={b.slug} href="/backgrounds" className="card-hover flex items-center gap-2 rounded-xl border border-white/8 bg-panel px-3 py-2.5 text-xs">
                 <span className="h-2 w-2 rounded-full" style={{ background: accentCss(b.slug, 85, 62) }} />
                 <span className="font-semibold text-ink-dim">{b.title}</span>
                 <span className="text-[10px] text-ink-faint">{fmt(b.copies)} copies</span>

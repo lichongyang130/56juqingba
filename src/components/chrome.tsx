@@ -86,7 +86,7 @@ export function CtaRail() {
         <div className="min-w-0">
           <p className="text-sm font-extrabold tracking-tight">Every asset here is free to copy</p>
           <p className="mt-0.5 text-[11px] text-ink-dim">
-            107 components · 74 run-tested prompts · 30 guides — no account, no signup.
+            107 components · 74 run-tested prompts · 60 guides — no account, no signup.
           </p>
         </div>
         <div className="flex items-center gap-1.5">
@@ -263,7 +263,7 @@ export function Footer() {
                               {
                                 brand: SITE.name,
                                 tagline: SITE.description,
-                                counts: "as of Sep 2026 — 107 components, 74 prompts, 30 guides, 33 backgrounds",
+                                counts: "as of Sep 2026 — 107 components, 74 prompts, 60 guides, 33 backgrounds",
                                 colors: {
                                   violet: "hsl(262 82% 60%)",
                                   cyan: "hsl(192 82% 55%)",

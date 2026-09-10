@@ -2,13 +2,19 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { COMPONENTS } from "@/lib/data";
 import {
+  AuditLedgerPanel,
   ContrastCiPanel,
+  CopyLintPanel,
   DependencyLedgerPanel,
   KeyboardFlowPanel,
+  NumericTruthPanel,
+  PerfTrackerPanel,
   ReducedMotionPanel,
   ScreenReaderPanel,
   ScorePublishPanel,
   SizeBudgetPanel,
+  ToneLintPanel,
+  UrlInventoryPanel,
 } from "@/components/quality-panels";
 
 export const metadata: Metadata = {
@@ -27,6 +33,12 @@ export default function QualityPage() {
     "Dependency ledger",
     "Keyboard-flow tests",
     "Screen-reader smoke tests",
+    "Copy consistency lint",
+    "Numeric truth check",
+    "Perf regression baseline",
+    "Tone-of-voice lint",
+    "URL inventory test",
+    "Share-audit ledger",
   ];
   return (
     <div className="mx-auto max-w-7xl px-5 py-12 lg:px-8">
@@ -55,7 +67,7 @@ export default function QualityPage() {
             <span className="font-mono text-ink-faint">{String(i + 1).padStart(2, "0")}</span> {m}
           </span>
         ))}
-        <span className="chip !text-[10px] !border-amber-300/30 !text-amber-300">automation roadmap · 13 more mechanisms below</span>
+        <span className="chip !text-[10px] !border-amber-300/30 !text-amber-300">automation roadmap · 7 more mechanisms below</span>
       </div>
 
       <div className="mt-10 space-y-8">
@@ -66,6 +78,12 @@ export default function QualityPage() {
         <DependencyLedgerPanel />
         <KeyboardFlowPanel />
         <ScreenReaderPanel />
+        <CopyLintPanel />
+        <NumericTruthPanel />
+        <PerfTrackerPanel />
+        <ToneLintPanel />
+        <UrlInventoryPanel />
+        <AuditLedgerPanel />
       </div>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-white/8 bg-panel p-6">
