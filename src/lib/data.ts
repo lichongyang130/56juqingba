@@ -661,6 +661,17 @@ export const COMPONENTS: Asset[] = [
     copies: 480, views: 2900,
   },
   {
+    slug: "slug-field", kind: "element", title: "Slug Input Transform",
+    aliases: ["slugify", "url field", "kebab case"],
+    description: "Type a title, get a URL slug — folds the Latin letters with marks it knows, collapses dashes and trims to 60 characters, then says what it could not fold instead of pretending.",
+    tags: ["slug", "input", "url", "form", "cms"], behaviors: ["type", "click", "keyboard"],
+    stack: ["React", "HTML/CSS"], deps: [], bundleKb: 1.3, themeable: true,
+    a11yScore: 97, qualityScore: 94, status: "live", license: "MIT", version: "1.0.0",
+    author: "Motif Studio", published: "2026-09-10", demo: "slug-field",
+    props: [],
+    copies: 260, views: 1700,
+  },
+  {
     slug: "bezier-drawer", kind: "element", title: "Interactive Bezier Drawer",
     aliases: ["cubic bezier", "easing editor", "curve handles"],
     description: "Two draggable control points on a real curve chart, with the CSS value printed as you move them. Overshoot is allowed rather than clamped, and the preview dot runs on the exported curve itself.",

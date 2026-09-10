@@ -9198,6 +9198,163 @@ function LinkedCards() {
   );
 }
 
+/* -------------------- SECTION 17 · SLUG FIELD (the missed one) -------------------- */
+
+/** Latin letters with marks, folded to ASCII. Deliberately a short table rather
+ *  than a full transliteration library: the field says which characters it
+ *  cannot fold instead of inventing a spelling for them. */
+const FOLD: Record<string, string> = {
+  á: "a", à: "a", â: "a", ä: "a", ã: "a", å: "a",
+  é: "e", è: "e", ê: "e", ë: "e",
+  í: "i", ì: "i", î: "i", ï: "i",
+  ó: "o", ò: "o", ô: "o", ö: "o", õ: "o",
+  ú: "u", ù: "u", û: "u", ü: "u",
+  ç: "c", ñ: "n", ý: "y", ß: "ss", æ: "ae", ø: "o", œ: "oe",
+};
+
+const SLUG_RESERVED = ["admin", "api", "components", "prompts", "search", "new", "settings"];
+
+function slugify(input: string) {
+  const folded: string[] = [];
+  const dropped: string[] = [];
+  for (const ch of input.toLowerCase().normalize("NFC")) {
+    if (FOLD[ch]) {
+      folded.push(FOLD[ch]);
+      continue;
+    }
+    folded.push(ch);
+  }
+  const ascii = folded.join("");
+  for (const ch of ascii) if (!/[a-z0-9\s-]/.test(ch)) dropped.push(ch);
+  return {
+    slug: ascii
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/[\s_]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 60)
+      .replace(/-$/, ""),
+    dropped: [...new Set(dropped)],
+  };
+}
+
+function SlugField() {
+  const [title, setTitle] = useState("Glass Pricing Sections");
+  const [manual, setManual] = useState<string | null>(null);
+  const [status, setStatus] = useState("Typing a title writes the slug; edit the slug and it stops following.");
+  const auto = slugify(title);
+  const slug = manual ?? auto.slug;
+  const problems: string[] = [];
+  if (!slug) problems.push("A slug cannot be empty — the field shows a warning rather than submitting one.");
+  if (SLUG_RESERVED.includes(slug)) problems.push(`“${slug}” is reserved by a route on this site, so it would collide.`);
+  if (slug.length >= 60) problems.push("Trimmed at 60 characters; the rest is in the title, where it belongs.");
+  if (auto.dropped.length) problems.push(`Cannot fold ${auto.dropped.join(" ")} — this field folds Latin marks, not every script.`);
+
+  const final = `https://motifui.dev/prompts/${slug || "…"}`;
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(139,92,246,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/80">Slug field</p>
+          <p className="text-[10px] text-ink-faint">{manual === null ? "following the title" : "locked to your edit"}</p>
+        </div>
+
+        <label className="block">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Title</span>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="input mt-1 !rounded-xl !py-2 text-xs"
+            placeholder="Give the page a title…"
+          />
+        </label>
+
+        <label className="mt-3 block">
+          <span className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Slug</span>
+            {manual !== null && (
+              <button
+                type="button"
+                onClick={() => {
+                  setManual(null);
+                  setStatus("Slug is following the title again.");
+                }}
+                className="text-[10px] text-violet-300 underline decoration-dotted"
+              >
+                follow the title again
+              </button>
+            )}
+          </span>
+          <input
+            value={slug}
+            onChange={(e) => {
+              setManual(slugify(e.target.value).slug);
+              setStatus("Slug locked to your edit — the title no longer changes it.");
+            }}
+            aria-describedby="slug-preview slug-problems"
+            className="input mt-1 !rounded-xl !py-2 font-mono text-xs"
+            placeholder="a-url-slug"
+          />
+        </label>
+
+        <p id="slug-preview" className="mt-2 break-all rounded-xl border border-white/10 bg-white/[.02] px-3 py-2 font-mono text-[10px] text-ink-dim">
+          {final}
+        </p>
+
+        <ul id="slug-problems" className="mt-2 space-y-1">
+          {problems.length === 0 ? (
+            <li className="text-[10px] text-emerald-300/80">Looks like a URL that will not need redirecting later.</li>
+          ) : (
+            problems.map((p) => (
+              <li key={p} className="text-[10px] leading-relaxed text-amber-200/80">
+                · {p}
+              </li>
+            ))
+          )}
+        </ul>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setTitle("Café & Crème — 42 Ideas")}
+            className="btn btn-ghost !px-3 !py-1.5 text-[10px]"
+          >
+            Try accented text
+          </button>
+          <button
+            type="button"
+            onClick={() => setTitle("Admin")}
+            className="btn btn-ghost !px-3 !py-1.5 text-[10px]"
+          >
+            Try a reserved word
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setTitle("");
+              setManual(null);
+            }}
+            className="btn btn-ghost !px-3 !py-1.5 text-[10px]"
+          >
+            Empty it
+          </button>
+        </div>
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-violet-200/80">
+          {status}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          The transform is a real function, not a screenshot of one: it folds the Latin letters with marks it knows about, strips
+          the rest, collapses runs of dashes and trims to 60 characters. What it cannot do is transliterate — Cyrillic or Chinese
+          characters are dropped, and the field says so under the input instead of producing an empty slug and calling it success.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // Exported because the keys are the catalog's demo vocabulary, not a private
 // detail: the props panel and the harness both want the same list.
 export const DEMO_KEYS = [
@@ -9219,6 +9376,7 @@ export const DEMO_KEYS = [
   "flip-stack", "draw-path", "morph-icons",
   "logo-chase", "shimmer-text", "ring-ticks",
   "bezier-drawer", "counter-band", "linked-cards",
+  "slug-field",
   "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
   "status-banner", "progress-ring", "spinner-status", "empty-state-trio",
@@ -9317,6 +9475,7 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "bezier-drawer": return <BezierDrawer />;
     case "counter-band": return <CounterBand />;
     case "linked-cards": return <LinkedCards />;
+    case "slug-field": return <SlugField />;
     case "breadcrumb-trail": return <BreadcrumbTrail />;
     case "pagination-ellipsis": return <PaginationEllipsis {...props} />;
     case "toc-spine": return <TocSpine />;

@@ -1,46 +1,46 @@
 {
-  "measuredAt": "2026-09-10T08:39:13.257Z",
-  "buildId": "MCu4kqVnWT36l44eHvHQh",
+  "measuredAt": "2026-09-10T08:40:48.204Z",
+  "buildId": "lzimei0s0HeFiJMPf7Bf4",
   "command": "npm run build && npm run measure",
   "summary": {
     "routes": 112,
     "prerendered": 101,
     "onDemand": 11,
     "jsFiles": 44,
-    "jsKb": 2298.3,
+    "jsKb": 2303.3,
     "cssFiles": 2,
-    "cssKb": 207.4,
+    "cssKb": 207.6,
     "fontFiles": 2,
     "fontKb": 80,
-    "htmlFiles": 242,
-    "htmlKb": 10364.5
+    "htmlFiles": 243,
+    "htmlKb": 10387.7
   },
-  "sharedJsKb": 438.8,
+  "sharedJsKb": 439.4,
   "baseline": {
     "url": "/collections",
-    "jsKb": 438.8,
+    "jsKb": 439.4,
     "note": "The lightest route's file set, used as the shell every other route adds to. In this build that is a page which renders no demo."
   },
   "routes": [
     {
       "url": "/components/[slug]",
-      "ownJsKb": 580.2,
-      "totalJsKb": 1019,
-      "cssKb": 207.4,
+      "ownJsKb": 584.6,
+      "totalJsKb": 1024,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 8,
       "ownFiles": [
         "static/chunks/1rfdlrr6bjunf.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/28psb0lfg4jet.js"
       ]
     },
     {
       "url": "/admin/moderation",
-      "ownJsKb": 513.7,
-      "totalJsKb": 918.7,
-      "cssKb": 207.4,
+      "ownJsKb": 518.1,
+      "totalJsKb": 923.7,
+      "cssKb": 207.6,
       "htmlKb": 36.5,
       "prerendered": true,
       "jsFiles": 9,
@@ -48,15 +48,15 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/0rk7n7-016g2m.js"
       ]
     },
     {
       "url": "/admin/pipeline",
-      "ownJsKb": 485.2,
-      "totalJsKb": 890.2,
-      "cssKb": 207.4,
+      "ownJsKb": 489.6,
+      "totalJsKb": 895.2,
+      "cssKb": 207.6,
       "htmlKb": 32.9,
       "prerendered": true,
       "jsFiles": 9,
@@ -64,15 +64,15 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/2h30ig-r-dtxt.js"
       ]
     },
     {
       "url": "/admin/audit",
-      "ownJsKb": 480.1,
-      "totalJsKb": 885.1,
-      "cssKb": 207.4,
+      "ownJsKb": 484.5,
+      "totalJsKb": 890.1,
+      "cssKb": 207.6,
       "htmlKb": 28,
       "prerendered": true,
       "jsFiles": 9,
@@ -80,31 +80,31 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/3uckppt-xh5z8.js"
       ]
     },
     {
       "url": "/admin/content",
-      "ownJsKb": 480.1,
-      "totalJsKb": 885.1,
-      "cssKb": 207.4,
-      "htmlKb": 38.1,
+      "ownJsKb": 484.5,
+      "totalJsKb": 890.1,
+      "cssKb": 207.6,
+      "htmlKb": 38.2,
       "prerendered": true,
       "jsFiles": 9,
       "ownFiles": [
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/3uckppt-xh5z8.js"
       ]
     },
     {
       "url": "/admin/schedule",
-      "ownJsKb": 480.1,
-      "totalJsKb": 885.1,
-      "cssKb": 207.4,
+      "ownJsKb": 484.5,
+      "totalJsKb": 890.1,
+      "cssKb": 207.6,
       "htmlKb": 36,
       "prerendered": true,
       "jsFiles": 9,
@@ -112,15 +112,15 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/3uckppt-xh5z8.js"
       ]
     },
     {
       "url": "/admin/search",
-      "ownJsKb": 480.1,
-      "totalJsKb": 885.1,
-      "cssKb": 207.4,
+      "ownJsKb": 484.5,
+      "totalJsKb": 890.1,
+      "cssKb": 207.6,
       "htmlKb": 28.8,
       "prerendered": true,
       "jsFiles": 9,
@@ -128,15 +128,15 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/3uckppt-xh5z8.js"
       ]
     },
     {
       "url": "/admin/duplicates",
-      "ownJsKb": 479,
-      "totalJsKb": 884,
-      "cssKb": 207.4,
+      "ownJsKb": 483.4,
+      "totalJsKb": 889,
+      "cssKb": 207.6,
       "htmlKb": 32.8,
       "prerendered": true,
       "jsFiles": 9,
@@ -144,15 +144,15 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/3-jgfgrm1kei6.js"
       ]
     },
     {
       "url": "/admin/escalation",
-      "ownJsKb": 479,
-      "totalJsKb": 884,
-      "cssKb": 207.4,
+      "ownJsKb": 483.4,
+      "totalJsKb": 889,
+      "cssKb": 207.6,
       "htmlKb": 28.9,
       "prerendered": true,
       "jsFiles": 9,
@@ -160,15 +160,15 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/3-jgfgrm1kei6.js"
       ]
     },
     {
       "url": "/admin/exports",
-      "ownJsKb": 479,
-      "totalJsKb": 884,
-      "cssKb": 207.4,
+      "ownJsKb": 483.4,
+      "totalJsKb": 889,
+      "cssKb": 207.6,
       "htmlKb": 35.1,
       "prerendered": true,
       "jsFiles": 9,
@@ -176,15 +176,15 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/3-jgfgrm1kei6.js"
       ]
     },
     {
       "url": "/admin/stats",
-      "ownJsKb": 479,
-      "totalJsKb": 884,
-      "cssKb": 207.4,
+      "ownJsKb": 483.4,
+      "totalJsKb": 889,
+      "cssKb": 207.6,
       "htmlKb": 36.4,
       "prerendered": true,
       "jsFiles": 9,
@@ -192,15 +192,15 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/3-jgfgrm1kei6.js"
       ]
     },
     {
       "url": "/admin/theme",
-      "ownJsKb": 479,
-      "totalJsKb": 884,
-      "cssKb": 207.4,
+      "ownJsKb": 483.4,
+      "totalJsKb": 889,
+      "cssKb": 207.6,
       "htmlKb": 39.4,
       "prerendered": true,
       "jsFiles": 9,
@@ -208,31 +208,31 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/3-jgfgrm1kei6.js"
       ]
     },
     {
       "url": "/admin/assets",
-      "ownJsKb": 448.2,
-      "totalJsKb": 853.2,
-      "cssKb": 207.4,
-      "htmlKb": 128.6,
+      "ownJsKb": 452.6,
+      "totalJsKb": 858.2,
+      "cssKb": 207.6,
+      "htmlKb": 129.4,
       "prerendered": true,
       "jsFiles": 9,
       "ownFiles": [
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/1c5-monoy4w0_.js"
       ]
     },
     {
       "url": "/admin/settings",
-      "ownJsKb": 446.3,
-      "totalJsKb": 851.3,
-      "cssKb": 207.4,
+      "ownJsKb": 450.7,
+      "totalJsKb": 856.3,
+      "cssKb": 207.6,
       "htmlKb": 30.8,
       "prerendered": true,
       "jsFiles": 9,
@@ -240,15 +240,15 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/2qth6_wcu6i8y.js"
       ]
     },
     {
       "url": "/admin/prompts",
-      "ownJsKb": 445,
-      "totalJsKb": 850,
-      "cssKb": 207.4,
+      "ownJsKb": 449.4,
+      "totalJsKb": 855,
+      "cssKb": 207.6,
       "htmlKb": 181.6,
       "prerendered": true,
       "jsFiles": 9,
@@ -256,15 +256,15 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/1_fdonwlkbrv6.js"
       ]
     },
     {
       "url": "/admin",
-      "ownJsKb": 440.9,
-      "totalJsKb": 845.9,
-      "cssKb": 207.4,
+      "ownJsKb": 445.3,
+      "totalJsKb": 850.9,
+      "cssKb": 207.6,
       "htmlKb": 50.5,
       "prerendered": true,
       "jsFiles": 8,
@@ -272,14 +272,14 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/admin/billing",
-      "ownJsKb": 440.9,
-      "totalJsKb": 845.9,
-      "cssKb": 207.4,
+      "ownJsKb": 445.3,
+      "totalJsKb": 850.9,
+      "cssKb": 207.6,
       "htmlKb": 45.3,
       "prerendered": true,
       "jsFiles": 8,
@@ -287,14 +287,14 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/admin/changelog",
-      "ownJsKb": 440.9,
-      "totalJsKb": 845.9,
-      "cssKb": 207.4,
+      "ownJsKb": 445.3,
+      "totalJsKb": 850.9,
+      "cssKb": 207.6,
       "htmlKb": 31,
       "prerendered": true,
       "jsFiles": 8,
@@ -302,44 +302,44 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/admin/health",
-      "ownJsKb": 440.9,
-      "totalJsKb": 845.9,
-      "cssKb": 207.4,
-      "htmlKb": 513.5,
+      "ownJsKb": 445.3,
+      "totalJsKb": 850.9,
+      "cssKb": 207.6,
+      "htmlKb": 517.3,
       "prerendered": true,
       "jsFiles": 8,
       "ownFiles": [
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/admin/inspector",
-      "ownJsKb": 440.9,
-      "totalJsKb": 845.9,
-      "cssKb": 207.4,
-      "htmlKb": 48.4,
+      "ownJsKb": 445.3,
+      "totalJsKb": 850.9,
+      "cssKb": 207.6,
+      "htmlKb": 48.5,
       "prerendered": true,
       "jsFiles": 8,
       "ownFiles": [
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/admin/mobile",
-      "ownJsKb": 440.9,
-      "totalJsKb": 845.9,
-      "cssKb": 207.4,
+      "ownJsKb": 445.3,
+      "totalJsKb": 850.9,
+      "cssKb": 207.6,
       "htmlKb": 53.6,
       "prerendered": true,
       "jsFiles": 8,
@@ -347,14 +347,14 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/admin/notifications",
-      "ownJsKb": 440.9,
-      "totalJsKb": 845.9,
-      "cssKb": 207.4,
+      "ownJsKb": 445.3,
+      "totalJsKb": 850.9,
+      "cssKb": 207.6,
       "htmlKb": 35,
       "prerendered": true,
       "jsFiles": 8,
@@ -362,14 +362,14 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/admin/rerun",
-      "ownJsKb": 440.9,
-      "totalJsKb": 845.9,
-      "cssKb": 207.4,
+      "ownJsKb": 445.3,
+      "totalJsKb": 850.9,
+      "cssKb": 207.6,
       "htmlKb": 37.3,
       "prerendered": true,
       "jsFiles": 8,
@@ -377,172 +377,172 @@
         "static/chunks/00ndd-5uetpmg.js",
         "static/chunks/1x6fr6txe--kk.js",
         "static/chunks/1aqmvl59-vahh.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/lab",
-      "ownJsKb": 429.2,
-      "totalJsKb": 868,
-      "cssKb": 207.4,
+      "ownJsKb": 433.6,
+      "totalJsKb": 873,
+      "cssKb": 207.6,
       "htmlKb": 118.7,
       "prerendered": true,
       "jsFiles": 8,
       "ownFiles": [
         "static/chunks/17cqq5jp0fv8b.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/3rb7jz0mpfk7p.js"
       ]
     },
     {
       "url": "/prompts/[slug]",
-      "ownJsKb": 402.7,
-      "totalJsKb": 841.5,
-      "cssKb": 207.4,
+      "ownJsKb": 407.1,
+      "totalJsKb": 846.5,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 8,
       "ownFiles": [
         "static/chunks/1v548s5x4x1g4.js",
-        "static/chunks/0jj_wuwhaojpj.js",
+        "static/chunks/2ia0nibaec35k.js",
         "static/chunks/1rfdlrr6bjunf.js"
       ]
     },
     {
       "url": "/search",
-      "ownJsKb": 394.8,
-      "totalJsKb": 833.6,
-      "cssKb": 207.4,
+      "ownJsKb": 399.2,
+      "totalJsKb": 838.6,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 7,
       "ownFiles": [
         "static/chunks/0i0dh-792c9t-.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/components",
-      "ownJsKb": 389.4,
-      "totalJsKb": 828.2,
-      "cssKb": 207.4,
+      "ownJsKb": 393.8,
+      "totalJsKb": 833.2,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 7,
       "ownFiles": [
         "static/chunks/35clhygyh05yb.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/",
-      "ownJsKb": 378.2,
-      "totalJsKb": 817,
-      "cssKb": 207.4,
+      "ownJsKb": 382.6,
+      "totalJsKb": 822,
+      "cssKb": 207.6,
       "htmlKb": 228,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
         "static/chunks/3do2pj6hkga8f.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/prompts",
-      "ownJsKb": 376.9,
-      "totalJsKb": 815.7,
-      "cssKb": 207.4,
+      "ownJsKb": 381.3,
+      "totalJsKb": 820.7,
+      "cssKb": 207.6,
       "htmlKb": 500.7,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
         "static/chunks/1ljp_m46gysdt.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/backgrounds",
-      "ownJsKb": 375.4,
-      "totalJsKb": 814.2,
-      "cssKb": 207.4,
+      "ownJsKb": 379.8,
+      "totalJsKb": 819.2,
+      "cssKb": 207.6,
       "htmlKb": 73.9,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
         "static/chunks/2ux_dxuf52ctg.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/shuffle",
-      "ownJsKb": 375.3,
-      "totalJsKb": 814.1,
-      "cssKb": 207.4,
-      "htmlKb": 145.7,
+      "ownJsKb": 379.7,
+      "totalJsKb": 819.1,
+      "cssKb": 207.6,
+      "htmlKb": 146.4,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
         "static/chunks/1j8y3_qetxgor.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/pricing",
-      "ownJsKb": 374.3,
-      "totalJsKb": 813.1,
-      "cssKb": 207.4,
-      "htmlKb": 175.8,
+      "ownJsKb": 378.7,
+      "totalJsKb": 818.1,
+      "cssKb": 207.6,
+      "htmlKb": 176.1,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
         "static/chunks/3sbr-stfjj7i7.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/embed/[slug]",
-      "ownJsKb": 366.2,
-      "totalJsKb": 771.2,
-      "cssKb": 207.4,
+      "ownJsKb": 370.6,
+      "totalJsKb": 776.2,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 6,
       "ownFiles": [
         "static/chunks/2c2xoqy0vxi62.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/lab/layers",
-      "ownJsKb": 366,
-      "totalJsKb": 804.8,
-      "cssKb": 207.4,
-      "htmlKb": 62.3,
+      "ownJsKb": 370.4,
+      "totalJsKb": 809.8,
+      "cssKb": 207.6,
+      "htmlKb": 62.4,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
         "static/chunks/2s4vll9f6ca4h.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/templates",
-      "ownJsKb": 361.1,
-      "totalJsKb": 799.9,
-      "cssKb": 207.4,
+      "ownJsKb": 365.5,
+      "totalJsKb": 804.9,
+      "cssKb": 207.6,
       "htmlKb": 81.3,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
         "static/chunks/2gvef3p259byq.js",
-        "static/chunks/0jj_wuwhaojpj.js"
+        "static/chunks/2ia0nibaec35k.js"
       ]
     },
     {
       "url": "/studio",
       "ownJsKb": 71.4,
-      "totalJsKb": 510.2,
-      "cssKb": 207.4,
+      "totalJsKb": 510.8,
+      "cssKb": 207.6,
       "htmlKb": 108.3,
       "prerendered": true,
       "jsFiles": 6,
@@ -553,8 +553,8 @@
     {
       "url": "/pro/api",
       "ownJsKb": 39.9,
-      "totalJsKb": 478.7,
-      "cssKb": 207.4,
+      "totalJsKb": 479.3,
+      "cssKb": 207.6,
       "htmlKb": 50.3,
       "prerendered": true,
       "jsFiles": 6,
@@ -565,8 +565,8 @@
     {
       "url": "/pro/bundles",
       "ownJsKb": 39.9,
-      "totalJsKb": 478.7,
-      "cssKb": 207.4,
+      "totalJsKb": 479.3,
+      "cssKb": 207.6,
       "htmlKb": 51.6,
       "prerendered": true,
       "jsFiles": 6,
@@ -577,8 +577,8 @@
     {
       "url": "/pro/cancel",
       "ownJsKb": 39.9,
-      "totalJsKb": 478.7,
-      "cssKb": 207.4,
+      "totalJsKb": 479.3,
+      "cssKb": 207.6,
       "htmlKb": 52.5,
       "prerendered": true,
       "jsFiles": 6,
@@ -589,8 +589,8 @@
     {
       "url": "/pro/discounts",
       "ownJsKb": 39.9,
-      "totalJsKb": 478.7,
-      "cssKb": 207.4,
+      "totalJsKb": 479.3,
+      "cssKb": 207.6,
       "htmlKb": 47.1,
       "prerendered": true,
       "jsFiles": 6,
@@ -601,8 +601,8 @@
     {
       "url": "/pro/referral",
       "ownJsKb": 39.9,
-      "totalJsKb": 478.7,
-      "cssKb": 207.4,
+      "totalJsKb": 479.3,
+      "cssKb": 207.6,
       "htmlKb": 46.7,
       "prerendered": true,
       "jsFiles": 6,
@@ -613,8 +613,8 @@
     {
       "url": "/pro/teams",
       "ownJsKb": 39.9,
-      "totalJsKb": 478.7,
-      "cssKb": 207.4,
+      "totalJsKb": 479.3,
+      "cssKb": 207.6,
       "htmlKb": 46.2,
       "prerendered": true,
       "jsFiles": 6,
@@ -625,8 +625,8 @@
     {
       "url": "/pro/trial",
       "ownJsKb": 39.9,
-      "totalJsKb": 478.7,
-      "cssKb": 207.4,
+      "totalJsKb": 479.3,
+      "cssKb": 207.6,
       "htmlKb": 48.3,
       "prerendered": true,
       "jsFiles": 6,
@@ -637,8 +637,8 @@
     {
       "url": "/saved",
       "ownJsKb": 31.1,
-      "totalJsKb": 469.9,
-      "cssKb": 207.4,
+      "totalJsKb": 470.5,
+      "cssKb": 207.6,
       "htmlKb": 39.6,
       "prerendered": true,
       "jsFiles": 6,
@@ -649,8 +649,8 @@
     {
       "url": "/community/loved",
       "ownJsKb": 20.6,
-      "totalJsKb": 459.4,
-      "cssKb": 207.4,
+      "totalJsKb": 460,
+      "cssKb": 207.6,
       "htmlKb": 55.6,
       "prerendered": true,
       "jsFiles": 6,
@@ -661,8 +661,8 @@
     {
       "url": "/community/re-run",
       "ownJsKb": 20.6,
-      "totalJsKb": 459.4,
-      "cssKb": 207.4,
+      "totalJsKb": 460,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 6,
@@ -673,8 +673,8 @@
     {
       "url": "/community/submit",
       "ownJsKb": 20.6,
-      "totalJsKb": 459.4,
-      "cssKb": 207.4,
+      "totalJsKb": 460,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 6,
@@ -685,8 +685,8 @@
     {
       "url": "/community/outcomes",
       "ownJsKb": 10.7,
-      "totalJsKb": 449.5,
-      "cssKb": 207.4,
+      "totalJsKb": 450.1,
+      "cssKb": 207.6,
       "htmlKb": 72.9,
       "prerendered": true,
       "jsFiles": 6,
@@ -697,8 +697,8 @@
     {
       "url": "/community/remixes",
       "ownJsKb": 10.7,
-      "totalJsKb": 449.5,
-      "cssKb": 207.4,
+      "totalJsKb": 450.1,
+      "cssKb": 207.6,
       "htmlKb": 53.2,
       "prerendered": true,
       "jsFiles": 6,
@@ -709,8 +709,8 @@
     {
       "url": "/community/requests",
       "ownJsKb": 10.7,
-      "totalJsKb": 449.5,
-      "cssKb": 207.4,
+      "totalJsKb": 450.1,
+      "cssKb": 207.6,
       "htmlKb": 51,
       "prerendered": true,
       "jsFiles": 6,
@@ -721,8 +721,8 @@
     {
       "url": "/learn/[slug]",
       "ownJsKb": 5.4,
-      "totalJsKb": 444.2,
-      "cssKb": 207.4,
+      "totalJsKb": 444.8,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 6,
@@ -733,8 +733,8 @@
     {
       "url": "/integrations/bookmarklet",
       "ownJsKb": 1.7,
-      "totalJsKb": 440.5,
-      "cssKb": 207.4,
+      "totalJsKb": 441.1,
+      "cssKb": 207.6,
       "htmlKb": 51.9,
       "prerendered": true,
       "jsFiles": 6,
@@ -745,8 +745,8 @@
     {
       "url": "/collections",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 45.8,
       "prerendered": true,
       "jsFiles": 5,
@@ -755,8 +755,8 @@
     {
       "url": "/collections/[slug]",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 5,
@@ -765,8 +765,8 @@
     {
       "url": "/community",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 73.2,
       "prerendered": true,
       "jsFiles": 5,
@@ -775,8 +775,8 @@
     {
       "url": "/community/attribution",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 46.7,
       "prerendered": true,
       "jsFiles": 5,
@@ -785,8 +785,8 @@
     {
       "url": "/community/badges",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 48.2,
       "prerendered": true,
       "jsFiles": 5,
@@ -795,8 +795,8 @@
     {
       "url": "/community/challenges",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 55.1,
       "prerendered": true,
       "jsFiles": 5,
@@ -805,8 +805,8 @@
     {
       "url": "/community/craft-talk",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 44.7,
       "prerendered": true,
       "jsFiles": 5,
@@ -815,8 +815,8 @@
     {
       "url": "/community/events",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 46.2,
       "prerendered": true,
       "jsFiles": 5,
@@ -825,8 +825,8 @@
     {
       "url": "/community/leaderboard",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 73.7,
       "prerendered": true,
       "jsFiles": 5,
@@ -835,8 +835,8 @@
     {
       "url": "/community/onboarding",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 51.1,
       "prerendered": true,
       "jsFiles": 5,
@@ -845,8 +845,8 @@
     {
       "url": "/community/picks",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 55.4,
       "prerendered": true,
       "jsFiles": 5,
@@ -855,8 +855,8 @@
     {
       "url": "/community/provenance",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 61.8,
       "prerendered": true,
       "jsFiles": 5,
@@ -865,8 +865,8 @@
     {
       "url": "/community/recognition",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 53,
       "prerendered": true,
       "jsFiles": 5,
@@ -875,8 +875,8 @@
     {
       "url": "/community/spotlight",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 52.3,
       "prerendered": true,
       "jsFiles": 5,
@@ -885,8 +885,8 @@
     {
       "url": "/community/teams",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 52,
       "prerendered": true,
       "jsFiles": 5,
@@ -895,8 +895,8 @@
     {
       "url": "/community/translations",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 107.3,
       "prerendered": true,
       "jsFiles": 5,
@@ -905,8 +905,8 @@
     {
       "url": "/digest",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 78.3,
       "prerendered": true,
       "jsFiles": 5,
@@ -915,8 +915,8 @@
     {
       "url": "/es",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 42.6,
       "prerendered": true,
       "jsFiles": 5,
@@ -925,8 +925,8 @@
     {
       "url": "/integrations",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 70.3,
       "prerendered": true,
       "jsFiles": 5,
@@ -935,8 +935,8 @@
     {
       "url": "/integrations/badge",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 52.9,
       "prerendered": true,
       "jsFiles": 5,
@@ -945,8 +945,8 @@
     {
       "url": "/integrations/catalog",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 45.1,
       "prerendered": true,
       "jsFiles": 5,
@@ -955,8 +955,8 @@
     {
       "url": "/integrations/cli",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 51.7,
       "prerendered": true,
       "jsFiles": 5,
@@ -965,8 +965,8 @@
     {
       "url": "/integrations/codesandbox",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 46.1,
       "prerendered": true,
       "jsFiles": 5,
@@ -975,8 +975,8 @@
     {
       "url": "/integrations/embed",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 45.2,
       "prerendered": true,
       "jsFiles": 5,
@@ -985,8 +985,8 @@
     {
       "url": "/integrations/feed",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 43.3,
       "prerendered": true,
       "jsFiles": 5,
@@ -995,8 +995,8 @@
     {
       "url": "/integrations/figma",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 58.5,
       "prerendered": true,
       "jsFiles": 5,
@@ -1005,8 +1005,8 @@
     {
       "url": "/integrations/og",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 48.1,
       "prerendered": true,
       "jsFiles": 5,
@@ -1015,8 +1015,8 @@
     {
       "url": "/integrations/print",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 43.9,
       "prerendered": true,
       "jsFiles": 5,
@@ -1025,8 +1025,8 @@
     {
       "url": "/integrations/react",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 43.8,
       "prerendered": true,
       "jsFiles": 5,
@@ -1035,8 +1035,8 @@
     {
       "url": "/integrations/single-file",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 46.9,
       "prerendered": true,
       "jsFiles": 5,
@@ -1045,8 +1045,8 @@
     {
       "url": "/integrations/storybook",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 42.4,
       "prerendered": true,
       "jsFiles": 5,
@@ -1055,8 +1055,8 @@
     {
       "url": "/integrations/tailwind",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 43.1,
       "prerendered": true,
       "jsFiles": 5,
@@ -1065,8 +1065,8 @@
     {
       "url": "/integrations/tokens",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 56.5,
       "prerendered": true,
       "jsFiles": 5,
@@ -1075,8 +1075,8 @@
     {
       "url": "/integrations/vscode",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 49.2,
       "prerendered": true,
       "jsFiles": 5,
@@ -1085,8 +1085,8 @@
     {
       "url": "/learn",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 241.3,
       "prerendered": true,
       "jsFiles": 5,
@@ -1095,8 +1095,8 @@
     {
       "url": "/makers",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 57.3,
       "prerendered": true,
       "jsFiles": 5,
@@ -1105,8 +1105,8 @@
     {
       "url": "/makers/[handle]",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 5,
@@ -1115,8 +1115,8 @@
     {
       "url": "/mission",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 46.1,
       "prerendered": true,
       "jsFiles": 5,
@@ -1125,8 +1125,8 @@
     {
       "url": "/perf",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 122.5,
       "prerendered": true,
       "jsFiles": 5,
@@ -1135,8 +1135,8 @@
     {
       "url": "/perf/blur",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 57,
       "prerendered": true,
       "jsFiles": 5,
@@ -1145,8 +1145,8 @@
     {
       "url": "/perf/build",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 53.6,
       "prerendered": true,
       "jsFiles": 5,
@@ -1155,8 +1155,8 @@
     {
       "url": "/perf/caching",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 53.9,
       "prerendered": true,
       "jsFiles": 5,
@@ -1165,8 +1165,8 @@
     {
       "url": "/perf/chunks",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 50.1,
       "prerendered": true,
       "jsFiles": 5,
@@ -1175,8 +1175,8 @@
     {
       "url": "/perf/devices",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 49.8,
       "prerendered": true,
       "jsFiles": 5,
@@ -1185,8 +1185,8 @@
     {
       "url": "/perf/fonts",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 50.4,
       "prerendered": true,
       "jsFiles": 5,
@@ -1195,8 +1195,8 @@
     {
       "url": "/perf/mounting",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 47.7,
       "prerendered": true,
       "jsFiles": 5,
@@ -1205,8 +1205,8 @@
     {
       "url": "/perf/no-images",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 47.7,
       "prerendered": true,
       "jsFiles": 5,
@@ -1215,8 +1215,8 @@
     {
       "url": "/perf/no-js",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 56.8,
       "prerendered": true,
       "jsFiles": 5,
@@ -1225,8 +1225,8 @@
     {
       "url": "/perf/prefetch",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 51.4,
       "prerendered": true,
       "jsFiles": 5,
@@ -1235,8 +1235,8 @@
     {
       "url": "/perf/service-worker",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 49.8,
       "prerendered": true,
       "jsFiles": 5,
@@ -1245,8 +1245,8 @@
     {
       "url": "/perf/timers",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 61.6,
       "prerendered": true,
       "jsFiles": 5,
@@ -1255,8 +1255,8 @@
     {
       "url": "/pro",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 122.2,
       "prerendered": true,
       "jsFiles": 5,
@@ -1265,8 +1265,8 @@
     {
       "url": "/pro/changelog",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 57.8,
       "prerendered": true,
       "jsFiles": 5,
@@ -1275,8 +1275,8 @@
     {
       "url": "/pro/enterprise",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 55.2,
       "prerendered": true,
       "jsFiles": 5,
@@ -1285,8 +1285,8 @@
     {
       "url": "/pro/licence",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 53.4,
       "prerendered": true,
       "jsFiles": 5,
@@ -1295,8 +1295,8 @@
     {
       "url": "/pro/promise",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 51.4,
       "prerendered": true,
       "jsFiles": 5,
@@ -1305,8 +1305,8 @@
     {
       "url": "/pro/unlimited",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 48.8,
       "prerendered": true,
       "jsFiles": 5,
@@ -1315,9 +1315,9 @@
     {
       "url": "/quality",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
-      "htmlKb": 513.3,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
+      "htmlKb": 515.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1325,8 +1325,8 @@
     {
       "url": "/samples",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 44.6,
       "prerendered": true,
       "jsFiles": 5,
@@ -1335,8 +1335,8 @@
     {
       "url": "/samples/[slug]",
       "ownJsKb": 0,
-      "totalJsKb": 438.8,
-      "cssKb": 207.4,
+      "totalJsKb": 439.4,
+      "cssKb": 207.6,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 5,
@@ -1351,7 +1351,7 @@
         "subset": "latin",
         "kb": 47.1,
         "preloaded": true,
-        "pagesPreloading": 240
+        "pagesPreloading": 241
       },
       {
         "file": "sora_latin_wght_normal-s.p.2o7d_x-bmx02y.woff2",
@@ -1359,21 +1359,21 @@
         "subset": "latin",
         "kb": 32.9,
         "preloaded": true,
-        "pagesPreloading": 240
+        "pagesPreloading": 241
       }
     ],
     "totalKb": 80,
-    "pagesWithPreload": 240,
-    "pages": 242
+    "pagesWithPreload": 241,
+    "pages": 243
   },
   "heaviestHtml": [
     {
       "file": ".next/server/app/admin/health.html",
-      "kb": 513.5
+      "kb": 517.3
     },
     {
       "file": ".next/server/app/quality.html",
-      "kb": 513.3
+      "kb": 515.5
     },
     {
       "file": ".next/server/app/prompts.html",
@@ -1393,11 +1393,11 @@
     },
     {
       "file": ".next/server/app/pricing.html",
-      "kb": 175.8
+      "kb": 176.1
     },
     {
       "file": ".next/server/app/shuffle.html",
-      "kb": 145.7
+      "kb": 146.4
     }
   ],
   "jsOff": {

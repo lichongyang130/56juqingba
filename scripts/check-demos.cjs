@@ -45,6 +45,7 @@ const NEW_SCENES = [
   { slug: "bezier-drawer", marker: "Cubic-bezier drawer", behaviors: ["drag", "keyboard"] },
   { slug: "counter-band", marker: "Counters, in a row", behaviors: ["click", "scroll"] },
   { slug: "linked-cards", marker: "Hover-linked cards", behaviors: ["hover", "keyboard"] },
+  { slug: "slug-field", marker: "Slug field", behaviors: ["type", "click", "keyboard"] },
 ];
 
 (async () => {
@@ -69,6 +70,19 @@ const NEW_SCENES = [
   ok("every demo in the switch is claimed by an entry", orphans.length === 0, orphans.join(", "));
 
   const ledger = fs.readFileSync("docs/enrichment-500.md", "utf8");
+
+  // A section header that says "complete" while one of its bullets is still
+  // unticked is the quietest kind of false claim in this file, and it happened
+  // once: §1 read 70/70 while the slug field had never been built. This checks
+  // every hand-ticked section against its own header.
+  const sections = ledger.split(/\n## (\d+)\. /).slice(1);
+  for (let i = 0; i < sections.length; i += 2) {
+    const [num, body] = [sections[i], sections[i + 1].split("\n## ")[0]];
+    const bullets = (body.match(/^- \*\*/gm) || []).length;
+    const ticked = (body.match(/^- \*\*.*✅/gm) || []).length;
+    if (!bullets || !ticked) continue; // sections that record shipped rows instead
+    ok(`§${num} claims complete and has every bullet ticked`, bullets === ticked, `${ticked}/${bullets} ticked`);
+  }
   const headline = Number((ledger.match(/## Progress — (\d+) \/ 500 shipped/) || [])[1]);
   const rows = (ledger.match(/^\| \d+ \|/gm) || []).length;
   ok("the ledger table matches its headline", rows === headline && rows > 0, `table ${rows}, headline ${headline}`);

@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 445 / 500 shipped (batches 1–65, in order) · Sections 1–16 complete ✅ · Section 17 in progress (15/25)
+## Progress — 446 / 500 shipped (batches 1–66, in order) · Sections 1–16 complete ✅ · Section 17 in progress (16/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -457,6 +457,7 @@ names, behaviours and where they plug into the existing pages.
 | 443 | Interactive bezier drawer | [/components/bezier-drawer](/components/bezier-drawer) · two draggable handles (arrow keys too), the CSS value printed live, a probe cursor reading y at any t, and a preview dot animated by the exported curve itself |
 | 444 | Animated counters band | [/components/counter-band](/components/counter-band) · four figures counting to the catalog's real totals — components, prompts, guides, copies — with the single-value odometer asset linked from the card |
 | 445 | Hover-linked cards | [/components/linked-cards](/components/linked-cards) · focus dims siblings exactly as hover does, nothing is disabled, contrast stays readable, and reduced motion drops the saturation shift |
+| 446 | Slug input transform | [/components/slug-field](/components/slug-field) · title → kebab-case with a small fold table, dash collapsing, a 60-character trim, reserved-word and empty-value warnings, and a manual lock |
 
 ---
 
@@ -477,7 +478,7 @@ names, behaviours and where they plug into the existing pages.
 - **Toggle with label stack** ✅ (`toggle-label-stack`): themeable iOS-style switch that ships with a labels-and-description row.
 - **Password strength meter** ✅ (`password-strength`): input that grades a passphrase with animated segments.
 - **Button with embedded menu** ✅ (`split-button-menu`): a primary button whose right half opens a dropdown of secondary actions.
-- **Slug input transform**: writes a URL slug live from a title field (title → kebab-case) — perfect for prompt pages.
+- **Slug input transform** ✅ (`slug-field`): writes a URL slug live from a title field (title → kebab-case), folds the Latin marks it knows and reports what it cannot fold.
 
 ### Navigation & layout atoms
 - **Command palette** ✅ (`command-palette`): ⌘K overlay that searches library, prompts, guides and admin routes in one fuzzy list.
@@ -1046,7 +1047,7 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 17. More interactive scenes & motion — 25 demos — 15/25 shipped, in progress
+## 17. More interactive scenes & motion — 25 demos — 16/25 shipped, in progress
 
 - **Drag-to-reorder list**: rows that glide when you drag, with a11y keyboard reorder.
 - **Swipeable cards (deck)**: tinder-style stack with undo and reduced-motion note.
