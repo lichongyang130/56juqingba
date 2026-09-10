@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { DemoView, KeyframesStyle } from "@/components/demos/Demo";
+import { KeyframesStyle } from "@/components/keyframes";
+import { LazyDemo } from "@/components/lazy-demo";
+import { IntentLink } from "@/components/intent-link";
 import {
   accentCss,
   accentHue,
@@ -91,14 +93,17 @@ export function CopyCount({ n, className = "" }: { n: number; className?: string
 
 export function AssetCard({ asset }: { asset: Asset }) {
   return (
-    <Link
+    // 107 of these render in the library grid, and each points at a route that is
+    // rendered on demand, so the card opts out of viewport prefetch and fetches
+    // on intent instead (#409).
+    <IntentLink
       href={`/components/${asset.slug}`}
       className="card-hover group block overflow-hidden rounded-2xl border border-white/8 bg-panel"
     >
       <div className="relative">
         <HueStage seed={asset.slug}>
           <div className="absolute inset-0 flex items-center justify-center p-0">
-            <DemoView demo={asset.demo} props={{}} />
+            <LazyDemo demo={asset.demo} minHeight={160} />
           </div>
         </HueStage>
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
@@ -129,7 +134,7 @@ export function AssetCard({ asset }: { asset: Asset }) {
           ))}
         </div>
       </div>
-    </Link>
+    </IntentLink>
   );
 }
 
@@ -203,7 +208,7 @@ export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate;
     >
       {/* ambient scene, cropped-in so self-labels stay out of frame */}
       <div className="absolute -inset-[38%]" aria-hidden>
-        <DemoView demo={scene} props={sceneProps} />
+        <LazyDemo demo={scene} props={sceneProps} minHeight={0} label="Poster scene" />
       </div>
       {/* legibility scrims */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(120deg, rgba(5,6,10,0.72) 0%, rgba(5,6,10,0.32) 55%, rgba(5,6,10,0.6) 100%)` }} aria-hidden />
@@ -338,7 +343,7 @@ export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate;
 
 export function PromptCard({ prompt }: { prompt: PromptTemplate }) {
   return (
-    <Link
+    <IntentLink
       href={`/prompts/${prompt.slug}`}
       className="card-hover group flex h-full flex-col overflow-hidden rounded-2xl border border-white/8 bg-panel"
     >
@@ -367,7 +372,7 @@ export function PromptCard({ prompt }: { prompt: PromptTemplate }) {
           </span>
         </div>
       </div>
-    </Link>
+    </IntentLink>
   );
 }
 
@@ -377,7 +382,7 @@ export function BackgroundCard({ bg }: { bg: BackgroundAsset }) {
   return (
     <div className="card-hover group overflow-hidden rounded-2xl border border-white/8 bg-panel">
       <Stage>
-        <DemoView demo={bg.demo} props={{}} />
+        <LazyDemo demo={bg.demo} minHeight={168} label="Background demo" />
       </Stage>
       <div className="flex items-center justify-between p-3.5">
         <div>

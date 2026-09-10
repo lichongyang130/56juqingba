@@ -19,7 +19,7 @@ import {
   SavedThemesPanel,
   ThemePreviewPanel,
 } from "@/components/studio-panels";
-import { ProLabGate } from "@/components/pro-ui-2";
+import { ProLabGate } from "@/components/pro-lab-gate";
 import {
   ApiPreviewPanel,
   IconPanel,

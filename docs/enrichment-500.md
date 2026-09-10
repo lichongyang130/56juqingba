@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 399 / 500 shipped (batches 1–55, in order) · Sections 1–14 complete ✅ · Section 15 next
+## Progress — 414 / 500 shipped (batches 1–56, in order) · Sections 1–15 complete ✅ · Section 16 next
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -411,6 +411,21 @@ names, behaviours and where they plug into the existing pages.
 | 397 | Enterprise contact card | [/pro/enterprise](/pro/enterprise) · 7 procurement asks with 3 answered "not available" in plain words |
 | 398 | Receipts & plans page | [/admin/billing](/admin/billing) · six demo invoices derived from the price table, and what a real one needs |
 | 399 | Pro changelog | [/pro/changelog](/pro/changelog) · every Pro claim generated from the ledger, free alternative in the next column |
+| 400 | Per-page budget report | [/perf](/perf) · every route's own JS, CSS and HTML read from the committed build report, with an import-derived "why this size" column |
+| 401 | Font-loading audit | [/perf/fonts](/perf/fonts) · 9 files / 261.4 KB → 2 latin subsets / 80 KB, both preloaded, on 99 of 101 pages |
+| 402 | Zero-JS showcase | [/perf/no-js](/perf/no-js) · 106 of 107 assets need no JavaScript, and the page reads its own built HTML to show what a scriptless client receives |
+| 403 | Lazy scene mounting | [/perf/mounting](/perf/mounting) · IntersectionObserver at a 320px margin; /prompts HTML 963.6 → 496.1 KB |
+| 404 | Image-free policy | [/perf/no-images](/perf/no-images) · 0 image tags in the source, and what the policy costs (no OG image, no screenshots) |
+| 405 | Edge-cache headers | [/perf/caching](/perf/caching) · 3 Cache-Control rules served by next.config.ts, immutable only for hashed assets |
+| 406 | Bundle-splitting tour | [/perf/chunks](/perf/chunks) · the layout → cards → demo import that put 485 KB on every route, and the 41-line module that removed it |
+| 407 | Backdrop-blur budget | [/perf/blur](/perf/blur) · 71 blurs classified by surface: 8 full-screen, 52 panel, 11 component |
+| 408 | Animation layer inspector | [/lab/layers](/lab/layers) · mount any of 107 demos, read what it animates, classify compositor/paint/layout, sample frames on your own device |
+| 409 | Prefetch strategy | [/perf/prefetch](/perf/prefetch) · 181 catalog cards opt out of viewport prefetch and fetch after 140 ms of intent; one payload measures 15.8 KB |
+| 410 | Memory hygiene guide | [/perf/timers](/perf/timers) · 79 registrations against 47 cleanups counted per file, with the limits of a static count stated |
+| 411 | Low-end device test notes | [/perf/devices](/perf/devices) · a 3-class matrix published with no results, because none have been run |
+| 412 | Perf badge on changelog | [/#changelog](/#changelog) · every entry from 2026-09-10 carries its measured delta; earlier entries read "size not recorded" |
+| 413 | Build-time page | [/perf/build](/perf/build) · 94 routes, 84 prerendered, 42 chunks, 103 HTML files — read from .next, never typed |
+| 414 | Service worker plan | [/perf/service-worker](/perf/service-worker) · what would be cached, how it would be versioned, why it ships after the API |
 
 ---
 
@@ -947,7 +962,7 @@ One structural note: the Pro changelog, the feature ledger and the pricing audit
 
 ---
 
-## 15. Performance & delivery — 15 upgrades
+## 15. Performance & delivery — 15 upgrades — 15/15 shipped ✅
 
 - **Per-page budget report**: publish each route's JS/CSS weight with a "why this size" note.
 - **Font-loading audit**: confirm variable fonts subset and preload the display face.
@@ -964,6 +979,14 @@ One structural note: the Pro changelog, the feature ledger and the pricing audit
 - **Perf regression badge on changelog**: each entry says whether size went up/down.
 - **Build-time page**: what the production build compiles in — a transparency stat.
 - **Service worker plan**: offline support for the catalog once the API lands.
+
+The section has one rule: a number is either measured, or it is printed as a gap. Nothing is estimated. That rule forced the shape of the whole thing. The first version of the budget page measured the build *while it was running* and reported "31 of 94 routes have a prerendered body" against 106 real pages, because `next build` writes each page's HTML as it prerenders it — a page rendered early sees a partial `.next`. The measurement moved into `scripts/measure-build.mjs`, which runs after the build, writes `docs/build-report.json`, and refuses to write a report whose HTML count is more than a tenth below what is on disk, so a failed build cannot replace measured numbers with zeroes. Every page in the section reads that file; the same run also prints the numbers on the build report page.
+
+The audit found real defects, not just numbers. The budget report showed pages that render no demo loading 743.1 KB of JavaScript; the cause was three hops of imports — the public layout needed one keyframes component, that component lived in `cards.tsx`, and `cards.tsx` imports the 7,392-line demo module. Splitting the keyframes into their own 41-line file took those routes to 427.6 KB. The font audit found nine subset files (261.4 KB) shipped for English copy with no preload link on any page; the site now ships two latin subsets (80 KB) preloaded on 99 of 101 pages. The prefetch page came from the same reading: 181 cards in the component and prompt grids each point at a route rendered on demand, so the cards now fetch after 140 ms of pointer or keyboard intent instead of on scroll, and the page states the cost of one payload (15.8 KB, measured with the header Next itself sends) rather than a saving nobody traced.
+
+Three pages exist mainly to keep the section honest. The no-JavaScript page reads its own built HTML: 74 of 74 prompt posters are still `pending` in the file, but all 107 component titles and 115 links are in it, so the catalog's information survives a scriptless client while its decoration does not. The device matrix publishes the three classes it would test against and no results, because no such devices have been used — the alternative was a table of green ticks invented in an editor. And the service worker page explains why the one asset a browser cannot un-register is scheduled after the API rather than before it. The only place a measurement is allowed to be local is the layer inspector: it reads computed styles and samples frames in the reader's own browser, says so, and names the one thing it cannot see (the compositor's real layer count, which needs a trace).
+
+The cache work is the section's other carry-forward. `src/lib/cache-rules.ts` holds the three rules that `next.config.ts` serves and the page prints, and the rules were wrong in the first draft in the way these things are usually wrong: the catch-all was listed last, and a later matching rule overrides an earlier one for the same header, so fingerprinted assets were being served the HTML policy. The harness now reads the headers off the running server, which is why the ordering bug could not survive a batch.
 
 ---
 

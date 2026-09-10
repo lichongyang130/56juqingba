@@ -1,5 +1,7 @@
-@import "@fontsource-variable/inter";
-@import "@fontsource-variable/sora";
+/* Fonts are wired through next/font/local in src/app/layout.tsx (#401): two
+   latin-subset variable faces, fingerprinted and preloaded. The @fontsource
+   CSS imports that used to sit here shipped nine subset files (261 KB) for a
+   site that needs two (80 KB). */
 @import "tailwindcss";
 
 /* ============================================================
@@ -30,9 +32,9 @@
   --radius-lg: 24px;
   --radius-xl: 34px;
 
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: "Sora Variable", "Inter Variable", ui-sans-serif, system-ui,
+  --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, system-ui,
     sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas,
     monospace;

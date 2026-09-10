@@ -2402,6 +2402,13 @@ export interface ChangeLogEntry {
   tag: "Components" | "Prompts" | "Backgrounds" | "Lab" | "Platform";
   title: string;
   body: string;
+  /** #412 — the measured size change, where one was taken.
+   *
+   *  A negative `deltaKb` means the build got lighter. Entries written before
+   *  the build report existed carry no figure, and the changelog prints "not
+   *  recorded" for them rather than a number nobody measured. Entries dated
+   *  2026-09-10 or later are expected to carry one. */
+  perf?: { deltaKb: number; scope: string; build: string } | null;
 }
 
 /** Sample marketing copy used by the per-prompt "concept poster" renders.
@@ -2486,6 +2493,12 @@ export const INDUSTRY_SAMPLE_FALLBACK = {
 };
 
 export const CHANGELOG: ChangeLogEntry[] = [
+  {
+    date: "2026-09-10", tag: "Platform",
+    title: "The demo module leaves every page that does not render one",
+    body: "A layout import pulled 7,392 lines of scenes onto all 82 routes, so pages with no demo paid for one. Split out; measured at 743.1 KB to 427.6 KB of JavaScript on those routes, and 261.4 KB to 80 KB of fonts, both from the build report.",
+    perf: { deltaKb: -315.5, scope: "JS on a route that renders no demo", build: "batch 56" },
+  },
   {
     date: "2026-09-09", tag: "Lab", title: "Scroll Lab ships — choreography you can scrub",
     body: "Sketch enter/pin/exit phases on a playhead, set trigger points, export a recipe with exact thresholds. Motion theory finally has a whiteboard.",

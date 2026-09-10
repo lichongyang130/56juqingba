@@ -1,7 +1,7 @@
 import { CtaRail, Footer, Header } from "@/components/chrome";
 import { ReturningCue } from "@/components/home-cues";
 import { CHANGELOG } from "@/lib/data";
-import { KeyframesStyle } from "@/components/cards";
+import { KeyframesStyle } from "@/components/keyframes";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -13,7 +13,14 @@ export interface LogEntry {
   tag: string;
   title: string;
   body?: string;
+  /** #412 — a measured size change, or absent when none was taken. */
+  perf?: { deltaKb: number; scope: string; build: string } | null;
 }
+
+/** Entries from this date onward are expected to carry a measured size delta;
+ *  earlier ones were written before the build report existed, and saying so is
+ *  the point of the badge rather than a footnote. */
+const PERF_BADGE_SINCE = "2026-09-10";
 
 const TAG_HUE: Record<string, number> = {
   Components: 262,
@@ -59,9 +66,15 @@ export function ChangelogList({ entries }: { entries: LogEntry[] }) {
               {e.title}
             </h3>
             {e.body && <p className="mt-1 text-xs leading-relaxed text-ink-dim">{e.body}</p>}
+            <PerfBadge entry={e} />
           </li>
         ))}
       </ol>
+      <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+        Since {PERF_BADGE_SINCE} every entry carries the size change it measured, taken from{" "}
+        <span className="font-mono">docs/build-report.json</span>. Earlier entries say &ldquo;not recorded&rdquo;, because no
+        measurement was taken at the time and inventing one after the fact would be a guess.
+      </p>
       {entries.length > 5 && (
         <button
           type="button"
@@ -72,6 +85,40 @@ export function ChangelogList({ entries }: { entries: LogEntry[] }) {
         </button>
       )}
     </div>
+  );
+}
+
+/** #412 — the per-entry size badge. Three states, and the third is the honest
+ *  one: an entry written before the measurement existed is labelled as such
+ *  rather than shown with a zero. */
+export function PerfBadge({ entry }: { entry: LogEntry }) {
+  const perf = entry.perf;
+  if (perf) {
+    const lighter = perf.deltaKb < 0;
+    return (
+      <span
+        className={`mt-1.5 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider ${
+          lighter ? "border-emerald-300/30 bg-emerald-300/10 text-emerald-200" : "border-amber-300/30 bg-amber-300/10 text-amber-200"
+        }`}
+        title={`${perf.scope} · measured on ${perf.build}`}
+      >
+        <span aria-hidden>{lighter ? "↓" : "↑"}</span>
+        {lighter ? "" : "+"}
+        {Math.abs(perf.deltaKb).toFixed(1)} KB {lighter ? "lighter" : "heavier"} · {perf.scope}
+      </span>
+    );
+  }
+  if (entry.date < PERF_BADGE_SINCE) {
+    return (
+      <span className="mt-1.5 inline-flex items-center rounded-full border border-white/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-ink-faint">
+        size not recorded
+      </span>
+    );
+  }
+  return (
+    <span className="mt-1.5 inline-flex items-center rounded-full border border-dashed border-amber-300/40 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-amber-200">
+      no measurement yet — this entry should carry one
+    </span>
   );
 }
 
