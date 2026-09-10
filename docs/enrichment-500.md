@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 433 / 500 shipped (batches 1–61, in order) · Sections 1–16 complete ✅ · Section 17 in progress (3/25)
+## Progress — 436 / 500 shipped (batches 1–62, in order) · Sections 1–16 complete ✅ · Section 17 in progress (6/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -445,6 +445,9 @@ names, behaviours and where they plug into the existing pages.
 | 431 | Drag-to-reorder list | [/components/reorder-list](/components/reorder-list) · rows glide through a FLIP transform while the pointer drags, and a keyboard handle moves a row a slot at a time with every move announced |
 | 432 | Swipeable cards (deck) | [/components/swipe-deck](/components/swipe-deck) · drag a card past the threshold or press one of the two buttons; every decision is undoable and the status line counts what is left |
 | 433 | Split-pane resizer | [/components/split-pane](/components/split-pane) · a real separator with min/max, arrow-key resizing, shift for larger steps, Enter to reset and a visible focus ring |
+| 434 | Zoom-on-hover image map | [/components/zoom-lens](/components/zoom-lens) · a map drawn in SVG rather than loaded as a picture, magnified 1.5×–4× by a lens the arrow keys can pan, with the same features listed as text |
+| 435 | Range-linked chart scrubber | [/components/chart-scrubber](/components/chart-scrubber) · all 74 prompts' average fidelity as bars; drag a handle and the band's count, mean and leading model follow, from the catalog's own numbers |
+| 436 | Scroll-jack by choice | [/components/scroll-pin](/components/scroll-pin) · the story pins only after the switch is turned on, inside its own scroller; Next and Back work either way and Escape hands the scroll straight back |
 
 ---
 
@@ -1034,7 +1037,7 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 17. More interactive scenes & motion — 25 demos — 3/25 shipped, in progress
+## 17. More interactive scenes & motion — 25 demos — 6/25 shipped, in progress
 
 - **Drag-to-reorder list**: rows that glide when you drag, with a11y keyboard reorder.
 - **Swipeable cards (deck)**: tinder-style stack with undo and reduced-motion note.

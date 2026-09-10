@@ -128,9 +128,19 @@ function parseCheck(label, source) {
   ok("tokens have colours and radii", Object.keys(tokens.color).length >= 10 && Object.keys(tokens.radius).length >= 3);
 
   const catalog = JSON.parse((await get("/api/exports/catalog.json")).text);
-  // Bumped when the catalog grows; the ledger row count is the source of the
-  // expected figure and the hub prints the same number.
-  ok("catalog carries every component", catalog.components.length === 110, String(catalog.components.length));
+  // The expected count is not typed in here: the chrome derives it from the
+  // same data module, so comparing the JSON endpoint with the rendered footer
+  // checks both paths at once and keeps this file from going stale.
+  // /quality prints the counted claim ("N original assets") from truthRows(),
+  // which reads the same data module the JSON endpoint serialises — two
+  // independent paths to one number.
+  const qualityHtml = (await get("/quality")).text.replace(/<!-- -->/g, "");
+  const printed = Number((qualityHtml.match(/(\d+) original assets/) || [])[1]);
+  ok(
+    "catalog carries every component, and /quality agrees",
+    catalog.components.length > 100 && catalog.components.length === printed,
+    `catalog ${catalog.components.length}, /quality ${printed}`,
+  );
 
   const rss = await get("/api/exports/changelog.xml");
   ok("the feed carries every changelog entry", (rss.text.match(/<item>/g) || []).length === 12);

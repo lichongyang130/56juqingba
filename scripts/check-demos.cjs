@@ -30,9 +30,12 @@ const get = async (p) => {
 /** The scenes this batch added. Kept explicit: a silently empty grid entry is
  *  exactly what the rest of this file is trying to catch. */
 const NEW_SCENES = [
-  { slug: "reorder-list", marker: "Release checklist" },
-  { slug: "swipe-deck", marker: "Review deck" },
-  { slug: "split-pane", marker: "Layer inspector" },
+  { slug: "reorder-list", marker: "Release checklist", behaviors: ["drag", "keyboard"] },
+  { slug: "swipe-deck", marker: "Review deck", behaviors: ["drag", "click", "keyboard"] },
+  { slug: "split-pane", marker: "Layer inspector", behaviors: ["drag", "keyboard"] },
+  { slug: "zoom-lens", marker: "District map", behaviors: ["hover", "keyboard"] },
+  { slug: "chart-scrubber", marker: "Prompt fidelity", behaviors: ["drag", "keyboard"] },
+  { slug: "scroll-pin", marker: "Three-step story", behaviors: ["scroll", "click", "keyboard"] },
 ];
 
 (async () => {
@@ -60,7 +63,8 @@ const NEW_SCENES = [
   const headline = Number((ledger.match(/## Progress — (\d+) \/ 500 shipped/) || [])[1]);
   const rows = (ledger.match(/^\| \d+ \|/gm) || []).length;
   ok("the ledger table matches its headline", rows === headline && rows > 0, `table ${rows}, headline ${headline}`);
-  ok("section 17 says how far it has got", /Section 17 in progress \(3\/25\)/.test(ledger));
+  const shipped = Number((ledger.match(/Section 17 in progress \((\d+)\/25\)/) || [])[1] || 0);
+  ok("the ledger and this list agree on how many scenes shipped", shipped === NEW_SCENES.length, `ledger ${shipped}, checked ${NEW_SCENES.length}`);
 
   for (const scene of NEW_SCENES) {
     const page = await get(`/components/${scene.slug}`);
@@ -73,7 +77,14 @@ const NEW_SCENES = [
   ok("the library lists the new scenes", hub.status === 200 && NEW_SCENES.every((s) => hub.text.includes(s.slug)));
   ok("the catalog endpoint carries them too", NEW_SCENES.every((s) => catalog.components.some((c) => c.slug === s.slug)));
   ok("the catalog carries the backgrounds as well", catalog.backgrounds.length > 0 && catalog.$generated.backgrounds === catalog.backgrounds.length, String(catalog.backgrounds.length));
-  ok("the new entries declare drag and keyboard behaviour", catalog.components.filter((c) => NEW_SCENES.some((s) => s.slug === c.slug)).every((c) => c.behaviors.includes("drag") && c.behaviors.includes("keyboard")));
+  for (const scene of NEW_SCENES) {
+    const entry = catalog.components.find((c) => c.slug === scene.slug);
+    ok(
+      `${scene.slug} declares the behaviour it ships`,
+      Boolean(entry) && scene.behaviors.every((b) => entry.behaviors.includes(b)),
+      entry ? entry.behaviors.join("+") : "missing",
+    );
+  }
 
   console.log(`\n${fail === 0 ? "ALL PASS" : "FAILURES"} — ${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);

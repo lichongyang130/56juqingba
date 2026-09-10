@@ -7654,6 +7654,442 @@ function SplitPane() {
   );
 }
 
+/* -------------------- SECTION 17 · THREE MORE SCENES -------------------- */
+
+// A stylised street map, drawn from the numbers below rather than loaded as a
+// picture. The zoom lens magnifies this geometry, so the "image" stays sharp
+// at 4× and the site keeps its no-raster-assets property.
+const MAP_BLOCKS = [
+  { x: 14, y: 14, w: 46, h: 34, tone: "#141a2b" },
+  { x: 70, y: 14, w: 34, h: 22, tone: "#182034" },
+  { x: 114, y: 14, w: 52, h: 34, tone: "#141a2b" },
+  { x: 176, y: 14, w: 50, h: 50, tone: "#182034" },
+  { x: 14, y: 58, w: 46, h: 44, tone: "#182034" },
+  { x: 70, y: 46, w: 34, h: 56, tone: "#101625" },
+  { x: 114, y: 58, w: 52, h: 44, tone: "#182034" },
+  { x: 70, y: 112, w: 96, h: 34, tone: "#141a2b" },
+  { x: 176, y: 74, w: 50, h: 40, tone: "#101625" },
+  { x: 14, y: 112, w: 46, h: 34, tone: "#101625" },
+];
+const MAP_FEATURES = [
+  "Two avenues crossing at the centre",
+  "A park on the north-east block",
+  "A river along the south edge",
+  "Eleven blocks, all drawn in SVG",
+];
+
+function MapArt() {
+  return (
+    <g>
+      <rect width="240" height="160" fill="#0b0d14" />
+      {MAP_BLOCKS.map((b, i) => (
+        <rect key={i} x={b.x} y={b.y} width={b.w} height={b.h} rx="3" fill={b.tone} stroke="rgba(255,255,255,.06)" />
+      ))}
+      <rect x="176" y="14" width="50" height="50" rx="6" fill="#0f2a22" stroke="rgba(52,211,153,.25)" />
+      <path d="M0 150 Q60 138 120 148 T240 142 L240 160 L0 160 Z" fill="#0d2136" />
+      <path d="M0 78 H240" stroke="#1d2436" strokeWidth="10" />
+      <path d="M100 0 V160" stroke="#1d2436" strokeWidth="10" />
+      <path d="M0 78 H240" stroke="rgba(255,255,255,.10)" strokeWidth="1" strokeDasharray="6 6" />
+      <path d="M100 0 V160" stroke="rgba(255,255,255,.10)" strokeWidth="1" strokeDasharray="6 6" />
+      <circle cx="100" cy="78" r="7" fill="#0b0d14" stroke="rgba(167,139,250,.55)" />
+    </g>
+  );
+}
+
+function ZoomLens() {
+  const [pt, setPt] = useState({ x: 120, y: 72 });
+  const [zoom, setZoom] = useState(2);
+  const [active, setActive] = useState(false);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const reduced = useReducedMotion();
+  const radius = 30;
+
+  const toArt = (clientX: number, clientY: number) => {
+    const svg = svgRef.current;
+    if (!svg) return { x: 0, y: 0 };
+    const r = svg.getBoundingClientRect();
+    return {
+      x: Math.max(0, Math.min(240, ((clientX - r.left) / r.width) * 240)),
+      y: Math.max(0, Math.min(160, ((clientY - r.top) / r.height) * 160)),
+    };
+  };
+
+  const pan = (dx: number, dy: number) => {
+    setActive(true);
+    setPt((p) => ({ x: Math.max(0, Math.min(240, p.x + dx)), y: Math.max(0, Math.min(160, p.y + dy)) }));
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(56,189,248,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-sky-300/80">District map</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            lens {zoom.toFixed(1)}× · {active ? "following" : "hover or focus"}
+          </p>
+        </div>
+
+        <svg
+          ref={svgRef}
+          viewBox="0 0 240 160"
+          role="application"
+          tabIndex={0}
+          aria-label="Interactive district map with a magnifying lens. Arrow keys pan the lens, plus and minus change its zoom."
+          className="h-44 w-full cursor-crosshair rounded-2xl border border-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+          onPointerMove={(e) => {
+            setActive(true);
+            const p = toArt(e.clientX, e.clientY);
+            setPt(p);
+          }}
+          onPointerDown={(e) => {
+            setActive(true);
+            setPt(toArt(e.clientX, e.clientY));
+          }}
+          onPointerLeave={() => setActive(false)}
+          onBlur={() => setActive(false)}
+          onKeyDown={(e) => {
+            const step = e.shiftKey ? 16 : 6;
+            if (e.key === "ArrowLeft") { e.preventDefault(); pan(-step, 0); }
+            else if (e.key === "ArrowRight") { e.preventDefault(); pan(step, 0); }
+            else if (e.key === "ArrowUp") { e.preventDefault(); pan(0, -step); }
+            else if (e.key === "ArrowDown") { e.preventDefault(); pan(0, step); }
+            else if (e.key === "+" || e.key === "=") { e.preventDefault(); setActive(true); setZoom((z) => Math.min(4, z + 0.5)); }
+            else if (e.key === "-" || e.key === "_") { e.preventDefault(); setActive(true); setZoom((z) => Math.max(1.5, z - 0.5)); }
+          }}
+        >
+          <defs>
+            <clipPath id="motif-lens-clip">
+              <circle cx={pt.x} cy={pt.y} r={radius} />
+            </clipPath>
+          </defs>
+          <MapArt />
+          {active && (
+            <g>
+              <g clipPath="url(#motif-lens-clip)">
+                <g transform={`translate(${pt.x} ${pt.y}) scale(${zoom}) translate(${-pt.x} ${-pt.y})`}>
+                  <MapArt />
+                </g>
+              </g>
+              <circle
+                cx={pt.x}
+                cy={pt.y}
+                r={radius}
+                fill="none"
+                stroke="rgba(125,211,252,.85)"
+                strokeWidth="1.5"
+                style={{ transition: reduced ? "none" : "r 160ms ease" }}
+              />
+              <circle cx={pt.x} cy={pt.y} r="1.6" fill="rgba(125,211,252,.9)" />
+            </g>
+          )}
+        </svg>
+
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <div className="rounded-2xl border border-white/8 bg-white/[.02] px-3 py-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">On the map</p>
+            <ul className="mt-1 space-y-0.5">
+              {MAP_FEATURES.map((f) => (
+                <li key={f} className="text-[10px] leading-relaxed text-ink-dim">
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="rounded-2xl border border-white/8 bg-white/[.02] px-3 py-2.5 text-[10px] leading-relaxed text-ink-dim">
+            A magnifier that only works with a mouse is half a magnifier: the lens also pans with the arrow keys and zooms with
+            plus and minus, and the list beside it carries the same information for anyone who never sees the drawing at all.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const fidelitySeries = [...PROMPTS].map((p) => ({ v: p.avgFidelity, slug: p.slug, model: p.bestModel })).sort((a, b) => a.v - b.v);
+
+function ChartScrubber() {
+  const [lo, setLo] = useState(18);
+  const [hi, setHi] = useState(54);
+  const [dragging, setDragging] = useState<"lo" | "hi" | null>(null);
+  const [reading, setReading] = useState<number | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const n = fidelitySeries.length;
+  const inBand = fidelitySeries.slice(lo, hi + 1);
+  const mean = Math.round((inBand.reduce((a, b) => a + b.v, 0) / Math.max(1, inBand.length)) * 10) / 10;
+  const best = inBand.reduce((top, p) => (p.v > top.v ? p : top), inBand[0] ?? fidelitySeries[0]);
+  const floor = 60;
+  const ceil = 100;
+  const height = (v: number) => `${Math.max(8, ((v - floor) / (ceil - floor)) * 100)}%`;
+
+  const indexFromClientX = (clientX: number) => {
+    const el = trackRef.current;
+    if (!el) return 0;
+    const r = el.getBoundingClientRect();
+    return Math.max(0, Math.min(n - 1, Math.round(((clientX - r.left) / r.width) * (n - 1))));
+  };
+
+  const onHandleKey = (e: React.KeyboardEvent, which: "lo" | "hi") => {
+    const step = e.shiftKey ? 6 : 1;
+    const apply = (delta: number) => {
+      if (which === "lo") setLo((v) => Math.max(0, Math.min(hi - 1, v + delta)));
+      else setHi((v) => Math.min(n - 1, Math.max(lo + 1, v + delta)));
+    };
+    if (e.key === "ArrowLeft") { e.preventDefault(); apply(-step); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); apply(step); }
+    else if (e.key === "Home") {
+      e.preventDefault();
+      if (which === "lo") setLo(0);
+      else setHi(lo + 1);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      if (which === "hi") setHi(n - 1);
+      else setLo(hi - 1);
+    }
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_100%,rgba(167,139,250,0.12),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-lg">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/80">Prompt fidelity, {n} run-tested prompts</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            {lo + 1}–{hi + 1} of {n} · mean {mean}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/[.02] p-3">
+          <div
+            ref={trackRef}
+            className="relative flex h-32 items-end gap-[2px]"
+            onPointerMove={(e) => {
+              setReading(indexFromClientX(e.clientX));
+              if (dragging) {
+                const i = indexFromClientX(e.clientX);
+                if (dragging === "lo") setLo(Math.max(0, Math.min(hi - 1, i)));
+                else setHi(Math.min(n - 1, Math.max(lo + 1, i)));
+              }
+            }}
+            onPointerLeave={() => {
+              setReading(null);
+              setDragging(null);
+            }}
+            onPointerUp={() => setDragging(null)}
+          >
+            {fidelitySeries.map((p, i) => {
+              const inBandRow = i >= lo && i <= hi;
+              return (
+                <button
+                  key={p.slug}
+                  type="button"
+                  tabIndex={-1}
+                  aria-hidden
+                  onPointerDown={() => {
+                    setDragging(i - lo <= hi - i ? "lo" : "hi");
+                  }}
+                  className="flex-1 rounded-t-[2px] transition-opacity"
+                  style={{
+                    height: height(p.v),
+                    background: inBandRow ? "#a78bfa" : "rgba(167,139,250,.22)",
+                    opacity: reading === i ? 1 : inBandRow ? 0.95 : 0.6,
+                  }}
+                />
+              );
+            })}
+
+            <div
+              role="slider"
+              tabIndex={0}
+              aria-label="Lower fidelity bound"
+              aria-valuemin={0}
+              aria-valuemax={n - 1}
+              aria-valuenow={lo}
+              aria-valuetext={`Prompt ${lo + 1} of ${n}, fidelity ${fidelitySeries[lo].v}`}
+              onKeyDown={(e) => onHandleKey(e, "lo")}
+              className="absolute bottom-0 top-0 w-3 -translate-x-1/2 cursor-ew-resize rounded-full bg-violet-400/25 hover:bg-violet-400/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-300"
+              style={{ left: `${(lo / (n - 1)) * 100}%` }}
+            />
+            <div
+              role="slider"
+              tabIndex={0}
+              aria-label="Upper fidelity bound"
+              aria-valuemin={0}
+              aria-valuemax={n - 1}
+              aria-valuenow={hi}
+              aria-valuetext={`Prompt ${hi + 1} of ${n}, fidelity ${fidelitySeries[hi].v}`}
+              onKeyDown={(e) => onHandleKey(e, "hi")}
+              className="absolute bottom-0 top-0 w-3 -translate-x-1/2 cursor-ew-resize rounded-full bg-violet-400/25 hover:bg-violet-400/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-300"
+              style={{ left: `${(hi / (n - 1)) * 100}%` }}
+            />
+          </div>
+
+          <div className="mt-2 flex justify-between text-[9px] tabular-nums text-ink-faint">
+            <span>{fidelitySeries[0].v}</span>
+            <span>{reading !== null ? `prompt ${reading + 1}: ${fidelitySeries[reading].v} avg fidelity · ${fidelitySeries[reading].model}` : "drag a bar, or focus a handle and use ← →"}</span>
+            <span>{fidelitySeries[n - 1].v}</span>
+          </div>
+        </div>
+
+        <dl className="mt-3 grid grid-cols-3 gap-2">
+          {[
+            ["Prompts in band", String(inBand.length)],
+            ["Band mean", String(mean)],
+            ["Best model in band", best.model],
+          ].map(([k, v]) => (
+            <div key={k} className="rounded-2xl border border-white/8 bg-white/[.02] px-3 py-2">
+              <dt className="text-[9px] font-bold uppercase tracking-widest text-ink-faint">{k}</dt>
+              <dd className="mt-0.5 text-[11px] font-semibold text-ink">{v}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+          The series is not decoration: it is the average fidelity of every prompt in the catalog, sorted, and the band selects
+          real rows — the same averages the prompt cards print. {best.model} leads the selected band at {best.v}.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const PIN_CHAPTERS = [
+  { title: "Sketch", body: "Three boxes, one accent colour. Nothing else survives the first review." },
+  { title: "Build", body: "The hero ships first, then the pricing band, then the FAQ nobody asked for." },
+  { title: "Ship", body: "Deploy, watch the first hour, and keep the changelog entry honest." },
+];
+
+function ScrollPin() {
+  const [step, setStep] = useState(0);
+  const [pinned, setPinned] = useState(false);
+  const [status, setStatus] = useState("Scroll pinning is off. This box scrolls like any other box.");
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+
+  const go = (next: number, how: string) => {
+    const clamped = Math.max(0, Math.min(PIN_CHAPTERS.length - 1, next));
+    setStep(clamped);
+    setStatus(`Step ${clamped + 1} of ${PIN_CHAPTERS.length}, ${PIN_CHAPTERS[clamped].title} — ${how}.`);
+  };
+
+  const release = () => {
+    setPinned(false);
+    setStatus("Pinning released. The scroll is yours again.");
+  };
+
+  const onScroll = () => {
+    const el = scrollerRef.current;
+    if (!el || !pinned) return;
+    const reach = el.scrollHeight - el.clientHeight;
+    if (reach <= 0) return;
+    const next = Math.round((el.scrollTop / reach) * (PIN_CHAPTERS.length - 1));
+    if (next !== step) go(next, "reached by scrolling");
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(244,114,182,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-pink-300/80">Three-step story</p>
+          <label className="flex cursor-pointer items-center gap-2 text-[10px] text-ink-dim">
+            <input
+              type="checkbox"
+              checked={pinned}
+              onChange={() => {
+                if (pinned) {
+                  release();
+                  return;
+                }
+                setPinned(true);
+                setStatus("Pinning is on. Scroll inside the box, or use Next. Escape releases it.");
+              }}
+              className="accent-pink-400"
+            />
+            pin on scroll
+          </label>
+        </div>
+
+        <div
+          ref={scrollerRef}
+          onScroll={onScroll}
+          onKeyDown={(e) => {
+            if (e.key === "Escape" && pinned) {
+              e.preventDefault();
+              release();
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              go(step + 1, "advanced with the arrow key");
+            } else if (e.key === "ArrowUp") {
+              e.preventDefault();
+              go(step - 1, "went back with the arrow key");
+            }
+          }}
+          tabIndex={0}
+          aria-label="Three-step story. Arrow keys move between steps; Escape releases pinning."
+          className={`h-56 overflow-y-auto rounded-2xl border focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-400 ${
+            pinned ? "border-pink-400/40" : "border-white/10"
+          }`}
+        >
+          {pinned ? (
+            <div className="sticky top-0 flex h-56 flex-col justify-center bg-[#0b0d14] px-5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-pink-300/70">
+                Step {step + 1} of {PIN_CHAPTERS.length}
+              </p>
+              <p className="mt-2 text-lg font-extrabold text-ink">{PIN_CHAPTERS[step].title}</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-ink-dim">{PIN_CHAPTERS[step].body}</p>
+              <div className="mt-3 flex gap-1">
+                {PIN_CHAPTERS.map((c, i) => (
+                  <span key={c.title} className={`h-1 flex-1 rounded-full ${i <= step ? "bg-pink-400/70" : "bg-white/10"}`} />
+                ))}
+              </div>
+            </div>
+          ) : (
+            PIN_CHAPTERS.map((c, i) => (
+              <section key={c.title} className={`px-5 py-5 ${i > 0 ? "border-t border-white/8" : ""}`}>
+                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">Step {i + 1}</p>
+                <p className="mt-1 text-sm font-bold text-ink">{c.title}</p>
+                <p className="mt-1 text-[11px] leading-relaxed text-ink-dim">{c.body}</p>
+              </section>
+            ))
+          )}
+          {/* Spacers give the scroller real distance to travel while pinned. */}
+          {pinned && <div style={{ height: `${(PIN_CHAPTERS.length - 1) * 100}%` }} aria-hidden />}
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <button type="button" onClick={() => go(step - 1, "stepped back")} disabled={step === 0} className="btn btn-ghost !px-3.5 !py-2 text-[11px] disabled:opacity-40">
+            ← Back
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const next = step + 1;
+              go(next, "stepped forward");
+              if (!pinned && next < PIN_CHAPTERS.length) {
+                scrollerRef.current?.scrollTo({ top: next * 120, behavior: reduced ? "auto" : "smooth" });
+              }
+            }}
+            disabled={step === PIN_CHAPTERS.length - 1}
+            className="btn btn-primary !px-3.5 !py-2 text-[11px] disabled:opacity-40"
+          >
+            Next →
+          </button>
+          {pinned && (
+            <button type="button" onClick={release} className="btn btn-ghost !px-3.5 !py-2 text-[11px]">
+              Release (Esc)
+            </button>
+          )}
+        </div>
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-pink-200/80">
+          {status}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          The pinning happens inside this box and only after the switch is on: the page you are reading keeps its own scroll, the
+          buttons work whether or not pinning is enabled, and Escape gives the scroll straight back.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // Exported because the keys are the catalog's demo vocabulary, not a private
 // detail: the props panel and the harness both want the same list.
 export const DEMO_KEYS = [
@@ -7671,6 +8107,7 @@ export const DEMO_KEYS = [
   "auto-grow-textarea", "date-presets", "file-drop-zone", "toggle-label-stack",
   "password-strength", "split-button-menu", "breadcrumb-trail",
   "reorder-list", "swipe-deck", "split-pane",
+  "zoom-lens", "chart-scrubber", "scroll-pin",
   "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
   "status-banner", "progress-ring", "spinner-status", "empty-state-trio",
@@ -7757,6 +8194,9 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "reorder-list": return <ReorderList />;
     case "swipe-deck": return <SwipeDeck />;
     case "split-pane": return <SplitPane />;
+    case "zoom-lens": return <ZoomLens />;
+    case "chart-scrubber": return <ChartScrubber />;
+    case "scroll-pin": return <ScrollPin />;
     case "breadcrumb-trail": return <BreadcrumbTrail />;
     case "pagination-ellipsis": return <PaginationEllipsis {...props} />;
     case "toc-spine": return <TocSpine />;
