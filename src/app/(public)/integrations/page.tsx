@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { EXPORTS, exportSizeKb } from "@/lib/exports";
+import { COMPONENTS } from "@/lib/data";
 
 export const metadata = {
   title: "Integrations & exports — Motif UI",
@@ -38,7 +39,7 @@ const SUB_GAPS: [string, string, string][] = [
   [
     "Embed allowlist",
     "Framer-style code embed — the route",
-    "The chrome-free route ships for all 107 assets with frame-ancestors and noindex set. Restricting frames to named partners means reading the Origin header per request, which needs a server this build does not have.",
+    `The chrome-free route ships for all ${COMPONENTS.length} assets with frame-ancestors and noindex set. Restricting frames to named partners means reading the Origin header per request, which needs a server this build does not have.`,
   ],
   [
     "Publishing to npm",

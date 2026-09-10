@@ -11,7 +11,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { CHANGELOG, COMPONENTS, PROMPTS } from "./data";
+import { BACKGROUNDS, CHANGELOG, COMPONENTS, PROMPTS } from "./data";
 
 const ROOT = process.cwd();
 
@@ -793,6 +793,7 @@ export function catalogJson(): string {
     $description: "Motif UI catalog metadata — what the site stores about each asset.",
     $generated: {
       components: COMPONENTS.length,
+      backgrounds: BACKGROUNDS.length,
       prompts: PROMPTS.length,
       changelogEntries: CHANGELOG.length,
       note: "Scores, bundle sizes and licences are the stored values. Component source code is not part of this export, because the catalog does not store it.",
@@ -809,6 +810,11 @@ export function catalogJson(): string {
       qualityScore: c.qualityScore,
       themeable: c.themeable,
       tags: c.tags,
+      // Behaviour claims and the demo key travel with the entry, so a reader
+      // (or scripts/check-demos.cjs) can verify that a "drag" tag points at a
+      // scene that exists instead of taking the label's word for it.
+      behaviors: c.behaviors,
+      demo: c.demo,
       published: c.published,
     })),
     prompts: PROMPTS.map((p) => ({
@@ -820,6 +826,19 @@ export function catalogJson(): string {
       status: p.status,
       runs: p.runs.length,
       models: [...new Set(p.runs.map((r) => r.model))],
+    })),
+    // Backgrounds belong to the catalog too, and leaving them out made the
+    // drift guard in scripts/check-demos.cjs report 31 demos as orphans — the
+    // export was the incomplete side, not the switch.
+    backgrounds: BACKGROUNDS.map((b) => ({
+      slug: b.slug,
+      title: b.title,
+      category: b.category,
+      tech: b.tech,
+      perf: b.perf,
+      bundleKb: b.bundleKb,
+      themeable: b.themeable,
+      demo: b.demo,
     })),
   };
   return JSON.stringify(payload, null, 2) + "\n";

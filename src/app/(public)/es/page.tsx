@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { COMPONENTS } from "@/lib/data";
 
 export const metadata = {
   title: "Motif UI — prueba de localización (ES)",
@@ -83,7 +84,7 @@ export default function EsLandingPage() {
           que usa el sitio en inglés.
         </p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-ink-faint">
-          <Link href="/components" className="btn btn-ghost !px-4 !py-2">107 componentes originales →</Link>
+          <Link href="/components" className="btn btn-ghost !px-4 !py-2">{COMPONENTS.length} componentes originales →</Link>
           <Link href="/prompts" className="btn btn-ghost !px-4 !py-2">74 prompts con registros →</Link>
           <Link href="/mission" className="btn btn-ghost !px-4 !py-2">Nuestra misión →</Link>
         </div>

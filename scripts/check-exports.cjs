@@ -88,9 +88,10 @@ function parseCheck(label, source) {
 
   const doc = fs.readFileSync("docs/enrichment-500.md", "utf8");
   const rows = (doc.match(/^\| \d+ \|/gm) || []).length;
-  ok("ledger row count matches the shipped total", rows === 430, String(rows));
-  ok("ledger ends at row 430", /\| 430 \|/.test(doc));
-  ok("section 16 is marked complete", /15\/15 shipped ✅/.test(doc) && /Sections 1–16 complete/.test(doc));
+  const headline = Number((doc.match(/## Progress — (\d+) \/ 500 shipped/) || [])[1]);
+  ok("ledger table matches its own headline", rows === headline && rows > 0, `table ${rows}, headline ${headline}`);
+  ok("ledger ends at the newest row", new RegExp(`\\| ${headline} \\|`).test(doc));
+  ok("sections 1–16 are marked complete", /Sections 1–16 complete/.test(doc) && /15\/15 shipped ✅/.test(doc));
 
   /* ---------- the library and the hub ---------- */
 
@@ -127,7 +128,9 @@ function parseCheck(label, source) {
   ok("tokens have colours and radii", Object.keys(tokens.color).length >= 10 && Object.keys(tokens.radius).length >= 3);
 
   const catalog = JSON.parse((await get("/api/exports/catalog.json")).text);
-  ok("catalog carries every component", catalog.components.length === 107, String(catalog.components.length));
+  // Bumped when the catalog grows; the ledger row count is the source of the
+  // expected figure and the hub prints the same number.
+  ok("catalog carries every component", catalog.components.length === 110, String(catalog.components.length));
 
   const rss = await get("/api/exports/changelog.xml");
   ok("the feed carries every changelog entry", (rss.text.match(/<item>/g) || []).length === 12);

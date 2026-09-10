@@ -3,7 +3,7 @@
 // Original live demos for Motif UI. Every visual below is authored in-house;
 // none of the code is taken from third-party component libraries.
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BACKGROUNDS, COMPONENTS, PROMPTS } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
 import { KeyframesStyle } from "@/components/keyframes";
@@ -7209,6 +7209,453 @@ function SunsetHorizon() {
 
 
 
+export /* -------------------- SECTION 17 · INTERACTIVE SCENES -------------------- */
+
+/** Three scenes share one question: what does the interaction do when the
+ *  reader has asked for less motion, or has no pointer? The stylesheet already
+ *  kills keyframe animation for `prefers-reduced-motion`; a demo that moves
+ *  elements with an inline transform has to ask for itself, which is what this
+ *  hook is for. */
+function useReducedMotion() {
+  const [reduced, setReduced] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const on = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return reduced;
+}
+
+const REORDER_SEED = [
+  { id: "brief", label: "Write the brief", meta: "Today · Sam" },
+  { id: "refs", label: "Collect three references", meta: "Tomorrow · you" },
+  { id: "hero", label: "Build the hero", meta: "Thursday · Sam" },
+  { id: "review", label: "Review in the studio", meta: "Friday · both" },
+  { id: "ship", label: "Cut the release", meta: "Next week" },
+];
+
+function ReorderList() {
+  const [rows, setRows] = useState(REORDER_SEED);
+  const [dragging, setDragging] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
+  const [status, setStatus] = useState("Five steps. Drag a handle, or focus one and press the arrow keys.");
+  const listRef = useRef<HTMLUListElement>(null);
+  const topsRef = useRef<Map<string, number>>(new Map());
+  const reduced = useReducedMotion();
+
+  // offsetTop is used rather than getBoundingClientRect on purpose: it reports
+  // the layout slot and ignores the transform a glide may be mid-way through,
+  // so measuring during an animation does not poison the next one.
+  const measure = () => {
+    const list = listRef.current;
+    if (!list) return;
+    const next = new Map<string, number>();
+    for (const el of Array.from(list.querySelectorAll<HTMLElement>("[data-row]"))) {
+      next.set(el.dataset.row as string, el.offsetTop);
+    }
+    topsRef.current = next;
+  };
+
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const before = topsRef.current;
+    for (const el of Array.from(list.querySelectorAll<HTMLElement>("[data-row]"))) {
+      const id = el.dataset.row as string;
+      const was = before.get(id);
+      if (was === undefined || id === dragging) continue;
+      const dy = was - el.offsetTop;
+      if (!dy) continue;
+      el.style.transition = "none";
+      el.style.transform = `translateY(${dy}px)`;
+      requestAnimationFrame(() => {
+        el.style.transition = reduced ? "none" : "transform 220ms cubic-bezier(0.22, 1, 0.36, 1)";
+        el.style.transform = "";
+      });
+    }
+    measure();
+  }, [rows, reduced, dragging]);
+
+  const move = (id: string, to: number) => {
+    const from = rows.findIndex((r) => r.id === id);
+    const clamped = Math.max(0, Math.min(rows.length - 1, to));
+    if (from === -1 || from === clamped) return;
+    const next = [...rows];
+    const [row] = next.splice(from, 1);
+    next.splice(clamped, 0, row);
+    setRows(next);
+    setStatus(`${row.label} moved to position ${clamped + 1} of ${next.length}.`);
+  };
+
+  const onHandleKey = (e: React.KeyboardEvent, id: string, index: number) => {
+    if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      move(id, index - 1);
+    } else if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+      e.preventDefault();
+      move(id, index + 1);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      move(id, 0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      move(id, rows.length - 1);
+    }
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(139,92,246,0.12),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/80">Release checklist</p>
+          <p className="text-[10px] text-ink-faint">drag, or use the arrows</p>
+        </div>
+        <ul ref={listRef} className="space-y-2">
+          {rows.map((row, index) => (
+            <li
+              key={row.id}
+              data-row={row.id}
+              draggable
+              onDragStart={(e) => {
+                setDragging(row.id);
+                e.dataTransfer.effectAllowed = "move";
+                e.dataTransfer.setData("text/plain", row.id);
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (dragging && dragging !== row.id) setOverId(row.id);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                const id = dragging ?? e.dataTransfer.getData("text/plain");
+                if (id && id !== row.id) move(id, index);
+                setDragging(null);
+                setOverId(null);
+              }}
+              onDragEnd={() => {
+                setDragging(null);
+                setOverId(null);
+              }}
+              className={`flex items-center gap-3 rounded-2xl border bg-white/[.03] px-3 py-2.5 ${
+                overId === row.id ? "border-violet-400/60" : "border-white/8"
+              } ${dragging === row.id ? "opacity-60" : ""}`}
+              style={{ willChange: "transform" }}
+            >
+              <span className="w-4 text-[10px] tabular-nums text-ink-faint">{index + 1}</span>
+              <button
+                type="button"
+                aria-label={`Reorder ${row.label}. Arrow keys move it, Home and End send it to either end.`}
+                onKeyDown={(e) => onHandleKey(e, row.id, index)}
+                className="cursor-grab rounded-lg border border-white/10 p-1.5 text-ink-faint transition-colors hover:border-violet-400/50 hover:text-ink active:cursor-grabbing"
+              >
+                <svg width="10" height="14" viewBox="0 0 10 14" aria-hidden focusable="false">
+                  {[2, 7, 12].map((cy) => (
+                    <g key={cy}>
+                      <circle cx="2.5" cy={cy} r="1.2" fill="currentColor" />
+                      <circle cx="7.5" cy={cy} r="1.2" fill="currentColor" />
+                    </g>
+                  ))}
+                </svg>
+              </button>
+              <span className="flex-1">
+                <span className="block text-xs font-semibold text-ink">{row.label}</span>
+                <span className="block text-[10px] text-ink-faint">{row.meta}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p aria-live="polite" className="mt-3 min-h-[1rem] text-[10px] leading-relaxed text-violet-200/80">
+          {status}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const SWIPE_SEED = [
+  { id: "hero", title: "Gradient hero", meta: "Landing · 3 references kept" },
+  { id: "pricing", title: "Three-tier pricing", meta: "Landing · needs a copy pass" },
+  { id: "changelog", title: "Changelog journal", meta: "Docs · reads well on mobile" },
+  { id: "waitlist", title: "Waitlist band", meta: "Launch · one field, one button" },
+  { id: "gallery", title: "Filterable gallery", meta: "Work · 12 stills placed" },
+];
+
+function SwipeDeck() {
+  const [deck, setDeck] = useState(SWIPE_SEED);
+  const [history, setHistory] = useState<{ id: string; kept: boolean }[]>([]);
+  const [drag, setDrag] = useState<{ id: string; x: number } | null>(null);
+  const [status, setStatus] = useState(`${SWIPE_SEED.length} cards in the deck. Swipe, or use the two buttons.`);
+  const reduced = useReducedMotion();
+  const startRef = useRef(0);
+
+  const decide = (kept: boolean) => {
+    const card = deck[0];
+    if (!card) return;
+    const next = deck.slice(1);
+    setDeck(next);
+    setHistory((h) => [...h, { id: card.id, kept }]);
+    setDrag(null);
+    setStatus(
+      next.length === 0
+        ? `${kept ? "Kept" : "Skipped"} ${card.title}. That was the last card — ${history.filter((h) => h.kept).length + (kept ? 1 : 0)} kept.`
+        : `${kept ? "Kept" : "Skipped"} ${card.title}. ${next.length} left.`
+    );
+  };
+
+  const undo = () => {
+    const last = history[history.length - 1];
+    if (!last) return;
+    const card = SWIPE_SEED.find((c) => c.id === last.id);
+    if (!card) return;
+    setDeck((d) => [card, ...d.filter((c) => c.id !== card.id)]);
+    setHistory((h) => h.slice(0, -1));
+    setDrag(null);
+    setStatus(`Undid the decision on ${card.title}.`);
+  };
+
+  const restart = () => {
+    setDeck(SWIPE_SEED);
+    setHistory([]);
+    setDrag(null);
+    setStatus("Deck reset. Five cards again.");
+  };
+
+  const kept = history.filter((h) => h.kept).length;
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_100%,rgba(56,189,248,0.12),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-sky-300/80">Review deck</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            {kept} kept · {deck.length} left
+          </p>
+        </div>
+
+        <div className="relative h-52">
+          {deck.length === 0 && (
+            <div className="flex h-full flex-col items-center justify-center rounded-2xl border border-dashed border-white/12 text-center">
+              <p className="text-xs font-semibold text-ink">Deck finished</p>
+              <p className="mt-1 text-[10px] text-ink-faint">Nothing left to decide. Undo one, or start again.</p>
+            </div>
+          )}
+          {deck
+            .slice(0, 3)
+            .reverse()
+            .map((card, i, all) => {
+              const depth = all.length - 1 - i; // 0 = top card
+              const top = depth === 0;
+              const x = top && drag ? drag.x : 0;
+              const tilt = reduced ? 0 : x / 18;
+              return (
+                <div
+                  key={card.id}
+                  aria-hidden={!top}
+                  style={{
+                    transform: `translate(${x}px, ${depth * 8}px) rotate(${tilt}deg) scale(${1 - depth * 0.04})`,
+                    transition: drag && top ? "none" : reduced ? "none" : "transform 260ms cubic-bezier(0.22, 1, 0.36, 1)",
+                    zIndex: 3 - depth,
+                    touchAction: top ? "none" : undefined,
+                  }}
+                  className={`absolute inset-x-0 top-0 rounded-2xl border bg-panel p-4 ${
+                    top ? "border-sky-400/30" : "border-white/8"
+                  }`}
+                  onPointerDown={(e) => {
+                    if (!top) return;
+                    startRef.current = e.clientX;
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                    setDrag({ id: card.id, x: 0 });
+                  }}
+                  onPointerMove={(e) => {
+                    if (!top || !drag) return;
+                    setDrag({ id: card.id, x: e.clientX - startRef.current });
+                  }}
+                  onPointerUp={() => {
+                    if (!top) return;
+                    if (drag && Math.abs(drag.x) > 90) decide(drag.x > 0);
+                    else setDrag(null);
+                  }}
+                  onPointerCancel={() => setDrag(null)}
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-300/70">Card {history.length + depth + 1}</p>
+                  <p className="mt-2 text-sm font-bold text-ink">{card.title}</p>
+                  <p className="mt-1 text-[11px] leading-relaxed text-ink-dim">{card.meta}</p>
+                  {top && drag && Math.abs(drag.x) > 90 && (
+                    <p className="mt-3 text-[10px] font-bold uppercase tracking-widest text-ink">
+                      {drag.x > 0 ? "Release to keep" : "Release to skip"}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+        </div>
+
+        <div className="mt-4 flex items-center gap-2">
+          <button type="button" onClick={() => decide(false)} disabled={!deck.length} className="btn btn-ghost flex-1 !py-2 text-[11px] disabled:opacity-40">
+            ← Skip
+          </button>
+          <button type="button" onClick={() => decide(true)} disabled={!deck.length} className="btn btn-primary flex-1 !py-2 text-[11px] disabled:opacity-40">
+            Keep →
+          </button>
+          <button type="button" onClick={undo} disabled={!history.length} className="btn btn-ghost !px-3 !py-2 text-[11px] disabled:opacity-40">
+            Undo
+          </button>
+          <button type="button" onClick={restart} className="btn btn-ghost !px-3 !py-2 text-[11px]">
+            Reset
+          </button>
+        </div>
+        <p aria-live="polite" className="mt-3 min-h-[1rem] text-[10px] leading-relaxed text-sky-200/80">
+          {status}
+        </p>
+        {reduced && (
+          <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+            Reduced motion is on: the cards move without rotation and without the spring back.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const SPLIT_LAYERS = [
+  { id: "sky", label: "Sky gradient", colour: "#38bdf8" },
+  { id: "grid", label: "Grid overlay", colour: "#a78bfa" },
+  { id: "glow", label: "Corner glow", colour: "#f472b6" },
+];
+
+function SplitPane() {
+  const [pct, setPct] = useState(42);
+  const [on, setOn] = useState<string[]>(["sky", "grid"]);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [resizing, setResizing] = useState(false);
+  const reduced = useReducedMotion();
+  const clamp = (n: number) => Math.max(20, Math.min(80, n));
+
+  const setFromClientX = (clientX: number) => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setPct(clamp(Math.round(((clientX - r.left) / r.width) * 100)));
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(167,139,250,0.12),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-lg">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/80">Layer inspector</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">left pane {pct}% · drag the divider or press ← →</p>
+        </div>
+
+        <div ref={wrapRef} className="flex h-56 overflow-hidden rounded-2xl border border-white/10">
+          <div className="overflow-hidden bg-white/[.02]" style={{ width: `${pct}%` }}>
+            <ul className="space-y-1.5 p-3">
+              {SPLIT_LAYERS.map((layer) => {
+                const checked = on.includes(layer.id);
+                return (
+                  <li key={layer.id}>
+                    <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-white/8 bg-white/[.02] px-2.5 py-2 text-[11px]">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() =>
+                          setOn((prev) => (checked ? prev.filter((id) => id !== layer.id) : [...prev, layer.id]))
+                        }
+                        className="accent-violet-400"
+                      />
+                      <span className="flex-1 text-ink-dim">{layer.label}</span>
+                      <span className="h-2.5 w-2.5 rounded-full" style={{ background: layer.colour }} aria-hidden />
+                    </label>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize the two panels"
+            aria-valuenow={pct}
+            aria-valuemin={20}
+            aria-valuemax={80}
+            aria-valuetext={`Left panel ${pct} percent`}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              const step = e.shiftKey ? 10 : 2;
+              if (e.key === "ArrowLeft") { e.preventDefault(); setPct((p) => clamp(p - step)); }
+              else if (e.key === "ArrowRight") { e.preventDefault(); setPct((p) => clamp(p + step)); }
+              else if (e.key === "Home") { e.preventDefault(); setPct(20); }
+              else if (e.key === "End") { e.preventDefault(); setPct(80); }
+              else if (e.key === "Enter") { e.preventDefault(); setPct(42); }
+            }}
+            onPointerDown={(e) => {
+              e.currentTarget.setPointerCapture(e.pointerId);
+              setResizing(true);
+              setFromClientX(e.clientX);
+            }}
+            onPointerMove={(e) => {
+              if (resizing) setFromClientX(e.clientX);
+            }}
+            onPointerUp={() => setResizing(false)}
+            onPointerCancel={() => setResizing(false)}
+            onDoubleClick={() => setPct(42)}
+            className={`w-2.5 shrink-0 cursor-col-resize border-x border-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400 ${
+              resizing ? "bg-violet-400/40" : "bg-white/[.06] hover:bg-violet-400/25"
+            }`}
+          />
+
+          <div className="flex-1 bg-[#0b0d14] p-3">
+            <div className="relative h-full overflow-hidden rounded-xl border border-white/8">
+              {on.includes("sky") && (
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: "radial-gradient(60% 80% at 50% 0%, rgba(56,189,248,0.35), transparent 65%)",
+                    transition: reduced ? "none" : "opacity 200ms ease",
+                  }}
+                />
+              )}
+              {on.includes("grid") && (
+                <div
+                  className="absolute inset-0 opacity-40"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(rgba(255,255,255,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.14) 1px, transparent 1px)",
+                    backgroundSize: "18px 18px",
+                    transition: reduced ? "none" : "opacity 200ms ease",
+                  }}
+                />
+              )}
+              {on.includes("glow") && (
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: "radial-gradient(45% 55% at 100% 100%, rgba(244,114,182,0.5), transparent 70%)",
+                    transition: reduced ? "none" : "opacity 200ms ease",
+                  }}
+                />
+              )}
+              <p className="absolute bottom-2 left-3 text-[10px] text-white/70">
+                {on.length} of {SPLIT_LAYERS.length} layers visible
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+          The divider is a real <span className="font-mono">separator</span>: 20% to 80%, arrow keys for two points, shift for
+          ten, Enter or a double-click back to the default. Both panes keep working at any size.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// Exported because the keys are the catalog's demo vocabulary, not a private
+// detail: the props panel and the harness both want the same list.
 export const DEMO_KEYS = [
   "prism-switch", "halo-button", "pulse-loader", "nav-dock",
   "aurora-veil", "halo-trail", "orbit-deck", "star-motes", "scramble-text", "tilt-card",
@@ -7223,6 +7670,7 @@ export const DEMO_KEYS = [
   "slider-ticks", "checkbox-card", "quantity-stepper", "radio-pills",
   "auto-grow-textarea", "date-presets", "file-drop-zone", "toggle-label-stack",
   "password-strength", "split-button-menu", "breadcrumb-trail",
+  "reorder-list", "swipe-deck", "split-pane",
   "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
   "status-banner", "progress-ring", "spinner-status", "empty-state-trio",
@@ -7306,6 +7754,9 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "toggle-label-stack": return <ToggleLabelStack />;
     case "password-strength": return <PasswordStrength />;
     case "split-button-menu": return <SplitButtonMenu />;
+    case "reorder-list": return <ReorderList />;
+    case "swipe-deck": return <SwipeDeck />;
+    case "split-pane": return <SplitPane />;
     case "breadcrumb-trail": return <BreadcrumbTrail />;
     case "pagination-ellipsis": return <PaginationEllipsis {...props} />;
     case "toc-spine": return <TocSpine />;

@@ -55,6 +55,6 @@ export const EMBED_HEADERS: { source: string; headers: { key: string; value: str
       { key: "Content-Security-Policy", value: "frame-ancestors *" },
       { key: "X-Robots-Tag", value: "noindex" },
     ],
-    why: "The frame policy says out loud that the route exists to be framed; without it a future default CSP would silently break every embed. Noindex keeps 107 near-identical demo-only pages out of search results, where they would compete with the asset pages that explain them. A per-site allowlist would need a server reading Origin, which this build does not have.",
+    why: "The frame policy says out loud that the route exists to be framed; without it a future default CSP would silently break every embed. Noindex keeps the near-identical demo-only pages out of search results, where they would compete with the asset pages that explain them. A per-site allowlist would need a server reading Origin, which this build does not have.",
   },
 ];

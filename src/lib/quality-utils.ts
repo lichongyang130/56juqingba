@@ -257,7 +257,7 @@ export function truthRows(): TruthRow[] {
   const depFree = depFreeCount();
   return [
     {
-      claim: "“107 original assets”",
+      claim: `“${COMPONENTS.length} original assets”`,
       value: String(COMPONENTS.length),
       derived: "COMPONENTS.length",
       source: "COMPONENTS array in src/lib/data.ts",
@@ -285,7 +285,7 @@ export function truthRows(): TruthRow[] {
       surfaces: "footer count line · /backgrounds",
     },
     {
-      claim: "“106/107 dependency-free”",
+      claim: `“${COMPONENTS.filter((c) => c.deps.length === 0).length}/${COMPONENTS.length} dependency-free”`,
       value: `${depFree}/${COMPONENTS.length}`,
       derived: "assets with deps.length === 0",
       source: "deps field across COMPONENTS",

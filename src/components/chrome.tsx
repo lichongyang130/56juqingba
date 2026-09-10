@@ -46,7 +46,15 @@ export function NewsletterLine() {
 }
 
 /* Subtle bottom CTA rail — marketing pages only; dismissed once per browser. */
-export function CtaRail() {
+export interface SiteCounts {
+  components: number;
+  prompts: number;
+  guides: number;
+  backgrounds: number;
+  asOf: string;
+}
+
+export function CtaRail({ counts }: { counts: SiteCounts }) {
   const [gone, setGone] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [deep, setDeep] = useState(false);
@@ -87,7 +95,7 @@ export function CtaRail() {
         <div className="min-w-0">
           <p className="text-sm font-extrabold tracking-tight">Every asset here is free to copy</p>
           <p className="mt-0.5 text-[11px] text-ink-dim">
-            107 components · 74 run-tested prompts · 60 guides — no account, no signup.
+            {counts.components} components · {counts.prompts} run-tested prompts · {counts.guides} guides — no account, no signup.
           </p>
         </div>
         <div className="flex items-center gap-1.5">
@@ -227,7 +235,7 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
 
 const ROSTER_HANDLES = new Set(ROSTER.map((m) => m.handle));
 
-export function Footer() {
+export function Footer({ counts }: { counts: SiteCounts }) {
   const groups: [string, string[]][] = [
     ["Library", ["Elements", "Animated", "Sections", "Templates", "Backgrounds"]],
     ["AI Prompts", ["All prompts", "Verified only", "Prompt builder", "Scoreboard"]],
@@ -305,7 +313,7 @@ export function Footer() {
                               {
                                 brand: SITE.name,
                                 tagline: SITE.description,
-                                counts: "as of Sep 2026 — 107 components, 74 prompts, 60 guides, 33 backgrounds",
+                                counts: `as of ${counts.asOf} — ${counts.components} components, ${counts.prompts} prompts, ${counts.guides} guides, ${counts.backgrounds} backgrounds`,
                                 colors: {
                                   violet: "hsl(262 82% 60%)",
                                   cyan: "hsl(192 82% 55%)",

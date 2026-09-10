@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 430 / 500 shipped (batches 1–60, in order) · Sections 1–16 complete ✅ · Section 17 next
+## Progress — 433 / 500 shipped (batches 1–61, in order) · Sections 1–16 complete ✅ · Section 17 in progress (3/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -442,6 +442,9 @@ names, behaviours and where they plug into the existing pages.
 | 428 | Browser bookmarklet | [/integrations/bookmarklet](/integrations/bookmarklet) · a drag-to-the-bar script that lists any page's colour custom properties and copies one per click, with the saving gap named |
 | 429 | CLI sketch | [/api/exports/motif-cli.mjs](/api/exports/motif-cli.mjs) · a script that runs — `node motif-cli.mjs list\|tokens\|badge` against any deployment — with no registry entry, so nothing pretends to be installable |
 | 430 | CI badge | [/integrations/badge](/integrations/badge) · a real SVG per asset at /api/badge/&lt;slug&gt; carrying the stored score, with "no CI service" written into the file's own description |
+| 431 | Drag-to-reorder list | [/components/reorder-list](/components/reorder-list) · rows glide through a FLIP transform while the pointer drags, and a keyboard handle moves a row a slot at a time with every move announced |
+| 432 | Swipeable cards (deck) | [/components/swipe-deck](/components/swipe-deck) · drag a card past the threshold or press one of the two buttons; every decision is undoable and the status line counts what is left |
+| 433 | Split-pane resizer | [/components/split-pane](/components/split-pane) · a real separator with min/max, arrow-key resizing, shift for larger steps, Enter to reset and a visible focus ring |
 
 ---
 
@@ -1031,7 +1034,7 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 17. More interactive scenes & motion — 25 demos
+## 17. More interactive scenes & motion — 25 demos — 3/25 shipped, in progress
 
 - **Drag-to-reorder list**: rows that glide when you drag, with a11y keyboard reorder.
 - **Swipeable cards (deck)**: tinder-style stack with undo and reduced-motion note.

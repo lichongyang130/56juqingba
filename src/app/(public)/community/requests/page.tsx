@@ -44,7 +44,7 @@ export default function RequestsPage() {
 
       <div className="mt-10 grid gap-4 md:grid-cols-3">
         {[
-          { h: "Ask with a number", b: "“More drag components” is a feeling. “7 of 107 assets declare drag” is a request someone can act on, and it stays true if the catalog changes." },
+          { h: "Ask with a number", b: "“More drag components” is a feeling. “7 of {COMPONENTS.length} assets declare drag” is a request someone can act on, and it stays true if the catalog changes." },
           { h: "The studio's own picks", b: "The thinnest gaps are not always the most valuable. The ordering here is a map of coverage, not a roadmap — a loud vote on a well-covered area is still a vote." },
           { h: "What gets built", b: "Requests that arrive with a measurement are the ones that survive a planning pass. If a gap closes, its row drops down the board automatically." },
         ].map((c) => (

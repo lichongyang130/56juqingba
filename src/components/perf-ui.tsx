@@ -22,6 +22,7 @@ import {
   zeroJsAssets,
 } from "@/lib/perf";
 import { CACHE_PLAN, CACHE_RULES } from "@/lib/cache-rules";
+import { COMPONENTS } from "@/lib/data";
 
 export const PERF_ROUTES: { href: string; label: string; item: string; blurb: string }[] = [
   { href: "/perf", label: "Page budgets", item: "#400", blurb: "Every route's own JS, its CSS and its HTML, measured from this build." },
@@ -340,7 +341,7 @@ export function MountingPanel() {
           value={deferred ? `${deferred.pending}` : "—"}
           sub={deferred ? `${deferred.mounted} mounted in the built HTML; the rest wait for the viewport` : "no reading available"}
         />
-        <Stat label="Work avoided on load" value="107" sub="demo subtrees on /components that no longer mount off-screen" />
+        <Stat label="Work avoided on load" value={String(COMPONENTS.length)} sub="demo subtrees on /components that no longer mount off-screen" />
       </div>
 
       <Panel
@@ -369,7 +370,7 @@ export function MountingPanel() {
         <p className="mt-1.5 max-w-3xl text-[11px] leading-relaxed text-amber-100/80">
           Mounting needs JavaScript. With JavaScript disabled the placeholders never fill in, so a no-JS visitor sees the
           catalog without animations. That is a real cost, accepted because the animation is decoration over information that
-          stays in the HTML — and measured on the no-JavaScript page, where all 107 component titles are still present. The
+          stays in the HTML — and measured on the no-JavaScript page, where all {COMPONENTS.length} component titles are still present. The
           alternative, mounting everything eagerly, is what the previous build did, and it is the number on the left.
         </p>
       </div>
@@ -569,7 +570,7 @@ export const DEVICE_CLASSES = [
     hardware: "4× slower CPU than a 2023 mid-range phone, 4 GB RAM",
     network: "Slow 4G, 400 ms RTT, 1.6 Mbps",
     measures: "First paint, longest main-thread task, dropped frames while scrolling the catalog with demos mounting.",
-    why: "This is the class the blur budget and lazy mounting exist for: 107 mounting demos is a different problem at 4× slower.",
+    why: `This is the class the blur budget and lazy mounting exist for: ${COMPONENTS.length} mounting demos is a different problem at 4× slower.`,
   },
   {
     id: "mid",

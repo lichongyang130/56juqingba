@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { exportFor, tokenSet } from "@/lib/exports";
+import { COMPONENTS } from "@/lib/data";
 
 export const metadata = {
   title: "React package scaffold — Motif UI",
@@ -51,7 +52,7 @@ export default function IntegrationsReactPage() {
 ├─ tokens.json      the DTCG file from /api/exports/tokens.json
 └─ README.md        what it does, and the three things it does not`}</pre>
             <p className="mt-3 text-[11px] leading-relaxed text-ink-dim">
-              Nothing here is inside a component that pretends to be one of the catalog&apos;s 107. A wrapper that rendered a
+              Nothing here is inside a component that pretends to be one of the catalog&apos;s {COMPONENTS.length}. A wrapper that rendered a
               &ldquo;button&rdquo; this site never authored would make the package look bigger than the product.
             </p>
           </div>

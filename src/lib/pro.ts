@@ -372,7 +372,7 @@ export const TRIAL_DAYS: TrialDay[] = [
    ------------------------------------------------------------------- */
 
 export const API_SCOPES = [
-  { id: "read:components", label: "Read components", note: "List and fetch the 107 catalog entries." },
+  { id: "read:components", label: "Read components", note: `List and fetch the ${COMPONENTS.length} catalog entries.` },
   { id: "read:prompts", label: "Read prompts", note: "Prompt bodies plus their run logs." },
   { id: "read:themes", label: "Read themes", note: "Fetch token kits saved by the account." },
   { id: "write:themes", label: "Write themes", note: "Create or replace a kit. The only write scope offered." },
@@ -630,7 +630,7 @@ export const CANCEL_STEPS: CancelStep[] = [
 ];
 
 export const CANCEL_AFTERMATH: { what: string; happens: string }[] = [
-  { what: "Library access", happens: "Never changes. The 107 components are MIT and do not live behind the subscription." },
+  { what: "Library access", happens: `Never changes. The ${COMPONENTS.length} components are MIT and do not live behind the subscription.` },
   { what: "Saved theme kits", happens: "Stay in your browser and stay exportable to CSS. Nothing is locked on the way out." },
   { what: "Paid surfaces", happens: "Stop renewing at the end of the period. API keys (if they existed) would be revoked on that date, not immediately." },
   { what: "Your data", happens: "Exports are available on the billing page for the length of the period. Nothing is deleted on cancel." },

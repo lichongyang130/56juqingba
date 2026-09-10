@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MountingPanel, MeasuredNote, PerfNav } from "@/components/perf-ui";
+import { COMPONENTS } from "@/lib/data";
 
 export const metadata = {
   title: "Lazy scene mounting — Motif UI",
@@ -15,7 +16,7 @@ export default function PerfMountingPage() {
           Demos that wait <span className="text-gradient">until you look</span>
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-ink-dim">
-          The catalog grid used to mount every demo on first paint — 107 live React subtrees on /components, each with its own
+          The catalog grid used to mount every demo on first paint — {COMPONENTS.length} live React subtrees on /components, each with its own
           timers and animations, running in rows nobody had reached yet. Now they mount when a card comes within one screen of
           the viewport, and the numbers below are the two builds measured side by side.
         </p>
