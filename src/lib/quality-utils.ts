@@ -466,10 +466,10 @@ export function emptyStateScan(): { deadEnds: number; lines: EmptyLine[] } {
 
 export const URL_SNAPSHOT = {
   audited: "2026-09-10",
-  commit: "d3c43a8",
-  seedRoutes: 228,
-  seedOk: 228,
-  hrefs: 266,
+  commit: "357fb85",
+  seedRoutes: 258,
+  seedOk: 258,
+  hrefs: 264,
   broken: 0,
   foundAndFixed: [
     "The weekly digest linked “Background refresh” entries to /components/<bg-slug>, which 404s — backgrounds have no per-slug page.",
