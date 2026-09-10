@@ -89,8 +89,18 @@ function parseCheck(label, source) {
   const doc = fs.readFileSync("docs/enrichment-500.md", "utf8");
   const rows = (doc.match(/^\| \d+ \|/gm) || []).length;
   const headline = Number((doc.match(/## Progress — (\d+) \/ 500 shipped/) || [])[1]);
-  ok("ledger table matches its own headline", rows === headline && rows > 0, `table ${rows}, headline ${headline}`);
-  ok("ledger ends at the newest row", new RegExp(`\\| ${headline} \\|`).test(doc));
+  const extras = Number((doc.match(/ledger-extra-rows: (\d+)/) || [])[1] || 0);
+  ok(
+    "ledger table matches its own headline",
+    rows === headline + extras && rows > 0,
+    `table ${rows}, headline ${headline} + ${extras} extra`,
+  );
+  const nums = [...doc.matchAll(/^\| (\d+) \|/gm)].map((m) => Number(m[1]));
+  ok(
+    "ledger rows are numbered 1..N without gaps",
+    nums.length > 0 && nums.every((n, i) => n === i + 1),
+    `${nums.length} rows, max ${Math.max(...nums)}`,
+  );
   ok("sections 1–16 are marked complete", /Sections 1–16 complete/.test(doc) && /15\/15 shipped ✅/.test(doc));
 
   /* ---------- the library and the hub ---------- */

@@ -8,7 +8,14 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 452 / 500 shipped (batches 1–68, in order) · Sections 1–16 complete ✅ · Section 17 in progress (21/25)
+<!-- ledger-extra-rows: 1 -->
+_One row in the table below is not an idea from the bank: #27 upload progress ring
+(`/components/progress-ring`) shipped alongside the Section 1 batch and was never one of
+the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet count. The
+harness reads the `ledger-extra-rows` marker above and allows that difference, which means
+the table ends at #501 on the day the headline reads 500 / 500._
+
+## Progress — 451 / 500 shipped (batches 1–68, in order) · Sections 1–16 complete ✅ · Section 17 in progress (21/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|

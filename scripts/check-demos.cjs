@@ -94,7 +94,14 @@ const NEW_SCENES = [
   }
   const headline = Number((ledger.match(/## Progress — (\d+) \/ 500 shipped/) || [])[1]);
   const rows = (ledger.match(/^\| \d+ \|/gm) || []).length;
-  ok("the ledger table matches its headline", rows === headline && rows > 0, `table ${rows}, headline ${headline}`);
+  // One early row (the upload progress ring) shipped outside the idea bank, so the
+  // table is allowed to run ahead of the headline by the documented extras.
+  const extras = Number((ledger.match(/ledger-extra-rows: (\d+)/) || [])[1] || 0);
+  ok(
+    "the ledger table matches its headline",
+    rows === headline + extras && rows > 0,
+    `table ${rows}, headline ${headline} + ${extras} extra`,
+  );
   const shipped = Number((ledger.match(/Section 17 in progress \((\d+)\/25\)/) || [])[1] || 0);
   const inSection17 = NEW_SCENES.filter((s) => s.section !== 1).length;
   ok(
