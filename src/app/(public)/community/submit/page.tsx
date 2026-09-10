@@ -56,6 +56,11 @@ export default async function SubmitPage({ searchParams }: { searchParams: Promi
           <li>Respect the licence of what you fork (components are MIT, guides are CC BY 4.0) and credit the original.</li>
           <li>Expect the gates: a failing lint or sandbox check is a conversation, not a verdict on you.</li>
         </ul>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link href="/community/onboarding" className="btn btn-ghost !py-2 text-xs">Read the full submit guide →</Link>
+          <Link href="/community/attribution" className="btn btn-ghost !py-2 text-xs">Attribution policy</Link>
+          <Link href="/community/outcomes" className="btn btn-ghost !py-2 text-xs">What happens to submissions</Link>
+        </div>
       </div>
     </div>
   );

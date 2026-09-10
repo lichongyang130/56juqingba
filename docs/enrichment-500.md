@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 351 / 500 shipped (batches 1–48, in order) · Sections 1–11 complete ✅ · Section 12 in progress (12/25)
+## Progress — 358 / 500 shipped (batches 1–49, in order) · Sections 1–11 complete ✅ · Section 12 in progress (19/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -363,6 +363,13 @@ names, behaviours and where they plug into the existing pages.
 | 349 | Community — badges awarded by rule | [/community/badges](/community/badges) · chips on maker pages |
 | 350 | Community — thank-you button + "community loved" sort | [/community/loved](/community/loved) · button on every asset page |
 | 351 | Community — spotlight interviews | [/community/spotlight](/community/spotlight) · linked from the Learn hub |
+| 352 | Community — craft-talk panel (no fake Discord) | [/community/craft-talk](/community/craft-talk) |
+| 353 | Community — content requests board | [/community/requests](/community/requests) · coverage measured from the catalog |
+| 354 | Community — snippet provenance ("blame") | per-asset panel on every component page · [/community/provenance](/community/provenance) |
+| 355 | Community — fork a remix into your set | [/community/remixes](/community/remixes) · forks shown on [/saved](/saved) |
+| 356 | Community — attribution policy | [/community/attribution](/community/attribution) |
+| 357 | Community — moderation outcomes made visible | [/community/outcomes](/community/outcomes) · sample-queue aggregate + your own reviews |
+| 358 | Community — contributor onboarding guide | [/community/onboarding](/community/onboarding) |
 
 ---
 
@@ -797,9 +804,11 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 12. Community — 25 features — 12/25 shipped
+## 12. Community — 25 features — 19/25 shipped
 
 Shipped so far: favourites/collect (#340) · collections with URLs (#341) · remix submit flow (#342) · community prompt re-run (#343) · copy leaderboard (#344) · maker profile pages (#345) · review threads on code lines (#346) · weekly picks (#347) · monthly challenges with a winners rail (#348) · rule-awarded badges (#349) · thank-you button and a loved board (#350) · spotlight interviews (#351).
+
+Batch 49 added the accountability layer: a craft-talk page that explains why there is no chat server yet (#352), a requests board where every ask carries a coverage number measured from the catalog (#353), snippet provenance that prints the record we hold and names the per-line history we do not (#354), remix forking with provenance attached (#355), the attribution policy (#356), public moderation outcomes aggregated from the sample queue (#357) and the contributor onboarding guide (#358).
 
 Everything lives under [/community](/community). The split is printed on every surface: picks, challenge winners and badges are computed from catalog and gate data by published rules; saved lists, submissions, review threads and thanks are browser-local; the re-run log is an explicit simulation — no model is called. Interview subjects are sample roster personas and are labelled as such.
 

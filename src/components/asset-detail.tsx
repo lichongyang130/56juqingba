@@ -11,6 +11,7 @@ import { CourseRailFinal } from "@/components/course-rail-3";
 import TemplateKit, { TemplateKitMore } from "@/components/template-kit";
 import { accentCss, COMPONENTS, KIND_META } from "@/lib/data";
 import { ReviewNotes, StarButton, ThanksButton } from "@/components/community-ui";
+import { snippetProvenance } from "@/lib/community";
 import type { Asset } from "@/lib/types";
 
 /* Original code snippets shown in the detail page (hand-written for the MVP). */
@@ -2340,6 +2341,10 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
     const body = snippet.react.split("\n").slice(0, 3).join("\n");
     return `<script setup>\n// ${asset.slug} — Vue Single File Component.\n// The styles below are the asset's own CSS; the template\n// is where you drop your markup (the demo structure differs\n// per asset — see the React tab for the shape).\n</script>\n\n<template>\n  <div class="${asset.slug}-host">\n    <!-- paste the rendered markup here -->\n    <slot />\n  </div>\n</template>\n\n<style scoped>\n${snippet.css}\n</style>\n\n<!-- source hint: ${body.replaceAll("\n", " ").slice(0, 90)}… -->`;
   }, [asset, snippet]);
+  // #346/#354 — the snippet on screen drives both the review anchors and the provenance block
+  const snippetText = tab === "vue" ? vueSnippet : snippet[tab];
+  const snippetLines = snippetText.split("\n").length;
+  const prov = snippetProvenance(asset, snippetLines);
   const accentColor = accentCss(asset.slug, 85, 68);
 
   /* deep-linkable theme + variant state (#274) */
@@ -2558,9 +2563,43 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
               code={tab === "vue" ? vueSnippet : snippet[tab]}
               onCopy={() => copy(tab, tab === "vue" ? vueSnippet : snippet[tab])}
             />
+            {/* #354 — snippet provenance: what the catalog actually records */}
+            <div className="mt-3 rounded-3xl border border-white/8 bg-panel p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Snippet provenance</p>
+                <span className="chip !text-[10px]">
+                  lines 1–{snippetLines} · {prov.current.version}
+                </span>
+              </div>
+              <div className="mt-3 space-y-1">
+                {prov.history.map((h) => (
+                  <div key={h.version} className="flex flex-wrap items-center gap-3 rounded-xl border border-white/8 bg-white/[.02] px-3 py-2">
+                    <span className="w-14 shrink-0 font-mono text-[10px] text-amber-200">{h.version}</span>
+                    <span className="min-w-0 flex-1 text-[11px] text-ink">{h.author}</span>
+                    <span className="font-mono text-[10px] text-ink-faint">{h.date}</span>
+                    <span className="text-[10px] text-ink-faint">{h.note}</span>
+                  </div>
+                ))}
+                <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">{prov.rule}</p>
+                {prov.mentions.map((m) => (
+                  <p key={`${m.date}-${m.title}`} className="mt-1 text-[10px] leading-relaxed text-ink-dim">
+                    <span className="font-mono text-ink-faint">{m.date}</span> · {m.tag} · {m.title}
+                  </p>
+                ))}
+              </div>
+              <p className="mt-3 border-t border-white/6 pt-2 text-[10px] leading-relaxed text-ink-faint">
+                Every line above is attributed to the single version this catalog records — we keep no per-line history, so
+                no per-line attribution is invented. See{" "}
+                <Link href="/community/provenance" className="font-semibold text-violet-300 hover:text-violet-200">
+                  the provenance page
+                </Link>{" "}
+                for the rule and the gaps.
+              </p>
+            </div>
+
             {/* #346 — review threads anchored to the lines of whichever tab is open */}
             <div className="mt-3">
-              <ReviewNotes slug={asset.slug} lines={(tab === "vue" ? vueSnippet : snippet[tab]).split("\n").length} />
+              <ReviewNotes slug={asset.slug} lines={snippetLines} />
             </div>
             {DESIGN_NOTES[asset.slug] && (
               <div className="mt-3 rounded-2xl border border-white/8 bg-panel p-5">

@@ -31,6 +31,13 @@ export default function CommunityHub() {
     { href: "/community/badges", title: "Badges", tag: "awarded by rule", body: "Four contributor badges computed from catalog and gate data. Nothing purchasable, nothing granted by hand.", cta: "See the rules" },
     { href: "/community/loved", title: "Community loved", tag: "browser-local thanks", body: "A thank-you button on every asset, and a board that puts the assets you thanked at the top for you.", cta: "Open the board" },
     { href: "/community/spotlight", title: "Spotlight interviews", tag: `${SPOTLIGHTS.length} months`, body: "One maker a month on the craft behind the queue, linked from the Learn section.", cta: "Read a spotlight" },
+    { href: "/community/remixes", title: "Remix board", tag: "fork into your set", body: "Fork a community remix into your own set — with the original and the remixer still attached.", cta: "Open the board" },
+    { href: "/community/requests", title: "Requests board", tag: "evidence first", body: "Ask for what is missing: every request carries a coverage number measured from the live catalog.", cta: "See the gaps" },
+    { href: "/community/outcomes", title: "Moderation outcomes", tag: "aggregated by rule", body: "Every gate outcome in the sample queue, the three decision paths, and your own reviews read back.", cta: "See the outcomes" },
+    { href: "/community/onboarding", title: "How to submit", tag: "the whole bar", body: "The audit criteria, the thresholds, why entries come back, and a pre-flight checklist.", cta: "Read the guide" },
+    { href: "/community/attribution", title: "Attribution policy", tag: "the licence, not a favour", body: "MIT for assets, CC BY 4.0 for guides — and exactly what happens when a credit goes missing.", cta: "Read the policy" },
+    { href: "/community/provenance", title: "Snippet provenance", tag: "honest blame", body: "Who touched this code, from the record we actually keep — plus the history we do not have.", cta: "Trace a snippet" },
+    { href: "/community/craft-talk", title: "Craft talk", tag: "not launched", body: "No chat server yet, and the four things that would have to be true before we open one.", cta: "Why there is no Discord" },
   ];
 
   return (

@@ -6,13 +6,18 @@
    real filters over the live catalog, so their counts are always true.
    --------------------------------------------------------------------- */
 
-import { COMPONENTS, PROMPTS } from "./data";
+import { CHANGELOG, COMPONENTS, PROMPTS } from "./data";
+import { LEARN_ARTICLES } from "./learn";
 import type { Asset, PromptTemplate } from "./types";
 
 export const STAR_KEY = "motif:stars";
 export const SUBMISSION_KEY = "motif:community-submissions";
 export const REVIEW_KEY = "motif:review-notes";
 export const THANKS_KEY = "motif:thanks";
+export const FORK_KEY = "motif:forks";
+export const VOTE_KEY = "motif:content-votes";
+/** The admin queue's decision store — shared so the outcomes page reads the same records. */
+export const MODERATION_STORAGE_KEY = "motif-admin-moderation-v1";
 
 /* ---------- moderation seed (moved here so the submit flow and the
    queue read one source of truth) ---------- */
@@ -599,3 +604,190 @@ export const SPOTLIGHTS: Spotlight[] = [
     ],
   },
 ];
+
+/* ===================================================================
+   #353 — content requests board
+   Every request carries a measurement taken from the catalog, so an ask is
+   evidence, not a wish. Ordering is the thinnest coverage first, and your own
+   votes (browser-local) pull rows to the top.
+   =================================================================== */
+
+export interface ContentRequest {
+  id: string;
+  title: string;
+  kind: "component" | "template" | "prompt" | "guide";
+  ask: string;
+  /** Live measurement behind the request. */
+  shortfall: number;
+  evidence: string;
+}
+
+export function contentRequests(): ContentRequest[] {
+  const stackCount = (name: string) => COMPONENTS.filter((c) => c.stack.includes(name as "React")).length;
+  const tagCount = (tag: string) => COMPONENTS.filter((c) => c.tags.includes(tag)).length;
+  const behaviourCount = (b: string) => COMPONENTS.filter((c) => c.behaviors.includes(b)).length;
+  const templates = COMPONENTS.filter((c) => c.kind === "template").length;
+  const strictA11y = COMPONENTS.filter((c) => c.a11yScore >= 98).length;
+  const guideTag = (tag: string) => LEARN_TAGS[tag] ?? 0;
+  const singlePromptIndustries = PROMPTS.filter((p) => PROMPTS.filter((q) => q.industry === p.industry).length === 1).length;
+
+  const rows: ContentRequest[] = [
+    {
+      id: "REQ-VUE",
+      title: "Vue-native variants",
+      kind: "component",
+      ask: "Every detail page offers a Vue SFC tab, but no asset declares Vue in its stack list — the tab is generated from the React source. Ship real Vue builds so the tab is not a paraphrase.",
+      shortfall: stackCount("Vue"),
+      evidence: `${stackCount("Vue")} of ${COMPONENTS.length} assets list Vue in their stack, while all ${COMPONENTS.length} detail pages render a Vue tab`,
+    },
+    {
+      id: "REQ-TEMPLATES",
+      title: "Whole-page templates",
+      kind: "template",
+      ask: "Templates assemble the sections into a finished page. Two exist; the section library is 35 deep, so the assembly layer is where the leverage is.",
+      shortfall: templates,
+      evidence: `${templates} of ${COMPONENTS.length} catalog items are whole-page templates, against 35 sections to assemble`,
+    },
+    {
+      id: "REQ-HOLD",
+      title: "Press-and-hold gestures",
+      kind: "component",
+      ask: "Hold is the least-covered interaction in the catalog and the one most often needed on touch: press-to-record, press-to-confirm, press-to-reveal.",
+      shortfall: behaviourCount("hold"),
+      evidence: `${behaviourCount("hold")} asset uses “hold”, ${behaviourCount("pointer")} use “pointer”, across ${COMPONENTS.length} assets`,
+    },
+    {
+      id: "REQ-DRAG",
+      title: "Drag beyond sortable lists",
+      kind: "component",
+      ask: "Drag appears mostly as list reordering. Missing: split panes, kanban columns, drag-to-upload zones — the surfaces where drag is the whole interaction.",
+      shortfall: behaviourCount("drag"),
+      evidence: `${behaviourCount("drag")} of ${COMPONENTS.length} assets declare a “drag” behaviour, ${tagCount("split")} carry the split tag`,
+    },
+    {
+      id: "REQ-A11Y-STRICT",
+      title: "A11y-strict siblings",
+      kind: "component",
+      ask: "For briefs that demand WCAG with no discussion, every popular pattern deserves a sibling audited at 98 or better — not a replacement, an option.",
+      shortfall: COMPONENTS.length - strictA11y,
+      evidence: `${strictA11y} of ${COMPONENTS.length} assets audit at 98+ — ${COMPONENTS.length - strictA11y} sit below that band`,
+    },
+    {
+      id: "REQ-REDUCED",
+      title: "A reduced-motion guide",
+      kind: "guide",
+      ask: "We ship reduced-motion handling in every animated component but have not written the field guide behind it: what to swap, what to keep, how to test it.",
+      shortfall: guideTag("reduced motion"),
+      evidence: `${guideTag("reduced motion")} guides carry the reduced-motion tag, against ${guideTag("a11y")} carrying the broader a11y tag`,
+    },
+    {
+      id: "REQ-EMPTY",
+      title: "Empty-state playbook",
+      kind: "guide",
+      ask: "Empty states decide whether a first session survives. One essay touches them; nothing covers the copy patterns or the illustration budget.",
+      shortfall: guideTag("empty states"),
+      evidence: `${guideTag("empty states")} guide has empty states as a tag`,
+    },
+    {
+      id: "REQ-INDUSTRY",
+      title: "Depth in thin prompt industries",
+      kind: "prompt",
+      ask: "The prompt library is wide and shallow: most industries have exactly one brief. A second and third prompt per industry would make adjacency comparisons possible.",
+      shortfall: singlePromptIndustries,
+      evidence: `${singlePromptIndustries} of ${PROMPTS.length} prompts belong to an industry with no other prompt`,
+    },
+  ];
+  return rows.sort((a, b) => a.shortfall - b.shortfall || a.id.localeCompare(b.id));
+}
+
+/** Guide tag counts — computed from the Learn articles, so a new guide moves
+ *  the request evidence without anyone editing this file. */
+const LEARN_TAGS: Record<string, number> = (() => {
+  const out: Record<string, number> = {};
+  for (const a of LEARN_ARTICLES) for (const t of a.tags) out[t] = (out[t] ?? 0) + 1;
+  return out;
+})();
+
+/* ===================================================================
+   #354 — snippet provenance ("blame")
+   We record one version per asset, not a commit log. The panel attributes
+   every line to that version and lists the changelog entries that mention the
+   asset by title — with the matching rule printed, so nothing is inferred.
+   =================================================================== */
+
+export interface ProvenanceVersion {
+  version: string;
+  date: string;
+  author: string;
+  note: string;
+}
+
+export interface Provenance {
+  lines: number;
+  current: ProvenanceVersion;
+  history: ProvenanceVersion[];
+  mentions: { date: string; tag: string; title: string }[];
+  rule: string;
+}
+
+export function snippetProvenance(asset: Asset, lines: number): Provenance {
+  const mentions = CHANGELOG.filter((c) => `${c.title} ${c.body}`.toLowerCase().includes(asset.title.toLowerCase())).map(
+    (c) => ({ date: c.date, tag: c.tag, title: c.title }),
+  );
+  return {
+    lines,
+    current: {
+      version: `v${asset.version}`,
+      date: asset.published,
+      author: asset.author,
+      note: `first published · status ${asset.status} · ${asset.license}`,
+    },
+    history: [
+      {
+        version: `v${asset.version}`,
+        date: asset.published,
+        author: asset.author,
+        note: "the only version the catalog records for this asset",
+      },
+    ],
+    mentions,
+    rule: mentions.length
+      ? `Changelog entries matched by the asset title “${asset.title}” appearing in the entry's title or body.`
+      : `No changelog entry mentions “${asset.title}”, so the catalog records a single version for it.`,
+  };
+}
+
+/* ===================================================================
+   #357 — moderation outcomes, aggregated from the sample queue
+   =================================================================== */
+
+export interface QueueReport {
+  total: number;
+  byKind: { kind: SubmissionKind; n: number }[];
+  lint: { pass: number; warn: number; fail: number };
+  safety: { pass: number; warn: number; fail: number };
+  clean: number;
+  blocked: number;
+  avgScore: number;
+  bandOf: (s: Submission) => "clean" | "review" | "blocked";
+}
+
+export function queueReport(): QueueReport {
+  const total = MODERATION_SEED.length;
+  const tally = (pick: (s: Submission) => Gate) => ({
+    pass: MODERATION_SEED.filter((s) => pick(s) === "pass").length,
+    warn: MODERATION_SEED.filter((s) => pick(s) === "warn").length,
+    fail: MODERATION_SEED.filter((s) => pick(s) === "fail").length,
+  });
+  const kinds = ["element", "section", "animated", "prompt"] as const;
+  return {
+    total,
+    byKind: kinds.map((k) => ({ kind: k, n: MODERATION_SEED.filter((s) => s.kind === k).length })).filter((r) => r.n > 0),
+    lint: tally((s) => s.lint),
+    safety: tally((s) => s.safety),
+    clean: MODERATION_SEED.filter((s) => s.lint === "pass" && s.safety === "pass").length,
+    blocked: MODERATION_SEED.filter((s) => s.safety === "fail").length,
+    avgScore: Math.round((MODERATION_SEED.reduce((a, s) => a + s.score, 0) / total) * 10) / 10,
+    bandOf: (s) => (s.safety === "fail" ? "blocked" : s.lint === "pass" && s.safety === "pass" ? "clean" : "review"),
+  };
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SavedBoard } from "@/components/community-ui";
+import { ForkedList } from "@/components/community-ui-2";
 
 export const metadata: Metadata = {
   title: "Your saved list — Motif UI",
@@ -26,6 +27,23 @@ export default function SavedPage() {
         </p>
       </div>
       <SavedBoard />
+
+      <section className="mt-12">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/6 pb-3">
+          <h2 className="text-xs font-bold uppercase tracking-[0.24em] text-violet-200">Remixes you forked</h2>
+          <Link href="/community/remixes" className="text-[11px] font-semibold text-violet-300 hover:text-violet-200">
+            Open the remix board →
+          </Link>
+        </div>
+        <p className="mt-3 max-w-3xl text-[11px] leading-relaxed text-ink-faint">
+          Forked remixes live in the same browser store as your stars, in{" "}
+          <span className="font-mono">motif:forks</span>. Each fork keeps a link back to the original asset and to the
+          person who made the remix — a copy without provenance is worth less than the credit it drops.
+        </p>
+        <div className="mt-4">
+          <ForkedList />
+        </div>
+      </section>
     </div>
   );
 }
