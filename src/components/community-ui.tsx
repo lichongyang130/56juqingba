@@ -7,7 +7,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { accentCss, COMPONENTS, PROMPTS } from "@/lib/data";
-import { RERUN_MODELS, rerunFidelity, rerunScript, REVIEW_KEY, STAR_KEY, SUBMISSION_KEY, type Submission } from "@/lib/community";
+import { RERUN_MODELS, rerunFidelity, rerunScript, REVIEW_KEY, STAR_KEY, SUBMISSION_KEY, THANKS_KEY, type Submission } from "@/lib/community";
 
 /* ===================================================================
    #340 — favourites: star assets and prompts into a saved list
@@ -586,4 +586,134 @@ export function useLocalStars() {
 
 export function authoredBy(handle: string) {
   return COMPONENTS.filter((a) => a.author.includes(handle)).length + PROMPTS.filter((p) => p.author.includes(handle)).length;
+}
+
+/* ===================================================================
+   #350 — thank-you button + "community loved" board
+   =================================================================== */
+
+export function useThanks() {
+  const [thanks, setThanks] = useState<string[]>([]);
+  useEffect(() => {
+    const sync = () => setThanks(readThanks());
+    const raf = requestAnimationFrame(sync);
+    window.addEventListener(EVENT_THANKS, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener(EVENT_THANKS, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
+  const toggle = (slug: string) => {
+    const cur = readThanks();
+    const next = cur.includes(slug) ? cur.filter((s) => s !== slug) : [...cur, slug];
+    try {
+      window.localStorage.setItem(THANKS_KEY, JSON.stringify(next));
+    } catch {
+      /* blocked storage — thanks still register for this visit */
+    }
+    setThanks(next);
+    window.dispatchEvent(new Event(EVENT_THANKS));
+  };
+  return { thanks, toggle, has: (slug: string) => thanks.includes(slug) };
+}
+
+const EVENT_THANKS = "motif:thanks-changed";
+
+function readThanks(): string[] {
+  try {
+    const raw = window.localStorage.getItem(THANKS_KEY);
+    const parsed = raw ? (JSON.parse(raw) as string[]) : [];
+    return Array.isArray(parsed) ? parsed.filter((x) => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+export function ThanksButton({ slug, title }: { slug: string; title: string }) {
+  const { has, toggle } = useThanks();
+  const thanked = has(slug);
+  return (
+    <button
+      type="button"
+      onClick={() => toggle(slug)}
+      aria-pressed={thanked}
+      title={thanked ? `Remove your thanks for ${title}` : `Thank the makers of ${title} (stored in this browser)`}
+      className={`btn btn-ghost ${thanked ? "!border-mint/40 !text-mint" : ""}`}
+    >
+      {thanked ? "♥ Thanked" : "♡ Thank the makers"}
+    </button>
+  );
+}
+
+/** The loved board: the catalog ranking, reordered for you by your own thanks.
+ *  Client-side because thanks are browser-local — the shared signal is copies. */
+export function LovedBoard({ rows }: { rows: { slug: string; title: string; kind: string; copies: number; href: string }[] }) {
+  const { thanks, has, toggle } = useThanks();
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setHydrated(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const ordered = useMemo(() => {
+    if (!thanks.length) return rows;
+    const mine = rows.filter((r) => has(r.slug));
+    const rest = rows.filter((r) => !has(r.slug));
+    return [...mine, ...rest];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, thanks]);
+
+  const max = rows[0]?.copies ?? 1;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/[.02] px-4 py-3">
+        <p className="text-xs text-ink-dim">
+          {hydrated && thanks.length
+            ? `${thanks.length} ${thanks.length === 1 ? "asset" : "assets"} thanked in this browser — they sit at the top of the board for you.`
+            : "You have not thanked anything on this device yet, so the board reads in catalog order."}
+        </p>
+        <span className="chip !text-[10px]">localStorage · motif:thanks</span>
+      </div>
+
+      <div className="space-y-2">
+        {ordered.map((r, i) => {
+          const mine = hydrated && has(r.slug);
+          return (
+            <div
+              key={r.slug}
+              className={`flex items-center gap-4 rounded-2xl border px-4 py-3 ${mine ? "border-mint/25 bg-mint/[.04]" : "border-white/8 bg-panel"}`}
+            >
+              <span className="w-7 shrink-0 font-mono text-sm font-extrabold text-ink-faint">#{i + 1}</span>
+              <div className="min-w-0 flex-1">
+                <Link href={r.href} className="truncate text-sm font-bold text-ink hover:text-violet-200">
+                  {r.title}
+                </Link>
+                <p className="font-mono text-[10px] text-ink-faint">
+                  {r.slug} · {r.kind}
+                  {mine ? " · you thanked this" : ""}
+                </p>
+              </div>
+              <div className="hidden h-1.5 w-32 overflow-hidden rounded-full bg-white/8 sm:block">
+                <div className="h-full rounded-full bg-gradient-to-r from-mint/70 to-violet-400/70" style={{ width: `${Math.max(4, (r.copies / max) * 100)}%` }} />
+              </div>
+              <span className="w-14 shrink-0 text-right font-mono text-xs text-ink-dim">{r.copies.toLocaleString()}</span>
+              <button
+                type="button"
+                onClick={() => toggle(r.slug)}
+                aria-pressed={mine}
+                className={`shrink-0 rounded-lg border px-2.5 py-1 text-[10px] font-semibold transition-colors ${
+                  mine ? "border-mint/40 text-mint" : "border-white/10 text-ink-faint hover:border-mint/40 hover:text-mint"
+                }`}
+              >
+                {mine ? "♥ thanked" : "♡ thank"}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }

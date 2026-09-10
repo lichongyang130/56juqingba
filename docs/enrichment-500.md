@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 345 / 500 shipped (batches 1–47, in order) · Sections 1–11 complete ✅ · Section 12 in progress (6/25)
+## Progress — 351 / 500 shipped (batches 1–48, in order) · Sections 1–11 complete ✅ · Section 12 in progress (12/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -357,6 +357,12 @@ names, behaviours and where they plug into the existing pages.
 | 343 | Community — prompt re-run with published-average comparison | [/community/re-run](/community/re-run) (labelled simulation) |
 | 344 | Community — copy leaderboard with credits | [/community/leaderboard](/community/leaderboard) |
 | 345 | Community — maker profile pages | [/makers](/makers) · 9 sample-roster handles |
+| 346 | Community — review threads anchored to code lines | code panel on every component page (browser-local, anchors match the snippet on screen) |
+| 347 | Community — weekly picks ("made it" band) | [/community/picks](/community/picks) · rule-ranked, rotates weekly |
+| 348 | Community — monthly challenges + winners rail | [/community/challenges](/community/challenges) · one brief open, winner chosen by code |
+| 349 | Community — badges awarded by rule | [/community/badges](/community/badges) · chips on maker pages |
+| 350 | Community — thank-you button + "community loved" sort | [/community/loved](/community/loved) · button on every asset page |
+| 351 | Community — spotlight interviews | [/community/spotlight](/community/spotlight) · linked from the Learn hub |
 
 ---
 
@@ -791,9 +797,11 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 12. Community — 25 features — 6/25 shipped
+## 12. Community — 25 features — 12/25 shipped
 
-Shipped so far: favourites/collect (#340) · collections with URLs (#341) · remix submit flow (#342) · community prompt re-run (#343) · copy leaderboard (#344) · maker profile pages (#345). All six live under [/community](/community); saved lists, submissions and review notes are browser-local and labelled as such, and the re-run log is an explicit simulation — no model is called.
+Shipped so far: favourites/collect (#340) · collections with URLs (#341) · remix submit flow (#342) · community prompt re-run (#343) · copy leaderboard (#344) · maker profile pages (#345) · review threads on code lines (#346) · weekly picks (#347) · monthly challenges with a winners rail (#348) · rule-awarded badges (#349) · thank-you button and a loved board (#350) · spotlight interviews (#351).
+
+Everything lives under [/community](/community). The split is printed on every surface: picks, challenge winners and badges are computed from catalog and gate data by published rules; saved lists, submissions, review threads and thanks are browser-local; the re-run log is an explicit simulation — no model is called. Interview subjects are sample roster personas and are labelled as such.
 
 - **Favourites (public or private)**: star assets and prompts into a saved list.
 - **User collections**: "Landing stack", "Under 5KB" shared collections with URLs.

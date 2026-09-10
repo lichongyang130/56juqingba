@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BACKGROUNDS, COMPONENTS, LAB_TOOLS, PROMPTS } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
-import { COLLECTIONS, MODERATION_SEED, ROSTER } from "@/lib/community";
+import { CHALLENGES, COLLECTIONS, MODERATION_SEED, ROSTER, SPOTLIGHTS } from "@/lib/community";
 
 export const metadata: Metadata = {
   title: "Community — Motif UI",
@@ -25,7 +25,12 @@ export default function CommunityHub() {
     { href: "/community/leaderboard", title: "Copy leaderboard", tag: "live now", body: "The most-copied assets and highest-fidelity prompts, with credits shown for each.", cta: "See the leaderboard" },
     { href: "/community/re-run", title: "Community re-run", tag: "simulated demo", body: "Ask whether a prompt still holds on a given model and watch a run log stream against the published average.", cta: "Run a prompt" },
     { href: "/community/submit", title: "Submit a remix", tag: "feeds the queue", body: "Send a remix into the moderation queue with the audit gate marked pending until a human reviews it.", cta: "Submit a remix" },
-    { href: "/makers", title: "Maker pages", tag: "sample roster", body: `Minimal pages for the ${ROSTER.length} contributors in the moderation demo — their submissions, scores and notes.`, cta: "Meet the makers" },
+    { href: "/makers", title: "Maker pages", tag: "sample roster", body: `Minimal pages for the ${ROSTER.length} contributors in the moderation demo — their submissions, scores, badges and notes.`, cta: "Meet the makers" },
+    { href: "/community/picks", title: "Weekly picks", tag: "rule, not taste", body: "Three submissions a week in a \u201cmade it\u201d band, ranked by gate results first and audit score second.", cta: "See this week's picks" },
+    { href: "/community/challenges", title: "Monthly challenges", tag: `${CHALLENGES.filter((c) => c.status === "open").length} brief open`, body: "A published brief, published constraints, and a winner rule applied by code — entries carry their gate line.", cta: "Open the challenge" },
+    { href: "/community/badges", title: "Badges", tag: "awarded by rule", body: "Four contributor badges computed from catalog and gate data. Nothing purchasable, nothing granted by hand.", cta: "See the rules" },
+    { href: "/community/loved", title: "Community loved", tag: "browser-local thanks", body: "A thank-you button on every asset, and a board that puts the assets you thanked at the top for you.", cta: "Open the board" },
+    { href: "/community/spotlight", title: "Spotlight interviews", tag: `${SPOTLIGHTS.length} months`, body: "One maker a month on the craft behind the queue, linked from the Learn section.", cta: "Read a spotlight" },
   ];
 
   return (
@@ -78,12 +83,13 @@ export default function CommunityHub() {
               <li>Curated collections derived from live catalog filters, each with a shareable URL.</li>
               <li>Copy counts, audit scores, prompt run logs and author credits.</li>
               <li>Maker pages built from the same sample roster the moderation demo already uses.</li>
+              <li>Weekly picks, challenge rules and badges all computed from catalog and gate data.</li>
             </ul>
           </div>
           <div className="rounded-2xl border border-amber-300/25 bg-amber-300/[.04] p-4">
             <p className="text-sm font-extrabold text-amber-300">Browser-local until there is a backend</p>
             <ul className="prose-list mt-2">
-              <li>Saved lists, remix submissions and review notes live in localStorage on this device.</li>
+              <li>Saved lists, remix submissions, review threads and thanks live in localStorage on this device.</li>
               <li>Community re-runs are a labelled simulation — no model is called.</li>
               <li>No count here implies users we do not have; the roster is sample data and says so.</li>
             </ul>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { makerOf, makerStats, queuedFor, ROSTER } from "@/lib/community";
+import { badgesFor, makerOf, makerStats, queuedFor, ROSTER } from "@/lib/community";
 import { accentCss } from "@/lib/data";
 
 export function generateStaticParams() {
@@ -22,6 +22,7 @@ export default async function MakerPage({ params }: { params: Promise<{ handle: 
   if (!m) notFound();
   const subs = queuedFor(handle);
   const s = makerStats(handle);
+  const badges = badgesFor(handle);
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12 lg:px-8">
@@ -61,6 +62,24 @@ export default async function MakerPage({ params }: { params: Promise<{ handle: 
       <p className="mt-6 max-w-3xl rounded-2xl border border-white/8 bg-white/[.02] px-5 py-4 text-[12px] leading-relaxed text-ink-dim">
         {m.note}
       </p>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span className="text-xs font-semibold text-ink-faint">Badges:</span>
+        {badges.length === 0 ? (
+          <span className="chip !text-[10px]">
+            none yet — every badge is awarded by a published rule, never granted by hand
+          </span>
+        ) : (
+          badges.map((b) => (
+            <span key={b.slug} className="chip !text-[10px] !border-amber-300/30 !text-amber-200">
+              {b.mark} {b.name}
+            </span>
+          ))
+        )}
+        <Link href="/community/badges" className="text-[10px] font-semibold text-violet-300 hover:text-violet-200">
+          How badges are earned →
+        </Link>
+      </div>
 
       <section className="mt-8">
         <h2 className="border-b border-white/6 pb-3 text-xs font-bold uppercase tracking-[0.24em] text-amber-200">Submissions in the queue</h2>

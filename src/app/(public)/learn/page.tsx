@@ -23,6 +23,21 @@ export default function LearnIndexPage() {
         </p>
       </div>
 
+      <Link
+        href="/community/spotlight"
+        className="card-hover mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-violet-300/25 bg-violet-400/[.05] p-6"
+      >
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-widest text-violet-200">Spotlight interview · one maker a month</p>
+          <p className="mt-1.5 text-sm font-extrabold tracking-tight">The craft behind the queue — told by the people doing the work</p>
+          <p className="mt-1.5 text-[11px] leading-relaxed text-ink-dim">
+            A monthly interview about the decisions, not the launch, drawing on each maker&apos;s submissions and gate
+            results. Interviewees are the sample roster personas, and the page says so.
+          </p>
+        </div>
+        <span className="text-xs font-semibold text-violet-300">Read the spotlights →</span>
+      </Link>
+
       <div className="mt-10 grid gap-5 md:grid-cols-2">
         {LEARN_ARTICLES.map((a) => {
           const hue = accentHue(a.slug);

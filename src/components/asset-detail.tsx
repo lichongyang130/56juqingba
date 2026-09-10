@@ -10,7 +10,7 @@ import CourseRailThree from "@/components/course-rail-3";
 import { CourseRailFinal } from "@/components/course-rail-3";
 import TemplateKit, { TemplateKitMore } from "@/components/template-kit";
 import { accentCss, COMPONENTS, KIND_META } from "@/lib/data";
-import { StarButton } from "@/components/community-ui";
+import { ReviewNotes, StarButton, ThanksButton } from "@/components/community-ui";
 import type { Asset } from "@/lib/types";
 
 /* Original code snippets shown in the detail page (hand-written for the MVP). */
@@ -2441,6 +2441,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
             {copied === "install" ? "✓ Copied" : "Copy component"}
           </button>
           <StarButton slug={asset.slug} title={asset.title} kind="asset" className="btn btn-ghost" />
+          <ThanksButton slug={asset.slug} title={asset.title} />
           <CopyCount n={asset.copies} className="!text-sm" />
         </div>
       </div>
@@ -2557,6 +2558,10 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
               code={tab === "vue" ? vueSnippet : snippet[tab]}
               onCopy={() => copy(tab, tab === "vue" ? vueSnippet : snippet[tab])}
             />
+            {/* #346 — review threads anchored to the lines of whichever tab is open */}
+            <div className="mt-3">
+              <ReviewNotes slug={asset.slug} lines={(tab === "vue" ? vueSnippet : snippet[tab]).split("\n").length} />
+            </div>
             {DESIGN_NOTES[asset.slug] && (
               <div className="mt-3 rounded-2xl border border-white/8 bg-panel p-5">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-ink-faint">
