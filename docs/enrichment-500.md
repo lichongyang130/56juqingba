@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 446 / 500 shipped (batches 1–66, in order) · Sections 1–16 complete ✅ · Section 17 in progress (16/25)
+## Progress — 449 / 500 shipped (batches 1–67, in order) · Sections 1–16 complete ✅ · Section 17 in progress (19/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -458,6 +458,9 @@ names, behaviours and where they plug into the existing pages.
 | 444 | Animated counters band | [/components/counter-band](/components/counter-band) · four figures counting to the catalog's real totals — components, prompts, guides, copies — with the single-value odometer asset linked from the card |
 | 445 | Hover-linked cards | [/components/linked-cards](/components/linked-cards) · focus dims siblings exactly as hover does, nothing is disabled, contrast stays readable, and reduced motion drops the saturation shift |
 | 446 | Slug input transform | [/components/slug-field](/components/slug-field) · title → kebab-case with a small fold table, dash collapsing, a 60-character trim, reserved-word and empty-value warnings, and a manual lock |
+| 447 | Share-sheet overlay | [/components/share-sheet](/components/share-sheet) · a real dialog with focus, Escape and a return path to its trigger; the system-share row reports whether this browser has one instead of pretending |
+| 448 | Drag-theme chip onto a card | [/components/theme-drop](/components/theme-drop) · the admin presets dropped onto a preview card, with the same WCAG contrast arithmetic recomputed on every apply and failing pairs named |
+| 449 | Inline search highlight walk | [/components/search-walk](/components/search-walk) · substring search across a real guide, every occurrence marked, the active one scrolled into view and drawn in full amber |
 
 ---
 
@@ -1047,7 +1050,7 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 17. More interactive scenes & motion — 25 demos — 16/25 shipped, in progress
+## 17. More interactive scenes & motion — 25 demos — 19/25 shipped, in progress
 
 - **Drag-to-reorder list**: rows that glide when you drag, with a11y keyboard reorder.
 - **Swipeable cards (deck)**: tinder-style stack with undo and reduced-motion note.

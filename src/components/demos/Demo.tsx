@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BACKGROUNDS, COMPONENTS, PROMPTS } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
+import { contrastChecks, THEME_PRESETS, type ThemeValues } from "@/lib/admin-ops";
 import { KeyframesStyle } from "@/components/keyframes";
 
 export { KeyframesStyle };
@@ -9355,6 +9356,427 @@ function SlugField() {
   );
 }
 
+/* -------------------- SECTION 17 · SHARE, THEME, SEARCH -------------------- */
+
+const SHARE_TARGET = {
+  title: "Tilt Card",
+  slug: "tilt-card",
+  blurb: "Pointer-aware 3D card with a light spot that follows the cursor.",
+};
+
+function ShareSheet() {
+  const reduced = useReducedMotion();
+  const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState("The sheet is closed. Everything it offers is listed below it as well.");
+  const [nativeShare, setNativeShare] = useState(false);
+
+  /** Focus goes home to the button by id rather than through a ref: the sheet
+   *  lives in a portal-less overlay and the trigger never unmounts, so the
+   *  lookup is deterministic — and the actions stay plain functions. */
+  const refocus = () => document.getElementById("share-trigger")?.focus();
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        refocus();
+        setStatus("Sheet dismissed with Escape; focus went back to the button that opened it.");
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const copy = async (what: "link" | "markdown") => {
+    const text =
+      what === "link"
+        ? `https://motifui.dev/components/${SHARE_TARGET.slug}`
+        : `[${SHARE_TARGET.title} — Motif UI](https://motifui.dev/components/${SHARE_TARGET.slug})`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setStatus(`Copied the ${what === "link" ? "URL" : "Markdown"} to the clipboard.`);
+    } catch {
+      setStatus(`The clipboard was blocked by the browser, so here is the ${what}: ${text}`);
+    }
+    setOpen(false);
+    refocus();
+  };
+
+  // Availability is read when the sheet opens, not during render: the server
+  // has no navigator, and a browser that does should not cause a mismatch.
+  const canShare = () => typeof navigator !== "undefined" && typeof navigator.share === "function";
+
+  const actions = [
+    { id: "link", label: "Copy link", note: "the plain URL", run: () => copy("link") },
+    { id: "md", label: "Copy Markdown", note: "title linked to the page", run: () => copy("markdown") },
+    {
+      id: "native",
+      label: "System share",
+      note: nativeShare ? "this browser has one" : "not available in this browser",
+      run: () => {
+        if (nativeShare) {
+          navigator
+            .share({ title: SHARE_TARGET.title, text: SHARE_TARGET.blurb })
+            .catch(() => setStatus("The system sheet was dismissed without sharing."));
+        } else {
+          setStatus("This browser has no navigator.share, so the two copy actions are the whole sheet — no fallback pretends otherwise.");
+        }
+      },
+    },
+  ];
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_100%,rgba(56,189,248,0.12),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-sky-300/80">Share sheet</p>
+          <p className="text-[10px] text-ink-faint">{open ? "open" : "closed"}</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/[.02] p-4">
+          <p className="text-[11px] font-bold text-ink">{SHARE_TARGET.title}</p>
+          <p className="mt-0.5 text-[10px] leading-relaxed text-ink-dim">{SHARE_TARGET.blurb}</p>
+          <button
+            id="share-trigger"
+            type="button"
+            onClick={() => {
+              setNativeShare(canShare());
+              setOpen(true);
+              setStatus("Sheet opened. Escape closes it and returns focus here.");
+            }}
+            aria-haspopup="dialog"
+            aria-expanded={open}
+            className="btn btn-primary mt-3 !px-3.5 !py-2 text-[11px]"
+          >
+            Share this asset
+          </button>
+        </div>
+
+        {open && (
+          <>
+            <button
+              type="button"
+              tabIndex={-1}
+              aria-label="Close the share sheet"
+              onClick={() => {
+                setOpen(false);
+                refocus();
+              }}
+              className="fixed inset-0 z-40 cursor-default bg-black/50 backdrop-blur-[2px]"
+            />
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="share-sheet-title"
+              tabIndex={-1}
+              autoFocus
+              className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md rounded-t-3xl border border-white/12 bg-[#0d1017] p-4 shadow-[0_-20px_60px_-20px_rgba(0,0,0,.9)] focus:outline-none"
+              style={{ animation: reduced ? "none" : "share-rise 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both" }}
+            >
+              <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/15" aria-hidden />
+              <p id="share-sheet-title" className="text-sm font-extrabold text-ink">
+                Share {SHARE_TARGET.title}
+              </p>
+              <ul className="mt-3 space-y-2">
+                {actions.map((a) => (
+                  <li key={a.id}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpen(false);
+                        a.run();
+                      }}
+                      className="flex w-full items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[.03] px-3.5 py-2.5 text-left transition-colors hover:border-sky-400/50"
+                    >
+                      <span className="text-[11px] font-semibold text-ink">{a.label}</span>
+                      <span className="text-[9px] text-ink-faint">{a.note}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  refocus();
+                }}
+                className="btn btn-ghost mt-3 w-full !py-2 text-[11px]"
+              >
+                Cancel
+              </button>
+            </div>
+          </>
+        )}
+
+        <p aria-live="polite" className="mt-3 min-h-[1rem] text-[10px] leading-relaxed text-sky-200/80">
+          {status}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          The sheet is a real dialog: it takes focus when it opens, Escape closes it and hands focus back to the button, and the
+          backdrop is a button rather than a div with a click handler. The spring is a 320ms cubic-bezier with overshoot; with
+          reduced motion the sheet simply appears. The system-share row reports what this browser actually offers at the moment you open
+          the sheet, and every action is also a normal button on the card — nothing lives only inside the overlay.
+        </p>
+      </div>
+
+      <style>{`@keyframes share-rise { from { transform: translateY(28px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }`}</style>
+    </div>
+  );
+}
+
+const TOKEN_LABELS: { key: keyof ThemeValues; label: string }[] = [
+  { key: "bg", label: "page" },
+  { key: "panel", label: "panel" },
+  { key: "ink", label: "text" },
+  { key: "accent", label: "accent" },
+];
+
+function ThemeDrop() {
+  const [applied, setApplied] = useState<(typeof THEME_PRESETS)[number] | null>(null);
+  const [hovering, setHovering] = useState(false);
+  const [status, setStatus] = useState("Four theme presets from the admin control room. Drag one onto the card, or press it.");
+  const checks = applied ? contrastChecks(applied.values) : [];
+  const failing = checks.filter((c) => !c.pass);
+
+  const apply = (preset: (typeof THEME_PRESETS)[number], how: string) => {
+    setApplied(preset);
+    const rows = contrastChecks(preset.values);
+    const bad = rows.filter((r) => !r.pass).length;
+    setStatus(
+      bad === 0
+        ? `${preset.label} applied ${how}. All ${rows.length} contrast checks pass.`
+        : `${preset.label} applied ${how}. ${bad} of ${rows.length} contrast checks fail — the panel below names them.`
+    );
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(167,139,250,0.12),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/80">Drop a theme on a card</p>
+          <p className="text-[10px] text-ink-faint">{applied ? applied.label : "no theme applied"}</p>
+        </div>
+
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setHovering(true);
+          }}
+          onDragLeave={() => setHovering(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setHovering(false);
+            const id = e.dataTransfer.getData("text/plain");
+            const preset = THEME_PRESETS.find((p) => p.id === id);
+            if (preset) apply(preset, "by drop");
+          }}
+          className={`rounded-2xl border p-4 transition-colors ${hovering ? "border-violet-400/70 bg-violet-400/[.06]" : "border-white/10 bg-white/[.02]"}`}
+          style={applied ? { background: applied.values.bg, borderColor: applied.values.accent } : undefined}
+        >
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: applied?.values.inkFaint ?? "#747b87" }}>
+            Component preview
+          </p>
+          <div className="mt-2 rounded-xl border p-3" style={applied ? { background: applied.values.panel, borderColor: `${applied.values.ink}22` } : { background: "#0b0d14", borderColor: "rgba(255,255,255,.1)" }}>
+            <p className="text-sm font-extrabold" style={{ color: applied?.values.ink ?? "#edf0f7" }}>
+              Pricing, but it breathes
+            </p>
+            <p className="mt-1 text-[10px] leading-relaxed" style={{ color: applied?.values.inkDim ?? "#9aa3b5" }}>
+              Three tiers, one accent, no gradient soup. Drop a different chip on this card and every value remaps at once.
+            </p>
+            <span
+              className="mt-2 inline-block rounded-lg px-2.5 py-1 text-[10px] font-bold"
+              style={{ background: applied?.values.accent ?? "#8b5cf6", color: applied?.values.bg ?? "#06070b" }}
+            >
+              Choose a plan
+            </span>
+            <p className="mt-1.5 text-[9px]" style={{ color: applied?.values.inkFaint ?? "#747b87" }}>
+              14-day refund · no card
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          {THEME_PRESETS.map((preset) => (
+            <button
+              key={preset.id}
+              type="button"
+              draggable
+              onDragStart={(e) => {
+                e.dataTransfer.setData("text/plain", preset.id);
+                e.dataTransfer.effectAllowed = "copy";
+              }}
+              onClick={() => apply(preset, "with a press")}
+              aria-pressed={applied?.id === preset.id}
+              className="flex cursor-grab items-center gap-2 rounded-xl border border-white/10 bg-white/[.03] px-2.5 py-1.5 text-[10px] text-ink-dim transition-colors hover:border-violet-400/50 hover:text-ink active:cursor-grabbing"
+            >
+              <span className="flex gap-1" aria-hidden>
+                {TOKEN_LABELS.map(({ key, label }) => (
+                  <span key={label} className="h-3 w-3 rounded-full border border-white/20" style={{ background: preset.values[key] }} />
+                ))}
+              </span>
+              {preset.label}
+            </button>
+          ))}
+        </div>
+
+        {applied && (
+          <div className="mt-3 rounded-2xl border border-white/10 bg-white/[.02] p-3">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-ink-faint">
+              Contrast, recomputed on every apply ({checks.length - failing.length}/{checks.length} pass)
+            </p>
+            <ul className="mt-1.5 space-y-1">
+              {checks.map((c) => (
+                <li key={c.label} className="flex items-center justify-between gap-2 text-[10px]">
+                  <span className="truncate text-ink-dim">{c.label}</span>
+                  <span className={`shrink-0 tabular-nums ${c.pass ? "text-emerald-300" : "text-amber-300"}`}>
+                    {c.ratio.toFixed(2)}:1 · {c.pass ? "pass" : `needs ${c.line}`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-violet-200/80">
+          {status}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          The chips are the presets the admin theme control room stores, and the contrast figures are the same WCAG arithmetic
+          that room runs — so a preset that fails is named here, not quietly dropped from the menu. Pressing a chip does exactly
+          what dropping it does; the drag is a shortcut, never the only way in.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function SearchWalk() {
+  const article = LEARN_ARTICLES[0];
+  // Blocks carry bodies, bullets, code or callouts; this scene walks the prose
+  // only, and the optional field is handled rather than asserted away.
+  const paragraphs = article.blocks.flatMap((b) => b.body ?? []);
+  const [query, setQuery] = useState("motion");
+  const [index, setIndex] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const needle = query.trim().toLowerCase();
+  // Match positions are computed per paragraph so the render can mark each one
+  // and the walk can scroll to the nth match without re-rendering the document.
+  const matches = paragraphs.flatMap((text, pi) => {
+    if (!needle) return [];
+    const hits: { pi: number; at: number; len: number }[] = [];
+    const hay = text.toLowerCase();
+    let from = 0;
+    for (;;) {
+      const at = hay.indexOf(needle, from);
+      if (at === -1) break;
+      hits.push({ pi, at, len: needle.length });
+      from = at + needle.length;
+    }
+    return hits;
+  });
+  const total = matches.length;
+  const safeIndex = total ? Math.min(index, total - 1) : 0;
+
+  useEffect(() => {
+    if (!total) return;
+    const el = listRef.current?.querySelector<HTMLElement>(`[data-match="${safeIndex}"]`);
+    el?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [safeIndex, total, query]);
+
+  const step = (delta: number) => {
+    if (!total) return;
+    setIndex((i) => (i + delta + total) % total);
+  };
+
+  const renderMarked = (text: string, pi: number) => {
+    const hits = matches.filter((m) => m.pi === pi);
+    if (!hits.length) return text;
+    const out: React.ReactNode[] = [];
+    let cursor = 0;
+    hits.forEach((hit, i) => {
+      const globalIndex = matches.indexOf(hit);
+      out.push(text.slice(cursor, hit.at));
+      out.push(
+        <mark
+          key={`${pi}-${hit.at}`}
+          data-match={globalIndex}
+          className={globalIndex === safeIndex ? "rounded bg-amber-300 px-0.5 text-black" : "rounded bg-amber-300/35 px-0.5 text-ink"}
+        >
+          {text.slice(hit.at, hit.at + hit.len)}
+        </mark>
+      );
+      cursor = hit.at + hit.len;
+      void i;
+    });
+    out.push(text.slice(cursor));
+    return out;
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(251,191,36,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-amber-300/80">Search inside a guide</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            {total ? `${safeIndex + 1} / ${total} matches` : "no matches"}
+          </p>
+        </div>
+
+        <div className="flex gap-2">
+          <input
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setIndex(0);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                step(e.shiftKey ? -1 : 1);
+              }
+            }}
+            placeholder="Search this guide…"
+            aria-label={`Search inside ${article.title}`}
+            className="input !rounded-xl !py-2 text-xs"
+          />
+          <button type="button" onClick={() => step(-1)} disabled={!total} aria-label="Previous match" className="btn btn-ghost !px-3 !py-2 text-[11px] disabled:opacity-40">
+            ↑
+          </button>
+          <button type="button" onClick={() => step(1)} disabled={!total} aria-label="Next match" className="btn btn-ghost !px-3 !py-2 text-[11px] disabled:opacity-40">
+            ↓
+          </button>
+        </div>
+
+        <p className="mt-1.5 text-[10px] text-ink-faint">
+          Searching <span className="text-ink-dim">{article.title}</span> — Enter goes to the next match, shift-Enter back.
+        </p>
+
+        <div ref={listRef} className="mt-2 max-h-56 space-y-3 overflow-y-auto rounded-2xl border border-white/10 bg-white/[.02] p-3">
+          {paragraphs.map((text, pi) => (
+            <p key={pi} className="text-[11px] leading-relaxed text-ink-dim">
+              {renderMarked(text, pi)}
+            </p>
+          ))}
+        </div>
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-amber-200/80">
+          {needle
+            ? total
+              ? `Match ${safeIndex + 1} of ${total} is scrolled into view and drawn in full amber; the rest are dimmed.`
+              : `“${query}” does not appear in this guide — the count says zero rather than leaving the document unmarked.`
+            : "Type to mark every occurrence. Matching is plain substring, case-insensitive, on the article's real text."}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          The walk scrolls the document to the active match and gives it a stronger mark, so the position is visible as well as
+          counted. It is plain substring matching over the guide&apos;s own paragraphs — no fuzzy ranking, no highlighting of
+          words that are not there, and the counter is the actual number of occurrences.
+        </p>
+      </div>
+    </div>
+  );
+}
 // Exported because the keys are the catalog's demo vocabulary, not a private
 // detail: the props panel and the harness both want the same list.
 export const DEMO_KEYS = [
@@ -9376,6 +9798,7 @@ export const DEMO_KEYS = [
   "flip-stack", "draw-path", "morph-icons",
   "logo-chase", "shimmer-text", "ring-ticks",
   "bezier-drawer", "counter-band", "linked-cards",
+  "share-sheet", "theme-drop", "search-walk",
   "slug-field",
   "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
@@ -9475,6 +9898,9 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "bezier-drawer": return <BezierDrawer />;
     case "counter-band": return <CounterBand />;
     case "linked-cards": return <LinkedCards />;
+    case "share-sheet": return <ShareSheet />;
+    case "theme-drop": return <ThemeDrop />;
+    case "search-walk": return <SearchWalk />;
     case "slug-field": return <SlugField />;
     case "breadcrumb-trail": return <BreadcrumbTrail />;
     case "pagination-ellipsis": return <PaginationEllipsis {...props} />;

@@ -46,6 +46,9 @@ const NEW_SCENES = [
   { slug: "counter-band", marker: "Counters, in a row", behaviors: ["click", "scroll"] },
   { slug: "linked-cards", marker: "Hover-linked cards", behaviors: ["hover", "keyboard"] },
   { slug: "slug-field", marker: "Slug field", behaviors: ["type", "click", "keyboard"] },
+  { slug: "share-sheet", marker: "Share sheet", behaviors: ["click", "keyboard"] },
+  { slug: "theme-drop", marker: "Drop a theme on a card", behaviors: ["drag", "click", "keyboard"] },
+  { slug: "search-walk", marker: "Search inside a guide", behaviors: ["type", "keyboard"] },
 ];
 
 (async () => {
