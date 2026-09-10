@@ -10,16 +10,14 @@ export interface CacheRule {
   why: string;
 }
 
+// Order matters: Next applies matching rules in order and a later rule wins for
+// the same header, so the catch-all is listed last. The first version of this
+// file had it first, which silently served fingerprinted assets the HTML policy.
 export const CACHE_RULES: CacheRule[] = [
   {
-    // The catch-all is listed first on purpose. Next applies matching rules in
-    // order and a later rule overrides an earlier one for the same header, so a
-    // catch-all placed last silently replaces every specific rule above it —
-    // which is how fingerprinted assets ended up with the HTML policy in the
-    // first version of this file.
-    source: "/:path*",
-    value: "public, max-age=0, s-maxage=300, stale-while-revalidate=86400",
-    why: "HTML: the browser revalidates every time and the edge holds it for five minutes, serving stale for up to a day while it refreshes. A correction ships within five minutes without stampeding the origin.",
+    source: "/_next/image",
+    value: "public, max-age=86400, stale-while-revalidate=604800",
+    why: "The optimizer is not used by any page in this build (0 <img> tags), so this rule exists for the day it is.",
   },
   {
     source: "/_next/static/:path*",
@@ -27,9 +25,9 @@ export const CACHE_RULES: CacheRule[] = [
     why: "Every file under it carries a content hash in its name, so a changed file is a changed URL. Immutable is safe here and only here.",
   },
   {
-    source: "/_next/image",
-    value: "public, max-age=86400, stale-while-revalidate=604800",
-    why: "The optimizer is not used by any page in this build (0 <img> tags), so this rule exists for the day it is.",
+    source: "/:path*",
+    value: "public, max-age=0, s-maxage=300, stale-while-revalidate=86400",
+    why: "HTML: the browser revalidates every time and the edge holds it for five minutes, serving stale for up to a day while it refreshes. A correction ships within five minutes without stampeding the origin.",
   },
 ];
 

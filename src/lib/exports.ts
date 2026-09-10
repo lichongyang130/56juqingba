@@ -480,6 +480,228 @@ ${cssVars}
   return JSON.stringify(payload, null, 2) + "\n";
 }
 
+/* ---------- bookmarklet ---------- */
+
+/** The script the bookmarklet loads. It reads the CSS custom properties of
+ *  whatever page it runs on and lists them; if a page has none, it says so
+ *  instead of showing an empty panel. */
+export function bookmarkletJs(): string {
+  return `/* Motif UI palette reader — loaded by the bookmarklet on /integrations/bookmarklet.
+ * Runs on the page you are looking at, reads its CSS custom properties, and
+ * draws a panel. It sends nothing anywhere: there is no network call after this
+ * file itself is fetched. */
+(() => {
+  const ID = "motif-palette-panel";
+  const existing = document.getElementById(ID);
+  if (existing) { existing.remove(); return; }
+
+  const vars = [];
+  for (const sheet of Array.from(document.styleSheets)) {
+    let rules;
+    try { rules = sheet.cssRules; } catch { continue; } // cross-origin sheet
+    for (const rule of Array.from(rules || [])) {
+      if (!rule.style) continue;
+      for (const name of Array.from(rule.style)) {
+        if (!name.startsWith("--")) continue;
+        const value = rule.style.getPropertyValue(name).trim();
+        if (/^(#|rgb|hsl)/.test(value)) vars.push([name, value]);
+      }
+    }
+  }
+  // Inline style attributes are a second, cheaper source.
+  for (const el of Array.from(document.querySelectorAll("[style]"))) {
+    for (const name of Array.from(el.style)) {
+      if (!name.startsWith("--")) continue;
+      const value = el.style.getPropertyValue(name).trim();
+      if (/^(#|rgb|hsl)/.test(value)) vars.push([name, value]);
+    }
+  }
+
+  const seen = new Map();
+  for (const [name, value] of vars) if (!seen.has(name)) seen.set(name, value);
+
+  const panel = document.createElement("div");
+  panel.id = ID;
+  panel.setAttribute("role", "dialog");
+  panel.setAttribute("aria-label", "Colour custom properties on this page");
+  panel.style.cssText = [
+    "position:fixed", "z-index:2147483647", "right:16px", "bottom:16px",
+    "max-height:70vh", "overflow:auto", "width:300px", "padding:14px",
+    "border-radius:14px", "border:1px solid rgba(255,255,255,.16)",
+    "background:#0b0d14", "color:#edf0f7", "font:12px/1.5 ui-monospace,monospace",
+    "box-shadow:0 20px 60px rgba(0,0,0,.55)",
+  ].join(";");
+
+  const head = document.createElement("div");
+  head.textContent = seen.size
+    ? seen.size + " colour custom properties on this page"
+    : "No colour custom properties found on this page";
+  head.style.cssText = "font-weight:700;margin-bottom:8px";
+  panel.appendChild(head);
+
+  if (!seen.size) {
+    const hint = document.createElement("div");
+    hint.textContent = "This page may not define any --custom-properties, or its stylesheets are cross-origin.";
+    hint.style.cssText = "opacity:.75";
+    panel.appendChild(hint);
+  }
+
+  for (const [name, value] of seen) {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.style.cssText = "display:flex;align-items:center;gap:8px;width:100%;padding:5px 6px;border:0;border-radius:8px;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer";
+    row.onmouseenter = () => { row.style.background = "rgba(255,255,255,.06)"; };
+    row.onmouseleave = () => { row.style.background = "transparent"; };
+    const swatch = document.createElement("span");
+    swatch.style.cssText = "width:14px;height:14px;border-radius:4px;border:1px solid rgba(255,255,255,.25);background:" + value;
+    const label = document.createElement("span");
+    label.textContent = name + "  " + value;
+    label.style.cssText = "flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
+    row.append(swatch, label);
+    row.title = "Copy " + name;
+    row.onclick = async () => {
+      try { await navigator.clipboard.writeText(name + ": " + value + ";"); label.textContent = "copied " + name; }
+      catch { label.textContent = "copy blocked by the page"; }
+    };
+    panel.appendChild(row);
+  }
+
+  const close = document.createElement("button");
+  close.type = "button";
+  close.textContent = "Close";
+  close.style.cssText = "margin-top:10px;width:100%;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,.16);background:transparent;color:inherit;font:inherit;cursor:pointer";
+  close.onclick = () => panel.remove();
+  panel.appendChild(close);
+
+  document.body.appendChild(panel);
+})();
+`;
+}
+
+/* ---------- CLI ---------- */
+
+/** A runnable script, not a sketch: it talks to this deployment's own export
+ *  endpoints. It is not published to npm, and the page says so. */
+export function cliScript(): string {
+  return `#!/usr/bin/env node
+/*
+ * Motif UI CLI — served from the site, run with node.
+ *
+ *   node motif-cli.mjs list [--kind animated]
+ *   node motif-cli.mjs tokens [--format css|json]
+ *   node motif-cli.mjs badge <slug>
+ *   node motif-cli.mjs --help
+ *
+ * --base <url> points it at a deployment (default http://localhost:3139).
+ * It is not published to npm: there is no registry entry, so \`npx motif\`
+ * installs nothing. This file is the command.
+ */
+
+const args = process.argv.slice(2);
+const baseIndex = args.indexOf("--base");
+const base = (baseIndex >= 0 ? args[baseIndex + 1] : "http://localhost:3139").replace(/\\/+$/, "");
+const kindIndex = args.indexOf("--kind");
+const kind = kindIndex >= 0 ? args[kindIndex + 1] : null;
+const formatIndex = args.indexOf("--format");
+const format = formatIndex >= 0 ? args[formatIndex + 1] : "css";
+const positional = args.filter((a) => !a.startsWith("--") && a !== base && a !== kind && a !== format);
+const command = positional[0] || "help";
+const operand = positional[1];
+
+async function json(path) {
+  const url = base + path;
+  let res;
+  try {
+    res = await fetch(url);
+  } catch (err) {
+    // Node reports "fetch failed" without the URL, which tells the reader
+    // nothing. The command pr...
+    throw new Error("could not reach " + url + " (" + (err && err.cause ? err.cause.code || err.cause.message : err.message) + ") — is the deployment running, and is --base right?");
+  }
+  if (!res.ok) throw new Error(url + " → HTTP " + res.status);
+  return res.json();
+}
+
+function help() {
+  console.log(\`Motif UI CLI
+
+  list [--kind <kind>]      components from /api/exports/catalog.json
+  tokens [--format css|json] design tokens from /api/exports/tokens.json
+  badge <slug>              Markdown for that asset's score badge
+  --base <url>              deployment to read (default \${base})
+  --help
+
+Not published to npm — this file is the command.\`);
+}
+
+async function list() {
+  const data = await json("/api/exports/catalog.json");
+  const rows = data.components.filter((c) => !kind || c.kind === kind);
+  for (const c of rows) {
+    console.log([c.slug.padEnd(26), c.kind.padEnd(9), (c.bundleKb + " KB").padStart(8), "a11y " + c.a11yScore, "Q " + c.qualityScore].join("  "));
+  }
+  console.log("\\n" + rows.length + " of " + data.components.length + " components" + (kind ? " (kind: " + kind + ")" : ""));
+}
+
+async function tokens() {
+  const data = await json("/api/exports/tokens.json");
+  if (format === "json") { console.log(JSON.stringify(data, null, 2)); return; }
+  for (const [name, token] of Object.entries(data.color)) console.log("  --color-" + name + ": " + token.$value + ";");
+  for (const [name, token] of Object.entries(data.radius)) console.log("  --radius-" + name + ": " + token.$value + ";");
+}
+
+async function badge(slug) {
+  if (!slug) { console.error("badge needs a slug: node motif-cli.mjs badge tilt-card"); process.exit(1); }
+  const data = await json("/api/exports/catalog.json");
+  const asset = data.components.find((c) => c.slug === slug);
+  if (!asset) { console.error("no component called " + slug); process.exit(1); }
+  console.log("![quality " + asset.qualityScore + "](" + base + "/api/badge/" + slug + ")");
+  console.log("\\n# " + asset.title + " — a11y " + asset.a11yScore + ", quality " + asset.qualityScore + ", " + asset.bundleKb + " KB, " + asset.license);
+}
+
+const run = { list, tokens, badge, help }[command] ?? help;
+Promise.resolve(command === "badge" ? badge(operand) : run()).catch((err) => { console.error(err.message); process.exit(1); });
+`;
+}
+
+/* ---------- score badge ---------- */
+
+/** The badge SVG, built from the stored catalog scores. Kept here so the route
+ *  that serves it and the page that inlines it cannot disagree. */
+export function badgeSvg(slug: string): string | null {
+  const asset = COMPONENTS.find((c) => c.slug === slug);
+  if (!asset) return null;
+  const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const colour = asset.qualityScore >= 90 ? "#34d399" : asset.qualityScore >= 75 ? "#fbbf24" : "#f87171";
+  const label = "motif quality";
+  const value = String(asset.qualityScore);
+  const labelWidth = 96;
+  const valueWidth = 34;
+  const width = labelWidth + valueWidth;
+  const desc = `${asset.title}: editorial quality ${asset.qualityScore}/100, accessibility audit ${asset.a11yScore}/100, from the Motif UI catalog. No CI service is involved; the score is the stored editorial value.`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="20" role="img" aria-label="${esc(label)}: ${value}">
+  <title>${esc(asset.title)} — quality ${value}/100</title>
+  <desc>${esc(desc)}</desc>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r"><rect width="${width}" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="${labelWidth}" height="20" fill="#22242e"/>
+    <rect x="${labelWidth}" width="${valueWidth}" height="20" fill="${colour}"/>
+    <rect width="${width}" height="20" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${esc(label)}</text>
+    <text x="${labelWidth / 2}" y="14">${esc(label)}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${value}</text>
+    <text x="${labelWidth + valueWidth / 2}" y="14">${value}</text>
+  </g>
+</svg>
+`;
+}
+
 /* ---------- the print stylesheet, as text ---------- */
 
 /** The print block, read out of the stylesheet. The page that documents it
@@ -614,7 +836,8 @@ export interface ExportEntry {
   build: () => string;
 }
 
-export const EXPORTS: ExportEntry[] = [  {
+export const EXPORTS: ExportEntry[] = [
+  {
     file: "tokens.json",
     label: "Design tokens (DTCG)",
     contentType: "application/json; charset=utf-8",
@@ -655,6 +878,30 @@ export const EXPORTS: ExportEntry[] = [  {
     build: vscodeSnippets,
   },
   {
+    file: "changelog.xml",
+    label: "Changelog feed",
+    contentType: "application/rss+xml; charset=utf-8",
+    item: "#420",
+    blurb: "RSS for the studio log, with each entry's measured size change carried in the description.",
+    build: () => changelogRss(),
+  },
+  {
+    file: "motif-storybook-decorator.jsx",
+    label: "Storybook decorator",
+    contentType: "text/jsx; charset=utf-8",
+    item: "#421",
+    blurb: "A decorator that hands your stories this site's palette as custom properties.",
+    build: storybookDecorator,
+  },
+  {
+    file: "learn-print.css",
+    label: "Print stylesheet",
+    contentType: "text/css; charset=utf-8",
+    item: "#423",
+    blurb: "The @media print block this site compiles, served as a file so it can be copied into another project.",
+    build: printCss,
+  },
+  {
     file: "motif-react-wrapper.jsx",
     label: "React token provider",
     contentType: "text/jsx; charset=utf-8",
@@ -679,28 +926,20 @@ export const EXPORTS: ExportEntry[] = [  {
     build: codesandboxFiles,
   },
   {
-    file: "changelog.xml",
-    label: "Changelog feed",
-    contentType: "application/rss+xml; charset=utf-8",
-    item: "#420",
-    blurb: "RSS for the studio log, with each entry's measured size change carried in the description.",
-    build: () => changelogRss(),
+    file: "motif-bookmarklet.js",
+    label: "Palette bookmarklet",
+    contentType: "text/javascript; charset=utf-8",
+    item: "#428",
+    blurb: "The script behind the drag-to-bookmarks palette reader; it sends nothing anywhere.",
+    build: bookmarkletJs,
   },
   {
-    file: "motif-storybook-decorator.jsx",
-    label: "Storybook decorator",
-    contentType: "text/jsx; charset=utf-8",
-    item: "#421",
-    blurb: "A decorator that hands your stories this site's palette as custom properties.",
-    build: storybookDecorator,
-  },
-  {
-    file: "learn-print.css",
-    label: "Print stylesheet",
-    contentType: "text/css; charset=utf-8",
-    item: "#423",
-    blurb: "The @media print block this site compiles, served as a file so it can be copied into another project.",
-    build: printCss,
+    file: "motif-cli.mjs",
+    label: "CLI",
+    contentType: "text/javascript; charset=utf-8",
+    item: "#429",
+    blurb: "A runnable script that reads this deployment's own endpoints — list, tokens, badge.",
+    build: cliScript,
   },
 ];
 

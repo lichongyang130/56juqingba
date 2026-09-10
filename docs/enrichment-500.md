@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 427 / 500 shipped (batches 1–59, in order) · Sections 1–15 complete ✅ · Section 16 in progress (12/15)
+## Progress — 430 / 500 shipped (batches 1–60, in order) · Sections 1–16 complete ✅ · Section 17 next
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -439,6 +439,9 @@ names, behaviours and where they plug into the existing pages.
 | 425 | HTML/CSS single-file copy | [/api/exports/single-file.html](/api/exports/single-file.html) · 3.6 KB with 0 external references and 0 script tags, checked in the output rather than by eye |
 | 426 | Export to CodeSandbox | [/integrations/codesandbox](/integrations/codesandbox) · 3 real files for a sandbox, and why the one-click define link is a named gap instead of an unverified URL |
 | 427 | Framer-style code embed | [/embed/tilt-card](/embed/tilt-card) · a chrome-free route per asset with frame-ancestors and noindex set, plus the allowlist a static build cannot enforce |
+| 428 | Browser bookmarklet | [/integrations/bookmarklet](/integrations/bookmarklet) · a drag-to-the-bar script that lists any page's colour custom properties and copies one per click, with the saving gap named |
+| 429 | CLI sketch | [/api/exports/motif-cli.mjs](/api/exports/motif-cli.mjs) · a script that runs — `node motif-cli.mjs list\|tokens\|badge` against any deployment — with no registry entry, so nothing pretends to be installable |
+| 430 | CI badge | [/integrations/badge](/integrations/badge) · a real SVG per asset at /api/badge/&lt;slug&gt; carrying the stored score, with "no CI service" written into the file's own description |
 
 ---
 
@@ -1003,7 +1006,7 @@ The cache work is the section's other carry-forward. `src/lib/cache-rules.ts` ho
 
 ---
 
-## 16. Integrations & exports — 15 bridges — 12/15 shipped, in progress
+## 16. Integrations & exports — 15 bridges — 15/15 shipped ✅
 
 - **VS Code snippet pack**: install Motif snippets as editor completions.
 - **Figma variable sync**: export tokens as Figma variables (documented format).
@@ -1020,6 +1023,11 @@ The cache work is the section's other carry-forward. `src/lib/cache-rules.ts` ho
 - **CI badge**: a fake-but-designed "tests passing" badge per asset for READMEs.
 - **RSS for changelog**: subscribe to release notes in a feed reader.
 - **Print stylesheet for Learn**: articles that print cleanly as PDF (publish the CSS).
+
+
+The section's rule was that an export must hand out what the build actually stores, and it cost three features to keep. The React package is one provider rather than a component set, because the catalog holds metadata and not component source; the CodeSandbox export is three files rather than a define-link, because the link's compression runs on somebody else's server and this build has no way to check its own output; the CLI is a script you download and run, because there is no registry entry and a printed `npx` line would be a lie the reader discovers by typing it. The score badge is the sharpest case: the idea bank asked for a "fake-but-designed tests passing badge", and a badge claiming a test suite this project does not run is exactly the kind of decoration the rest of the site argues against — so the badge carries the number the catalog already stores and says, inside its own SVG description, that no pipeline stands behind it.
+
+The harness keeps the section checkable from outside: it fetches all thirteen export endpoints, reads the served bytes back against the page that prints them, parses both served scripts with `node --check`, and asserts the five remainders are still listed where the hub claims them. Five gaps now sit inside fourteen shipped deliverables, each named on the page that owns it.
 
 ---
 

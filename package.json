@@ -11,7 +11,8 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:setup": "prisma migrate dev && prisma generate",
-    "measure": "node scripts/measure-build.mjs"
+    "measure": "node scripts/measure-build.mjs",
+    "check:exports": "node scripts/check-exports.cjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",

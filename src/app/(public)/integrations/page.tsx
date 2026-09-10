@@ -3,7 +3,7 @@ import { EXPORTS, exportSizeKb } from "@/lib/exports";
 
 export const metadata = {
   title: "Integrations & exports — Motif UI",
-  description: "Five live export endpoints built from the site's own tokens and catalog data, with what each one leaves out.",
+  description: "Every export and integration this build serves, generated from the site's own tokens and catalog data, with the gaps it will not paper over.",
 };
 
 /** Where each export is documented. One entry per registry file, so adding an
@@ -17,17 +17,44 @@ const PAGE_FOR: Record<string, string> = {
   "motif-react-wrapper.jsx": "/integrations/react",
   "single-file.html": "/integrations/single-file",
   "codesandbox-files.json": "/integrations/codesandbox",
+  "motif-bookmarklet.js": "/integrations/bookmarklet",
+  "motif-cli.mjs": "/integrations/cli",
   "changelog.xml": "/integrations/feed",
   "motif-storybook-decorator.jsx": "/integrations/storybook",
   "learn-print.css": "/integrations/print",
 };
 
-const NOT_SHIPPED = [
-  ["CodeSandbox export", "A deep link needs a hosted sandbox service and a place to upload the file; both are outside a static build."],
-  ["iframe embed", "Embedding a demo on someone else's site needs an embed route with its own caching and origin rules, and a page here that promises one without it would be a screenshot of a feature."],
-  ["Browser bookmarklet", "The palette it would save is already readable from the page's own CSS variables — the bookmarklet would be a wrapper over a value the reader can inspect."],
-  ["CLI", "`npx motif add` needs a published package and a registry lookup. There is no registry entry, so there is no command."],
-  ["Per-asset CI badge", "A badge that reports a score needs a badge service. What can be published honestly is the number, and it is on every asset page."],
+// Section 16 closed with no unshipped bullet left, which is not the same as no
+// gaps. Each line below is the part of a shipped integration that this build
+// still cannot do, named with what it would take — a registry entry, a server,
+// a third-party round trip. The list is what the pages say about themselves,
+// collected in one place so a reader does not have to find the five footnotes.
+const SUB_GAPS: [string, string, string][] = [
+  [
+    "One-click CodeSandbox link",
+    "CodeSandbox export — the file bundle",
+    "The three files ship and work. A define link encodes the project with lz-string parameters fetched from a third party, and this build cannot make that round trip to verify its own output, so it prints the files instead of a URL that might open nothing.",
+  ],
+  [
+    "Embed allowlist",
+    "Framer-style code embed — the route",
+    "The chrome-free route ships for all 107 assets with frame-ancestors and noindex set. Restricting frames to named partners means reading the Origin header per request, which needs a server this build does not have.",
+  ],
+  [
+    "Publishing to npm",
+    "React wrapper, Storybook decorator, CLI",
+    "All three files are real and run from disk. There is no registry entry behind any of them, so no install command on this site would work, and none is printed.",
+  ],
+  [
+    "Saving a palette",
+    "Browser bookmarklet — reading and copying",
+    "The bookmarklet reads the custom properties on any page and copies one declaration per click. Saving a set needs storage and an identity to attach it to, so the reader gets a clipboard and nothing else.",
+  ],
+  [
+    "A pipeline behind the badge",
+    "Per-asset score badge",
+    "The badge route serves a real SVG carrying the asset's stored editorial score. No test run, build or CI service stands behind the number, and the SVG's own description says so.",
+  ],
 ];
 
 export default function IntegrationsPage() {
@@ -39,9 +66,17 @@ export default function IntegrationsPage() {
           Hand out <span className="text-gradient">what is actually stored</span>
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-ink-dim">
-          An export is a promise that what you download matches what the product is. These five are generated from the same
-          modules this site renders from — the stylesheet, the catalog data, the token values — and each page prints the exact
-          bytes the endpoint serves.
+          An export is a promise that what you download matches what the product is. These {EXPORTS.length} are generated from
+          the same modules this site renders from — the stylesheet, the catalog data, the token values — and each page prints
+          the exact bytes the endpoint serves. Two more integrations are routes rather than files:{" "}
+          <Link href="/integrations/embed" className="underline decoration-dotted">
+            the embed
+          </Link>{" "}
+          serves frames and{" "}
+          <Link href="/integrations/badge" className="underline decoration-dotted">
+            the badge
+          </Link>{" "}
+          serves an SVG per asset.
         </p>
       </div>
 
@@ -70,7 +105,7 @@ export default function IntegrationsPage() {
       </div>
 
       <div className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
-        <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Two integrations that are not files</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Three integrations that are not downloads</p>
         <p className="mt-2 text-[11px] leading-relaxed text-ink-dim">
           The{" "}
           <Link href="/integrations/og" className="underline decoration-dotted">
@@ -81,7 +116,12 @@ export default function IntegrationsPage() {
             embed route
           </Link>{" "}
           serves frames rather than bytes — it is a page other sites point an iframe at, with the frame headers printed beside
-          the markup. Both are excluded from the download list above because neither has a single file to fetch.
+          the markup. The{" "}
+          <Link href="/integrations/badge" className="underline decoration-dotted">
+            score badge
+          </Link>{" "}
+          is a route too: one SVG per asset, built from the stored scores. All three are excluded from the download list above
+          because none of them is a file you fetch once.
         </p>
       </div>
 
@@ -97,12 +137,19 @@ src/lib/data.ts      catalog       →        "            →   printed on each
       </div>
 
       <div className="mt-10 rounded-3xl border border-dashed border-amber-300/25 bg-amber-300/[.04] p-6">
-        <p className="text-sm font-extrabold text-amber-200">Bridges that are not shipped, and why</p>
-        <ul className="mt-3 grid gap-2 md:grid-cols-2">
-          {NOT_SHIPPED.map(([title, why]) => (
+        <p className="text-sm font-extrabold text-amber-200">What is still missing, and inside which feature</p>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-amber-100/80">
+          Every bullet in this section shipped something real. None of them shipped the whole idea, and these are the five
+          remainders: the part that needs a registry, a server, or a third-party round trip this build cannot make. The count in
+          the heading is the point — five gaps in fourteen deliverables, each one named where it belongs rather than discovered
+          later.
+        </p>
+        <ul className="mt-4 grid gap-2 md:grid-cols-2">
+          {SUB_GAPS.map(([title, inside, why]) => (
             <li key={title} className="rounded-2xl border border-white/8 bg-white/[.02] px-3.5 py-3">
               <span className="text-[11px] font-bold text-amber-100">{title}</span>
-              <span className="mt-0.5 block text-[11px] leading-relaxed text-amber-100/70">{why}</span>
+              <span className="mt-0.5 block font-mono text-[10px] text-amber-100/50">{inside}</span>
+              <span className="mt-1 block text-[11px] leading-relaxed text-amber-100/70">{why}</span>
             </li>
           ))}
         </ul>

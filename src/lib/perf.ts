@@ -405,19 +405,22 @@ export const MEASURED = {
   },
   /** This build, measured by the same functions the pages call. */
   after: {
-    build: "batch 56",
-    promptsHtmlKb: 496.1,
-    totalHtmlKb: 6485.7,
-    noDemoPageJsKb: 427.6,
-    studioJsKb: 499,
+    build: "batch 60",
+    promptsHtmlKb: 500.6,
+    /** Every prerendered page, including the 107 embed pages added in batch 59.
+     *  The file count changed between builds, so this is a scale figure, not a
+     *  like-for-like delta — the pages say so where it is shown. */
+    totalHtmlKb: 9952.3,
+    noDemoPageJsKb: 429.5,
+    studioJsKb: 500.9,
     fontFiles: 2,
     fontKb: 80,
-    pagesPreloadingFonts: 87,
-    /** These three were measured by fetching the pages with no JavaScript at
-     *  all — the same request a text browser or a crawler makes. /components
-     *  is rendered on demand, so it has no prerendered file to read. `headings`
-     *  counts card titles in the HTML, which is how the "the information is
-     *  still there without JavaScript" claim is checked rather than asserted. */
+    pagesPreloadingFonts: 225,
+    /** Measured by fetching the pages with no JavaScript at all — the same
+     *  request a text browser or a crawler makes. /components is rendered on
+     *  demand, so it has no prerendered file to read. `headings` counts card
+     *  titles in the HTML, which is how the "the information is still there
+     *  without JavaScript" claim is checked rather than asserted. */
     jsOff: {
       "/components": { htmlKb: 332.4, pending: 107, mounted: 0, links: 149, headings: 107 },
       "/backgrounds": { htmlKb: 73.2, pending: 33, mounted: 0, links: 41, headings: 0 },
