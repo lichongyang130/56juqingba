@@ -416,8 +416,22 @@ export function ToolCard({ tool }: { tool: LabTool }) {
       </div>
       <h3 className="mt-4 text-[15px] font-bold tracking-tight">{tool.title}</h3>
       <p className="mt-1.5 text-xs leading-relaxed text-ink-dim">{tool.description}</p>
-      <div className="mt-4 text-xs font-semibold text-ink-faint transition-colors group-hover:text-ink">
-        Open tool →
+      {/* Only claim a destination that exists: the interactive four run further
+          up this page, Theme Studio has its own route, and the rest are ideas
+          that have not been built — which the card now says out loud instead of
+          printing "Open tool" over dead air. */}
+      <div className="mt-4 text-xs font-semibold">
+        {tool.interactive ? (
+          <Link href="/lab" className="text-ink-faint transition-colors group-hover:text-ink">
+            Try it above ↑
+          </Link>
+        ) : tool.slug === "themes" ? (
+          <Link href="/studio" className="text-violet-200 transition-colors group-hover:text-ink">
+            Open Theme Studio →
+          </Link>
+        ) : (
+          <span className="chip !text-[9px] !border-amber-300/40 !text-amber-300">planned · not in this build</span>
+        )}
       </div>
     </div>
   );

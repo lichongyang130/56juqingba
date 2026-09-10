@@ -1,61 +1,13 @@
 import Link from "next/link";
 import { DemoView } from "@/components/demos/Demo";
 import { Stage } from "@/components/cards";
-
-const PLANS = [
-  {
-    name: "Free",
-    monthly: 0,
-    blurb: "Everything you need to ship a great personal site.",
-    features: [
-      "Full library browsing & copying",
-      "All element / animated assets",
-      "Verified AI prompts (non-Pro packs)",
-      "Lab tools: Easing, Spring, Gradient",
-      "Public collections",
-      "Community submission & badges",
-    ],
-    cta: "Start free",
-    featured: false,
-  },
-  {
-    name: "Pro",
-    monthly: 19,
-    yearly: 129,
-    blurb: "For people who build sites for a living.",
-    features: [
-      "Everything in Free",
-      "Prompt test reports & Pro prompt packs",
-      "Whole template one-click installs",
-      "Theme Studio + saved brand kits",
-      "Private collections & API access",
-      "Priority review (48h → 6h)",
-      "No ads, early features",
-    ],
-    cta: "Go Pro",
-    featured: true,
-  },
-  {
-    name: "Team",
-    monthly: 49,
-    yearly: 399,
-    blurb: "Shared brand kits and usage for small teams.",
-    features: [
-      "Everything in Pro, per member",
-      "Shared theme tokens & component audits",
-      "Admin console for content policy",
-      "Usage analytics dashboard",
-      "Dedicated support",
-    ],
-    cta: "Contact us",
-    featured: false,
-  },
-];
+import { PricingAudit, ProSectionNav } from "@/components/pro-ui";
+import { MONEY_GAP, PLANS, yearlySaving } from "@/lib/pro";
 
 const FAQ = [
   ["Is the library really free?", "Yes — the core library (elements, animated assets, backgrounds, sections) is MIT-licensed and free forever, no watermark."],
   ["What does Pro actually add?", "Pro sells productivity: multi-model test reports, template packs, theme persistence and API access. Not the basic code."],
-  ["Do contributors get paid?", "Featured community submissions earn a 30% net share when their asset is part of paid packs, or redeemable credits."],
+  ["Do contributors get paid?", "That is the intent, and it is not implemented: there is no paid-pack revenue, no payouts and no credit ledger in this build. The plan is a 30% net share on paid packs once packs exist."],
   ["Can I cancel anytime?", "Yes. Billing is monthly or yearly, cancel in one click, access lasts to the end of the period."],
 ];
 
@@ -80,9 +32,11 @@ export default function PricingPage() {
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">The free-forever promise</p>
             <h2 className="mt-2 text-xl font-extrabold tracking-tight">What stays free, in writing</h2>
             <p className="mt-2 text-[13px] leading-relaxed text-ink-dim">
-              The core library — elements, animated assets, backgrounds and sections — is MIT-licensed, copyable
-              without an account, and free forever. No watermark, no code paywall, no &ldquo;free for 14 days&rdquo;.
-              Pro sells leverage, never the code itself.
+              Every component in the catalog carries <span className="font-mono">license: &ldquo;MIT&rdquo;</span> and is
+              copyable without an account, free forever. Backgrounds and lab tools follow the same MIT policy, though the
+              catalog stores no licence field for them — the licence page labels those rows as policy rather than pretending
+              they are recorded facts. No watermark, no code paywall, no &ldquo;free for 14 days&rdquo;. Pro sells leverage,
+              never the code itself.
             </p>
           </div>
           <Link href="#free" className="btn btn-ghost !px-3.5 !py-2 text-xs">Jump to the Free plan ↓</Link>
@@ -120,7 +74,7 @@ export default function PricingPage() {
             </div>
             {p.monthly > 0 && p.yearly && (
               <div className="mt-1 text-[11px] text-ink-faint">
-                or ${p.yearly}/year — save ~{Math.round((1 - p.yearly / (p.monthly * 12)) * 100)}%
+                or ${p.yearly}/year — save {yearlySaving(p)}%
               </div>
             )}
             <p className="mt-3 text-xs leading-relaxed text-ink-dim">{p.blurb}</p>
@@ -130,9 +84,10 @@ export default function PricingPage() {
               <button
                 type="button"
                 className={`btn mt-6 w-full ${p.featured ? "btn-primary" : "btn-ghost"}`}
-                title="Checkout is wired up in the production build — this MVP demo shows the plans."
+                title={MONEY_GAP}
+                disabled
               >
-                {p.cta} <span className="opacity-70">(launch)</span>
+                {p.cta} <span className="opacity-70">· no processor</span>
               </button>
             )}
             <ul className="prose-list mt-6 list-none space-y-2">
@@ -182,6 +137,26 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
+
+      <div className="mx-auto mt-14 max-w-5xl">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-violet-300">Itemised, not summarised</p>
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight">The Pro section, promise by promise</h2>
+            <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-ink-dim">
+              Each Pro bullet has a page that says what it is in this build, what it would need, and which free path already
+              covers it. {MONEY_GAP}
+            </p>
+          </div>
+          <Link href="/pro" className="btn btn-ghost !px-3.5 !py-2 text-xs">Open the ledger →</Link>
+        </div>
+        <div className="mt-5">
+          <ProSectionNav current="/pricing" />
+        </div>
+        <div className="mt-6">
+          <PricingAudit />
+        </div>
+      </div>
 
       <div className="mx-auto mt-16 max-w-3xl">
         <h2 className="text-center text-2xl font-extrabold tracking-tight">Questions, answered</h2>

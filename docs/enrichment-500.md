@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 384 / 500 shipped (batches 1–53, in order) · Sections 1–13 complete ✅ · Section 14 next
+## Progress — 391 / 500 shipped (batches 1–54, in order) · Sections 1–13 complete ✅ · Section 14 in progress (7/15)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -396,6 +396,13 @@ names, behaviours and where they plug into the existing pages.
 | 382 | Admin — duplicate detector | [/admin/duplicates](/admin/duplicates) · queued titles against the whole catalog, with the shared words printed as the evidence |
 | 383 | Admin — empty state | queue page when nothing is pending · shows the newest published records instead of a blank panel |
 | 384 | Admin — quick stats per content type | [/admin/stats](/admin/stats) · type inventory, publish-volume chart and per-kind means — with the copy-trend chart it cannot draw named in full |
+| 385 | Pro feature ledger | [/pro](/pro) · all 11 Pro promises with a state chip (works now / browser demo / needs a server), the evidence for that state and the free path beside it |
+| 386 | Licence clarity cards | [/pro/licence](/pro/licence) · MIT vs Pro in cards and a table, with the three rows that are site policy rather than stored catalog data labelled as such |
+| 387 | Usage-based honesty | [/pro/unlimited](/pro/unlimited) · "unlimited" written out as 4 things it covers and 4 it does not |
+| 388 | Pro trial playbook | [/pro/trial](/pro/trial) · 7 walkable days ordered working → browser demo → server-bound |
+| 389 | API tokens demo | [/pro/api](/pro/api) · scope picker minting a deterministic prefixed demo key, plus the request it would make |
+| 390 | Pro-only lab gate | [/studio](/studio) · three minutes of the real editor, then an upgrade card with a one-press dismissal |
+| 391 | Bundle vs ala-carte | [/pro/bundles](/pro/bundles) · cost meter over real pack prices that argues against its own bundle |
 
 ---
 
@@ -904,7 +911,7 @@ The closing item on the list was *quick stats per content type*, described in th
 
 ---
 
-## 14. Pro plans & monetization — 15 upgrades
+## 14. Pro plans & monetization — 15 upgrades — 7/15 shipped
 
 - **Pro feature list page**: one page that shows every Pro asset/lab with a live preview gate.
 - **License clarity cards**: free = MIT assets · Pro = team licence + reports + API (visual, not legalese).
@@ -921,6 +928,10 @@ The closing item on the list was *quick stats per content type*, described in th
 - **Enterprise contact card**: what to say when teams ask for SSO/SLA, honestly scoped.
 - **Receipt/plans page mock**: a fake-but-working billing settings page for admin demos.
 - **Pro changelog**: every Pro-only addition listed with its free alternative noted.
+
+Monetization is the section where a site is most tempted to describe a product it does not have, so the whole section is built around one label: every Pro promise carries a state — **works now**, **browser demo** or **needs a server** — with the evidence for that state and the free path that already exists beside it. The label is not decoration. It is what says out loud that per-model prompt reports are already free on every prompt page (74 prompts, 221 runs), that a seven-day trial over features needing no server would be theatre, and that "Priority review (48h → 6h)" cannot be kept by a static build because no submission is ever received.
+
+Two claims came off the existing pages. The paid CTA's tooltip promised that "checkout is wired up in the production build" — there is no production build with a checkout, so the button is now visibly disabled and titled with the gap. And the free-forever panel asserted MIT for backgrounds and lab tools, which the catalog does not record: `license` is a field on components (107/107 MIT, counted from the data) and nothing else, so those rows now read *policy, not a stored field*. Prices, the yearly saving and every pack unit price moved into one module that the plan cards and all seven pages read, which is the only reliable way to stop a price drifting from its own checkout copy.
 
 ---
 

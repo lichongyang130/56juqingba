@@ -354,7 +354,29 @@ export function Footer() {
             <div className="text-xs font-bold uppercase tracking-widest text-ink-faint">{title}</div>
             <ul className="mt-3 space-y-2">
               {links.map((l) => {
-                const href: string | null = { About: "/mission", Pricing: "/pricing", Community: "/community", "Quality bar": "/quality" }[l] ?? null;
+                // Every label that has a real destination is a link; the three
+                // that do not (prompt builder, verified-only filter, status page)
+                // stay inert rather than pointing at a route that is not there.
+                const href: string | null =
+                  {
+                    About: "/mission",
+                    Pricing: "/pricing",
+                    Community: "/community",
+                    "Quality bar": "/quality",
+                    License: "/pro/licence",
+                    "API docs": "/pro/api",
+                    "Theme Studio": "/studio",
+                    "Easing Lab": "/lab",
+                    "Spring Lab": "/lab",
+                    "Guides & Blog": "/learn",
+                    Backgrounds: "/backgrounds",
+                    "All prompts": "/prompts",
+                    Scoreboard: "/prompts",
+                    Templates: "/templates",
+                    Elements: "/components",
+                    Animated: "/components",
+                    Sections: "/components",
+                  }[l] ?? null;
                 return (
                   <li key={l}>
                     {href ? (

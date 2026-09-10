@@ -19,6 +19,7 @@ import {
   SavedThemesPanel,
   ThemePreviewPanel,
 } from "@/components/studio-panels";
+import { ProLabGate } from "@/components/pro-ui-2";
 import {
   ApiPreviewPanel,
   IconPanel,
@@ -233,6 +234,11 @@ function TokenStudio() {
         </p>
       )}
 
+      {/* #390 — Theme Studio is the one lab tool marked non-free, so the free
+          preview gate lives here: three minutes of the real editor, then an
+          upgrade card that is one press away from being dismissed. */}
+      <div className="mt-6">
+        <ProLabGate variant="bare" tool="Theme Studio — the one lab tool marked Pro">
       {/* live token editor */}
       <div className="mt-10 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-3xl border border-white/8 p-6" style={{ background: panel, color: ink }}>
@@ -431,6 +437,8 @@ function TokenStudio() {
           </p>
         </div>
         <Link href="/lab" className="btn btn-ghost !py-2 text-xs">Back to the Lab</Link>
+      </div>
+        </ProLabGate>
       </div>
     </div>
   );
