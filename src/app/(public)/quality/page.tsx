@@ -109,6 +109,29 @@ export default function QualityPage() {
         <AnnualReviewPanel />
       </div>
 
+      {/* Community-driven challenge — real surfaces, deliberately not counted
+          as a 21st mechanism (Section 12, batch 47). */}
+      <div className="mt-8 rounded-3xl border border-violet-300/20 bg-violet-400/[.04] p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-violet-200">
+            Community-challenged quality · not counted among the 20 above
+          </p>
+          <span className="chip !text-[10px]">Section 12 · community</span>
+        </div>
+        <p className="mt-2 max-w-3xl text-xs leading-relaxed text-ink-dim">
+          Every mechanism above is ours. Two of these claims can also be challenged from outside: anybody can ask
+          whether a prompt still holds on a given model, and a remix can be pushed through the same audit gates into the
+          moderation queue. Both surfaces print their own honesty label — the re-run log is a simulation with no model
+          behind it, and submissions stay in your browser until a reviewer opens the queue.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link href="/community/re-run" className="chip !text-[10px] transition-colors hover:!text-ink">▶ Community prompt re-run</Link>
+          <Link href="/community/submit" className="chip !text-[10px] transition-colors hover:!text-ink">⤴ Remix submit flow</Link>
+          <Link href="/community/leaderboard" className="chip !text-[10px] transition-colors hover:!text-ink">Copy leaderboard</Link>
+          <Link href="/community" className="chip !text-[10px] transition-colors hover:!text-ink">All community surfaces</Link>
+        </div>
+      </div>
+
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-white/8 bg-panel p-6">
         <div className="max-w-xl">
           <p className="text-sm font-extrabold">Where the numbers come from</p>

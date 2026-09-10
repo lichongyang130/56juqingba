@@ -1,41 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { MODERATION_SEED, SUBMISSION_KEY, type Submission, type SubmissionKind } from "@/lib/community";
 
-type SubmissionKind = "element" | "section" | "animated" | "prompt";
-type Gate = "pass" | "warn" | "fail";
 type Decision = "approved" | "rejected";
-
-interface Submission {
-  id: string;
-  kind: SubmissionKind;
-  title: string;
-  author: string;
-  score: number; // a11y audit for components · fidelity for prompts
-  lint: Gate; // lint gate for components · style lint for prompts
-  safety: Gate; // sandbox safety for components · model run for prompts
-  stack: string;
-}
-
-const SEED: Submission[] = [
-  { id: "SUB-1026", kind: "prompt", title: "SaaS pricing — glassmorphism landing", author: "pixelparlor", score: 91, lint: "pass", safety: "pass", stack: "Next.js · 3 models" },
-  { id: "SUB-1025", kind: "element", title: "Soft ripple text field", author: "lena.dev", score: 96, lint: "pass", safety: "pass", stack: "React" },
-  { id: "SUB-1024", kind: "section", title: "Lava lamp blob hero", author: "noir.studio", score: 91, lint: "warn", safety: "pass", stack: "HTML/CSS" },
-  { id: "SUB-1023", kind: "prompt", title: "Indie magazine cover hero prompt", author: "glyph.rgb", score: 89, lint: "pass", safety: "warn", stack: "HTML · 3 models" },
-  { id: "SUB-1022", kind: "element", title: "Coin flip loader", author: "karina_ui", score: 88, lint: "warn", safety: "pass", stack: "React" },
-  { id: "SUB-1021", kind: "animated", title: "Scroll-linked hue nav", author: "tttyping", score: 82, lint: "pass", safety: "pass", stack: "Vue" },
-  { id: "SUB-1020", kind: "section", title: "Glass stat card trio", author: "pixelparlor", score: 97, lint: "fail", safety: "pass", stack: "HTML/CSS" },
-  { id: "SUB-1019", kind: "animated", title: "Aurora pricing toggle", author: "unknown_usr", score: 90, lint: "pass", safety: "fail", stack: "React" },
-  { id: "SUB-1018", kind: "prompt", title: "Beauty routine-builder prompt", author: "studio.ceres", score: 86, lint: "warn", safety: "pass", stack: "HTML · 3 models" },
-  { id: "SUB-1017", kind: "section", title: "Checkout stepper", author: "monoflow", score: 99, lint: "pass", safety: "pass", stack: "React" },
-];
-
-const STORAGE_KEY = "motif-admin-moderation-v1";
 
 interface Persisted {
   decisions: Record<string, Decision>;
   at: string;
 }
+
+/** Submissions sent from the public remix form live in localStorage; the
+ *  queue reads them so the submit flow genuinely reaches a reviewer. */
+function loadLocalSubmissions(): Submission[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(SUBMISSION_KEY);
+    const list = raw ? (JSON.parse(raw) as Submission[]) : [];
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+const STORAGE_KEY = "motif-admin-moderation-v1";
 
 function loadDecisions(): Persisted {
   if (typeof window === "undefined") return { decisions: {}, at: "" };
@@ -58,7 +46,8 @@ const METRICS: Record<SubmissionKind, [string, string, string]> = {
 
 export default function AdminModeration() {
   const [persisted] = useState<Persisted>(loadDecisions);
-  const [rows, setRows] = useState(() => SEED.filter((r) => !persisted.decisions[r.id]));
+  const [local] = useState<Submission[]>(loadLocalSubmissions);
+  const [rows, setRows] = useState(() => [...local, ...MODERATION_SEED].filter((r) => !persisted.decisions[r.id]));
   const [decided, setDecided] = useState<Record<string, Decision>>(persisted.decisions);
 
   // Persist every decision so a refresh keeps the queue honest.
@@ -80,7 +69,7 @@ export default function AdminModeration() {
 
   const resetDemo = () => {
     try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
-    setRows(SEED);
+    setRows([...local, ...MODERATION_SEED]);
     setDecided({});
   };
 
@@ -96,7 +85,8 @@ export default function AdminModeration() {
           <h1 className="text-2xl font-extrabold tracking-tight">Moderation queue</h1>
           <p className="mt-1 max-w-xl text-sm text-ink-dim">
             Component <em>and</em> prompt submissions run the automated audit gate first; humans make
-            the final call. Decisions persist locally so the queue survives a refresh.
+            the final call. Decisions persist locally so the queue survives a refresh. {MODERATION_SEED.length} sample
+            rows ship with the demo{local.length ? `, alongside ${local.length} sent from the public remix form on this device — those read pending because no gate has run on them yet` : ""}.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -133,6 +123,7 @@ export default function AdminModeration() {
         {rows.map((s) => {
           const [mScore, mLint, mSafety] = METRICS[s.kind];
           const score = s.score;
+          const awaiting = s.source === "community";
           return (
             <div key={s.id} className="rounded-3xl border border-white/8 bg-panel p-5">
               <div className="flex items-start justify-between gap-3">
@@ -141,6 +132,7 @@ export default function AdminModeration() {
                     <span className="font-mono">{s.id}</span>
                     <span>·</span>
                     <span>{s.author}</span>
+                    {awaiting && <span className="chip !text-[9px]">from your browser</span>}
                   </div>
                   <h2 className="mt-1 font-extrabold tracking-tight">{s.title}</h2>
                 </div>
@@ -151,19 +143,26 @@ export default function AdminModeration() {
 
               <div className="mt-4 grid grid-cols-3 gap-2 text-center">
                 <div className="rounded-xl border border-white/7 bg-black/20 px-2 py-2.5">
-                  <div className={`text-sm font-extrabold ${score >= 95 ? "text-mint" : score >= 85 ? "text-amber-300" : "text-danger"}`}>{score}</div>
+                  <div className={`text-sm font-extrabold ${awaiting ? "text-ink-faint" : score >= 95 ? "text-mint" : score >= 85 ? "text-amber-300" : "text-danger"}`}>{awaiting ? "pending" : score}</div>
                   <div className="text-[9px] uppercase tracking-wider text-ink-faint">{mScore}</div>
                 </div>
                 <div className="rounded-xl border border-white/7 bg-black/20 px-2 py-2.5">
-                  <div className={`text-sm font-extrabold ${s.lint === "pass" ? "text-mint" : s.lint === "warn" ? "text-amber-300" : "text-danger"}`}>{s.lint}</div>
+                  <div className={`text-sm font-extrabold ${awaiting ? "text-ink-faint" : s.lint === "pass" ? "text-mint" : s.lint === "warn" ? "text-amber-300" : "text-danger"}`}>{awaiting ? "pending" : s.lint}</div>
                   <div className="text-[9px] uppercase tracking-wider text-ink-faint">{mLint}</div>
                 </div>
                 <div className="rounded-xl border border-white/7 bg-black/20 px-2 py-2.5">
-                  <div className={`text-sm font-extrabold ${s.safety === "pass" ? "text-mint" : "text-danger"}`}>{s.safety}</div>
+                  <div className={`text-sm font-extrabold ${awaiting ? "text-ink-faint" : s.safety === "pass" ? "text-mint" : "text-danger"}`}>{awaiting ? "pending" : s.safety}</div>
                   <div className="text-[9px] uppercase tracking-wider text-ink-faint">{mSafety}</div>
                 </div>
               </div>
 
+              {awaiting && (
+                <p className="mt-3 rounded-xl border border-violet-300/20 bg-violet-400/5 px-3 py-2 text-[11px] text-violet-100/90">
+                  ◌ Sent from the public remix form{s.basedOn ? ` as a remix of ${s.basedOn}` : ""} — the audit gates have
+                  not run on it yet, so the three tiles above read pending on purpose. Approving records the decision in
+                  this browser only; nothing is published.
+                </p>
+              )}
               {s.lint === "fail" && (
                 <p className="mt-3 rounded-xl border border-amber-300/15 bg-amber-400/5 px-3 py-2 text-[11px] text-amber-200/90">
                   ⚠ {s.kind === "prompt" ? "Style lint" : "Lint"} gate failed — request a fix before approving.

@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 339 / 500 shipped (batches 1–46, in order) · Sections 1–11 complete ✅
+## Progress — 345 / 500 shipped (batches 1–47, in order) · Sections 1–11 complete ✅ · Section 12 in progress (6/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -351,6 +351,12 @@ names, behaviours and where they plug into the existing pages.
 | 337 | Quality bar — security hygiene | [/quality](/quality) |
 | 338 | Quality bar — licence scanner | [/quality](/quality) |
 | 339 | Quality bar — annual content review | [/quality](/quality) |
+| 340 | Community — favourites / collect | [/saved](/saved) · star button on every component and prompt page |
+| 341 | Community — user collections with shareable URLs | [/collections](/collections) · 5 filter-backed collections |
+| 342 | Community — remix submit flow into the moderation queue | [/community/submit](/community/submit) · [/admin/moderation](/admin/moderation) |
+| 343 | Community — prompt re-run with published-average comparison | [/community/re-run](/community/re-run) (labelled simulation) |
+| 344 | Community — copy leaderboard with credits | [/community/leaderboard](/community/leaderboard) |
+| 345 | Community — maker profile pages | [/makers](/makers) · 9 sample-roster handles |
 
 ---
 
@@ -785,7 +791,9 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 12. Community — 25 features
+## 12. Community — 25 features — 6/25 shipped
+
+Shipped so far: favourites/collect (#340) · collections with URLs (#341) · remix submit flow (#342) · community prompt re-run (#343) · copy leaderboard (#344) · maker profile pages (#345). All six live under [/community](/community); saved lists, submissions and review notes are browser-local and labelled as such, and the re-run log is an explicit simulation — no model is called.
 
 - **Favourites (public or private)**: star assets and prompts into a saved list.
 - **User collections**: "Landing stack", "Under 5KB" shared collections with URLs.

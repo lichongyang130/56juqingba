@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { POSTER_SCENE_META, PromptCard, PromptPoster, posterSceneFor } from "@/components/cards";
 import { PROMPTS, accentHue, fidelityColor, promptStatusMeta } from "@/lib/data";
+import { PromptStar } from "@/components/community-ui";
 import type { PromptTemplate } from "@/lib/types";
 
 export default function PromptDetail({ prompt }: { prompt: PromptTemplate }) {
@@ -72,9 +73,12 @@ export default function PromptDetail({ prompt }: { prompt: PromptTemplate }) {
                 <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
                 <span className="ml-2 text-xs font-semibold text-ink-dim">prompt.txt — copy-paste ready</span>
               </div>
-              <button type="button" className="btn btn-primary !px-4 !py-2 !text-xs" onClick={copyPrompt}>
-                {copied ? "✓ Copied to clipboard" : "Copy prompt"}
-              </button>
+              <div className="flex items-center gap-2">
+                <PromptStar slug={prompt.slug} title={prompt.title} />
+                <button type="button" className="btn btn-primary !px-4 !py-2 !text-xs" onClick={copyPrompt}>
+                  {copied ? "✓ Copied to clipboard" : "Copy prompt"}
+                </button>
+              </div>
             </div>
             <pre className="max-h-[26rem] overflow-y-auto whitespace-pre-wrap p-5 font-mono text-[13px] leading-relaxed text-emerald-100/90">
               {prompt.promptBody}
@@ -90,6 +94,23 @@ export default function PromptDetail({ prompt }: { prompt: PromptTemplate }) {
             {prompt.blocks.map((b) => (
               <span key={b} className="chip">{b}</span>
             ))}
+          </div>
+
+          {/* community — re-run this brief on a model, or remix it */}
+          <div className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-white/8 bg-white/[.02] px-4 py-3">
+            <span className="text-xs font-semibold text-ink-dim">Community:</span>
+            <Link href={`/community/re-run?prompt=${prompt.slug}`} className="chip !text-[10px] transition-colors hover:!text-ink">
+              ▶ Re-run this prompt
+            </Link>
+            <Link href={`/community/submit?basedOn=${prompt.slug}`} className="chip !text-[10px] transition-colors hover:!text-ink">
+              ⤴ Submit a remix of it
+            </Link>
+            <Link href="/saved" className="chip !text-[10px] transition-colors hover:!text-ink">
+              ★ Your saved list
+            </Link>
+            <span className="text-[10px] leading-relaxed text-ink-faint">
+              Re-runs are a labelled simulation; the run log on this page is the real record.
+            </span>
           </div>
 
           {/* failure notes — the differentiator */}

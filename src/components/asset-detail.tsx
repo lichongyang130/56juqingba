@@ -10,6 +10,7 @@ import CourseRailThree from "@/components/course-rail-3";
 import { CourseRailFinal } from "@/components/course-rail-3";
 import TemplateKit, { TemplateKitMore } from "@/components/template-kit";
 import { accentCss, COMPONENTS, KIND_META } from "@/lib/data";
+import { StarButton } from "@/components/community-ui";
 import type { Asset } from "@/lib/types";
 
 /* Original code snippets shown in the detail page (hand-written for the MVP). */
@@ -2439,7 +2440,7 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
           <button type="button" className="btn btn-primary" onClick={() => copy("install", `npx motifui add ${asset.slug}`)}>
             {copied === "install" ? "✓ Copied" : "Copy component"}
           </button>
-          <button type="button" className="btn btn-ghost">♥ Collect</button>
+          <StarButton slug={asset.slug} title={asset.title} kind="asset" className="btn btn-ghost" />
           <CopyCount n={asset.copies} className="!text-sm" />
         </div>
       </div>
