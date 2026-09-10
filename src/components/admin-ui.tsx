@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CommandPalette } from "@/components/admin-ui-3";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: "▤", exact: true },
@@ -9,7 +10,12 @@ const NAV = [
   { href: "/admin/prompts", label: "AI Prompts", icon: "◎" },
   { href: "/admin/moderation", label: "Moderation", icon: "✓" },
   { href: "/admin/pipeline", label: "Pipeline", icon: "≡" },
+  { href: "/admin/health", label: "Health", icon: "◈" },
   { href: "/admin/content", label: "Content", icon: "✎" },
+  { href: "/admin/inspector", label: "Inspector", icon: "▣" },
+  { href: "/admin/changelog", label: "Changelog", icon: "✧" },
+  { href: "/admin/rerun", label: "Prompt re-run", icon: "↻" },
+  { href: "/admin/notifications", label: "Notifications", icon: "◔" },
   { href: "/admin/schedule", label: "Scheduling", icon: "◷" },
   { href: "/admin/search", label: "Search", icon: "⌕" },
   { href: "/admin/audit", label: "Audit trail", icon: "☰" },
@@ -73,6 +79,7 @@ export function AdminTopbar() {
         <span className="text-ink-faint">· last sync just now</span>
       </div>
       <div className="ml-auto flex items-center gap-3">
+        <CommandPalette />
         <span className="chip hidden sm:inline-flex">role: admin@motifui.dev</span>
         <Link href="/" className="btn btn-ghost !px-3 !py-1.5 !text-[11px]">View site ↗</Link>
       </div>

@@ -233,7 +233,7 @@ export function cmsFieldsFor(asset: Asset): CmsField[] {
       type: "list",
       value: asset.tags.join(", "),
       hint: "Comma separated. These drive search and the collection filters.",
-      validate: (v) => (v.split(",").filter((t) => t.trim()).length < 2 ? "At least two tags — a single tag cannot be filtered against." : null),
+      validate: (v) => (v.split(",").filter((t) => t.trim()).length < 2 ? "At least two tags — every published component carries three to six, so one would be the only single-tag row in the catalog." : null),
     },
     {
       name: "bundleKb",
@@ -273,8 +273,8 @@ export function cmsFieldsFor(asset: Asset): CmsField[] {
       label: "Status",
       type: "select",
       value: asset.status,
-      options: ["live", "beta", "draft", "deprecated"],
-      hint: "Only “live” items appear in public listings.",
+      options: ["draft", "review", "live", "archived"],
+      hint: "Lifecycle state, and the only legal values the catalog type accepts. Nothing public filters on it today — every published component is listed regardless — so a change here is intent, not a switch.",
       validate: () => null,
     },
   ];
@@ -440,3 +440,350 @@ export function searchDocs(query: string, docs = searchIndex(), limit = 40): Sea
 /* -- gate helpers reused by the bulk tools -------------------------- */
 
 export const gateTone = (g: Gate) => (g === "pass" ? "text-mint" : g === "warn" ? "text-amber-300" : "text-danger");
+
+/* ===================================================================
+   #371 — content health: freshness, audit status and open issues per asset
+   Every factor is one published field compared against one published
+   threshold, so a red cell always has a number behind it.
+   =================================================================== */
+
+export interface HealthFactor {
+  label: string;
+  ok: boolean;
+  detail: string;
+  weight: number;
+}
+
+export interface HealthRow {
+  slug: string;
+  title: string;
+  kind: string;
+  score: number;
+  age: number;
+  factors: HealthFactor[];
+}
+
+export const HEALTH_THRESHOLDS = {
+  freshnessDays: 30,
+  a11y: 95,
+  quality: 90,
+  /** budget comes from the per-kind table in ./kinds */
+} as const;
+
+export function contentHealth(assets: Asset[] = COMPONENTS): HealthRow[] {
+  return assets
+    .map((a) => {
+      const budget = budgetFor(a.kind);
+      const age = daysSince(a.published);
+      const factors: HealthFactor[] = [
+        {
+          label: "freshness",
+          ok: age <= HEALTH_THRESHOLDS.freshnessDays,
+          detail: `${age}d since the recorded publish date (window ${HEALTH_THRESHOLDS.freshnessDays}d)`,
+          weight: 2,
+        },
+        {
+          label: "a11y band",
+          ok: a.a11yScore >= HEALTH_THRESHOLDS.a11y,
+          detail: `audit ${a.a11yScore} (line ${HEALTH_THRESHOLDS.a11y})`,
+          weight: 2,
+        },
+        {
+          label: "editorial",
+          ok: a.qualityScore >= HEALTH_THRESHOLDS.quality,
+          detail: `quality ${a.qualityScore} (line ${HEALTH_THRESHOLDS.quality})`,
+          weight: 2,
+        },
+        { label: "budget", ok: a.bundleKb <= budget, detail: `${a.bundleKb} KB of ${budget} KB`, weight: 2 },
+        {
+          label: "zero-dep",
+          ok: a.deps.length === 0,
+          detail:
+            a.deps.length === 0
+              ? "0 runtime dependencies"
+              : `${a.deps.length} runtime dependenc${a.deps.length === 1 ? "y" : "ies"}: ${a.deps.join(", ")}`,
+          weight: 1,
+        },
+      ];
+      const total = factors.reduce((s, f) => s + f.weight, 0);
+      const earned = factors.reduce((s, f) => s + (f.ok ? f.weight : 0), 0);
+      return { slug: a.slug, title: a.title, kind: kindLabel(a.kind), score: Math.round((earned / total) * 100), age, factors };
+    })
+    .sort((a, b) => a.score - b.score || b.age - a.age || a.title.localeCompare(b.title));
+}
+
+export function healthSummary(rows: HealthRow[]) {
+  const failing = (label: string) => rows.filter((r) => r.factors.some((f) => f.label === label && !f.ok)).length;
+  const scores = rows.map((r) => r.score);
+  return {
+    total: rows.length,
+    average: Math.round(scores.reduce((a, b) => a + b, 0) / Math.max(1, rows.length)),
+    perfect: rows.filter((r) => r.score === 100).length,
+    below90: rows.filter((r) => r.score < 90).length,
+    stale: failing("freshness"),
+    a11y: failing("a11y band"),
+    editorial: failing("editorial"),
+    budget: failing("budget"),
+    dep: failing("zero-dep"),
+  };
+}
+
+/* ===================================================================
+   #374 — changelog composer
+   Write the entry, and the composer finds the catalog items it names. The
+   matching rule is printed, because "auto-linked" is only useful if you can
+   see what it linked and why.
+   =================================================================== */
+
+export interface ChangelogDraft {
+  date: string;
+  tag: string;
+  title: string;
+  body: string;
+}
+
+/** The tag vocabulary the feed already uses, read out of the catalog rather
+ *  than typed here: a hardcoded list drifts into offering tags no entry
+ *  carries and rejecting ones that exist. */
+export const CHANGELOG_TAGS: readonly string[] = [...new Set(CHANGELOG.map((c) => c.tag))].sort();
+
+export interface LinkedItem {
+  slug: string;
+  title: string;
+  kind: string;
+  href: string;
+  where: "title" | "body";
+}
+
+/** Items whose title appears in the draft, longest title first so a short
+ *  title cannot claim a mention that belongs to a longer one. */
+export function autoLinkAssets(draft: ChangelogDraft): LinkedItem[] {
+  const candidates = COMPONENTS.map((c) => ({ slug: c.slug, title: c.title, kind: kindLabel(c.kind), href: `/components/${c.slug}` })).sort(
+    (a, b) => b.title.length - a.title.length,
+  );
+  const out: LinkedItem[] = [];
+  for (const c of candidates) {
+    const t = c.title.toLowerCase();
+    if (t.length < 4) continue;
+    const inTitle = draft.title.toLowerCase().includes(t);
+    const inBody = draft.body.toLowerCase().includes(t);
+    if (inTitle || inBody) out.push({ ...c, where: inTitle ? "title" : "body" });
+  }
+  return out;
+}
+
+export function changelogIssues(draft: ChangelogDraft, existingDates: string[]): { field: string; message: string }[] {
+  const out: { field: string; message: string }[] = [];
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(draft.date) || Number.isNaN(Date.parse(`${draft.date}T00:00:00Z`))) {
+    out.push({ field: "date", message: "Use an ISO date (YYYY-MM-DD)." });
+  } else if (draft.date < newestCatalogDate()) {
+    out.push({
+      field: "date",
+      message: `Backdating an entry older than the newest published record (${newestCatalogDate()}) puts the feed out of order. Add it as a numbered section with the real date instead.`,
+    });
+  }
+  if (draft.title.trim().length < 12) out.push({ field: "title", message: "Titles under 12 characters read like a tag, not a headline." });
+  if (draft.title.trim().length > 80) out.push({ field: "title", message: "Longer than 80 characters wraps badly in the feed." });
+  if (draft.body.trim().length < 60) out.push({ field: "body", message: "Say what changed and why in at least a sentence — 60 characters is the floor." });
+  if (!(CHANGELOG_TAGS as readonly string[]).includes(draft.tag)) out.push({ field: "tag", message: `Tag has to be one the feed already uses: ${CHANGELOG_TAGS.join(", ")}. A brand-new tag is a change to src/lib/data.ts, not to this draft.` });
+  if (existingDates.includes(draft.date)) {
+    out.push({ field: "date", message: "Another entry already carries this date. Several entries per date are fine, but say so here so the reviewer knows it was deliberate." });
+  }
+  return out;
+}
+
+/** The TypeScript object to paste into CHANGELOG in src/lib/data.ts. The
+ *  composer never writes the file — it hands a human the exact text. */
+export function changelogSnippet(draft: ChangelogDraft, links: LinkedItem[]): string {
+  const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  const linkNote = links.length
+    ? `  // Links to ${links.map((l) => l.title).join(", ")} — already in the catalog, so reuse the wording the detail pages use.\n`
+    : "";
+  return `${linkNote}  {
+    date: "${draft.date}", tag: "${draft.tag}", title: "${esc(draft.title)}",
+    body: "${esc(draft.body)}",
+  },`;
+}
+
+/* ===================================================================
+   #376 — notification centre
+   There is no server watching anything, so every notification is derived from
+   data this build already holds: the sample queue's gate results, your own
+   stored decisions, the audit trail, and the freshness window. Each card names
+   its source, and the empty states say what would have to exist for a real
+   inbox to be useful.
+   =================================================================== */
+
+export interface Notification {
+  id: string;
+  kind: "gate" | "sla" | "stale" | "local";
+  tone: "danger" | "warn" | "info";
+  title: string;
+  body: string;
+  source: string;
+  href: string;
+  /** newest date this notification is derived from, for ordering */
+  ref: string;
+}
+
+export function notifications(
+  trail: AuditEntry[],
+  decisions: Record<string, "approved" | "rejected">,
+  health: HealthRow[] = contentHealth(),
+): Notification[] {
+  const out: Notification[] = [];
+
+  for (const s of MODERATION_SEED) {
+    if (decisions[s.id]) continue;
+    // A fail is a fail whichever gate it lands on. The wording follows the same
+    // rule the bulk tools use: hard failure ⇒ default reject, warning ⇒ read it.
+    const failed = [s.safety === "fail" ? "safety" : null, s.lint === "fail" ? "lint" : null].filter(Boolean) as string[];
+    if (failed.length > 0) {
+      out.push({
+        id: `gate-${s.id}`,
+        kind: "gate",
+        tone: "danger",
+        title: `${s.id} failed the ${failed.join(" and ")} gate${failed.length > 1 ? "s" : ""}`,
+        body: `${s.title} — ${s.kind} by @${s.author}. lint ${s.lint}, safety ${s.safety}. ${failed.includes("safety") ? "A safety failure" : "A lint failure"} is a default reject and bulk approve will not take it; send the reason back to the submitter.`,
+        source: "sample queue gate result",
+        href: "/admin/moderation",
+        ref: "9999-99-99",
+      });
+    } else if (s.lint !== "pass" || s.safety !== "pass") {
+      out.push({
+        id: `warn-${s.id}`,
+        kind: "gate",
+        tone: "warn",
+        title: `${s.id} carries a gate warning`,
+        body: `${s.title} — lint ${s.lint}, safety ${s.safety}. Warnings are readable one at a time; that is why bulk approve will not take them.`,
+        source: "sample queue gate result",
+        href: "/admin/moderation",
+        ref: "9998-99-99",
+      });
+    }
+  }
+
+  // Health arrives weakest-first; this card claims "oldest first", so sort by age
+  // rather than inheriting a different order.
+  const stale = health
+    .filter((h) => h.age > HEALTH_THRESHOLDS.freshnessDays)
+    .sort((a, b) => b.age - a.age || a.title.localeCompare(b.title));
+  if (stale.length > 0) {
+    out.push({
+      id: "stale-batch",
+      kind: "stale",
+      tone: "info",
+      title: `${stale.length} catalog item${stale.length === 1 ? "" : "s"} past the ${HEALTH_THRESHOLDS.freshnessDays}-day review window`,
+      body: `Oldest first: ${stale
+        .slice(0, 4)
+        .map((h) => `${h.title} (${h.age}d)`)
+        .join(", ")}${stale.length > 4 ? `, and ${stale.length - 4} more` : ""}. Each one has a publish date behind the number.`,
+      source: "freshness rule on recorded publish dates",
+      href: "/admin/health",
+      ref: newestCatalogDate(),
+    });
+  }
+
+  const reviewed = Object.keys(decisions).length;
+  if (reviewed > 0) {
+    const approvals = Object.values(decisions).filter((d) => d === "approved").length;
+    out.push({
+      id: "local-decisions",
+      kind: "local",
+      tone: "info",
+      title: `You have decided ${reviewed} of ${MODERATION_SEED.length} sample rows`,
+      body: `${approvals} approved, ${reviewed - approvals} rejected, recorded in this browser only. Your accept rate is yours; it never enters a public statistic.`,
+      source: "your localStorage decisions",
+      href: "/community/outcomes",
+      ref: new Date().toISOString().slice(0, 10),
+    });
+  }
+
+  if (trail.length === 0) {
+    out.push({
+      id: "no-trail",
+      kind: "sla",
+      tone: "info",
+      title: "No audit entries yet",
+      body: "Nothing has been decided, edited, scheduled or exported on this device, so there is no queue-age figure to report. We would rather show you this than a fake SLA breach.",
+      source: "empty audit trail",
+      href: "/admin/audit",
+      ref: newestCatalogDate(),
+    });
+  }
+
+  return out.sort((a, b) => b.ref.localeCompare(a.ref) || a.id.localeCompare(b.id));
+}
+
+/* ===================================================================
+   #375 — command palette
+   The palette runs two kinds of thing: navigation (always available) and
+   actions that are only honest where the data exists (a jump to a gate-failed
+   row, a reschedule for something stale). Commands carry a description of what
+   they do, because a palette that hides its semantics is a trap.
+   =================================================================== */
+
+export interface AdminCommand {
+  id: string;
+  label: string;
+  group: "Go to" | "Review" | "Create" | "Content";
+  hint: string;
+  href: string;
+  keywords: string;
+}
+
+export function adminCommands(health: HealthRow[] = contentHealth()): AdminCommand[] {
+  const failing = MODERATION_SEED.filter((s) => s.safety === "fail" || s.lint === "fail");
+  const stale = health.filter((h) => h.age > HEALTH_THRESHOLDS.freshnessDays).slice(0, 3);
+  return [
+    { id: "go-dash", label: "Dashboard", group: "Go to", hint: "KPIs derived from the catalog", href: "/admin", keywords: "home overview kpi" },
+    { id: "go-mod", label: "Moderation queue", group: "Go to", hint: `${MODERATION_SEED.length} sample rows`, href: "/admin/moderation", keywords: "queue review approve reject" },
+    { id: "go-pipeline", label: "Pipeline", group: "Go to", hint: "funnel with sources", href: "/admin/pipeline", keywords: "funnel submitted audited live" },
+    { id: "go-health", label: "Content health", group: "Go to", hint: "freshness, audit, budget per asset", href: "/admin/health", keywords: "health freshness stale" },
+    { id: "go-content", label: "Content editor", group: "Create", hint: "stage a field change, export a patch", href: "/admin/content", keywords: "edit cms fields patch" },
+    { id: "go-inspector", label: "Copy inspector", group: "Create", hint: "preview a card or detail header before publishing", href: "/admin/inspector", keywords: "preview card list detail" },
+    { id: "go-changelog", label: "Changelog composer", group: "Create", hint: "draft an entry and auto-link the assets it names", href: "/admin/changelog", keywords: "changelog entry ship notes" },
+    { id: "go-prompts", label: "Prompt re-run console", group: "Review", hint: "labelled simulation — no model is called", href: "/admin/rerun", keywords: "rerun fidelity models simulation" },
+    { id: "go-schedule", label: "Scheduling", group: "Create", hint: "queue a change for a future date", href: "/admin/schedule", keywords: "schedule publish future date" },
+    { id: "go-notify", label: "Notifications", group: "Review", hint: "derived from the queue, your decisions and the audit trail", href: "/admin/notifications", keywords: "inbox alerts sla" },
+    { id: "go-audit", label: "Audit trail", group: "Review", hint: "append-only decision log", href: "/admin/audit", keywords: "log history decisions actor" },
+    { id: "go-search", label: "Search everything", group: "Content", hint: "303 indexed records", href: "/admin/search", keywords: "find lookup index" },
+    { id: "go-assets", label: "Asset table", group: "Content", hint: `${COMPONENTS.length} components`, href: "/admin/assets", keywords: "components table sort" },
+    { id: "go-settings", label: "Settings", group: "Go to", hint: "brand and feature flags", href: "/admin/settings", keywords: "brand flags config" },
+    ...failing.map((s) => ({
+      id: `review-${s.id}`,
+      label: `Review ${s.id} — ${s.title}`,
+      group: "Review" as const,
+      hint: `lint ${s.lint} · safety ${s.safety} · score ${s.score}`,
+      href: "/admin/moderation",
+      keywords: `gate fail ${s.author} ${s.kind} ${s.id}`,
+    })),
+    ...stale.map((h) => ({
+      id: `stale-${h.slug}`,
+      label: `Refresh ${h.title}`,
+      group: "Content" as const,
+      hint: `${h.age}d since its recorded publish date — past the review window`,
+      href: "/admin/content",
+      keywords: `stale freshness ${h.slug} review`,
+    })),
+  ];
+}
+
+/** Fuzzy-lite matcher for the palette: every typed term must appear somewhere
+ *  in the label, hint, group or keywords. Term order does not matter. */
+export function matchCommands(query: string, commands: AdminCommand[], limit = 8): AdminCommand[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return commands.slice(0, limit);
+  const terms = q.split(/\s+/);
+  return commands
+    .map((c) => {
+      const hay = `${c.label} ${c.hint} ${c.group} ${c.keywords}`.toLowerCase();
+      const label = c.label.toLowerCase();
+      const hits = terms.filter((t) => hay.includes(t)).length;
+      return { c, score: hits * 10 + (label.startsWith(q) ? 25 : 0) + (label.includes(q) ? 10 : 0) };
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score || a.c.label.localeCompare(b.c.label))
+    .slice(0, limit)
+    .map((x) => x.c);
+}

@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 370 / 500 shipped (batches 1–51, in order) · Sections 1–12 complete ✅ · Section 13 in progress (6/20)
+## Progress — 376 / 500 shipped (batches 1–52, in order) · Sections 1–12 complete ✅ · Section 13 in progress (12/20)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -382,6 +382,12 @@ names, behaviours and where they plug into the existing pages.
 | 368 | Admin — bulk status transitions | [/admin/moderation](/admin/moderation) · bulk approval only carries all-gates-clean rows |
 | 369 | Admin — audit trail | [/admin/audit](/admin/audit) · append-only, actor + timestamp + note |
 | 370 | Admin — search across every content type | [/admin/search](/admin/search) · 303 indexed records |
+| 371 | Admin — content health score | [/admin/health](/admin/health) · 5 weighted factors over 107 assets, weakest first; every cell prints the number it compares and the line it compares against |
+| 372 | Admin — copy inspector | [/admin/inspector](/admin/inspector) · the production card and detail header rendered from edited copy; the card's real behaviour is stated (it prints the first three tags and no description) |
+| 373 | Admin — prompt re-run button | [/admin/rerun](/admin/rerun) · labelled simulation: no model is called, and the new score is compared against the *published* score for the same model |
+| 374 | Admin — changelog composer | [/admin/changelog](/admin/changelog) · auto-links the catalog items a draft names and exports the `data.ts` snippet; tag list read out of the feed itself |
+| 375 | Admin — ⌘K command palette | topbar of every [/admin](/admin) page · commands built from the nav, the queue's failed rows and the staleness window |
+| 376 | Admin — notification centre | [/admin/notifications](/admin/notifications) · "queue passed SLA"-style inbox; every card names its source, and the empty state lists the events a static build cannot see |
 
 ---
 
@@ -854,9 +860,11 @@ Everything lives under [/community](/community). The split is printed on every s
 
 ---
 
-## 13. Admin & content workflow — 20 tools — 6/20 shipped
+## 13. Admin & content workflow — 20 tools — 12/20 shipped
 
-Shipped so far: the local-first content editor (#365), the pipeline overview (#366), scheduled publishing (#367), bulk transitions (#368), the audit trail (#369) and console-wide search (#370). All six live under [/admin](/admin) and share one rule: a figure is either computed from the catalog or named as a gap — nothing in the console invents traffic, contributor counts or review latency. The dashboard's hard-coded KPIs and its invented community numbers were replaced as part of this batch.
+Shipped so far: the local-first content editor (#365), the pipeline overview (#366), scheduled publishing (#367), bulk transitions (#368), the audit trail (#369), console-wide search (#370), the content health table (#371), the copy inspector (#372), the prompt re-run console (#373), the changelog composer (#374), the ⌘K command palette (#375) and the notification centre (#376). All twelve live under [/admin](/admin) and share one rule: a figure is either computed from the catalog or named as a gap — nothing in the console invents traffic, contributor counts or review latency. The dashboard's hard-coded KPIs and its invented community numbers were replaced as part of this batch.
+
+The second batch tightened that rule from *don't invent numbers* to *don't assert behaviour either*. Building the console surfaced four claims about the site that were not true of the site: component `status` was offered as a visibility switch when no public listing filters on it, the changelog composer's tag list held two tags no entry carries while rejecting `Backgrounds` which does, a hard `lint` failure was reported as a "gate warning", and the copy inspector described truncation limits that no card implements. All four now describe the render path: the tag vocabulary is read out of the feed, the failure wording follows the same all-gates-clean rule as bulk approve, and the inspector's field notes quote measurements taken from the 107 published components.
 
 - **Local-first content CMS**: edit components/prompts/essays in the admin and export the data patch.
 - **Pipeline overview dashboard**: funnel of submitted → audited → reviewed → live, with times.

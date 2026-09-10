@@ -214,7 +214,7 @@ export const COMPONENTS: Asset[] = [
     description: "Complete 8-section launch page: nav, aurora hero, bento features, live demo strip, pricing toggle, FAQ, CTA and footer. React + Tailwind, one install.",
     tags: ["saas", "template", "landing", "pricing"], behaviors: ["scroll", "click"],
     stack: ["React"], deps: [], bundleKb: 24.0, themeable: true,
-    a11yScore: 97, qualityScore: 97, status: "featured" as Asset["status"], license: "MIT", version: "1.0.0",
+    a11yScore: 97, qualityScore: 97, status: "live", license: "MIT", version: "1.0.0",
     author: "Motif Studio", published: "2026-07-26", demo: "hero-aurora",
     props: [
       { name: "sections", label: "Sections included", type: "range", min: 4, max: 9, step: 1, defaultValue: 8 },
