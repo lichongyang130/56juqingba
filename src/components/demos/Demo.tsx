@@ -8090,6 +8090,384 @@ function ScrollPin() {
   );
 }
 
+/* -------------------- SECTION 17 · FLIP, DRAW, MORPH -------------------- */
+
+const STACK_CARDS = [
+  { id: "library", face: "The library", back: "113 assets · MIT", hue: 262, note: "Every card links to a page with the same demo you just flipped." },
+  { id: "motion", face: "Motion", back: "202 declarations", hue: 192, note: "The count comes from the animation audit, not from a wish." },
+  { id: "tokens", face: "Tokens", back: "14 colours · 5 radii", hue: 330, note: "The same values the token export serves as JSON." },
+];
+
+function FlipStack() {
+  const [flipped, setFlipped] = useState<string[]>(["library"]);
+  const [raised, setRaised] = useState<string | null>(null);
+  const [status, setStatus] = useState("Three cards. Hover or focus one to flip it — the card that flips comes to the front.");
+  const reduced = useReducedMotion();
+
+  const toggle = (id: string) => {
+    const card = STACK_CARDS.find((c) => c.id === id);
+    if (!card) return;
+    const next = flipped.includes(id) ? flipped.filter((f) => f !== id) : [...flipped, id];
+    setFlipped(next);
+    setStatus(next.includes(id) ? `${card.face} flipped: the back reads "${card.back}".` : `${card.face} flipped back to the front.`);
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(167,139,250,0.12),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/80">Layered deck</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">{flipped.length} showing a back face</p>
+        </div>
+
+        <ul className="relative h-64">
+          {STACK_CARDS.map((card, i) => {
+            const isFlipped = flipped.includes(card.id);
+            const isRaised = raised === card.id;
+            return (
+              <li
+                key={card.id}
+                className="absolute inset-x-0"
+                style={{
+                  top: `${i * 84}px`,
+                  zIndex: isRaised ? 30 : 10 - i,
+                  transform: `translateY(${isRaised ? -12 : 0}px) scale(${isRaised ? 1.02 : 1 - i * 0.015})`,
+                  transformStyle: "preserve-3d",
+                  perspective: "1100px",
+                  transition: reduced ? "none" : "transform 300ms cubic-bezier(0.22, 1, 0.36, 1)",
+                }}
+              >
+                <button
+                  type="button"
+                  aria-pressed={isFlipped}
+                  onMouseEnter={() => {
+                    setRaised(card.id);
+                    if (!isFlipped) toggle(card.id);
+                  }}
+                  onMouseLeave={() => setRaised(null)}
+                  onFocus={() => {
+                    setRaised(card.id);
+                    if (!isFlipped) toggle(card.id);
+                  }}
+                  onBlur={() => setRaised(null)}
+                  onClick={() => toggle(card.id)}
+                  className="relative block w-full rounded-2xl border border-white/10 bg-panel p-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400"
+                  style={{
+                    transform: `rotateY(${isFlipped ? 180 : 0}deg)`,
+                    transformStyle: "preserve-3d",
+                    transition: reduced ? "none" : "transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    minHeight: "5rem",
+                  }}
+                >
+                  <span
+                    className="block"
+                    style={{ backfaceVisibility: "hidden", opacity: isFlipped ? 0 : 1, transition: reduced ? "none" : "opacity 140ms" }}
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-[0.24em]" style={{ color: `hsl(${card.hue} 85% 70%)` }}>
+                      Card {i + 1}
+                    </span>
+                    <span className="mt-1 block text-sm font-bold text-ink">{card.face}</span>
+                    <span className="mt-1 block text-[10px] leading-relaxed text-ink-dim">{card.note}</span>
+                  </span>
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 flex flex-col justify-center rounded-2xl px-4"
+                    style={{
+                      transform: "rotateY(180deg)",
+                      backfaceVisibility: "hidden",
+                      opacity: isFlipped ? 1 : 0,
+                      transition: reduced ? "none" : "opacity 140ms",
+                      background: `radial-gradient(70% 90% at 50% 0%, hsl(${card.hue} 85% 62% / .18), transparent 70%)`,
+                    }}
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-ink-faint">Back</span>
+                    <span className="mt-1 text-base font-extrabold text-ink">{card.back}</span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+
+        <p aria-live="polite" className="mt-3 min-h-[1rem] text-[10px] leading-relaxed text-violet-200/80">
+          {status}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          Focus flips a card exactly as hover does, and <span className="font-mono">aria-pressed</span> carries the state for
+          anyone who cannot see which face is up. The overshoot is 420ms of real cubic-bezier; with reduced motion the flip is
+          instant.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// One path, authored here: a signature curve that rises, loops and settles.
+// The description below the drawing is what a reader gets instead of the shape.
+const DRAW_PATH =
+  "M14 96 C 40 20, 74 20, 86 62 S 118 128, 138 74 C 152 36, 174 30, 196 52 C 214 70, 214 96, 186 104 C 158 112, 132 96, 132 72 C 132 44, 160 20, 196 20";
+const DRAW_NOTES = [
+  "One stroked path, 9 curve segments, drawn at 1.6px on a 210×128 grid",
+  "It traces when the frame scrolls into view, and again whenever you press Draw",
+  "dashoffset does the work, so nothing re-lays out while it draws",
+];
+
+function DrawOnScroll() {
+  const pathRef = useRef<SVGPathElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [length, setLength] = useState(0);
+  const [drawn, setDrawn] = useState(false);
+  const [seen, setSeen] = useState(0);
+  const reduced = useReducedMotion();
+
+  useLayoutEffect(() => {
+    const path = pathRef.current;
+    if (!path) return;
+    try {
+      setLength(path.getTotalLength());
+    } catch {
+      setLength(0); // no SVG geometry API: the path stays drawn without the trace
+    }
+  }, []);
+
+  useEffect(() => {
+    const box = boxRef.current;
+    if (!box || typeof IntersectionObserver === "undefined") {
+      setDrawn(true); // no observer: show the finished path rather than nothing
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setSeen((n) => n + 1);
+            setDrawn(true);
+          }
+        }
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_100%,rgba(56,189,248,0.12),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-sky-300/80">Signature curve</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            {drawn ? "drawn" : "cleared"} · entered view {seen}×
+          </p>
+        </div>
+
+        <div ref={boxRef} className="rounded-2xl border border-white/10 bg-white/[.02] p-3">
+          <svg viewBox="0 0 210 128" className="h-40 w-full" role="img" aria-labelledby="draw-title draw-desc">
+            <title id="draw-title">A single curve that draws itself</title>
+            <desc id="draw-desc">
+              A stroked path that rises from the lower left, loops once and settles near the top right. It draws when it enters
+              view and can be redrawn with the button below.
+            </desc>
+            <path d="M6 116 H204" stroke="rgba(255,255,255,.08)" strokeWidth="1" />
+            <path d="M6 64 H204" stroke="rgba(255,255,255,.05)" strokeWidth="1" strokeDasharray="4 8" />
+            <path d={DRAW_PATH} fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="1.6" strokeLinecap="round" />
+            <path
+              ref={pathRef}
+              d={DRAW_PATH}
+              fill="none"
+              stroke="#7dd3fc"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              style={{
+                strokeDasharray: length || undefined,
+                strokeDashoffset: length ? length * (drawn ? 0 : 1) : undefined,
+                transition: reduced ? "none" : "stroke-dashoffset 1200ms cubic-bezier(0.4, 0, 0.2, 1)",
+              }}
+            />
+            <circle cx="14" cy="96" r="2.6" fill="#7dd3fc" opacity={drawn ? 1 : 0} />
+            <circle cx="196" cy="20" r="2.6" fill="#7dd3fc" opacity={drawn ? 1 : 0} />
+          </svg>
+
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setDrawn(false);
+                // One frame lets the browser apply the reset before the
+                // transition runs again; without it the path never redraws.
+                requestAnimationFrame(() => setDrawn(true));
+              }}
+              className="btn btn-ghost !px-3.5 !py-2 text-[11px]"
+            >
+              Draw
+            </button>
+            <button type="button" onClick={() => setDrawn(false)} className="btn btn-ghost !px-3.5 !py-2 text-[11px]">
+              Clear
+            </button>
+            <span className="text-[10px] text-ink-faint">
+              {length ? `${Math.round(length)}px of path` : "measuring the path…"}
+            </span>
+          </div>
+        </div>
+
+        <ul className="mt-3 space-y-1">
+          {DRAW_NOTES.map((n) => (
+            <li key={n} className="text-[10px] leading-relaxed text-ink-dim">
+              · {n}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+          A decoration nobody can perceive is still a decoration: the description inside the SVG carries the same content, the
+          buttons work whether or not the path ever draws itself, and reduced motion skips the 1200ms entirely.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// The morph is geometric, not a cross-fade. Each glyph is the same number of
+// quads and the animation interpolates their corner points: play is two
+// degenerate quads (the triangle split down the middle), pause is those quads
+// opened into bars. Nothing here is traced from an icon set.
+type Quad = [number, number][];
+const PLAY_LEFT: Quad = [[0, 0], [50, 50], [50, 50], [0, 100]];
+const PLAY_RIGHT: Quad = [[50, 50], [100, 0], [100, 100], [50, 50]];
+const PAUSE_LEFT: Quad = [[0, 0], [36, 0], [36, 100], [0, 100]];
+const PAUSE_RIGHT: Quad = [[64, 0], [100, 0], [100, 100], [64, 100]];
+const PLUS: Quad[] = [
+  [[40, 0], [60, 0], [60, 40], [40, 40]],
+  [[60, 40], [100, 40], [100, 60], [60, 60]],
+  [[40, 60], [60, 60], [60, 100], [40, 100]],
+  [[0, 40], [40, 40], [40, 60], [0, 60]],
+];
+const CROSS: Quad[] = [
+  [[16, 32], [32, 16], [84, 68], [68, 84]],
+  [[68, 16], [84, 32], [32, 84], [16, 68]],
+  [[68, 16], [84, 32], [32, 84], [16, 68]],
+  [[16, 32], [32, 16], [84, 68], [68, 84]],
+];
+const CHEVRON_UP: Quad[] = [
+  [[0, 62], [50, 12], [50, 12], [100, 62]],
+  [[0, 62], [50, 12], [50, 12], [0, 62]],
+];
+const CHEVRON_DOWN: Quad[] = [
+  [[0, 38], [50, 88], [50, 88], [100, 38]],
+  [[0, 38], [50, 88], [50, 88], [0, 38]],
+];
+
+const MORPH_PAIRS = [
+  { id: "play", label: "Play", from: [PLAY_LEFT, PLAY_RIGHT], to: [PAUSE_LEFT, PAUSE_RIGHT], alt: "Pause" },
+  { id: "plus", label: "Add", from: PLUS, to: CROSS, alt: "Close" },
+  { id: "chevron", label: "Collapse", from: CHEVRON_UP, to: CHEVRON_DOWN, alt: "Expand" },
+];
+
+function quadsToPath(quads: Quad[]): string {
+  return quads.map((q) => `M${q.map(([x, y]) => `${x} ${y}`).join(" L")} Z`).join(" ");
+}
+
+function lerpQuads(from: Quad[], to: Quad[], t: number): Quad[] {
+  return from.map((quad, qi) => quad.map(([x, y], pi) => [x + (to[qi][pi][0] - x) * t, y + (to[qi][pi][1] - y) * t] as Quad[number]));
+}
+
+function MorphIcons() {
+  const [on, setOn] = useState<Record<string, boolean>>({ play: true });
+  const [t, setT] = useState<Record<string, number>>({ play: 0 });
+  const [status, setStatus] = useState("Three glyph pairs. Each icon interpolates its corner points, and the label follows the glyph.");
+  const reduced = useReducedMotion();
+  const frameRef = useRef<number | null>(null);
+  const clockRef = useRef<number>(0);
+
+  // One rAF loop drives every morph at once: the glyphs share a clock, so three
+  // icons toggled in the same second stay in step instead of racing.
+  useEffect(() => {
+    const tick = (now: number) => {
+      const dt = clockRef.current ? Math.min(48, now - clockRef.current) : 16;
+      clockRef.current = now;
+      // ~320ms to cover the path between the two glyphs, independent of the
+      // frame rate the reader's device manages.
+      const step = Math.min(1, (dt / 320) * 1.6);
+      setT((prev) => {
+        let moved = false;
+        const next: Record<string, number> = {};
+        for (const pair of MORPH_PAIRS) {
+          const target = on[pair.id] ? 0 : 1;
+          const current = prev[pair.id] ?? target;
+          if (reduced) {
+            next[pair.id] = target;
+            moved = moved || current !== target;
+            continue;
+          }
+          const value = current + (target - current) * step;
+          next[pair.id] = Math.abs(target - value) < 0.002 ? target : value;
+          moved = moved || next[pair.id] !== current;
+        }
+        return moved ? next : prev;
+      });
+      frameRef.current = requestAnimationFrame(tick);
+    };
+    frameRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      clockRef.current = 0;
+    };
+  }, [on, reduced]);
+
+  const flip = (id: string) => {
+    const pair = MORPH_PAIRS.find((p) => p.id === id);
+    if (!pair) return;
+    const next = !on[id];
+    setOn((prev) => ({ ...prev, [id]: next }));
+    setStatus(`${pair.label} → ${pair.alt}: now showing ${next ? pair.alt.toLowerCase() : pair.label.toLowerCase()}.`);
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(52,211,153,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-emerald-300/80">Morphing icons</p>
+
+        <div className="mt-3 grid grid-cols-3 gap-3">
+          {MORPH_PAIRS.map((pair) => {
+            const active = on[pair.id] ?? false;
+            const progress = reduced ? (active ? 1 : 0) : t[pair.id] ?? (active ? 0 : 1);
+            const quads = lerpQuads(pair.from, pair.to, progress);
+            return (
+              <div key={pair.id} className="rounded-2xl border border-white/10 bg-white/[.02] p-3 text-center">
+                <svg
+                  viewBox="0 0 100 100"
+                  className="mx-auto h-16 w-16"
+                  role="img"
+                  aria-label={`${pair.label} icon, currently showing ${active ? pair.alt : pair.label}`}
+                >
+                  <path d={quadsToPath(quads)} fill="#edf0f7" />
+                </svg>
+                <button
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => flip(pair.id)}
+                  className="mt-2 w-full rounded-xl border border-white/10 px-2 py-1.5 text-[10px] font-semibold text-ink-dim transition-colors hover:border-emerald-400/50 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400"
+                >
+                  {pair.label} → {pair.alt}
+                </button>
+                <p className="mt-1 font-mono text-[9px] tabular-nums text-ink-faint">t = {progress.toFixed(2)}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        <p aria-live="polite" className="mt-3 min-h-[1rem] text-[10px] leading-relaxed text-emerald-200/80">
+          {status}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          Each glyph is a handful of quads with identical corner counts, so the browser interpolates coordinates instead of
+          cross-fading two drawings. The readout shows the parameter itself, because a morph that never leaves 0 or 1 is just a
+          swap with a nicer name.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // Exported because the keys are the catalog's demo vocabulary, not a private
 // detail: the props panel and the harness both want the same list.
 export const DEMO_KEYS = [
@@ -8108,6 +8486,7 @@ export const DEMO_KEYS = [
   "password-strength", "split-button-menu", "breadcrumb-trail",
   "reorder-list", "swipe-deck", "split-pane",
   "zoom-lens", "chart-scrubber", "scroll-pin",
+  "flip-stack", "draw-path", "morph-icons",
   "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
   "status-banner", "progress-ring", "spinner-status", "empty-state-trio",
@@ -8197,6 +8576,9 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "zoom-lens": return <ZoomLens />;
     case "chart-scrubber": return <ChartScrubber />;
     case "scroll-pin": return <ScrollPin />;
+    case "flip-stack": return <FlipStack />;
+    case "draw-path": return <DrawOnScroll />;
+    case "morph-icons": return <MorphIcons />;
     case "breadcrumb-trail": return <BreadcrumbTrail />;
     case "pagination-ellipsis": return <PaginationEllipsis {...props} />;
     case "toc-spine": return <TocSpine />;

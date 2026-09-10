@@ -36,6 +36,9 @@ const NEW_SCENES = [
   { slug: "zoom-lens", marker: "District map", behaviors: ["hover", "keyboard"] },
   { slug: "chart-scrubber", marker: "Prompt fidelity", behaviors: ["drag", "keyboard"] },
   { slug: "scroll-pin", marker: "Three-step story", behaviors: ["scroll", "click", "keyboard"] },
+  { slug: "flip-stack", marker: "Layered deck", behaviors: ["hover", "click", "keyboard"] },
+  { slug: "draw-path", marker: "Signature curve", behaviors: ["scroll", "click"] },
+  { slug: "morph-icons", marker: "Morphing icons", behaviors: ["click", "keyboard"] },
 ];
 
 (async () => {
@@ -74,7 +77,7 @@ const NEW_SCENES = [
   }
 
   const hub = await get("/components");
-  ok("the library lists the new scenes", hub.status === 200 && NEW_SCENES.every((s) => hub.text.includes(s.slug)));
+  ok("the library lists every scene this guard knows about", hub.status === 200 && NEW_SCENES.every((s) => hub.text.includes(s.slug)));
   ok("the catalog endpoint carries them too", NEW_SCENES.every((s) => catalog.components.some((c) => c.slug === s.slug)));
   ok("the catalog carries the backgrounds as well", catalog.backgrounds.length > 0 && catalog.$generated.backgrounds === catalog.backgrounds.length, String(catalog.backgrounds.length));
   for (const scene of NEW_SCENES) {
