@@ -791,3 +791,66 @@ export function queueReport(): QueueReport {
     bandOf: (s) => (s.safety === "fail" ? "blocked" : s.lint === "pass" && s.safety === "pass" ? "clean" : "review"),
   };
 }
+
+/** Alias kept for the recognition page's naming — same rule as the rail. */
+export function winnerRows(): WinnerRow[] {
+  return winnersRail();
+}
+
+/* ===================================================================
+   #364 — merit sorting: who contributed this month
+   "This month" is computed from records that carry a date, and from nothing
+   else. Two dated sources exist: catalog publication dates, and challenge
+   deadlines (whose entries belong to the month the challenge closed). The rule
+   is printed with the block so the ranking can be argued with.
+   =================================================================== */
+
+export interface MeritRow {
+  holder: string;
+  count: number;
+  detail: string;
+}
+
+export interface MeritBoard {
+  month: string;
+  monthLabel: string;
+  rows: MeritRow[];
+  /** everyone with dated activity this month, not just the top slice */
+  contributors: number;
+  rule: string;
+}
+
+export function meritBoard(month = new Date().toISOString().slice(0, 7), limit = 3): MeritBoard {
+  const tally = new Map<string, { published: number; entries: number }>();
+  const bump = (holder: string, key: "published" | "entries") => {
+    const cur = tally.get(holder) ?? { published: 0, entries: 0 };
+    cur[key] += 1;
+    tally.set(holder, cur);
+  };
+
+  for (const a of COMPONENTS) if (a.published.startsWith(month)) bump(a.author, "published");
+  for (const p of PROMPTS) if (p.published.startsWith(month)) bump(p.author, "published");
+  for (const c of CHALLENGES) {
+    if (!c.deadline.startsWith(month)) continue;
+    for (const e of c.entries) bump(e.handle, "entries");
+  }
+
+  const rows: MeritRow[] = [...tally.entries()]
+    .map(([holder, v]) => ({
+      holder,
+      count: v.published + v.entries,
+      detail: [v.published ? `${v.published} published` : "", v.entries ? `${v.entries} challenge ${v.entries === 1 ? "entry" : "entries"}` : ""]
+        .filter(Boolean)
+        .join(" · "),
+    }))
+    .sort((a, b) => b.count - a.count || a.holder.localeCompare(b.holder))
+    .slice(0, limit);
+
+  return {
+    month,
+    monthLabel: new Date(`${month}-01T00:00:00Z`).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" }),
+    rows,
+    contributors: tally.size,
+    rule: "Ranked by dated records only: catalog items whose publication date falls in the month, plus challenge entries whose challenge closed in it. Nothing is counted from a page view, a star, a thanks or a vote — none of those leave the browser.",
+  };
+}

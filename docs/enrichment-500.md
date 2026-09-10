@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 358 / 500 shipped (batches 1–49, in order) · Sections 1–11 complete ✅ · Section 12 in progress (19/25)
+## Progress — 364 / 500 shipped (batches 1–50, in order) · Sections 1–12 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -370,6 +370,12 @@ names, behaviours and where they plug into the existing pages.
 | 356 | Community — attribution policy | [/community/attribution](/community/attribution) |
 | 357 | Community — moderation outcomes made visible | [/community/outcomes](/community/outcomes) · sample-queue aggregate + your own reviews |
 | 358 | Community — contributor onboarding guide | [/community/onboarding](/community/onboarding) |
+| 359 | Community — recognition tiers (honest milestones) | [/community/recognition](/community/recognition) |
+| 360 | Community — RSS feed of new catalog records | [/community/rss.xml](/community/rss.xml) · alias [/community/feed.xml](/community/feed.xml) |
+| 361 | Community — teams & licensing page | [/community/teams](/community/teams) |
+| 362 | Community — translation crowd help (CC BY) | [/community/translations](/community/translations) · status table reads zero |
+| 363 | Community — event calendar with computed dates | [/community/events](/community/events) |
+| 364 | Community — merit sorting in the footer | "Top contributors" block in the site footer, ranked from dated records only |
 
 ---
 
@@ -804,9 +810,11 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 12. Community — 25 features — 19/25 shipped
+## 12. Community — 25 features — complete (25/25 shipped ✅)
 
 Shipped so far: favourites/collect (#340) · collections with URLs (#341) · remix submit flow (#342) · community prompt re-run (#343) · copy leaderboard (#344) · maker profile pages (#345) · review threads on code lines (#346) · weekly picks (#347) · monthly challenges with a winners rail (#348) · rule-awarded badges (#349) · thank-you button and a loved board (#350) · spotlight interviews (#351).
+
+Batch 50 closed the section: recognition tiers that print what exists against what is deliberately not offered (#359), an RSS 2.0 feed built from the catalog's dated records with the origin taken from the request Host so it works behind any proxy (#360), a teams-and-licensing page answering the questions that block a ship (#361), the translation programme with a do-not-translate glossary and a status table that honestly reads zero (#362), a two-session event cadence whose next dates are computed from today and whose past list is empty (#363), and a footer merit list ranked from dated records only (#364).
 
 Batch 49 added the accountability layer: a craft-talk page that explains why there is no chat server yet (#352), a requests board where every ask carries a coverage number measured from the catalog (#353), snippet provenance that prints the record we hold and names the per-line history we do not (#354), remix forking with provenance attached (#355), the attribution policy (#356), public moderation outcomes aggregated from the sample queue (#357) and the contributor onboarding guide (#358).
 

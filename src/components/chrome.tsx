@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NAV, SITE } from "@/lib/site";
+import { meritBoard, ROSTER } from "@/lib/community";
 
 /* One-line newsletter promise, shown in every footer. Cadence honesty included. */
 export function NewsletterLine() {
@@ -224,6 +225,8 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
   );
 }
 
+const ROSTER_HANDLES = new Set(ROSTER.map((m) => m.handle));
+
 export function Footer() {
   const groups: [string, string[]][] = [
     ["Library", ["Elements", "Animated", "Sections", "Templates", "Backgrounds"]],
@@ -243,6 +246,45 @@ export function Footer() {
           <p className="mt-4 text-xs text-ink-faint">
             Original content only. Assets are MIT · guides are CC BY 4.0.
           </p>
+          {(() => {
+            const merit = meritBoard();
+            return (
+              <div className="mt-5 rounded-2xl border border-white/6 bg-white/[.02] p-3.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">
+                    Top contributors · {merit.monthLabel}
+                  </span>
+                  <span className="font-mono text-[9px] text-ink-faint">{merit.contributors} with dated activity</span>
+                </div>
+                <ol className="mt-2 space-y-1.5">
+                  {merit.rows.map((r, i) => (
+                    <li key={r.holder} className="flex items-baseline gap-2 text-[11px]">
+                      <span className="font-mono text-[10px] text-amber-200/80">#{i + 1}</span>
+                      {ROSTER_HANDLES.has(r.holder) ? (
+                        <Link href={`/makers/${r.holder}`} className="font-semibold text-ink-dim hover:text-ink">
+                          {r.holder}
+                        </Link>
+                      ) : (
+                        <span className="font-semibold text-ink-dim">{r.holder}</span>
+                      )}
+                      <span className="ml-auto font-mono text-[10px] text-ink-faint">{r.detail}</span>
+                    </li>
+                  ))}
+                </ol>
+                <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+                  Ranked from dated records only — publication dates and challenge deadlines. Votes, stars, thanks and
+                  your reviews never leave the browser, so they cannot move this list.
+                  {merit.contributors <= 1
+                    ? " This month only the studio has dated publishing records on file, so the list has one row; community merit sorting starts when submissions are stored server-side."
+                    : ""}
+                </p>
+                <Link href="/community" className="mt-2 inline-block text-[10px] font-semibold text-violet-300 hover:text-violet-200">
+                  How the community layer works →
+                </Link>
+              </div>
+            );
+          })()}
+
           <div className="mt-5 rounded-2xl border border-white/6 bg-white/[.02] p-3.5">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink-faint">
               <LogoMark size={14} /> Press &amp; media kit

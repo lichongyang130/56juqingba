@@ -6,6 +6,7 @@ import { CHALLENGES, COLLECTIONS, MODERATION_SEED, ROSTER, SPOTLIGHTS } from "@/
 
 export const metadata: Metadata = {
   title: "Community — Motif UI",
+  alternates: { types: { "application/rss+xml": "/community/rss.xml" } },
   description:
     "Motif's community surfaces: saved lists, curated collections, community prompt re-runs, the copy leaderboard, maker pages and the remix submit flow — each labelled with exactly what is live and what is a browser-local demo.",
 };
@@ -38,6 +39,11 @@ export default function CommunityHub() {
     { href: "/community/attribution", title: "Attribution policy", tag: "the licence, not a favour", body: "MIT for assets, CC BY 4.0 for guides — and exactly what happens when a credit goes missing.", cta: "Read the policy" },
     { href: "/community/provenance", title: "Snippet provenance", tag: "honest blame", body: "Who touched this code, from the record we actually keep — plus the history we do not have.", cta: "Trace a snippet" },
     { href: "/community/craft-talk", title: "Craft talk", tag: "not launched", body: "No chat server yet, and the four things that would have to be true before we open one.", cta: "Why there is no Discord" },
+    { href: "/community/recognition", title: "Recognition tiers", tag: "milestones, not merch", body: "What actually exists at each contributor milestone — and the merch programme we deliberately do not pretend to have.", cta: "See the tiers" },
+    { href: "/community/teams", title: "Teams & licensing", tag: "for the day job", body: "How teams use the catalog together, plus plain-language answers to the licensing questions that block a ship.", cta: "Read the answers" },
+    { href: "/community/translations", title: "Translations", tag: "zero so far, honestly", body: "CC BY 4.0 lets you translate any guide. The workflow, the glossary and a status table that reads zero.", cta: "Translate a guide" },
+    { href: "/community/events", title: "Events", tag: "cadence, computed dates", body: "Two recurring sessions with next dates computed from today — and no past sessions claimed.", cta: "See the schedule" },
+    { href: "/community/rss.xml", title: "Catalog feed", tag: "RSS 2.0 · live", body: "Every dated record in the catalog, newest first. Community submissions are not in it because none are stored server-side.", cta: "Open the feed" },
   ];
 
   return (
@@ -90,7 +96,8 @@ export default function CommunityHub() {
               <li>Curated collections derived from live catalog filters, each with a shareable URL.</li>
               <li>Copy counts, audit scores, prompt run logs and author credits.</li>
               <li>Maker pages built from the same sample roster the moderation demo already uses.</li>
-              <li>Weekly picks, challenge rules and badges all computed from catalog and gate data.</li>
+              <li>Weekly picks, challenge rules, badges and the footer merit list all computed from catalog and gate data.</li>
+              <li>An RSS feed of every dated catalog record, and a contribution cadence with next dates computed from today.</li>
             </ul>
           </div>
           <div className="rounded-2xl border border-amber-300/25 bg-amber-300/[.04] p-4">
