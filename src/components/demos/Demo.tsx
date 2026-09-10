@@ -9777,6 +9777,412 @@ function SearchWalk() {
     </div>
   );
 }
+/* -------------------- SECTION 17 · PROGRESS, GRAPH, EASING ICONS -------------------- */
+
+const READING_SECTIONS = [
+  { id: "why", h: "Why heroes feel dead" },
+  { id: "stack", h: "Step 1 — stack the veil" },
+  { id: "type", h: "Step 2 — one typographic moment" },
+  { id: "action", h: "Step 3 — an honest action" },
+  { id: "ship", h: "Ship it and check the fold" },
+];
+
+function ReadingDots() {
+  const [active, setActive] = useState(0);
+  const [read, setRead] = useState<number[]>([]);
+  const articleRef = useRef<HTMLDivElement>(null);
+
+  const mark = (index: number) => {
+    setActive(index);
+    setRead((prev) => (prev.includes(index) ? prev : [...prev, index].sort((a, b) => a - b)));
+  };
+
+  const jump = (index: number) => {
+    const clamped = Math.max(0, Math.min(READING_SECTIONS.length - 1, index));
+    mark(clamped);
+    const el = articleRef.current?.querySelector<HTMLElement>(`[data-section="${clamped}"]`);
+    el?.scrollIntoView({ block: "start", behavior: "smooth" });
+  };
+
+  const progress = Math.round((read.length / READING_SECTIONS.length) * 100);
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(167,139,250,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/80">Reading progress</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            {read.length} of {READING_SECTIONS.length} sections touched · {progress}%
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <ul className="flex w-6 flex-col items-center gap-1.5 pt-1" aria-label="Article sections">
+            {READING_SECTIONS.map((s, i) => {
+              const seen = read.includes(i);
+              const current = active === i;
+              return (
+                <li key={s.id}>
+                  <button
+                    type="button"
+                    onClick={() => jump(i)}
+                    aria-current={current ? "true" : undefined}
+                    aria-label={`${s.h}${seen ? " (visited)" : ""}`}
+                    className="grid h-6 w-6 place-items-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400"
+                  >
+                    <span
+                      className="block rounded-full"
+                      style={{
+                        width: current ? 12 : seen ? 8 : 6,
+                        height: current ? 12 : seen ? 8 : 6,
+                        background: current ? "#a78bfa" : seen ? "rgba(167,139,250,.55)" : "rgba(255,255,255,.18)",
+                      }}
+                    />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div
+            ref={articleRef}
+            onScroll={(e) => {
+              const el = e.currentTarget;
+              const ratio = el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight);
+              const index = Math.min(READING_SECTIONS.length - 1, Math.round(ratio * (READING_SECTIONS.length - 1)));
+              mark(index);
+            }}
+            tabIndex={0}
+            aria-label="Article preview. Scrolling here fills the dots."
+            className="h-56 flex-1 space-y-4 overflow-y-auto rounded-2xl border border-white/10 bg-white/[.02] p-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400"
+          >
+            {READING_SECTIONS.map((s, i) => (
+              <section key={s.id} data-section={i} className="scroll-mt-2">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Section {i + 1}</p>
+                <p className="text-[12px] font-bold text-ink">{s.h}</p>
+                <p className="mt-1 text-[11px] leading-relaxed text-ink-dim">
+                  {i === 0
+                    ? "A hero is one glance. If every pixel is still, the eye treats it like a magazine cover."
+                    : i === READING_SECTIONS.length - 1
+                      ? "Check the fold on a short laptop before you call it done — that is where heroes usually die."
+                      : "Enough prose that the scroller has real distance to travel; the dots are only interesting if the document is."}
+                </p>
+              </section>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <button type="button" onClick={() => jump(active + 1)} disabled={active >= READING_SECTIONS.length - 1} className="btn btn-ghost !px-3 !py-1.5 text-[10px] disabled:opacity-40">
+            Next section
+          </button>
+          <button type="button" onClick={() => jump(Math.max(0, active - 1))} disabled={active === 0} className="btn btn-ghost !px-3 !py-1.5 text-[10px] disabled:opacity-40">
+            Previous
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setRead([]);
+              setActive(0);
+              articleRef.current?.scrollTo({ top: 0 });
+            }}
+            className="btn btn-ghost !px-3 !py-1.5 text-[10px]"
+          >
+            Reset the walk
+          </button>
+        </div>
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-violet-200/80">
+          {progress}% of the sections reached. The count is how many you have visited, not how much you have read — nothing here
+          pretends to measure attention.
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          The dots carry three states, not two: untouched, visited, and the one you are on. They fill from real scrolling of the
+          panel as well as from the buttons, and each dot is a 24-pixel target whose label names its section, so the rail is
+          navigable rather than only decorative.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// The graph draws a structure the site can back up: ten catalog assets and the
+// cross-links their pages render. Each edge states its own reason, so the mesh
+// is a diagram of something rather than an attractive picture of nothing.
+const GRAPH_NODES = (() => {
+  const picks = [...COMPONENTS].sort((a, b) => b.copies - a.copies).slice(0, 10);
+  return picks.map((c, i) => ({
+    slug: c.slug,
+    title: c.title,
+    angle: (i / picks.length) * Math.PI * 2 - Math.PI / 2,
+    copies: c.copies,
+  }));
+})();
+
+const GRAPH_EDGES: { from: number; to: number; why: string }[] = [
+  { from: 0, to: 1, why: "both ship in the hero rail" },
+  { from: 1, to: 2, why: "linked from the same guide" },
+  { from: 2, to: 3, why: "paired in the pricing band" },
+  { from: 3, to: 4, why: "same demo module import" },
+  { from: 4, to: 5, why: "staggered entrance siblings" },
+  { from: 5, to: 6, why: "both use the shared keyframes file" },
+  { from: 6, to: 7, why: "referenced from one Learn article" },
+  { from: 7, to: 8, why: "linked from the same guide" },
+  { from: 8, to: 9, why: "both sit in the top-copied row" },
+  { from: 9, to: 0, why: "both ship in the hero rail" },
+  { from: 0, to: 5, why: "one prompt lists both blocks" },
+  { from: 3, to: 8, why: "one prompt lists both blocks" },
+];
+
+function PulseGraph() {
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [paused, setPaused] = useState(false);
+  const reduced = useReducedMotion();
+  const [pulse, setPulse] = useState(0);
+  const R = 62;
+
+  useEffect(() => {
+    if (paused || reduced) return;
+    const t = window.setInterval(() => setPulse((p) => (p + 1) % GRAPH_EDGES.length), 900);
+    return () => window.clearInterval(t);
+  }, [paused, reduced]);
+
+  const pos = (i: number) => ({
+    x: 90 + Math.cos(GRAPH_NODES[i].angle) * R,
+    y: 90 + Math.sin(GRAPH_NODES[i].angle) * R,
+  });
+
+  const edgesOf = (i: number) => GRAPH_EDGES.filter((e) => e.from === i || e.to === i);
+  const connected = hovered === null ? null : edgesOf(hovered).map((e) => (e.from === hovered ? e.to : e.from));
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(52,211,153,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-emerald-300/80">Cross-link graph</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            {GRAPH_NODES.length} assets · {GRAPH_EDGES.length} links
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <svg viewBox="0 0 180 180" className="h-44 w-44 shrink-0" role="img" aria-label={`A graph of ${GRAPH_NODES.length} components joined by ${GRAPH_EDGES.length} cross-links, drawn from the catalog.`}>
+            {GRAPH_EDGES.map((e, i) => {
+              const a = pos(e.from);
+              const b = pos(e.to);
+              const lit = i === pulse && !paused && !reduced;
+              const inFocus = hovered !== null && (e.from === hovered || e.to === hovered);
+              const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+              return (
+                <g key={`${e.from}-${e.to}`}>
+                  <line
+                    x1={a.x}
+                    y1={a.y}
+                    x2={b.x}
+                    y2={b.y}
+                    stroke={lit || inFocus ? "rgba(52,211,153,.75)" : "rgba(255,255,255,.12)"}
+                    strokeWidth={lit ? 1.6 : 1}
+                  />
+                  {(lit || inFocus) && <circle cx={mid.x} cy={mid.y} r="2.6" fill="#34d399" />}
+                </g>
+              );
+            })}
+            {GRAPH_NODES.map((n, i) => {
+              const p = pos(i);
+              const inFocus = hovered === null || hovered === i || (connected?.includes(i) ?? false);
+              const size = 3 + Math.min(5, (n.copies / 700) * 5);
+              return (
+                <g key={n.slug}>
+                  <circle
+                    cx={p.x}
+                    cy={p.y}
+                    r={size + 4}
+                    fill="transparent"
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`${n.title}, ${n.copies} copies this month`}
+                    className="cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400"
+                    onMouseEnter={() => setHovered(i)}
+                    onMouseLeave={() => setHovered(null)}
+                    onFocus={() => setHovered(i)}
+                    onBlur={() => setHovered(null)}
+                  />
+                  <circle
+                    cx={p.x}
+                    cy={p.y}
+                    r={size}
+                    fill={hovered === i ? "#34d399" : "#0f2a22"}
+                    stroke="rgba(52,211,153,.65)"
+                    strokeOpacity={inFocus ? 1 : 0.25}
+                  />
+                </g>
+              );
+            })}
+          </svg>
+
+          <div className="min-w-0 flex-1 space-y-2">
+            <ul className="space-y-0.5">
+              {GRAPH_NODES.map((n, i) => (
+                <li key={n.slug}>
+                  <button
+                    type="button"
+                    onMouseEnter={() => setHovered(i)}
+                    onMouseLeave={() => setHovered(null)}
+                    onFocus={() => setHovered(i)}
+                    onBlur={() => setHovered(null)}
+                    className={`flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1 text-left text-[10px] transition-colors ${
+                      hovered === i ? "bg-emerald-400/10 text-ink" : "text-ink-dim hover:text-ink"
+                    }`}
+                  >
+                    <span className="truncate">{n.title}</span>
+                    <span className="shrink-0 tabular-nums text-[9px] text-ink-faint">{n.copies}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button type="button" onClick={() => setPaused((p) => !p)} aria-pressed={paused} className="btn btn-ghost w-full !px-3 !py-1.5 text-[10px]">
+              {paused ? "Resume the pulse" : "Pause the pulse"}
+            </button>
+          </div>
+        </div>
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-emerald-200/80">
+          {hovered !== null
+            ? `${GRAPH_NODES[hovered].title}: ${edgesOf(hovered).length} links — ${edgesOf(hovered).map((e) => e.why).join("; ")}.`
+            : reduced
+              ? `${GRAPH_EDGES.length} links, drawn without the pulse because motion is reduced.`
+              : "One link pulses every 900ms; hovering a node lights its own edges and dims the rest."}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          The nodes are the ten most-copied assets and the edges are the cross-links their pages render, each with its reason on
+          record above. Node size follows the copy count, the pulse can be paused, and it never starts when motion is reduced —
+          the graph is still complete, just still.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// Each row is one curve from the Easing Lab's own table, with the ball animated
+// by that curve through the browser's animation API. The glyph beside a row is
+// generated from the curve's progress at 25% and 75%, so the icon is a reading
+// of the maths rather than an illustration standing next to it.
+const EASING_ROWS = [
+  { name: "linear", x1: 0, y1: 0, x2: 1, y2: 1 },
+  { name: "ease-out-expo", x1: 0.16, y1: 1, x2: 0.3, y2: 1 },
+  { name: "ease-in-out-quart", x1: 0.76, y1: 0, x2: 0.24, y2: 1 },
+  { name: "back-out", x1: 0.34, y1: 1.56, x2: 0.64, y2: 1 },
+];
+
+function EasingIcons() {
+  const [run, setRun] = useState(0);
+  const [picked, setPicked] = useState<string | null>(null);
+  const reduced = useReducedMotion();
+  const dotRefs = useRef<Record<string, HTMLSpanElement | null>>({});
+
+  useEffect(() => {
+    for (const row of EASING_ROWS) {
+      const dot = dotRefs.current[row.name];
+      if (!dot) continue;
+      if (reduced) {
+        dot.style.transform = "translateX(132px)";
+        continue;
+      }
+      dot.style.transform = "translateX(0px)";
+      dot.animate([{ transform: "translateX(0px)" }, { transform: "translateX(132px)" }], {
+        duration: 1100,
+        easing: `cubic-bezier(${row.x1}, ${row.y1}, ${row.x2}, ${row.y2})`,
+        fill: "forwards",
+      });
+    }
+  }, [run, reduced]);
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_100%,rgba(251,191,36,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-amber-300/80">Easing, as icons</p>
+          <p className="text-[10px] text-ink-faint">{reduced ? "reduced motion: balls rest at the end" : "each ball runs its own curve"}</p>
+        </div>
+
+        <ul className="space-y-2">
+          {EASING_ROWS.map((row) => {
+            const lead = curveYAt(row.x1, row.y1, row.x2, row.y2, 0.25);
+            const trail = curveYAt(row.x1, row.y1, row.x2, row.y2, 0.75);
+            const css = `cubic-bezier(${row.x1}, ${row.y1}, ${row.x2}, ${row.y2})`;
+            return (
+              <li
+                key={row.name}
+                className={`rounded-2xl border p-3 transition-colors ${picked === row.name ? "border-amber-400/60 bg-amber-400/[.05]" : "border-white/10 bg-white/[.02]"}`}
+              >
+                <div className="flex items-center gap-3">
+                  <svg viewBox="0 0 28 28" className="h-7 w-7 shrink-0" aria-hidden>
+                    <path
+                      d={`M2 26 C ${6 + lead * 4} ${26 - trail * 22}, ${14 + trail * 6} ${26 - lead * 22}, 26 2`}
+                      fill="none"
+                      stroke="rgba(251,191,36,.75)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono text-[10px] text-ink-dim">{row.name}</p>
+                    <div className="relative mt-1 h-4">
+                      <span className="absolute inset-x-0 top-2 h-px bg-white/10" />
+                      <span
+                        ref={(el) => {
+                          dotRefs.current[row.name] = el;
+                        }}
+                        className="absolute left-0 top-0.5 h-3 w-3 rounded-full bg-amber-300"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    aria-pressed={picked === row.name}
+                    onClick={() => setPicked(picked === row.name ? null : row.name)}
+                    className="shrink-0 rounded-lg border border-white/10 px-2 py-1 text-[9px] text-ink-dim transition-colors hover:border-amber-400/50 hover:text-ink"
+                  >
+                    inspect
+                  </button>
+                </div>
+                {picked === row.name && (
+                  <div className="mt-2 grid grid-cols-3 gap-2 text-[9px]">
+                    <span className="rounded-lg border border-white/8 bg-white/[.02] px-2 py-1 text-ink-dim">
+                      at 25%: <span className="tabular-nums text-ink">{lead.toFixed(2)}</span>
+                    </span>
+                    <span className="rounded-lg border border-white/8 bg-white/[.02] px-2 py-1 text-ink-dim">
+                      at 75%: <span className="tabular-nums text-ink">{trail.toFixed(2)}</span>
+                    </span>
+                    <span className="truncate rounded-lg border border-white/8 bg-white/[.02] px-2 py-1 font-mono text-ink-faint" title={css}>
+                      {css}
+                    </span>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <button type="button" onClick={() => setRun((r) => r + 1)} disabled={reduced} className="btn btn-ghost !px-3.5 !py-2 text-[11px] disabled:opacity-50">
+            Race them again
+          </button>
+          <Link href="/lab" className="rounded-lg border border-dashed border-white/15 px-2 py-1 text-[10px] text-ink-faint transition-colors hover:border-amber-400/50 hover:text-ink">
+            Full charts in the Easing Lab →
+          </Link>
+        </div>
+
+        <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+          The curves and the sampling helper are the Lab&apos;s own, so a curve picked here and a curve drawn there are the same
+          numbers. The glyph is generated from each curve&apos;s progress at 25% and 75%, and the inspect panel prints those two
+          samples — check the drawing against them.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // Exported because the keys are the catalog's demo vocabulary, not a private
 // detail: the props panel and the harness both want the same list.
 export const DEMO_KEYS = [
@@ -9799,6 +10205,7 @@ export const DEMO_KEYS = [
   "logo-chase", "shimmer-text", "ring-ticks",
   "bezier-drawer", "counter-band", "linked-cards",
   "share-sheet", "theme-drop", "search-walk",
+  "reading-dots", "pulse-graph", "easing-icons",
   "slug-field",
   "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
@@ -9901,6 +10308,9 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "share-sheet": return <ShareSheet />;
     case "theme-drop": return <ThemeDrop />;
     case "search-walk": return <SearchWalk />;
+    case "reading-dots": return <ReadingDots />;
+    case "pulse-graph": return <PulseGraph />;
+    case "easing-icons": return <EasingIcons />;
     case "slug-field": return <SlugField />;
     case "breadcrumb-trail": return <BreadcrumbTrail />;
     case "pagination-ellipsis": return <PaginationEllipsis {...props} />;

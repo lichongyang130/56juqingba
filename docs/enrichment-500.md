@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 449 / 500 shipped (batches 1–67, in order) · Sections 1–16 complete ✅ · Section 17 in progress (18/25)
+## Progress — 452 / 500 shipped (batches 1–68, in order) · Sections 1–16 complete ✅ · Section 17 in progress (21/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -461,6 +461,9 @@ names, behaviours and where they plug into the existing pages.
 | 447 | Share-sheet overlay | [/components/share-sheet](/components/share-sheet) · a real dialog with focus, Escape and a return path to its trigger; the system-share row reports whether this browser has one instead of pretending |
 | 448 | Drag-theme chip onto a card | [/components/theme-drop](/components/theme-drop) · the admin presets dropped onto a preview card, with the same WCAG contrast arithmetic recomputed on every apply and failing pairs named |
 | 449 | Inline search highlight walk | [/components/search-walk](/components/search-walk) · substring search across a real guide, every occurrence marked, the active one scrolled into view and drawn in full amber |
+| 450 | Reading-time progress dots | [/components/reading-dots](/components/reading-dots) · a rail of labelled 24px dots with three states that also fills from real scrolling; the copy says it counts sections reached, not attention |
+| 451 | Pulse network graph | [/components/pulse-graph](/components/pulse-graph) · ten assets and twelve cross-links drawn from the catalog, each edge's reason on record, node size from copy counts, pulse pausable and off under reduced motion |
+| 452 | Easing icon families | [/components/easing-icons](/components/easing-icons) · the Lab's four curves racing real balls through the animation API, with each glyph generated from the curve's own 25% and 75% samples |
 
 ---
 
@@ -1050,7 +1053,7 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 17. More interactive scenes & motion — 25 demos — 18/25 shipped, in progress
+## 17. More interactive scenes & motion — 25 demos — 21/25 shipped, in progress
 
 - **Drag-to-reorder list**: rows that glide when you drag, with a11y keyboard reorder.
 - **Swipeable cards (deck)**: tinder-style stack with undo and reduced-motion note.

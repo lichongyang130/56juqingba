@@ -52,6 +52,9 @@ const NEW_SCENES = [
   { slug: "share-sheet", marker: "Share sheet", behaviors: ["click", "keyboard"] },
   { slug: "theme-drop", marker: "Drop a theme on a card", behaviors: ["drag", "click", "keyboard"] },
   { slug: "search-walk", marker: "Search inside a guide", behaviors: ["type", "keyboard"] },
+  { slug: "reading-dots", marker: "Reading progress", behaviors: ["scroll", "click", "keyboard"] },
+  { slug: "pulse-graph", marker: "Cross-link graph", behaviors: ["hover", "click", "keyboard"] },
+  { slug: "easing-icons", marker: "Easing, as icons", behaviors: ["click", "keyboard"] },
 ];
 
 (async () => {
