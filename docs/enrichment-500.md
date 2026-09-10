@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 332 / 500 shipped (batches 1–45, in order) · Sections 1–10 complete ✅ · Section 11 13/20 ✅
+## Progress — 339 / 500 shipped (batches 1–46, in order) · Sections 1–11 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -344,6 +344,13 @@ names, behaviours and where they plug into the existing pages.
 | 330 | Quality bar — tone-of-voice lint | [/quality](/quality) |
 | 331 | Quality bar — URL inventory test | [/quality](/quality) |
 | 332 | Quality bar — share-audit ledger | [/quality](/quality) |
+| 333 | Quality bar — freshness job | [/quality](/quality) |
+| 334 | Quality bar — spellcheck in CI | [/quality](/quality) |
+| 335 | Quality bar — image-free audit | [/quality](/quality) |
+| 336 | Quality bar — focus-visible regression suite | [/quality](/quality) |
+| 337 | Quality bar — security hygiene | [/quality](/quality) |
+| 338 | Quality bar — licence scanner | [/quality](/quality) |
+| 339 | Quality bar — annual content review | [/quality](/quality) |
 
 ---
 
@@ -753,7 +760,7 @@ names, behaviours and where they plug into the existing pages.
 
 ---
 
-## 11. Quality bar, a11y & testing — 20 mechanisms
+## 11. Quality bar, a11y & testing — 20 mechanisms — complete (20/20 shipped ✅)
 
 - **Automated axe pass per asset** ✅ (score distributions on [/quality](/quality)): run axe in CI and publish the score on detail pages.
 - **Contrast CI check** ✅ (real palette pairs + fingerprint tiers on [/quality](/quality)): fail a component if its default palette misses AA.
@@ -768,13 +775,13 @@ names, behaviours and where they plug into the existing pages.
 - **Tone-of-voice lint** ✅ (dictionary + context scan on [/quality](/quality)): reject marketing copy that overclaims ("instantly", "magically").
 - **URL inventory test** ✅ (crawl 258 routes on [/quality](/quality); found & fixed digest background links): all cross-links resolve (curl over every href).
 - **Share-audit page** ✅ (107-row ledger on [/quality](/quality)): public per-asset audit log (this is a differentiator — publish it).
-- **Freshness job**: weekly "stale content" report for prompts and changelog dates.
-- **Spellcheck in CI**: catch typos in prose and prompt bodies before deploy.
-- **Image-free audit**: assert decorative-only images are aria-hidden.
-- **Focus-visible regression suite**: per-component focus ring screenshots.
-- **Security hygiene**: no external fonts/CDNs in snippets without an integrity note.
-- **Licence scanner**: confirm snippet code is Motif-original (no copy-paste from libs).
-- **Annual content review**: a calendar reminder to re-run every prompt when models ship majors.
+- **Freshness job** ✅ (live windows on [/quality](/quality)): weekly "stale content" report for prompts and changelog dates.
+- **Spellcheck in CI** ✅ (misspelling scan on [/quality](/quality)): catch typos in prose and prompt bodies before deploy.
+- **Image-free audit** ✅ (0 <img> scan on [/quality](/quality)): assert decorative-only images are aria-hidden.
+- **Focus-visible regression suite** ✅ (ring rule + suite plan on [/quality](/quality)): per-component focus ring screenshots.
+- **Security hygiene** ✅ (0 external URLs on [/quality](/quality)): no external fonts/CDNs in snippets without an integrity note.
+- **Licence scanner** ✅ (107 MIT + CC BY table on [/quality](/quality)): confirm snippet code is Motif-original (no copy-paste from libs).
+- **Annual content review** ✅ (due-queue calendar on [/quality](/quality)): a calendar reminder to re-run every prompt when models ship majors.
 
 ---
 
