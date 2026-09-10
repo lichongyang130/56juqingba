@@ -1,4 +1,4 @@
-import { AdminSidebar, AdminTopbar } from "@/components/admin-ui";
+import { AdminMobileNav, AdminSidebar, AdminTopbar } from "@/components/admin-ui";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -6,6 +6,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <AdminSidebar />
       <div className="min-w-0 flex-1">
         <AdminTopbar />
+        <AdminMobileNav />
         <main className="px-5 py-8 lg:px-8">{children}</main>
       </div>
     </div>

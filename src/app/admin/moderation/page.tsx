@@ -1,15 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MODERATION_SEED, SUBMISSION_KEY, type Submission, type SubmissionKind } from "@/lib/community";
 import { BulkQueue } from "@/components/admin-ui-2";
+import { AdminEmptyState, UndoRedoBar } from "@/components/admin-ui-4";
+import {
+  DECISION_EVENT,
+  emptyDecisionPayload,
+  normalizeDecisionPayload,
+  recordDecisions,
+  type DecisionPayload,
+} from "@/lib/admin-ops";
 
 type Decision = "approved" | "rejected";
-
-interface Persisted {
-  decisions: Record<string, Decision>;
-  at: string;
-}
 
 /** Submissions sent from the public remix form live in localStorage; the
  *  queue reads them so the submit flow genuinely reaches a reviewer. */
@@ -26,16 +29,23 @@ function loadLocalSubmissions(): Submission[] {
 
 const STORAGE_KEY = "motif-admin-moderation-v1";
 
-function loadDecisions(): Persisted {
-  if (typeof window === "undefined") return { decisions: {}, at: "" };
+function loadPayload(): DecisionPayload {
+  if (typeof window === "undefined") return emptyDecisionPayload();
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const p = JSON.parse(raw) as Persisted;
-      if (p && p.decisions) return p;
-    }
-  } catch { /* corrupted — start fresh */ }
-  return { decisions: {}, at: "" };
+    return normalizeDecisionPayload(JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null"));
+  } catch {
+    return emptyDecisionPayload();
+  }
+}
+
+function savePayload(payload: DecisionPayload) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch {
+    /* storage full/blocked — demo still works in memory */
+  }
+  window.dispatchEvent(new Event(DECISION_EVENT));
+  window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
 }
 
 const METRICS: Record<SubmissionKind, [string, string, string]> = {
@@ -46,38 +56,58 @@ const METRICS: Record<SubmissionKind, [string, string, string]> = {
 };
 
 export default function AdminModeration() {
-  const [persisted] = useState<Persisted>(loadDecisions);
-  const [local] = useState<Submission[]>(loadLocalSubmissions);
-  const [rows, setRows] = useState(() => [...local, ...MODERATION_SEED].filter((r) => !persisted.decisions[r.id]));
-  const [decided, setDecided] = useState<Record<string, Decision>>(persisted.decisions);
+  const [payload, setPayload] = useState<DecisionPayload>(emptyDecisionPayload);
+  const [local, setLocal] = useState<Submission[]>([]);
+  const [rows, setRows] = useState<Submission[]>([]);
+  const [ready, setReady] = useState(false);
 
-  // Persist every decision so a refresh keeps the queue honest.
+  // One reader for the stored record. Every decision goes through
+  // recordDecisions, so the undo stack and the queue can never disagree.
+  const sync = useCallback(() => {
+    const next = loadPayload();
+    const sent = loadLocalSubmissions();
+    setPayload(next);
+    setLocal(sent);
+    setRows([...sent, ...MODERATION_SEED].filter((r) => !next.decisions[r.id]));
+  }, []);
+
   useEffect(() => {
-    try {
-      window.localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ decisions: decided, at: new Date().toISOString() } satisfies Persisted),
-      );
-    } catch { /* storage full/blocked — demo still works in memory */ }
-  }, [decided]);
+    const raf = requestAnimationFrame(() => {
+      sync();
+      setReady(true);
+    });
+    window.addEventListener(DECISION_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener(DECISION_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, [sync]);
 
-  const decide = (id: string, d: Decision) => {
-    setDecided((prev) => ({ ...prev, [id]: d }));
+  const decided = payload.decisions;
+
+  const decide = useCallback((id: string, d: Decision) => {
+    const next = recordDecisions(loadPayload(), [id], d, Date.now());
+    savePayload(next);
+    setPayload(next);
     setTimeout(() => {
       setRows((prev) => prev.filter((r) => r.id !== id));
     }, 900);
-  };
+  }, []);
 
   const resetDemo = () => {
-    try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
+    savePayload(emptyDecisionPayload());
+    setPayload(emptyDecisionPayload());
     setRows([...local, ...MODERATION_SEED]);
-    setDecided({});
   };
 
   const pending = rows.length;
   const decidedCount = Object.keys(decided).length;
   const approvals = Object.values(decided).filter((d) => d === "approved").length;
-  const acceptRate = decidedCount ? Math.round((approvals / decidedCount) * 100) : 61;
+  // No decisions on this device means no rate to show. It used to print a
+  // hard-coded 61%, which is exactly the kind of number this console bans.
+  const acceptRate = decidedCount ? `${Math.round((approvals / decidedCount) * 100)}%` : "—";
 
   return (
     <div className="space-y-6">
@@ -93,8 +123,8 @@ export default function AdminModeration() {
         <div className="flex items-center gap-3">
           {[
             { l: "pending", v: String(pending) },
-            { l: "decided today", v: String(decidedCount) },
-            { l: "accept rate", v: `${acceptRate}%` },
+            { l: "decided here", v: String(decidedCount) },
+            { l: "accept rate", v: acceptRate },
           ].map((s) => (
             <div key={s.l} className="rounded-2xl border border-white/8 bg-panel px-4 py-2.5 text-center">
               <div className="text-lg font-extrabold">{s.v}</div>
@@ -109,16 +139,16 @@ export default function AdminModeration() {
 
       <BulkQueue />
 
-      {pending === 0 && (
-        <div className="rounded-3xl border border-dashed border-mint/25 bg-mint/5 py-16 text-center">
-          <div className="text-3xl">🏁</div>
-          <p className="mt-3 font-bold text-mint">Queue is clear — all caught up!</p>
-          <p className="mt-1 text-sm text-ink-dim">
-            Decisions are saved locally. New submissions appear after the auto-audit stage.
-          </p>
-          <button type="button" onClick={resetDemo} className="btn btn-ghost mt-5 !py-2 text-xs">
-            Restore the demo queue
-          </button>
+      <UndoRedoBar />
+
+      {ready && pending === 0 && (
+        <div className="space-y-3">
+          <AdminEmptyState openCount={0} />
+          <div className="text-center">
+            <button type="button" onClick={resetDemo} className="btn btn-ghost !py-2 text-xs">
+              Restore the demo queue
+            </button>
+          </div>
         </div>
       )}
 

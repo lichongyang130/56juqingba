@@ -33,6 +33,7 @@ import {
   type SearchKind,
 } from "@/lib/admin";
 import { MODERATION_SEED, MODERATION_STORAGE_KEY, type Submission } from "@/lib/community";
+import { normalizeDecisionPayload, recordDecisions, type DecisionPayload } from "@/lib/admin-ops";
 import { COMPONENTS } from "@/lib/data";
 
 /* ---------- shared stores ---------- */
@@ -97,8 +98,8 @@ function useDecisions() {
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
     const sync = () => {
-      const p = readJson<{ decisions?: Record<string, "approved" | "rejected"> }>(MODERATION_STORAGE_KEY, {});
-      setDecisions(p.decisions ?? {});
+      const p = normalizeDecisionPayload(readJson<unknown>(MODERATION_STORAGE_KEY, null));
+      setDecisions(p.decisions);
       setHydrated(true);
     };
     const raf = requestAnimationFrame(sync);
@@ -111,8 +112,10 @@ function useDecisions() {
     };
   }, []);
   const decide = (ids: string[], decision: "approved" | "rejected") => {
-    const cur = readJson<{ decisions?: Record<string, "approved" | "rejected">; at?: string }>(MODERATION_STORAGE_KEY, {});
-    const next = { decisions: { ...(cur.decisions ?? {}), ...Object.fromEntries(ids.map((id) => [id, decision])) }, at: new Date().toISOString() };
+    // Record through the shared payload so a bulk action is one undoable step
+    // rather than a write that erases whatever history was there.
+    const cur: DecisionPayload = normalizeDecisionPayload(readJson<unknown>(MODERATION_STORAGE_KEY, null));
+    const next = recordDecisions(cur, ids, decision, Date.now());
     writeJson(MODERATION_STORAGE_KEY, next);
     setDecisions(next.decisions);
     window.dispatchEvent(new Event(DECISION_EVENT));

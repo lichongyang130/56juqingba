@@ -4,23 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CommandPalette } from "@/components/admin-ui-3";
 
-const NAV = [
-  { href: "/admin", label: "Dashboard", icon: "▤", exact: true },
-  { href: "/admin/assets", label: "Assets", icon: "▦" },
-  { href: "/admin/prompts", label: "AI Prompts", icon: "◎" },
-  { href: "/admin/moderation", label: "Moderation", icon: "✓" },
-  { href: "/admin/pipeline", label: "Pipeline", icon: "≡" },
-  { href: "/admin/health", label: "Health", icon: "◈" },
-  { href: "/admin/content", label: "Content", icon: "✎" },
-  { href: "/admin/inspector", label: "Inspector", icon: "▣" },
-  { href: "/admin/changelog", label: "Changelog", icon: "✧" },
-  { href: "/admin/rerun", label: "Prompt re-run", icon: "↻" },
-  { href: "/admin/notifications", label: "Notifications", icon: "◔" },
-  { href: "/admin/schedule", label: "Scheduling", icon: "◷" },
-  { href: "/admin/search", label: "Search", icon: "⌕" },
-  { href: "/admin/audit", label: "Audit trail", icon: "☰" },
-  { href: "/admin/settings", label: "Settings", icon: "⚙" },
-];
+import { ADMIN_NAV as NAV } from "@/lib/admin-nav";
 
 export function AdminSidebar() {
   const path = usePathname();
@@ -70,13 +54,12 @@ export function AdminSidebar() {
 export function AdminTopbar() {
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-white/6 bg-[#08090f]/80 px-5 backdrop-blur-xl">
-      <div className="flex items-center gap-2 text-sm">
-        <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mint opacity-60" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-mint" />
+      <div className="flex min-w-0 items-center gap-2 text-sm">
+        <span className="relative flex h-2 w-2 shrink-0">
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-violet-300" />
         </span>
-        <span className="font-semibold">Live</span>
-        <span className="text-ink-faint">· last sync just now</span>
+        <span className="font-semibold">Static build</span>
+        <span className="truncate text-ink-faint">· catalog read at build time, no server attached</span>
       </div>
       <div className="ml-auto flex items-center gap-3">
         <CommandPalette />
@@ -84,5 +67,36 @@ export function AdminTopbar() {
         <Link href="/" className="btn btn-ghost !px-3 !py-1.5 !text-[11px]">View site ↗</Link>
       </div>
     </header>
+  );
+}
+
+/** #380 — the admin nav for phones. The sidebar is `hidden lg:flex`, so before
+ *  this the console had no navigation at all below 1024px: the only way to
+ *  reach a tool was to type the URL. Targets are 44px tall and scroll
+ *  horizontally rather than collapsing into a menu that hides the current
+ *  section. */
+export function AdminMobileNav() {
+  const path = usePathname();
+  return (
+    <nav
+      aria-label="Admin sections"
+      className="flex snap-x gap-1.5 overflow-x-auto border-b border-white/6 bg-[#08090f] px-4 py-2 lg:hidden"
+    >
+      {NAV.map((n) => {
+        const active = n.exact ? path === n.href : path.startsWith(n.href);
+        return (
+          <Link
+            key={n.href}
+            href={n.href}
+            className={`flex min-h-11 shrink-0 snap-start items-center gap-1.5 rounded-xl px-3 text-[12px] font-semibold transition-colors ${
+              active ? "bg-white/10 text-ink" : "text-ink-dim hover:bg-white/5 hover:text-ink"
+            }`}
+          >
+            <span className="text-violet-300">{n.icon}</span>
+            {n.label}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

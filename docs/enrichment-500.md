@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 376 / 500 shipped (batches 1–52, in order) · Sections 1–12 complete ✅ · Section 13 in progress (12/20)
+## Progress — 384 / 500 shipped (batches 1–53, in order) · Sections 1–13 complete ✅ · Section 14 next
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -388,6 +388,14 @@ names, behaviours and where they plug into the existing pages.
 | 374 | Admin — changelog composer | [/admin/changelog](/admin/changelog) · auto-links the catalog items a draft names and exports the `data.ts` snippet; tag list read out of the feed itself |
 | 375 | Admin — ⌘K command palette | topbar of every [/admin](/admin) page · commands built from the nav, the queue's failed rows and the staleness window |
 | 376 | Admin — notification centre | [/admin/notifications](/admin/notifications) · "queue passed SLA"-style inbox; every card names its source, and the empty state lists the events a static build cannot see |
+| 377 | Admin — escalation lane | [/admin/escalation](/admin/escalation) · undecided rows sorted by real waiting time, with the 48-hour line marked and a live timer |
+| 378 | Admin — export reports | [/admin/exports](/admin/exports) · asset and publish-month CSVs built in the page; every column is a stored field |
+| 379 | Admin — theme control room | [/admin/theme](/admin/theme) · repaints the tab by overriding the nine `@theme` tokens, with WCAG ratios computed per preset |
+| 380 | Admin — mobile pass | [/admin/mobile](/admin/mobile) · a phone nav row on every admin page, 44px targets, and a touch index of all 21 sections |
+| 381 | Admin — undo/redo for decisions | decision bar above the queue · ⌘Z / ⇧⌘Z over a 40-step stored history, shared with the bulk bar |
+| 382 | Admin — duplicate detector | [/admin/duplicates](/admin/duplicates) · queued titles against the whole catalog, with the shared words printed as the evidence |
+| 383 | Admin — empty state | queue page when nothing is pending · shows the newest published records instead of a blank panel |
+| 384 | Admin — quick stats per content type | [/admin/stats](/admin/stats) · type inventory, publish-volume chart and per-kind means — with the copy-trend chart it cannot draw named in full |
 
 ---
 
@@ -860,11 +868,17 @@ Everything lives under [/community](/community). The split is printed on every s
 
 ---
 
-## 13. Admin & content workflow — 20 tools — 12/20 shipped
+## 13. Admin & content workflow — 20 tools — 20/20 shipped ✅
 
-Shipped so far: the local-first content editor (#365), the pipeline overview (#366), scheduled publishing (#367), bulk transitions (#368), the audit trail (#369), console-wide search (#370), the content health table (#371), the copy inspector (#372), the prompt re-run console (#373), the changelog composer (#374), the ⌘K command palette (#375) and the notification centre (#376). All twelve live under [/admin](/admin) and share one rule: a figure is either computed from the catalog or named as a gap — nothing in the console invents traffic, contributor counts or review latency. The dashboard's hard-coded KPIs and its invented community numbers were replaced as part of this batch.
+Shipped, in the order the rows landed: #365 content editor · #366 pipeline overview · #367 scheduled publishing · #368 bulk transitions · #369 audit trail · #370 console-wide search · #371 content health · #372 copy inspector · #373 prompt re-run console · #374 changelog composer · #375 ⌘K command palette · #376 notification centre · #377 escalation lane · #378 export reports · #379 theme control room · #380 mobile pass · #381 undo/redo · #382 duplicate detector · #383 queue empty state · #384 quick stats. Twenty tools, all under [/admin](/admin), and every one of them obeys one rule: a figure is either computed from the catalog or named as a gap — nothing in the console invents traffic, contributor counts or review latency. The dashboard's hard-coded KPIs and its invented community numbers were replaced as part of this section's first batch.
 
 The second batch tightened that rule from *don't invent numbers* to *don't assert behaviour either*. Building the console surfaced four claims about the site that were not true of the site: component `status` was offered as a visibility switch when no public listing filters on it, the changelog composer's tag list held two tags no entry carries while rejecting `Backgrounds` which does, a hard `lint` failure was reported as a "gate warning", and the copy inspector described truncation limits that no card implements. All four now describe the render path: the tag vocabulary is read out of the feed, the failure wording follows the same all-gates-clean rule as bulk approve, and the inspector's field notes quote measurements taken from the 107 published components.
+
+The closing batch went looking for the same class of problem in the tools that already shipped and found three more. The moderation queue printed a hard-coded **61% accept rate** whenever this device had no decisions — the last invented figure in the console, now an em dash with the count that would replace it. Its persist effect rewrote the storage key as `{ decisions, at }` on every state change, which would have quietly erased the decision history the new undo bar depends on; all three writers now go through one payload helper. And the admin topbar sat under a pulsing dot reading **"Live · last sync just now"**, describing a server this build does not have — it now says *static build, catalog read at build time*.
+
+The theme control room's contrast check then caught a real accessibility miss in the site's own palette: `--color-ink-faint` at `#5b6472` measured **3.24:1** on the panel colour, under the 4.5:1 AA line for body text, and it is used in 851 places. It ships at `#747b87` (4.55:1), and the control room recomputes every preset's ratios so the next drift is visible rather than assumed.
+
+The closing item on the list was *quick stats per content type*, described in the idea bank as "30-day copy trends rendered as mini charts". The catalog keeps one rolling `copies` number per asset and no history, so that chart cannot be drawn from this data; [/admin/stats](/admin/stats) ships the two charts the dates do support — publish volume per month and per-kind means — and gives the missing one a panel of its own rather than a smooth line built from nothing. Two figures worth knowing came out of it: 293 dated records across six types, and 135,020 copies in the single number the catalog stores.
 
 - **Local-first content CMS**: edit components/prompts/essays in the admin and export the data patch.
 - **Pipeline overview dashboard**: funnel of submitted → audited → reviewed → live, with times.

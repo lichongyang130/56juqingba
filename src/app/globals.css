@@ -14,7 +14,9 @@
   --color-edge-strong: rgba(255, 255, 255, 0.16);
   --color-ink: #edf0f7;
   --color-ink-dim: #9aa3b5;
-  --color-ink-faint: #5b6472;
+  /* raised from #5b6472: that value measured 3.24:1 on --color-panel, under the
+     4.5:1 AA line for body text. #747b87 measures 4.55:1. */
+  --color-ink-faint: #747b87;
   --color-accent: #8b5cf6;
   --color-accent-2: #22d3ee;
   --color-accent-3: #f472b6;
