@@ -16,6 +16,15 @@ import {
   ToneLintPanel,
   UrlInventoryPanel,
 } from "@/components/quality-panels";
+import {
+  AnnualReviewPanel,
+  FocusVisiblePanel,
+  FreshnessPanel,
+  ImageAuditPanel,
+  LicencePanel,
+  SecurityPanel,
+  SpellcheckPanel,
+} from "@/components/quality-panels-2";
 
 export const metadata: Metadata = {
   title: "Quality bar — Motif UI",
@@ -39,6 +48,13 @@ export default function QualityPage() {
     "Tone-of-voice lint",
     "URL inventory test",
     "Share-audit ledger",
+    "Freshness job",
+    "Spellcheck in CI",
+    "Image-free audit",
+    "Focus-visible suite",
+    "Security hygiene",
+    "Licence scanner",
+    "Annual content review",
   ];
   return (
     <div className="mx-auto max-w-7xl px-5 py-12 lg:px-8">
@@ -67,7 +83,7 @@ export default function QualityPage() {
             <span className="font-mono text-ink-faint">{String(i + 1).padStart(2, "0")}</span> {m}
           </span>
         ))}
-        <span className="chip !text-[10px] !border-amber-300/30 !text-amber-300">automation roadmap · 7 more mechanisms below</span>
+        <span className="chip !text-[10px] !border-mint/30 !text-mint">20 mechanisms · Section 11 complete</span>
       </div>
 
       <div className="mt-10 space-y-8">
@@ -84,6 +100,13 @@ export default function QualityPage() {
         <ToneLintPanel />
         <UrlInventoryPanel />
         <AuditLedgerPanel />
+        <FreshnessPanel />
+        <SpellcheckPanel />
+        <ImageAuditPanel />
+        <FocusVisiblePanel />
+        <SecurityPanel />
+        <LicencePanel />
+        <AnnualReviewPanel />
       </div>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-white/8 bg-panel p-6">

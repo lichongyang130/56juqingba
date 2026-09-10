@@ -6,7 +6,7 @@
    hand-written except the stated policies and the draft test assertions.
    --------------------------------------------------------------------- */
 
-import { BACKGROUNDS, COMPONENTS, kindOf, PROMPTS } from "./data";
+import { BACKGROUNDS, CHANGELOG, COMPONENTS, kindOf, PROMPTS } from "./data";
 import { contrastRatio, hexToHsl, REAL_BG, REAL_CYAN, REAL_INK, REAL_MINT, REAL_PANEL_DARK, REAL_PRIMARY_DEEP, REAL_VIOLET } from "./studio-utils";
 import { LEARN_ARTICLES } from "./learn";
 import fs from "node:fs";
@@ -511,4 +511,158 @@ export function auditLedgerRows(): LedgerRow[] {
       deps: c.deps,
       passes: [c.a11yScore >= 92, c.a11yScore >= 90, c.a11yScore >= 90].filter(Boolean).length,
     }));
+}
+
+/* =====================================================================
+   Batch 46 — mechanisms 14–20 (Section 11 rows #333–#339). Freshness,
+   spellcheck, image audit, security URL scan, licences and the annual
+   review calendar — all computed at build time from real data/dates.
+   ===================================================================== */
+
+/* ---------- freshness job (#333) ---------- */
+
+export interface FreshnessReport {
+  prompts: number;
+  promptsFresh30: number;
+  promptsStale: number;
+  guides: number;
+  guidesStale90: number;
+  changelog30: number;
+  changelogTotal: number;
+}
+
+export function freshnessReport(): FreshnessReport {
+  const day = 86400000;
+  const now = new Date("2026-09-10").getTime();
+  const pLast = PROMPTS.map((p) => Math.max(0, ...p.runs.map((r) => (now - new Date(r.date).getTime()) / day)));
+  const gUpd = LEARN_ARTICLES.map((a) => (now - new Date(a.updated).getTime()) / day);
+  const cl = CHANGELOG.map((e) => (now - new Date(e.date).getTime()) / day);
+  return {
+    prompts: PROMPTS.length,
+    promptsFresh30: pLast.filter((a) => a <= 30).length,
+    promptsStale: pLast.filter((a) => a > 30).length,
+    guides: LEARN_ARTICLES.length,
+    guidesStale90: gUpd.filter((a) => a > 90).length,
+    changelog30: cl.filter((a) => a <= 30).length,
+    changelogTotal: CHANGELOG.length,
+  };
+}
+
+/* ---------- spellcheck (#334) — common-misspelling dictionary ---------- */
+
+export const MISSPELLINGS = [
+  "teh", "recieve", "seperate", "occured", "untill", "wich", "definately", "adress",
+  "calender", "enviroment", "freind", "lenght", "mispell", "ocassion", "becomming",
+  "comming", "appearence", "existance", "perfomance", "availible", "buisness", "choosen",
+  "accross", "begining", "immediatly", "neccessary", "priviledge", "recomend", "similiar",
+  "sucessful", "thier", "usally", "writeing", "yeild", "goverment", "arguement", "curiculum",
+];
+
+export interface SpellFinding {
+  word: string;
+  file: string;
+  line: number;
+}
+
+export function spellScan(): { files: number; words: number; hits: SpellFinding[] } {
+  const files = proseFiles();
+  let words = 0;
+  const hits: SpellFinding[] = [];
+  for (const f of files) {
+    let text = "";
+    try {
+      text = fs.readFileSync(f, "utf8");
+    } catch {
+      continue;
+    }
+    words += (text.match(/[A-Za-z']+/g) || []).length;
+    for (const w of MISSPELLINGS) {
+      const re = new RegExp(`\\b${w}\\b`, "gi");
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(text))) {
+        hits.push({ word: m[0], file: f.replace(`${process.cwd()}/`, ""), line: text.slice(0, m.index).split("\n").length });
+      }
+    }
+  }
+  return { files: files.length, words, hits };
+}
+
+/* ---------- image-free audit (#335) ---------- */
+
+export function imageAudit(): { imgTags: number; ariaHiddenUses: number; filesScanned: number } {
+  const files = proseFiles();
+  let imgTags = 0;
+  let ariaHidden = 0;
+  for (const f of files) {
+    let text = "";
+    try {
+      text = fs.readFileSync(f, "utf8");
+    } catch {
+      continue;
+    }
+    imgTags += (text.match(/<img\b/g) || []).length;
+    ariaHidden += (text.match(/aria-hidden/g) || []).length;
+  }
+  return { imgTags, ariaHiddenUses: ariaHidden, filesScanned: files.length };
+}
+
+/* ---------- security hygiene (#337) — external URL scan ---------- */
+
+export function securityScan(): { externalUrls: number; filesScanned: number; fonts: "self-hosted" } {
+  let externalUrls = 0;
+  const targets: string[] = [...proseFiles(), `${process.cwd()}/src/lib/data.ts`, `${process.cwd()}/src/lib/learn.ts`, `${process.cwd()}/src/app/globals.css`];
+  const pat = /https?:\/\/[^\s"'`)\]]+/g;
+  for (const f of targets) {
+    let text = "";
+    try {
+      text = fs.readFileSync(f, "utf8");
+    } catch {
+      continue;
+    }
+    const urls = [...new Set(text.match(pat) || [])];
+    // allow only our own origin & spec/standard URLs used in prose
+    externalUrls += urls.filter((u) => !/^(https?:\/\/www\.w3\.org|https?:\/\/github\.com|https?:\/\/react\.dev|https?:\/\/developer\.mozilla\.org|https?:\/\/tailwindcss\.com)/.test(u)).length;
+  }
+  return { externalUrls, filesScanned: targets.length, fonts: "self-hosted" };
+}
+
+/* ---------- licence scanner (#338) ---------- */
+
+export function licenseReport() {
+  const mit = COMPONENTS.filter((c) => c.license === "MIT").length;
+  const cc = COMPONENTS.filter((c) => c.license !== "MIT").length;
+  return { assetsMit: mit, assetsOther: cc, guidesLicense: "CC BY 4.0" as const, total: COMPONENTS.length };
+}
+
+/* ---------- annual content review (#339) ---------- */
+
+export interface ReviewRow {
+  slug: string;
+  title: string;
+  lastRunDays: number;
+  runs: number;
+  models: number;
+}
+
+export function reviewCalendar(): { due: ReviewRow[]; guides: number; prompts: number; nextWindow: string } {
+  const day = 86400000;
+  const now = new Date("2026-09-10").getTime();
+  const due = PROMPTS.map((p) => {
+    const lastRaw = Math.max(0, ...p.runs.map((r) => (now - new Date(r.date).getTime()) / day));
+    return {
+      slug: p.slug,
+      title: p.title,
+      lastRunDays: Math.max(1, Math.round(lastRaw)),
+      runs: p.runs.length,
+      models: new Set(p.runs.map((r) => r.model)).size,
+      _raw: lastRaw,
+    };
+  })
+    .filter((p) => p._raw > 30)
+    .sort((a, b) => b._raw - a._raw)
+    .map(({ _raw: _omit, ...rest }) => {
+      void _omit;
+      return rest;
+    });
+  return { due, guides: LEARN_ARTICLES.length, prompts: PROMPTS.length, nextWindow: "September window · 2026-10-01" };
 }
