@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 326 / 500 shipped (batches 1–44, in order) · Sections 1–10 complete ✅ · Section 11 7/20 ✅
+## Progress — 332 / 500 shipped (batches 1–45, in order) · Sections 1–10 complete ✅ · Section 11 13/20 ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -338,6 +338,12 @@ names, behaviours and where they plug into the existing pages.
 | 324 | Quality bar — dependency ledger | [/quality](/quality) |
 | 325 | Quality bar — keyboard-flow test plans | [/quality](/quality) |
 | 326 | Quality bar — screen-reader smoke plans | [/quality](/quality) |
+| 327 | Quality bar — copy consistency lint | [/quality](/quality) |
+| 328 | Quality bar — numeric truth check | [/quality](/quality) |
+| 329 | Quality bar — perf regression baseline | [/quality](/quality) |
+| 330 | Quality bar — tone-of-voice lint | [/quality](/quality) |
+| 331 | Quality bar — URL inventory test | [/quality](/quality) |
+| 332 | Quality bar — share-audit ledger | [/quality](/quality) |
 
 ---
 
@@ -756,12 +762,12 @@ names, behaviours and where they plug into the existing pages.
 - **Dependency ledger** ✅ (public ledger on [/quality](/quality)): require an "added deps" note on every asset change.
 - **Keyboard-flow tests** ✅ (five scripted walks on [/quality](/quality)): scripted Tab walks per asset (Playwright).
 - **Screen-reader smoke test** ✅ (draft assertions on [/quality](/quality)): one announced-label assertion per interactive asset.
-- **Copy consistency lint**: flag "no items yet" style wording across the site.
-- **Numeric truth check**: every visible stat traces to a data source (like the ticker fix).
-- **Perf regression tracker**: a tiny metric history per asset over versions.
-- **Tone-of-voice lint**: reject marketing copy that overclaims ("instantly", "magically").
-- **URL inventory test**: all cross-links resolve (curl over every href).
-- **Share-audit page**: public per-asset audit log (this is a differentiator — publish it).
+- **Copy consistency lint** ✅ (dead-end scan on [/quality](/quality)): flag "no items yet" style wording across the site.
+- **Numeric truth check** ✅ (claim→source table on [/quality](/quality); found & fixed footer "30 guides"): every visible stat traces to a data source (like the ticker fix).
+- **Perf regression tracker** ✅ (baseline snapshot on [/quality](/quality)): a tiny metric history per asset over versions.
+- **Tone-of-voice lint** ✅ (dictionary + context scan on [/quality](/quality)): reject marketing copy that overclaims ("instantly", "magically").
+- **URL inventory test** ✅ (crawl 258 routes on [/quality](/quality); found & fixed digest background links): all cross-links resolve (curl over every href).
+- **Share-audit page** ✅ (107-row ledger on [/quality](/quality)): public per-asset audit log (this is a differentiator — publish it).
 - **Freshness job**: weekly "stale content" report for prompts and changelog dates.
 - **Spellcheck in CI**: catch typos in prose and prompt bodies before deploy.
 - **Image-free audit**: assert decorative-only images are aria-hidden.
