@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { COLLECTIONS, collectionItems, collectionMatches, collectionOf, collectionPrompts } from "@/lib/community";
-import { KIND_META } from "@/lib/quality-utils";
+import { KIND_BUDGETS } from "@/lib/kinds";
 
 export function generateStaticParams() {
   return COLLECTIONS.map((c) => ({ slug: c.slug }));
@@ -55,7 +55,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
           {assets.map((a) => (
             <Link key={a.slug} href={`/components/${a.slug}`} className="card-hover group flex flex-col rounded-3xl border border-white/8 bg-panel p-5">
               <div className="flex items-center justify-between gap-2">
-                <span className="chip !text-[10px]">{KIND_META.find((k) => k.kind === a.kind)?.label ?? a.kind}</span>
+                <span className="chip !text-[10px]">{KIND_BUDGETS.find((k) => k.kind === a.kind)?.label ?? a.kind}</span>
                 <span className="font-mono text-[10px] text-ink-faint">{a.bundleKb} KB</span>
               </div>
               <h2 className="mt-3 text-[15px] font-extrabold tracking-tight">{a.title}</h2>

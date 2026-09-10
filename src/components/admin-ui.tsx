@@ -5,9 +5,14 @@ import { usePathname } from "next/navigation";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: "▤", exact: true },
-  { href: "/admin/assets", label: "Assets", icon: "▦", count: null },
-  { href: "/admin/prompts", label: "AI Prompts", icon: "◎", count: null },
-  { href: "/admin/moderation", label: "Moderation", icon: "✓", count: 7 },
+  { href: "/admin/assets", label: "Assets", icon: "▦" },
+  { href: "/admin/prompts", label: "AI Prompts", icon: "◎" },
+  { href: "/admin/moderation", label: "Moderation", icon: "✓" },
+  { href: "/admin/pipeline", label: "Pipeline", icon: "≡" },
+  { href: "/admin/content", label: "Content", icon: "✎" },
+  { href: "/admin/schedule", label: "Scheduling", icon: "◷" },
+  { href: "/admin/search", label: "Search", icon: "⌕" },
+  { href: "/admin/audit", label: "Audit trail", icon: "☰" },
   { href: "/admin/settings", label: "Settings", icon: "⚙" },
 ];
 
@@ -38,11 +43,7 @@ export function AdminSidebar() {
             >
               <span className="w-4 text-center text-violet-300">{n.icon}</span>
               {n.label}
-              {n.count && (
-                <span className="ml-auto rounded-full bg-danger/20 px-2 py-0.5 text-[10px] font-bold text-danger">
-                  {n.count}
-                </span>
-              )}
+
             </Link>
           );
         })}
@@ -51,8 +52,9 @@ export function AdminSidebar() {
       <div className="rounded-2xl border border-white/7 bg-white/3 p-4">
         <div className="text-xs font-bold">MVP note</div>
         <p className="mt-1.5 text-[11px] leading-relaxed text-ink-dim">
-          Demo mode — data is mock, actions preview state locally. Production builds wire Prisma +
-          auth (schema in /prisma).
+          Demo console — catalog figures are read from the real data files, queue rows are sample
+          records, and every action stays in this browser. Production builds wire Prisma + auth
+          (schema in /prisma).
         </p>
       </div>
     </aside>

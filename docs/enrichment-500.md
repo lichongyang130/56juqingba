@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 364 / 500 shipped (batches 1–50, in order) · Sections 1–12 complete ✅
+## Progress — 370 / 500 shipped (batches 1–51, in order) · Sections 1–12 complete ✅ · Section 13 in progress (6/20)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -376,6 +376,12 @@ names, behaviours and where they plug into the existing pages.
 | 362 | Community — translation crowd help (CC BY) | [/community/translations](/community/translations) · status table reads zero |
 | 363 | Community — event calendar with computed dates | [/community/events](/community/events) |
 | 364 | Community — merit sorting in the footer | "Top contributors" block in the site footer, ranked from dated records only |
+| 365 | Admin — local-first content CMS | [/admin/content](/admin/content) · validation from the catalog's own rules, exports a patch |
+| 366 | Admin — pipeline overview | [/admin/pipeline](/admin/pipeline) · every stage names its source |
+| 367 | Admin — scheduled publishing | [/admin/schedule](/admin/schedule) · date validation; publishing is named as a gap |
+| 368 | Admin — bulk status transitions | [/admin/moderation](/admin/moderation) · bulk approval only carries all-gates-clean rows |
+| 369 | Admin — audit trail | [/admin/audit](/admin/audit) · append-only, actor + timestamp + note |
+| 370 | Admin — search across every content type | [/admin/search](/admin/search) · 303 indexed records |
 
 ---
 
@@ -848,7 +854,9 @@ Everything lives under [/community](/community). The split is printed on every s
 
 ---
 
-## 13. Admin & content workflow — 20 tools
+## 13. Admin & content workflow — 20 tools — 6/20 shipped
+
+Shipped so far: the local-first content editor (#365), the pipeline overview (#366), scheduled publishing (#367), bulk transitions (#368), the audit trail (#369) and console-wide search (#370). All six live under [/admin](/admin) and share one rule: a figure is either computed from the catalog or named as a gap — nothing in the console invents traffic, contributor counts or review latency. The dashboard's hard-coded KPIs and its invented community numbers were replaced as part of this batch.
 
 - **Local-first content CMS**: edit components/prompts/essays in the admin and export the data patch.
 - **Pipeline overview dashboard**: funnel of submitted → audited → reviewed → live, with times.

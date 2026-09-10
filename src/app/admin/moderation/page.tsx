@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MODERATION_SEED, SUBMISSION_KEY, type Submission, type SubmissionKind } from "@/lib/community";
+import { BulkQueue } from "@/components/admin-ui-2";
 
 type Decision = "approved" | "rejected";
 
@@ -105,6 +106,8 @@ export default function AdminModeration() {
           </button>
         </div>
       </div>
+
+      <BulkQueue />
 
       {pending === 0 && (
         <div className="rounded-3xl border border-dashed border-mint/25 bg-mint/5 py-16 text-center">

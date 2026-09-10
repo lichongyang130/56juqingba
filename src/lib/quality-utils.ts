@@ -10,17 +10,11 @@ import { BACKGROUNDS, CHANGELOG, COMPONENTS, kindOf, PROMPTS } from "./data";
 import { contrastRatio, hexToHsl, REAL_BG, REAL_CYAN, REAL_INK, REAL_MINT, REAL_PANEL_DARK, REAL_PRIMARY_DEEP, REAL_VIOLET } from "./studio-utils";
 import { LEARN_ARTICLES } from "./learn";
 import fs from "node:fs";
+import { KIND_BUDGETS, type AssetKind } from "./kinds";
 
-export type AssetKind = "element" | "animated" | "section" | "template";
-
-export const KIND_META: { kind: AssetKind; label: string; budgetKb: number; note: string }[] = [
-  { kind: "element", label: "Elements", budgetKb: 8, note: "small interactive controls — a tiny budget is the point" },
-  { kind: "animated", label: "Animated", budgetKb: 10, note: "motion scenes get one extra allowance" },
-  { kind: "section", label: "Sections", budgetKb: 8, note: "page sections stay lean; grids live in the template" },
-  { kind: "template", label: "Templates", budgetKb: 28, note: "whole pages, so whole-page weight is fair" },
-];
-
-export const kindLabel = (k: string) => KIND_META.find((m) => m.kind === k)?.label ?? k;
+// The budget table lives in ./kinds so client code can import it without
+// pulling in this file's node:fs source reads.
+export { kindLabel, budgetFor } from "./kinds";
 
 const kindOfAsset = (slug: string): AssetKind | undefined => COMPONENTS.find((c) => c.slug === slug)?.kind as AssetKind | undefined;
 
@@ -64,7 +58,7 @@ export interface KindSize {
 }
 
 export function kindSizeTable(): KindSize[] {
-  return KIND_META.map((m) => {
+  return KIND_BUDGETS.map((m) => {
     const assets = COMPONENTS.filter((c) => c.kind === m.kind);
     const kbs = assets.map((a) => a.bundleKb);
     return {
@@ -329,7 +323,7 @@ const median = (xs: number[]) => {
 };
 
 export function perfBaseline(): PerfKind[] {
-  return KIND_META.map((m) => {
+  return KIND_BUDGETS.map((m) => {
     const assets = COMPONENTS.filter((c) => c.kind === m.kind);
     const kbs = assets.map((a) => a.bundleKb);
     return {

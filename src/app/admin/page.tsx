@@ -1,34 +1,51 @@
 import Link from "next/link";
-import { COMPONENTS, PROMPTS } from "@/lib/data";
+import { BACKGROUNDS, COMPONENTS, PROMPTS } from "@/lib/data";
+import { LEARN_ARTICLES } from "@/lib/learn";
+import { newestCatalogDate, pipelineStages } from "@/lib/admin";
+import { KIND_BUDGETS } from "@/lib/kinds";
+import { MODERATION_SEED } from "@/lib/community";
+
+/** ISO date shifted by whole days — so "the last 30 days" is measured against
+ *  the catalog's newest record rather than the machine clock. */
+function shifted(iso: string, days: number): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
 
 export default function AdminDashboard() {
   const catalog = COMPONENTS.length;
   const verifiedPrompts = PROMPTS.filter((p) => p.status === "verified" || p.status === "featured").length;
   const copiesTotal = COMPONENTS.reduce((s, c) => s + c.copies, 0);
   const avgFidelity = Math.round(PROMPTS.reduce((s, p) => s + p.avgFidelity, 0) / Math.max(1, PROMPTS.length));
+  const newest = newestCatalogDate();
+  const last30 = COMPONENTS.filter((c) => c.published >= shifted(newest, -30)).length;
+  const flagged = MODERATION_SEED.filter((x) => x.lint !== "pass" || x.safety !== "pass").length;
+
   const KPI = [
-    { label: "Assets in catalog", value: String(catalog), delta: "+8 this drop", up: true },
-    { label: "Prompts live", value: String(PROMPTS.length), delta: `+${verifiedPrompts} verified`, up: true },
-    { label: "Copies (30d)", value: `${(copiesTotal / 1000).toFixed(1)}k`, delta: "+12.4%", up: true },
-    { label: "Avg prompt fidelity", value: `${avgFidelity}/100`, delta: "+0.6 pt", up: true },
-    { label: "Pending moderation", value: "7", delta: "SLA 48h", up: false },
-    { label: "Community contributors", value: "1,204", delta: "+84", up: true },
+    { label: "Assets in catalog", value: String(catalog), note: `${last30} published in the last 30 days`, tone: "text-ink" },
+    { label: "Prompts live", value: String(PROMPTS.length), note: `${verifiedPrompts} verified or featured`, tone: "text-ink" },
+    { label: "Copies recorded", value: `${(copiesTotal / 1000).toFixed(1)}k`, note: "catalog figure, not live analytics", tone: "text-ink" },
+    { label: "Avg prompt fidelity", value: `${avgFidelity}/100`, note: `mean of ${PROMPTS.length} published averages`, tone: "text-cyan-200" },
+    { label: "Sample queue", value: String(MODERATION_SEED.length), note: `${flagged} carry a gate warning`, tone: "text-amber-300" },
+    { label: "Also in the library", value: String(LEARN_ARTICLES.length + BACKGROUNDS.length), note: `${LEARN_ARTICLES.length} guides · ${BACKGROUNDS.length} backgrounds`, tone: "text-ink" },
   ];
 
-const CATEGORY_COPIES = [
-  { label: "Elements", value: 41, color: "bg-violet-400" },
-  { label: "Animated", value: 72, color: "bg-cyan-300" },
-  { label: "Sections", value: 58, color: "bg-pink-400" },
-  { label: "Templates", value: 26, color: "bg-amber-300" },
-  { label: "Backgrounds", value: 64, color: "bg-mint" },
-];
+  const kindShare = KIND_BUDGETS.map((k, i) => {
+    const n = COMPONENTS.filter((c) => c.kind === k.kind).length;
+    return {
+      label: k.label,
+      n,
+      value: Math.round((n / Math.max(1, COMPONENTS.length)) * 100),
+      budget: k.budgetKb,
+      color: ["bg-violet-400", "bg-cyan-300", "bg-pink-400", "bg-amber-300"][i % 4],
+    };
+  });
 
-const PIPELINE = [
-  { stage: "Submitted", n: 14 },
-  { stage: "Auto-audit", n: 9 },
-  { stage: "Human review", n: 7 },
-  { stage: "Approved", n: 6 },
-];
+  // The strip below is the same funnel the pipeline page renders, minus the
+  // local-decision stage (this dashboard is a server component and cannot read
+  // the browser store), and it says so.
+  const strip = pipelineStages([], 0).filter((x) => x.stage !== "Awaiting your review");
 
   const recentAssets = [...COMPONENTS].sort((a, b) => (a.published < b.published ? 1 : -1)).slice(0, 5);
   const recentPrompts = [...PROMPTS].sort((a, b) => (a.published < b.published ? 1 : -1)).slice(0, 4);
@@ -37,7 +54,10 @@ const PIPELINE = [
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-extrabold tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-sm text-ink-dim">Studio overview — Friday, September 4 (demo data).</p>
+        <p className="mt-1 max-w-2xl text-sm text-ink-dim">
+          Studio overview. Catalog figures are computed from the data files at build time — newest record {newest}. Queue rows are
+          the {MODERATION_SEED.length} sample submissions that ship with this build.
+        </p>
       </div>
 
       {/* KPI */}
@@ -45,8 +65,8 @@ const PIPELINE = [
         {KPI.map((k) => (
           <div key={k.label} className="rounded-2xl border border-white/8 bg-panel p-4">
             <div className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">{k.label}</div>
-            <div className="mt-2 text-2xl font-extrabold tracking-tight">{k.value}</div>
-            <div className={`mt-1 text-[11px] font-semibold ${k.up ? "text-mint" : "text-danger"}`}>{k.delta}</div>
+            <div className={`mt-2 text-2xl font-extrabold tracking-tight ${k.tone}`}>{k.value}</div>
+            <div className="mt-1 text-[11px] leading-relaxed text-ink-faint">{k.note}</div>
           </div>
         ))}
       </div>
@@ -55,15 +75,21 @@ const PIPELINE = [
         {/* copies by category */}
         <div className="rounded-3xl border border-white/8 bg-panel p-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-extrabold tracking-tight">Copies by category (30d)</h2>
-            <span className="chip !text-[10px] uppercase">share of 148.2k</span>
+            <h2 className="font-extrabold tracking-tight">Catalog share by kind</h2>
+            <span className="chip !text-[10px] uppercase">{COMPONENTS.length} assets</span>
           </div>
-          <div className="mt-6 space-y-4">
-            {CATEGORY_COPIES.map((c) => (
+          <p className="mt-1 text-[11px] leading-relaxed text-ink-faint">
+            Share of the catalog by kind, against each kind&apos;s published bundle budget. Copy counts are not broken out
+            per kind: the per-asset figures are on the asset list, where you can sort them.
+          </p>
+          <div className="mt-5 space-y-4">
+            {kindShare.map((c) => (
               <div key={c.label}>
-                <div className="flex justify-between text-xs">
+                <div className="flex justify-between gap-3 text-xs">
                   <span className="font-semibold text-ink-dim">{c.label}</span>
-                  <span className="font-mono text-ink-faint">{c.value}%</span>
+                  <span className="font-mono text-ink-faint">
+                    {c.n} · {c.value}% · {c.budget} KB budget
+                  </span>
                 </div>
                 <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/5">
                   <div className={`h-full rounded-full ${c.color}`} style={{ width: `${c.value}%` }} />
@@ -72,18 +98,23 @@ const PIPELINE = [
             ))}
           </div>
 
-          <h2 className="mt-9 font-extrabold tracking-tight">Contribution pipeline</h2>
-          <div className="mt-4 grid grid-cols-4 gap-2 text-center">
-            {PIPELINE.map((p, i) => (
-              <div key={p.stage} className="relative rounded-2xl border border-white/7 bg-black/20 px-2 py-4">
+          <div className="mt-9 flex items-center justify-between">
+            <h2 className="font-extrabold tracking-tight">Contribution pipeline</h2>
+            <Link href="/admin/pipeline" className="text-xs font-semibold text-ink-dim hover:text-ink">Full view →</Link>
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+            {strip.map((p) => (
+              <div key={p.stage} className="rounded-2xl border border-white/7 bg-black/20 px-2 py-4">
                 <div className="text-xl font-extrabold">{p.n}</div>
                 <div className="mt-1 text-[10px] leading-tight text-ink-dim">{p.stage}</div>
-                {i < PIPELINE.length - 1 && (
-                  <span className="absolute -right-1.5 top-1/2 -translate-y-1/2 text-ink-faint" aria-hidden>›</span>
-                )}
               </div>
             ))}
           </div>
+          <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+            {strip.map((p) => `${p.stage}: ${p.source}`).join(" · ")}. The review stage lives on{" "}
+            <Link href="/admin/pipeline" className="font-semibold text-violet-300 hover:text-violet-200">the pipeline page</Link>,
+            which can read your local decisions.
+          </p>
         </div>
 
         {/* recent activity lists */}
