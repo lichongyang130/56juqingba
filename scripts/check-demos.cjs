@@ -27,8 +27,11 @@ const get = async (p) => {
   return { status: res.status, text: await res.text() };
 };
 
-/** The scenes this batch added. Kept explicit: a silently empty grid entry is
- *  exactly what the rest of this file is trying to catch. */
+/** The scenes these batches added, kept explicit: a silently empty grid entry
+ *  is exactly what the rest of this file is trying to catch. `section` says
+ *  which section counts the entry in its own header — slug-field belongs to
+ *  Section 1 (it was the bullet that section had never shipped), so it is
+ *  verified here without being counted against Section 17. */
 const NEW_SCENES = [
   { slug: "reorder-list", marker: "Release checklist", behaviors: ["drag", "keyboard"] },
   { slug: "swipe-deck", marker: "Review deck", behaviors: ["drag", "click", "keyboard"] },
@@ -45,7 +48,7 @@ const NEW_SCENES = [
   { slug: "bezier-drawer", marker: "Cubic-bezier drawer", behaviors: ["drag", "keyboard"] },
   { slug: "counter-band", marker: "Counters, in a row", behaviors: ["click", "scroll"] },
   { slug: "linked-cards", marker: "Hover-linked cards", behaviors: ["hover", "keyboard"] },
-  { slug: "slug-field", marker: "Slug field", behaviors: ["type", "click", "keyboard"] },
+  { slug: "slug-field", marker: "Slug field", behaviors: ["type", "click", "keyboard"], section: 1 },
   { slug: "share-sheet", marker: "Share sheet", behaviors: ["click", "keyboard"] },
   { slug: "theme-drop", marker: "Drop a theme on a card", behaviors: ["drag", "click", "keyboard"] },
   { slug: "search-walk", marker: "Search inside a guide", behaviors: ["type", "keyboard"] },
@@ -90,7 +93,12 @@ const NEW_SCENES = [
   const rows = (ledger.match(/^\| \d+ \|/gm) || []).length;
   ok("the ledger table matches its headline", rows === headline && rows > 0, `table ${rows}, headline ${headline}`);
   const shipped = Number((ledger.match(/Section 17 in progress \((\d+)\/25\)/) || [])[1] || 0);
-  ok("the ledger and this list agree on how many scenes shipped", shipped === NEW_SCENES.length, `ledger ${shipped}, checked ${NEW_SCENES.length}`);
+  const inSection17 = NEW_SCENES.filter((s) => s.section !== 1).length;
+  ok(
+    "the ledger's Section 17 count matches the scenes verified here",
+    shipped === inSection17,
+    `ledger ${shipped}, checked ${inSection17} of ${NEW_SCENES.length} (slug-field counts against Section 1)`,
+  );
 
   for (const scene of NEW_SCENES) {
     const page = await get(`/components/${scene.slug}`);

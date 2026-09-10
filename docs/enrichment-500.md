@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 449 / 500 shipped (batches 1–67, in order) · Sections 1–16 complete ✅ · Section 17 in progress (19/25)
+## Progress — 449 / 500 shipped (batches 1–67, in order) · Sections 1–16 complete ✅ · Section 17 in progress (18/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -1050,7 +1050,7 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 17. More interactive scenes & motion — 25 demos — 19/25 shipped, in progress
+## 17. More interactive scenes & motion — 25 demos — 18/25 shipped, in progress
 
 - **Drag-to-reorder list**: rows that glide when you drag, with a11y keyboard reorder.
 - **Swipeable cards (deck)**: tinder-style stack with undo and reduced-motion note.
