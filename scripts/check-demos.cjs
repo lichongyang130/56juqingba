@@ -39,6 +39,9 @@ const NEW_SCENES = [
   { slug: "flip-stack", marker: "Layered deck", behaviors: ["hover", "click", "keyboard"] },
   { slug: "draw-path", marker: "Signature curve", behaviors: ["scroll", "click"] },
   { slug: "morph-icons", marker: "Morphing icons", behaviors: ["click", "keyboard"] },
+  { slug: "logo-chase", marker: "Roster chase", behaviors: ["hover", "click"] },
+  { slug: "shimmer-text", marker: "One-pass shimmer", behaviors: ["scroll"] },
+  { slug: "ring-ticks", marker: "Audit ring", behaviors: ["click"] },
 ];
 
 (async () => {

@@ -8093,7 +8093,7 @@ function ScrollPin() {
 /* -------------------- SECTION 17 · FLIP, DRAW, MORPH -------------------- */
 
 const STACK_CARDS = [
-  { id: "library", face: "The library", back: "113 assets · MIT", hue: 262, note: "Every card links to a page with the same demo you just flipped." },
+  { id: "library", face: "The library", back: `${COMPONENTS.length} assets · MIT`, hue: 262, note: "Every card links to a page with the same demo you just flipped." },
   { id: "motion", face: "Motion", back: "202 declarations", hue: 192, note: "The count comes from the animation audit, not from a wish." },
   { id: "tokens", face: "Tokens", back: "14 colours · 5 radii", hue: 330, note: "The same values the token export serves as JSON." },
 ];
@@ -8468,6 +8468,358 @@ function MorphIcons() {
   );
 }
 
+/* -------------------- SECTION 17 · CHASE, SHIMMER, RING -------------------- */
+
+const CHASE_COLUMN = [
+  { name: "Pixel Parlor", handle: "pixelparlor", craft: "Landing sections" },
+  { name: "Lena Ortiz", handle: "lena.dev", craft: "Form controls" },
+  { name: "Noir Studio", handle: "noir.studio", craft: "Hero scenes" },
+  { name: "Glyph RGB", handle: "glyph.rgb", craft: "Prompt engineering" },
+  { name: "Karina Sole", handle: "karina_ui", craft: "Micro-interactions" },
+  { name: "T T Typing", handle: "tttyping", craft: "Scroll choreography" },
+  { name: "Studio Ceres", handle: "studio.ceres", craft: "Commerce prompts" },
+  { name: "Monoflow", handle: "monoflow", craft: "Checkout flows" },
+];
+
+/** The stream is the site's own roster, drawn as type — no third-party logo is
+ *  reproduced here, and there is no image anywhere in it. Each column is
+ *  duplicated once so the translate loop can wrap without a visible seam.
+ *
+ *  The column is a top-level component with props rather than one declared
+ *  inside the parent: a component created during render is a new type on every
+ *  pass, and React unmounts its subtree each time. */
+function RosterColumn({ offset, seconds, paused }: { offset: number; seconds: number; paused: boolean }) {
+  return (
+    <div
+      className="flex flex-col gap-2"
+      style={{
+        animation: paused ? "none" : `chase-scroll ${seconds}s linear infinite`,
+        animationDelay: `-${offset}s`,
+      }}
+    >
+      {[...CHASE_COLUMN, ...CHASE_COLUMN].map((m, i) => (
+        <div
+          key={`${m.handle}-${i}`}
+          aria-hidden={i >= CHASE_COLUMN.length}
+          className="flex items-center gap-2 rounded-xl border border-white/8 bg-white/[.02] px-3 py-2"
+        >
+          <span
+            className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[10px] font-extrabold text-white"
+            style={{
+              background: `linear-gradient(135deg, hsl(${(i * 47) % 360} 70% 55%), hsl(${(i * 47 + 60) % 360} 70% 45%))`,
+            }}
+          >
+            {m.name.slice(0, 1)}
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate text-[11px] font-semibold text-ink">{m.name}</span>
+            <span className="block truncate text-[9px] text-ink-faint">
+              @{m.handle} · {m.craft}
+            </span>
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function InfiniteChase() {
+  const [speed, setSpeed] = useState(26);
+  const [running, setRunning] = useState(true);
+  const reduced = useReducedMotion();
+  const paused = !running || reduced;
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(94,234,212,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-teal-300/80">Roster chase</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            {CHASE_COLUMN.length} makers · {paused ? (reduced ? "stopped for reduced motion" : "paused") : `${speed}s per loop`}
+          </p>
+        </div>
+
+        <div className="relative h-56 overflow-hidden rounded-2xl border border-white/10 [mask-image:linear-gradient(to_bottom,transparent,black_14%,black_86%,transparent)]">
+          <div className="grid h-full grid-cols-2 gap-2 p-2">
+            <RosterColumn offset={0} seconds={speed} paused={paused} />
+            <RosterColumn offset={speed / 2} seconds={speed} paused={paused} />
+          </div>
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <button type="button" onClick={() => setRunning((r) => !r)} className="btn btn-ghost !px-3.5 !py-2 text-[11px]" aria-pressed={!running}>
+            {running ? "Pause" : "Play"}
+          </button>
+          <label className="flex flex-1 items-center gap-2 text-[10px] text-ink-dim">
+            <span className="shrink-0">speed</span>
+            <input
+              type="range"
+              min={10}
+              max={60}
+              step={2}
+              value={speed}
+              onChange={(e) => setSpeed(Number(e.target.value))}
+              className="w-full accent-teal-400"
+              aria-label="Seconds per loop"
+            />
+            <span className="w-10 shrink-0 text-right tabular-nums">{speed}s</span>
+          </label>
+        </div>
+
+        <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+          The two columns run at different speeds, which is the point of a chase: nothing lines up twice. The stream stops for
+          reduced motion and stays stopped until the reader presses Play — the animation lives on a CSS keyframe, so pausing it
+          costs no script. Each name is the actual roster the community pages print, and every mark is type: no third-party brand
+          is reproduced and no image is loaded.
+        </p>
+      </div>
+
+      <style>{`@keyframes chase-scroll { from { transform: translateY(0); } to { transform: translateY(-50%); } }`}</style>
+    </div>
+  );
+}
+
+const SHIMMER_LINES = [
+  "Motion that earns its place",
+  "Two hundred milliseconds, or silence",
+];
+
+function ShimmerReveal() {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [pass, setPass] = useState(0);
+  const [seen, setSeen] = useState(false);
+  const reduced = useReducedMotion();
+
+  useEffect(() => {
+    const box = boxRef.current;
+    if (!box || typeof IntersectionObserver === "undefined") {
+      setSeen(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) if (entry.isIntersecting) setSeen(true);
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, []);
+
+  // The sweep runs once per pass value and then stops: a shimmer that loops
+  // forever stops being a reveal and becomes a distraction.
+  const sweep = seen && !reduced && pass > 0;
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_100%,rgba(251,191,36,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div ref={boxRef} className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-amber-300/80">One-pass shimmer</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            {reduced ? "reduced motion: no sweep" : pass ? `sweep ${pass} · finished` : seen ? "ready" : "scroll into view"}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/[.02] p-5">
+          {SHIMMER_LINES.map((line, li) => (
+            <p
+              key={line}
+              className={`text-2xl font-extrabold leading-tight tracking-tight ${li ? "mt-1.5 text-ink-dim" : "text-ink"}`}
+              style={
+                sweep
+                  ? {
+                      backgroundImage:
+                        "linear-gradient(100deg, currentColor 0%, currentColor 38%, #fde68a 50%, currentColor 62%, currentColor 100%)",
+                      backgroundSize: "260% 100%",
+                      backgroundClip: "text",
+                      WebkitBackgroundClip: "text",
+                      color: "transparent",
+                      animation: `shimmer-sweep 1400ms cubic-bezier(0.4, 0, 0.2, 1) ${li * 180}ms 1 both`,
+                    }
+                  : undefined
+              }
+            >
+              {line}
+            </p>
+          ))}
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setSeen(true);
+              setPass((p) => p + 1);
+            }}
+            className="btn btn-ghost !px-3.5 !py-2 text-[11px]"
+          >
+            Run the sweep
+          </button>
+          <span className="text-[10px] text-ink-faint">
+            {reduced ? "the button still works underneath — the text is simply never hidden" : "one pass, 1400ms, then the text stays plain"}
+          </span>
+        </div>
+
+        <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+          The gradient moves across the glyphs and then the animation ends on the final frame, so the text settles rather than
+          looping. Nothing is hidden while the sweep runs: the words are in the DOM from the first render, so a screen reader or a
+          search crawler reads the headline whether or not the animation ever fires.
+        </p>
+      </div>
+
+      <style>{`@keyframes shimmer-sweep { from { background-position: 130% 0; } to { background-position: -40% 0; } }`}</style>
+    </div>
+  );
+}
+
+const RING_TICKS = [
+  { at: 25, label: "a quarter" },
+  { at: 50, label: "half" },
+  { at: 75, label: "three quarters" },
+  { at: 100, label: "every asset" },
+];
+
+function AuditRing() {
+  const graded = COMPONENTS.map((c) => c.a11yScore);
+  const threshold = 95;
+  const passing = graded.filter((s) => s >= threshold).length;
+  const share = (passing / graded.length) * 100;
+  const [value, setValue] = useState(0);
+  const [held, setHeld] = useState<number | null>(null);
+  const [replay, setReplay] = useState(0);
+  const reduced = useReducedMotion();
+  const r = 52;
+  const circumference = 2 * Math.PI * r;
+
+  // The ring animates to the real share, but pauses at each labelled tick on
+  // the way — a progress ring that ignores its own marks is a decoration.
+  useEffect(() => {
+    // With reduced motion the ring renders the settled value directly, so there
+    // is nothing to animate and no state to set from here.
+    if (reduced) return;
+    let frame = 0;
+    let current = 0;
+    let holdUntil = 0;
+    const step = (now: number) => {
+      if (now < holdUntil) {
+        frame = requestAnimationFrame(step);
+        return;
+      }
+      current = Math.min(share, current + 0.9);
+      setValue(current);
+      const crossed = RING_TICKS.find((t) => t.at <= current && t.at > current - 0.9 && t.at < share);
+      if (crossed) {
+        holdUntil = now + 340;
+        setHeld(crossed.at);
+      } else {
+        setHeld(null);
+      }
+      if (current < share) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+    // replay restarts the pass from zero
+  }, [share, reduced, replay]);
+
+  // One source of truth for what is on screen: the animated value, or the real
+  // share when the reader has asked for no motion at all.
+  const shown = reduced ? share : value;
+  const shownHeld = reduced ? null : held;
+  const pct = (v: number) => (v / 100) * circumference;
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(52,211,153,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-emerald-300/80">Audit ring</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            {shownHeld !== null ? `holding at ${shownHeld}%` : shown >= share ? "settled" : "drawing"}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-5 rounded-2xl border border-white/10 bg-white/[.02] p-4">
+          <svg viewBox="0 0 128 128" className="h-32 w-32 shrink-0" role="img" aria-label={`${passing} of ${graded.length} components score ${threshold} or higher on the accessibility audit, ${share.toFixed(1)} percent`}>
+            <circle cx="64" cy="64" r={r} fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="9" />
+            {RING_TICKS.map((tick) => {
+              const angle = (tick.at / 100) * 360 - 90;
+              const rad = (angle * Math.PI) / 180;
+              const inner = 40;
+              const outer = 47;
+              return (
+                <line
+                  key={tick.at}
+                  x1={64 + Math.cos(rad) * inner}
+                  y1={64 + Math.sin(rad) * inner}
+                  x2={64 + Math.cos(rad) * outer}
+                  y2={64 + Math.sin(rad) * outer}
+                  stroke={tick.at <= shown ? "rgba(52,211,153,.55)" : "rgba(255,255,255,.14)"}
+                  strokeWidth="1.5"
+                />
+              );
+            })}
+            <circle
+              cx="64"
+              cy="64"
+              r={r}
+              fill="none"
+              stroke="#34d399"
+              strokeWidth="9"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={circumference - pct(shown)}
+              transform="rotate(-90 64 64)"
+            />
+            <text x="64" y="62" textAnchor="middle" className="fill-ink" style={{ fontSize: "20px", fontWeight: 800 }}>
+              {shown.toFixed(1)}%
+            </text>
+            <text x="64" y="78" textAnchor="middle" style={{ fontSize: "8px", fill: "rgba(237,240,247,.6)" }}>
+              {passing} of {graded.length}
+            </text>
+          </svg>
+
+          <div className="min-w-0">
+            <p className="text-[11px] leading-relaxed text-ink-dim">
+              Share of the catalog scoring <span className="font-mono text-[10px] text-ink">{threshold}</span> or better on the
+              accessibility audit — the same per-asset numbers the asset pages and the catalog export carry.
+            </p>
+            <ul className="mt-2 space-y-1">
+              {RING_TICKS.map((tick) => (
+                <li key={tick.at} className="flex items-center gap-2 text-[10px] text-ink-faint">
+                  <span className={`h-1.5 w-1.5 rounded-full ${tick.at <= shown ? "bg-emerald-400" : "bg-white/20"}`} />
+                  <span className="tabular-nums">{tick.at}%</span>
+                  <span>{tick.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setValue(0);
+              setReplay((n) => n + 1);
+            }}
+            className="btn btn-ghost !px-3.5 !py-2 text-[11px]"
+          >
+            Replay
+          </button>
+          <span className="text-[10px] text-ink-faint">
+            lowest audit score in the catalog: {Math.min(...graded)} · highest: {Math.max(...graded)}
+          </span>
+        </div>
+
+        <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+          The 95 line is this demo&apos;s own, printed rather than hidden — the site does not publish an audit threshold, so
+          claiming one would be an invention. Move the line and the ring changes: the percentages above are computed from the
+          catalog at render, not typed in.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // Exported because the keys are the catalog's demo vocabulary, not a private
 // detail: the props panel and the harness both want the same list.
 export const DEMO_KEYS = [
@@ -8487,6 +8839,7 @@ export const DEMO_KEYS = [
   "reorder-list", "swipe-deck", "split-pane",
   "zoom-lens", "chart-scrubber", "scroll-pin",
   "flip-stack", "draw-path", "morph-icons",
+  "logo-chase", "shimmer-text", "ring-ticks",
   "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
   "status-banner", "progress-ring", "spinner-status", "empty-state-trio",
@@ -8579,6 +8932,9 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "flip-stack": return <FlipStack />;
     case "draw-path": return <DrawOnScroll />;
     case "morph-icons": return <MorphIcons />;
+    case "logo-chase": return <InfiniteChase />;
+    case "shimmer-text": return <ShimmerReveal />;
+    case "ring-ticks": return <AuditRing />;
     case "breadcrumb-trail": return <BreadcrumbTrail />;
     case "pagination-ellipsis": return <PaginationEllipsis {...props} />;
     case "toc-spine": return <TocSpine />;
