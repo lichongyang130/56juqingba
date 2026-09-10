@@ -484,6 +484,310 @@ export function bundleMath(selected: string[]): BundleMath {
 }
 
 /* -------------------------------------------------------------------
+   #392 — team seats
+   ------------------------------------------------------------------- */
+
+/** The plan card says $49/mo for "everything in Pro, per member" and never
+ *  states how many seats that covers. Rather than leave the number implied,
+ *  it is written down here — and the page says the card was silent. */
+export const TEAM_SEATS_INCLUDED = 3;
+export const TEAM_EXTRA_SEAT_PRICE = 12;
+
+export interface SeatRole {
+  id: string;
+  label: string;
+  can: string;
+  cannot: string;
+}
+
+export const SEAT_ROLES: SeatRole[] = [
+  { id: "owner", label: "Owner", can: "Billing, seats, and everything an editor can do.", cannot: "Delete the workspace without a typed confirmation." },
+  { id: "editor", label: "Editor", can: "Edit shared theme tokens, run audits, propose template installs.", cannot: "See billing or remove people." },
+  { id: "viewer", label: "Viewer", can: "Read tokens, exports and audit reports.", cannot: "Change a token or invite anyone." },
+];
+
+export interface SeatInvite {
+  email: string;
+  role: string;
+}
+
+export function seatMath(invites: SeatInvite[]) {
+  const seats = 1 + invites.length; // the owner holds the first seat
+  const extra = Math.max(0, seats - TEAM_SEATS_INCLUDED);
+  const monthly = planOf("team").monthly + extra * TEAM_EXTRA_SEAT_PRICE;
+  return {
+    seats,
+    included: TEAM_SEATS_INCLUDED,
+    extra,
+    extraRate: TEAM_EXTRA_SEAT_PRICE,
+    base: planOf("team").monthly,
+    monthly,
+    arithmetic: `${planOf("team").monthly} base + ${extra} × $${TEAM_EXTRA_SEAT_PRICE} extra = $${monthly}/mo for ${seats} seats`,
+    pending: invites.filter((i) => !isEmailShaped(i.email)).length,
+  };
+}
+
+/** Deliberately loose: this only decides whether the demo says "looks like an
+ *  address". No invite is sent, so pretending to validate deliverability would
+ *  be theatre. */
+export function isEmailShaped(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+}
+
+/* -------------------------------------------------------------------
+   #393 — discount lane
+   ------------------------------------------------------------------- */
+
+export interface DiscountLane {
+  id: string;
+  label: string;
+  rate: number;
+  who: string;
+  proof: string;
+  gap: string;
+}
+
+export const DISCOUNT_LANES: DiscountLane[] = [
+  {
+    id: "student",
+    label: "Students & teachers",
+    rate: 50,
+    who: "Anyone with an academic address or a current enrolment.",
+    proof: "An academic email domain, or a photo of a student card with the ID number hidden.",
+    gap: "There is no verification step in this build — the discount is described, and the calculator applies it locally.",
+  },
+  {
+    id: "independent",
+    label: "Independent builders",
+    rate: 40,
+    who: "Solo developers and studios under three people, self-declared.",
+    proof: "Nobody. Self-declaration is the whole process, because chasing invoices from a two-person studio costs more than the discount.",
+    gap: "An honour system needs an account to attach the flag to; without one, nothing carries the discount beyond this page.",
+  },
+  {
+    id: "nonprofit",
+    label: "Nonprofit & civic",
+    rate: 60,
+    who: "Registered nonprofits, libraries, public schools and civic projects.",
+    proof: "A registration number or a link to the org page — a link is enough.",
+    gap: "Needs a review step and somewhere to store the decision. Neither exists here.",
+  },
+  {
+    id: "student-hardship",
+    label: "Hardship, no questions",
+    rate: 100,
+    who: "Anyone who needs it and says so.",
+    proof: "A one-line request. No documents, no means test, no expiry.",
+    gap: "The most honest lane and the least automated: a person has to read the request.",
+  },
+];
+
+export function discountPrice(planId: string, rate: number) {
+  const p = planOf(planId);
+  const monthly = Math.round(p.monthly * (1 - rate / 100) * 100) / 100;
+  const yearly = p.yearly ? Math.round(p.yearly * (1 - rate / 100) * 100) / 100 : undefined;
+  return { list: p.monthly, rate, monthly, yearly, saving: Math.round((p.monthly - monthly) * 100) / 100 };
+}
+
+/* -------------------------------------------------------------------
+   #394 — the grandfather promise
+   ------------------------------------------------------------------- */
+
+export const GRANDFATHER = {
+  headline: "The price you join at is the price you keep.",
+  promise:
+    "If the Pro price rises while your subscription is active, your renewal stays at the price you signed up on — for as long as you keep the subscription running, and through any price change we announce.",
+  covers: [
+    "Renewals at your original monthly or yearly price.",
+    "A plan downgrade you make voluntarily: you keep the lower price you moved to, not the old higher one.",
+    "Price rises announced publicly: the announcement is the start of the clock, and existing subscribers are not moved onto the new price at that moment.",
+  ],
+  doesNotCover: [
+    "Cancelling and re-subscribing later — the price at the new sign-up applies.",
+    "Switching from monthly to yearly, which is a new price for a new term.",
+    "A change to what Pro includes: the promise is about price, not about the feature list staying identical.",
+    "Taxes, currency or payment-processor fees, which are not ours to hold constant.",
+  ],
+  dated: "Written 2026-09-10 and shown unchanged since. The dates on this page are the only part of it that can be checked, which is the honest limit of a promise on a page with no billing behind it.",
+  gap:
+    "A grandfather clause is enforced by a billing system holding a price per subscriber. There is no subscriber table here, so this page states the policy and nothing more.",
+};
+
+/* -------------------------------------------------------------------
+   #395 — the cancel path
+   ------------------------------------------------------------------- */
+
+export interface CancelStep {
+  step: number;
+  label: string;
+  detail: string;
+}
+
+export const CANCEL_STEPS: CancelStep[] = [
+  { step: 1, label: "Cancel", detail: "One button on the billing page. No form, no phone call, no chat queue." },
+  { step: 2, label: "Say why (optional)", detail: "Three radio options and a text box. Skippable, and a skip is recorded as a skip rather than a zero." },
+  { step: 3, label: "Done, with a date", detail: "Access runs to the end of the paid period, and the page prints that date in words, not as a countdown." },
+];
+
+export const CANCEL_AFTERMATH: { what: string; happens: string }[] = [
+  { what: "Library access", happens: "Never changes. The 107 components are MIT and do not live behind the subscription." },
+  { what: "Saved theme kits", happens: "Stay in your browser and stay exportable to CSS. Nothing is locked on the way out." },
+  { what: "Paid surfaces", happens: "Stop renewing at the end of the period. API keys (if they existed) would be revoked on that date, not immediately." },
+  { what: "Your data", happens: "Exports are available on the billing page for the length of the period. Nothing is deleted on cancel." },
+  { what: "Winning you back", happens: "One email at the end of the period, and no dark pattern between you and the door." },
+];
+
+export const CANCEL_REFUSES = [
+  "A hidden cancel link — the button is on the same page as the plan change.",
+  "A retention call, chat prompt or \"are you sure\" chain of three screens.",
+  "An offer that appears only after the cancel click, priced differently from the public plan.",
+  "A countdown timer on the offer, or a pre-ticked \"keep my plan\" box.",
+  "Making you type a reason. Three optional radios, and one of them is \"no longer needed\".",
+];
+
+/* -------------------------------------------------------------------
+   #396 — referral credit
+   ------------------------------------------------------------------- */
+
+export const REFERRAL = {
+  reward: "One month of Pro, each.",
+  cap: 6,
+  terms: [
+    "The friend gets their month on sign-up; you get yours once their first paid month settles.",
+    "Credit is applied to your own subscription, so it is not cash and cannot be withdrawn.",
+    `The cap is ${6} months per account in a rolling year. A referral programme without a cap is a pyramid scheme with better manners.`,
+    "Self-referrals and duplicate addresses do not count — which is unenforceable on this page and enforceable with accounts.",
+  ],
+  gap:
+    "Nothing on this page can credit anyone: there is no ledger, no account and no payment in the build. The counter below runs in your browser and forgets everything on reload.",
+};
+
+export function referralCredit(sent: number, settled: number) {
+  const credited = Math.min(settled, REFERRAL.cap);
+  const pending = Math.max(0, sent - settled);
+  return {
+    sent,
+    settled,
+    pending,
+    credited,
+    cappedOut: settled >= REFERRAL.cap,
+    months: credited,
+    note:
+      settled > REFERRAL.cap
+        ? `${settled} settled referrals would earn ${settled} months, but the ${REFERRAL.cap}-month cap applies — so the credit is ${credited}.`
+        : `${credited} of ${REFERRAL.cap} monthly credits used this year.`,
+  };
+}
+
+/* -------------------------------------------------------------------
+   #397 — enterprise asks
+   ------------------------------------------------------------------- */
+
+export interface EnterpriseAsk {
+  ask: string;
+  today: string;
+  verdict: "not available" | "partial" | "available";
+  needed: string;
+}
+
+export const ENTERPRISE_ASKS: EnterpriseAsk[] = [
+  { ask: "SSO / SAML", today: "Nothing. Sign-in is not implemented at all — there are no accounts, so there is nothing to federate.", verdict: "not available", needed: "Identity provider support, which is a week of work only after accounts exist." },
+  { ask: "SLA with credits", today: "No uptime commitment can be meaningful here: the site is a static build served by a host, and no measurement of it is recorded.", verdict: "not available", needed: "Monitoring, an incident process and a legal review of the wording." },
+  { ask: "DPA / data processing terms", today: "A short, honest answer: the build collects nothing, sets no analytics cookies and has no user table, so the data-processing surface is nearly empty.", verdict: "partial", needed: "A privacy review of the host's logs before signing anything binding." },
+  { ask: "Security questionnaire", today: "The quality bar publishes its own scans — dependency, licence, image and spelling audits are public pages.", verdict: "partial", needed: "A named security contact and evidence from real infrastructure rather than a static site." },
+  { ask: "Invoicing & purchase orders", today: "No invoice can be issued, because there is no company billing entity behind this build.", verdict: "not available", needed: "A legal entity, tax handling and an accounting system." },
+  { ask: "Seat management & offboarding", today: "The seats demo adds and removes names in your browser; nothing is provisioned.", verdict: "partial", needed: "Accounts, then a seat ledger, then directory sync." },
+  { ask: "Volume pricing", today: "Team is priced in the open: 3 seats included, $12 per seat after that, computed on the seats page.", verdict: "available", needed: "Nothing for the arithmetic — only a checkout to take the money." },
+];
+
+/* -------------------------------------------------------------------
+   #398 — receipt & plan mock (admin demo)
+   ------------------------------------------------------------------- */
+
+export interface ReceiptLine {
+  invoice: string;
+  date: string;
+  plan: string;
+  seats: number;
+  amount: number;
+  status: "paid (demo)" | "open (demo)";
+  method: string;
+}
+
+/** Six deterministic months of demo invoices, derived from the plan table so a
+ *  price change moves the receipts too. Anchored to a fixed month: this is a
+ *  mock for a console demo, and a mock that moves with today's date is harder
+ *  to reason about than one that does not. */
+export function receiptLines(): ReceiptLine[] {
+  const team = planOf("team");
+  const pro = planOf("pro");
+  const months = ["2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09"];
+  return months.map((m, i) => {
+    const onTeam = i >= 3;
+    const seats = onTeam ? 5 : 1;
+    const plan = onTeam ? "Team" : "Pro";
+    const base = onTeam ? team.monthly + (seats - TEAM_SEATS_INCLUDED) * TEAM_EXTRA_SEAT_PRICE : pro.monthly;
+    return {
+      invoice: `DEMO-${m.replace("-", "")}-0${i + 1}`,
+      date: `${m}-0${Math.min(9, i + 2)}`,
+      plan,
+      seats,
+      amount: base,
+      status: i === months.length - 1 ? "open (demo)" : "paid (demo)",
+      method: onTeam ? "PO · demo" : "card · •••• 4242 (demo)",
+    };
+  });
+}
+
+export function receiptTotals() {
+  const lines = receiptLines();
+  const paid = lines.filter((l) => l.status.startsWith("paid"));
+  return {
+    lines,
+    paidCount: paid.length,
+    paidTotal: paid.reduce((a, l) => a + l.amount, 0),
+    openTotal: lines.filter((l) => l.status.startsWith("open")).reduce((a, l) => a + l.amount, 0),
+  };
+}
+
+/* -------------------------------------------------------------------
+   #399 — the Pro changelog
+   ------------------------------------------------------------------- */
+
+export interface ProChangelogRow {
+  item: number;
+  addition: string;
+  claimed: string;
+  freeAlternative: string;
+  alreadyFree: boolean;
+}
+
+/** Built from the feature ledger rather than a second hand-written list, so
+ *  the changelog cannot claim something the ledger does not. */
+export function proChangelog(): ProChangelogRow[] {
+  const items: Record<string, number> = {
+    "prompt-reports": 385,
+    templates: 385,
+    "theme-kits": 385,
+    api: 389,
+    "priority-review": 388,
+    "private-collections": 387,
+    "usage-analytics": 391,
+    "team-seats": 392,
+    support: 397,
+    "no-ads": 385,
+    "early-features": 385,
+  };
+  return PRO_FEATURES.map((f) => ({
+    item: items[f.id] ?? 385,
+    addition: f.name,
+    claimed: f.promise,
+    freeAlternative: f.freeAlternative,
+    alreadyFree: f.state === "works-now",
+  }));
+}
+
+/* -------------------------------------------------------------------
    The pricing-page audit
    ------------------------------------------------------------------- */
 

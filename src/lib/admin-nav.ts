@@ -20,6 +20,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
   { href: "/admin/pipeline", label: "Pipeline", icon: "≡" },
   { href: "/admin/health", label: "Health", icon: "◈" },
   { href: "/admin/stats", label: "Quick stats", icon: "▨" },
+  { href: "/admin/billing", label: "Billing", icon: "▧" },
   { href: "/admin/content", label: "Content", icon: "✎" },
   { href: "/admin/inspector", label: "Inspector", icon: "▣" },
   { href: "/admin/changelog", label: "Changelog", icon: "✧" },

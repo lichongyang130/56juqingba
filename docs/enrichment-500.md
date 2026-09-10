@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 391 / 500 shipped (batches 1–54, in order) · Sections 1–13 complete ✅ · Section 14 in progress (7/15)
+## Progress — 399 / 500 shipped (batches 1–55, in order) · Sections 1–14 complete ✅ · Section 15 next
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -403,6 +403,14 @@ names, behaviours and where they plug into the existing pages.
 | 389 | API tokens demo | [/pro/api](/pro/api) · scope picker minting a deterministic prefixed demo key, plus the request it would make |
 | 390 | Pro-only lab gate | [/studio](/studio) · three minutes of the real editor, then an upgrade card with a one-press dismissal |
 | 391 | Bundle vs ala-carte | [/pro/bundles](/pro/bundles) · cost meter over real pack prices that argues against its own bundle |
+| 392 | Team seats preview | [/pro/teams](/pro/teams) · build a team, pick from 3 roles, and print the seat arithmetic the plan card leaves unsaid |
+| 393 | Student & independent discount lane | [/pro/discounts](/pro/discounts) · four lanes priced live, including one that asks for a single line and no documents |
+| 394 | Grandfather promise | [/pro/promise](/pro/promise) · the promise in full, the 4 cases it does not cover, and a plain-text copy to quote |
+| 395 | Cancel-path demo | [/pro/cancel](/pro/cancel) · a 3-step cancellation you can click through, plus the 5 dark patterns it refuses to contain |
+| 396 | Referral credit mock | [/pro/referral](/pro/referral) · one month each, capped at 6 a year, with the impossible states clamped |
+| 397 | Enterprise contact card | [/pro/enterprise](/pro/enterprise) · 7 procurement asks with 3 answered "not available" in plain words |
+| 398 | Receipts & plans page | [/admin/billing](/admin/billing) · six demo invoices derived from the price table, and what a real one needs |
+| 399 | Pro changelog | [/pro/changelog](/pro/changelog) · every Pro claim generated from the ledger, free alternative in the next column |
 
 ---
 
@@ -911,7 +919,7 @@ The closing item on the list was *quick stats per content type*, described in th
 
 ---
 
-## 14. Pro plans & monetization — 15 upgrades — 7/15 shipped
+## 14. Pro plans & monetization — 15 upgrades — 15/15 shipped ✅
 
 - **Pro feature list page**: one page that shows every Pro asset/lab with a live preview gate.
 - **License clarity cards**: free = MIT assets · Pro = team licence + reports + API (visual, not legalese).
@@ -932,6 +940,10 @@ The closing item on the list was *quick stats per content type*, described in th
 Monetization is the section where a site is most tempted to describe a product it does not have, so the whole section is built around one label: every Pro promise carries a state — **works now**, **browser demo** or **needs a server** — with the evidence for that state and the free path that already exists beside it. The label is not decoration. It is what says out loud that per-model prompt reports are already free on every prompt page (74 prompts, 221 runs), that a seven-day trial over features needing no server would be theatre, and that "Priority review (48h → 6h)" cannot be kept by a static build because no submission is ever received.
 
 Two claims came off the existing pages. The paid CTA's tooltip promised that "checkout is wired up in the production build" — there is no production build with a checkout, so the button is now visibly disabled and titled with the gap. And the free-forever panel asserted MIT for backgrounds and lab tools, which the catalog does not record: `license` is a field on components (107/107 MIT, counted from the data) and nothing else, so those rows now read *policy, not a stored field*. Prices, the yearly saving and every pack unit price moved into one module that the plan cards and all seven pages read, which is the only reliable way to stop a price drifting from its own checkout copy.
+
+The second half of the section pushed the same label into the places where monetization usually stops being honest. The team card said "everything in Pro, per member" for $49 and never named a seat count — the seats page now states the count it assumes (3 included, $12 after) and says the card was silent. The discount lanes include one that asks for a single line and no documents, because the cheapest lane to administer is the one that says the most about who the discount is for. The cancel-path demo refuses five specific retention tricks and lists them, so the claim is checkable against the flow itself. The grandfather promise is printed with the four cases it does not cover and a plain-text copy, since a promise you cannot quote without a screenshot is not a promise you can hold anyone to. And the Pro changelog is generated from the same ledger every other page reads — 11 rows, 3 of which are already free, which is the honest shape of a changelog written about promises rather than releases.
+
+One structural note: the Pro changelog, the feature ledger and the pricing audit all derive from `PRO_FEATURES`, so a promise cannot be added to one page without answering, on all three, what it is in this build and what the free user gets instead.
 
 ---
 

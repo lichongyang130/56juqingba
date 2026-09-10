@@ -21,6 +21,14 @@ import {
   planOf,
   unlimitedRows,
   yearlySaving,
+  receiptTotals,
+  TEAM_EXTRA_SEAT_PRICE,
+  TEAM_SEATS_INCLUDED,
+  CANCEL_AFTERMATH,
+  CANCEL_REFUSES,
+  ENTERPRISE_ASKS,
+  GRANDFATHER,
+  proChangelog,
   type FeatureState,
   type ProFeature,
 } from "@/lib/pro";
@@ -284,6 +292,274 @@ export function PricingAudit() {
 }
 
 /* -------------------------------------------------------------------
+   #394 — the grandfather promise
+   ------------------------------------------------------------------- */
+
+export function GrandfatherPanel() {
+  return (
+    <section className="space-y-5">
+      <div className="rounded-3xl border border-violet-300/25 bg-violet-500/[.06] p-7">
+        <p className="text-xs font-bold uppercase tracking-widest text-violet-200">The promise</p>
+        <h2 className="mt-2 text-2xl font-extrabold tracking-tight">{GRANDFATHER.headline}</h2>
+        <p className="mt-3 max-w-3xl text-[13px] leading-relaxed text-ink-dim">{GRANDFATHER.promise}</p>
+        <p className="mt-4 font-mono text-[11px] text-violet-200/80">{GRANDFATHER.dated}</p>
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-2">
+        <div className="rounded-3xl border border-white/8 bg-panel p-6">
+          <p className="text-xs font-bold uppercase tracking-widest text-emerald-300">What it covers</p>
+          <ul className="mt-4 space-y-3">
+            {GRANDFATHER.covers.map((c) => (
+              <li key={c} className="flex gap-2.5 text-[11px] leading-relaxed text-ink-dim">
+                <span className="text-emerald-300">✓</span>
+                <span>{c}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="rounded-3xl border border-white/8 bg-panel p-6">
+          <p className="text-xs font-bold uppercase tracking-widest text-danger">What it does not cover</p>
+          <ul className="mt-4 space-y-3">
+            {GRANDFATHER.doesNotCover.map((c) => (
+              <li key={c} className="flex gap-2.5 text-[11px] leading-relaxed text-ink-dim">
+                <span className="text-danger">×</span>
+                <span>{c}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/[.04] px-3.5 py-3 text-[10px] leading-relaxed text-amber-100/80">
+            {GRANDFATHER.gap}
+          </p>
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-white/8 bg-panel p-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">The same text, copyable</p>
+        <pre className="mt-3 overflow-x-auto rounded-2xl border border-white/8 bg-[#07090f] p-4 font-mono text-[11px] leading-relaxed text-ink-dim">{`Grandfather promise
+${GRANDFATHER.promise}
+
+Covers: ${GRANDFATHER.covers.length} cases (renewals, downgrades, announced rises).
+Does not cover: ${GRANDFATHER.doesNotCover.length} (re-subscribing later, monthly→yearly, feature-list changes, taxes/fees).`}</pre>
+        <p className="mt-3 text-[11px] leading-relaxed text-ink-dim">
+          A promise is worth more when it can be quoted without a screenshot, so the plain-text version sits above the styled
+          one. If the wording ever changes, the change belongs in the changelog with a date — quietly editing a promise is the
+          failure mode this page exists to avoid.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #395 — what happens after cancelling
+   ------------------------------------------------------------------- */
+
+export function CancelAftermath() {
+  return (
+    <section className="space-y-5">
+      <div className="overflow-hidden rounded-3xl border border-white/8 bg-panel">
+        <table className="w-full min-w-[36rem] text-left text-[11px]">
+          <thead className="border-b border-white/8 text-[10px] uppercase tracking-widest text-ink-faint">
+            <tr>
+              <th className="px-4 py-3 font-bold">After the cancel click</th>
+              <th className="px-4 py-3 font-bold">What actually happens</th>
+            </tr>
+          </thead>
+          <tbody>
+            {CANCEL_AFTERMATH.map((r) => (
+              <tr key={r.what} className="border-b border-white/5 align-top last:border-0">
+                <td className="px-4 py-3 font-bold">{r.what}</td>
+                <td className="px-4 py-3 text-ink-dim">{r.happens}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="rounded-3xl border border-danger/25 bg-panel p-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-danger">Dark patterns this flow refuses</p>
+        <ul className="mt-4 grid gap-2 md:grid-cols-2">
+          {CANCEL_REFUSES.map((c) => (
+            <li key={c} className="rounded-2xl border border-white/8 bg-white/[.02] px-3.5 py-2.5 text-[11px] text-ink-dim">
+              <span className="mr-2 text-danger">×</span>
+              {c}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 text-[11px] leading-relaxed text-ink-faint">
+          Checklists like this are usually marketing. This one is a build constraint: the flow demo above cannot contain any
+          of these steps, because there are none of them in the code.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #397 — enterprise asks
+   ------------------------------------------------------------------- */
+
+export function EnterpriseAsks() {
+  const tone: Record<string, string> = {
+    "not available": "!border-danger/40 !text-danger",
+    partial: "!border-amber-300/40 !text-amber-300",
+    available: "!border-emerald-300/40 !text-emerald-300",
+  };
+  const counts = ENTERPRISE_ASKS.reduce<Record<string, number>>((a, x) => {
+    a[x.verdict] = (a[x.verdict] ?? 0) + 1;
+    return a;
+  }, {});
+  return (
+    <section className="space-y-5">
+      <div className="rounded-3xl border border-white/8 bg-panel p-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">What teams ask for, and what is true today</p>
+        <p className="mt-1.5 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          Seven asks, sorted by how a procurement conversation actually goes. {counts.available ?? 0} is available now,{" "}
+          {counts.partial ?? 0} are partly answerable, and {counts["not available"] ?? 0} cannot be answered truthfully at all
+          — each with the work it would take. Most enterprise pages list features; the useful ones list the gaps first.
+        </p>
+        <div className="mt-4 space-y-2">
+          {ENTERPRISE_ASKS.map((a) => (
+            <div key={a.ask} className="rounded-2xl border border-white/8 bg-white/[.02] px-4 py-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[12px] font-bold">{a.ask}</span>
+                <span className={`chip !text-[10px] ${tone[a.verdict]}`}>{a.verdict}</span>
+              </div>
+              <p className="mt-1.5 text-[11px] leading-relaxed text-ink-dim">{a.today}</p>
+              <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">To answer it properly: {a.needed}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #399 — the Pro changelog
+   ------------------------------------------------------------------- */
+
+export function ProChangelog() {
+  const rows = proChangelog();
+  const freeCount = rows.filter((r) => r.alreadyFree).length;
+  return (
+    <section className="space-y-5">
+      <div className="rounded-3xl border border-white/8 bg-panel p-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Every Pro claim, with its free alternative</p>
+        <p className="mt-1.5 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          {rows.length} rows, one per promise, generated from the feature ledger rather than typed again — so this list cannot
+          say something the ledger does not. {freeCount} of the {rows.length} are already free in this build; the rest carry
+          the free path that exists today and the gap that keeps the paid version honest.
+        </p>
+      </div>
+
+      <div className="overflow-hidden rounded-3xl border border-white/8 bg-panel">
+        <table className="w-full min-w-[46rem] text-left text-[11px]">
+          <thead className="border-b border-white/8 text-[10px] uppercase tracking-widest text-ink-faint">
+            <tr>
+              <th className="px-4 py-3 font-bold">Shipped in</th>
+              <th className="px-4 py-3 font-bold">Addition</th>
+              <th className="px-4 py-3 font-bold">Claimed as</th>
+              <th className="px-4 py-3 font-bold">Free alternative</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.addition} className="border-b border-white/5 align-top last:border-0">
+                <td className="px-4 py-3">
+                  <span className="font-mono text-[10px] text-ink-faint">#{r.item}</span>
+                  {r.alreadyFree && (
+                    <span className="ml-2 chip !text-[9px] !border-emerald-300/40 !text-emerald-300">already free</span>
+                  )}
+                </td>
+                <td className="px-4 py-3 font-bold">{r.addition}</td>
+                <td className="px-4 py-3 text-ink-dim">{r.claimed}</td>
+                <td className="px-4 py-3 text-ink-dim">{r.freeAlternative}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #398 — receipts & plan state (admin demo surface)
+   ------------------------------------------------------------------- */
+
+export function ReceiptsPanel() {
+  const t = receiptTotals();
+  return (
+    <section className="space-y-5">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="rounded-2xl border border-white/8 bg-white/[.02] px-4 py-3">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Paid (demo)</p>
+          <p className="mt-1 font-mono text-xl font-black">
+            ${t.paidTotal}
+            <span className="ml-2 text-[10px] font-normal text-ink-faint">{t.paidCount} invoices</span>
+          </p>
+        </div>
+        <div className="rounded-2xl border border-white/8 bg-white/[.02] px-4 py-3">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Open (demo)</p>
+          <p className="mt-1 font-mono text-xl font-black">${t.openTotal}</p>
+        </div>
+        <div className="rounded-2xl border border-white/8 bg-white/[.02] px-4 py-3">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Plan on file</p>
+          <p className="mt-1 font-mono text-xl font-black">
+            Team<span className="ml-2 text-[10px] font-normal text-ink-faint">5 of {TEAM_SEATS_INCLUDED} included + 2 × ${TEAM_EXTRA_SEAT_PRICE}</span>
+          </p>
+        </div>
+      </div>
+
+      <div className="overflow-hidden rounded-3xl border border-white/8 bg-panel">
+        <table className="w-full min-w-[44rem] text-left text-[11px]">
+          <thead className="border-b border-white/8 text-[10px] uppercase tracking-widest text-ink-faint">
+            <tr>
+              <th className="px-4 py-3 font-bold">Invoice</th>
+              <th className="px-4 py-3 font-bold">Date</th>
+              <th className="px-4 py-3 font-bold">Plan</th>
+              <th className="px-4 py-3 font-bold">Seats</th>
+              <th className="px-4 py-3 font-bold">Method</th>
+              <th className="px-4 py-3 font-bold">Amount</th>
+              <th className="px-4 py-3 font-bold">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {t.lines.map((l) => (
+              <tr key={l.invoice} className="border-b border-white/5 last:border-0">
+                <td className="px-4 py-3 font-mono text-[10px]">{l.invoice}</td>
+                <td className="px-4 py-3 font-mono text-[10px] text-ink-dim">{l.date}</td>
+                <td className="px-4 py-3 font-bold">{l.plan}</td>
+                <td className="px-4 py-3 font-mono text-ink-dim">{l.seats}</td>
+                <td className="px-4 py-3 text-ink-dim">{l.method}</td>
+                <td className="px-4 py-3 font-mono">${l.amount}</td>
+                <td className="px-4 py-3">
+                  <span className={`chip !text-[9px] ${l.status.startsWith("paid") ? "!border-emerald-300/40 !text-emerald-300" : "!border-amber-300/40 !text-amber-300"}`}>
+                    {l.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="rounded-3xl border border-dashed border-amber-300/25 bg-amber-300/[.04] p-5">
+        <p className="text-sm font-extrabold text-amber-200">Six invoices that do not exist</p>
+        <p className="mt-1.5 max-w-3xl text-[11px] leading-relaxed text-amber-100/80">
+          The rows are derived arithmetically from the plan table — the two Pro months at ${planOf("pro").monthly}, then four
+          Team months at the base plus two extra seats — so a price edit moves them. But no invoice was issued, no card was
+          charged, and no receipt can be downloaded: there is no billing entity behind this build. The admin surfaces that
+          report on the catalog (health, stats, exports) never read this table, and this table never reads them — a demo
+          billing mock is not allowed to become site data.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------
    Shared small pieces
    ------------------------------------------------------------------- */
 
@@ -323,6 +599,13 @@ export const PRO_ROUTES: { href: string; label: string; item: string; blurb: str
   { href: "/pro/api", label: "API token demo", item: "#389", blurb: "Mint a prefixed demo key, pick scopes, see the request it would make." },
   { href: "/pro/bundles", label: "Bundle vs ala-carte", item: "#391", blurb: "A cost meter that will tell you the bundle is the wrong buy." },
   { href: "/lab", label: "Pro lab gate", item: "#390", blurb: "Three free minutes in Theme Studio, then the upgrade card — dismissible." },
+  { href: "/pro/teams", label: "Team seats", item: "#392", blurb: "Invite names, pick roles, watch the seat arithmetic — and read what the plan card never said." },
+  { href: "/pro/discounts", label: "Discount lanes", item: "#393", blurb: "Four lanes including one with no proof required, priced live against the plan table." },
+  { href: "/pro/promise", label: "Grandfather promise", item: "#394", blurb: "The promise in full, with the four cases it does not cover." },
+  { href: "/pro/cancel", label: "Cancel path", item: "#395", blurb: "Click through the whole cancellation and read the dark patterns it refuses." },
+  { href: "/pro/referral", label: "Referral credit", item: "#396", blurb: "One month each, capped at six a year, with the impossible states clamped." },
+  { href: "/pro/enterprise", label: "Enterprise asks", item: "#397", blurb: "SSO, SLA, DPA, purchase orders — what is answerable today and what is not." },
+  { href: "/pro/changelog", label: "Pro changelog", item: "#399", blurb: "Every Pro claim with its free alternative, generated from the ledger." },
 ];
 
 /** The routes that exist in this batch. Section 14's remaining pages (teams,
