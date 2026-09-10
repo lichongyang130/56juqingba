@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CachePanel, PerfNav } from "@/components/perf-ui";
-import { CACHE_RULES } from "@/lib/cache-rules";
+import { CACHE_RULES, EMBED_HEADERS } from "@/lib/cache-rules";
 
 export const metadata = {
   title: "Cache headers — Motif UI",
@@ -28,6 +28,23 @@ export default function PerfCachingPage() {
 
       <div className="mt-10">
         <CachePanel />
+      </div>
+
+      <div className="mt-5 rounded-3xl border border-white/8 bg-panel p-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">The one non-caching header rule</p>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          {EMBED_HEADERS[0].why}
+        </p>
+        <ul className="mt-3 space-y-1.5">
+          {EMBED_HEADERS[0].headers.map((h) => (
+            <li key={h.key} className="rounded-2xl border border-white/8 bg-white/[.02] px-3.5 py-2.5">
+              <span className="font-mono text-[10px] text-ink-dim">
+                {EMBED_HEADERS[0].source} · {h.key}
+              </span>
+              <span className="mt-0.5 block font-mono text-[10px] text-ink-faint">{h.value}</span>
+            </li>
+          ))}
+        </ul>
       </div>
 
       <div className="mt-10 rounded-3xl border border-white/8 bg-panel p-6">

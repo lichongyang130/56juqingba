@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { CACHE_RULES } from "./src/lib/cache-rules";
+import { CACHE_RULES, EMBED_HEADERS } from "./src/lib/cache-rules";
 
 // #405 — cache headers. Immutable for fingerprinted assets (Next hashes them,
 // so a changed file is a changed URL), and a short shared-cache window for
@@ -11,10 +11,15 @@ const nextConfig: NextConfig = {
   async headers() {
     // The rule list lives in src/lib/cache-rules.ts so that the page explaining
     // it and the build enforcing it cannot disagree.
-    return CACHE_RULES.map((rule) => ({
-      source: rule.source,
-      headers: [{ key: "Cache-Control", value: rule.value }],
-    }));
+    return [
+      ...CACHE_RULES.map((rule) => ({
+        source: rule.source,
+        headers: [{ key: "Cache-Control", value: rule.value }],
+      })),
+      // Not caching-related, but declared in the same module so the embed page
+      // prints the headers the server actually sets.
+      ...EMBED_HEADERS.map((rule) => ({ source: rule.source, headers: rule.headers })),
+    ];
   },
 };
 

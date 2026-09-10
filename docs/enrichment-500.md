@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 423 / 500 shipped (batches 1–58, in order) · Sections 1–15 complete ✅ · Section 16 in progress (9/15)
+## Progress — 427 / 500 shipped (batches 1–59, in order) · Sections 1–15 complete ✅ · Section 16 in progress (12/15)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -435,6 +435,10 @@ names, behaviours and where they plug into the existing pages.
 | 421 | Storybook decorator | [/api/exports/motif-storybook-decorator.jsx](/api/exports/motif-storybook-decorator.jsx) · real decorator code setting the palette as custom properties, with "not published to npm" said plainly |
 | 422 | Open Graph helper | [/integrations/og](/integrations/og) · blocks built from the three most-copied catalog records, containing no image reference and saying why |
 | 423 | Print stylesheet for Learn | [/integrations/print](/integrations/print) · an @media print block compiled into the site and printed on the page from the stylesheet itself |
+| 424 | React package scaffold | [/integrations/react](/integrations/react) · one component a package could ship honestly — tokens as custom properties — with the npm layout and the publishing gap stated |
+| 425 | HTML/CSS single-file copy | [/api/exports/single-file.html](/api/exports/single-file.html) · 3.6 KB with 0 external references and 0 script tags, checked in the output rather than by eye |
+| 426 | Export to CodeSandbox | [/integrations/codesandbox](/integrations/codesandbox) · 3 real files for a sandbox, and why the one-click define link is a named gap instead of an unverified URL |
+| 427 | Framer-style code embed | [/embed/tilt-card](/embed/tilt-card) · a chrome-free route per asset with frame-ancestors and noindex set, plus the allowlist a static build cannot enforce |
 
 ---
 
@@ -999,7 +1003,7 @@ The cache work is the section's other carry-forward. `src/lib/cache-rules.ts` ho
 
 ---
 
-## 16. Integrations & exports — 15 bridges — 9/15 shipped, in progress
+## 16. Integrations & exports — 15 bridges — 12/15 shipped, in progress
 
 - **VS Code snippet pack**: install Motif snippets as editor completions.
 - **Figma variable sync**: export tokens as Figma variables (documented format).

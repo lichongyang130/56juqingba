@@ -14,6 +14,9 @@ const PAGE_FOR: Record<string, string> = {
   "figma-variables.json": "/integrations/figma",
   "catalog.json": "/integrations/catalog",
   "motif.code-snippets": "/integrations/vscode",
+  "motif-react-wrapper.jsx": "/integrations/react",
+  "single-file.html": "/integrations/single-file",
+  "codesandbox-files.json": "/integrations/codesandbox",
   "changelog.xml": "/integrations/feed",
   "motif-storybook-decorator.jsx": "/integrations/storybook",
   "learn-print.css": "/integrations/print",
@@ -67,13 +70,18 @@ export default function IntegrationsPage() {
       </div>
 
       <div className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
-        <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Hand-written markup, generated blocks</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Two integrations that are not files</p>
         <p className="mt-2 text-[11px] leading-relaxed text-ink-dim">
-          The Open Graph helper has no file of its own — it builds a block per asset. It lives at{" "}
+          The{" "}
           <Link href="/integrations/og" className="underline decoration-dotted">
-            /integrations/og
+            Open Graph helper
           </Link>{" "}
-          where three assets&apos; blocks are printed from their catalog records.
+          builds a block per asset instead of shipping one download, and the{" "}
+          <Link href="/integrations/embed" className="underline decoration-dotted">
+            embed route
+          </Link>{" "}
+          serves frames rather than bytes — it is a page other sites point an iframe at, with the frame headers printed beside
+          the markup. Both are excluded from the download list above because neither has a single file to fetch.
         </p>
       </div>
 

@@ -46,3 +46,17 @@ export const CACHE_PLAN = {
     "Revalidate on write, not on read: a purge that only happens when someone visits is a cache that stays wrong for whoever arrives second.",
   ],
 };
+
+/** Headers that are not about caching. Kept beside the cache rules because
+ *  they are set the same way, in one module next.config.ts imports — and the
+ *  page that documents the embed prints them from here. */
+export const EMBED_HEADERS: { source: string; headers: { key: string; value: string }[]; why: string }[] = [
+  {
+    source: "/embed/:path*",
+    headers: [
+      { key: "Content-Security-Policy", value: "frame-ancestors *" },
+      { key: "X-Robots-Tag", value: "noindex" },
+    ],
+    why: "The frame policy says out loud that the route exists to be framed; without it a future default CSP would silently break every embed. Noindex keeps 107 near-identical demo-only pages out of search results, where they would compete with the asset pages that explain them. A per-site allowlist would need a server reading Origin, which this build does not have.",
+  },
+];

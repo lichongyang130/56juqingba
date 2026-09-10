@@ -255,6 +255,231 @@ ${items}
 `;
 }
 
+/* ---------- React package scaffold ---------- */
+
+/** A real wrapper a package could ship: it turns token values into custom
+ *  properties on a subtree. Markup wrappers that "style" a component they do
+ *  not own would be a lie, so this one only does what it can do exactly. */
+export function reactWrapper(): string {
+  const t = tokenSet();
+  const vars = Object.entries(t.colors)
+    .map(([k, v]) => `  "--color-${k}": "${v}",`)
+    .join("\n");
+  return `/* Motif UI — token provider.
+ *
+ * This is the one component a package could ship honestly today: it puts the
+ * design tokens on a subtree as custom properties, which is exactly what this
+ * site's stylesheet does at :root. It does not render the catalog components,
+ * because their source is not part of the export.
+ *
+ * Intended package layout (not published — see /integrations/react):
+ *   motif-tokens/package.json      name, version, peerDependencies: react>=18
+ *   motif-tokens/index.js          this file
+ *   motif-tokens/tokens.json       the DTCG file from /api/exports/tokens.json
+ *   motif-tokens/README.md         what it does and what it does not
+ */
+"use client";
+
+import React from "react";
+
+const TOKENS = {
+${vars}
+};
+
+export function MotifTokens({ mode = "dark", children }) {
+  return React.createElement(
+    "div",
+    {
+      "data-motif-mode": mode,
+      style: TOKENS,
+    },
+    children
+  );
+}
+
+export const motifTokens = TOKENS;
+
+export default MotifTokens;
+`;
+}
+
+/* ---------- single-file HTML copy ---------- */
+
+/** One self-contained page: inline styles, no requests, no framework. The
+ *  markup is the layout vocabulary this site uses, not a catalog demo — the
+ *  demos' source is not stored, and a single-file export that quietly
+ *  substituted a simplified copy of one would be the wrong kind of help. */
+export function singleFileHtml(): string {
+  const t = tokenSet();
+  const body = t.colors.bg;
+  const panel = t.colors.panel;
+  const ink = t.colors.ink;
+  const dim = t.colors["ink-dim"];
+  const faint = t.colors["ink-faint"];
+  const accent = t.colors.accent;
+  const accent2 = t.colors["accent-2"];
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motif UI — single-file starter</title>
+<meta name="description" content="One file, inline styles, no requests. Generated from the design tokens in /api/exports/tokens.json.">
+<style>
+  /* Tokens, inlined. Nothing here is fetched. */
+  :root {
+    --color-bg: ${body};
+    --color-panel: ${panel};
+    --color-ink: ${ink};
+    --color-ink-dim: ${dim};
+    --color-ink-faint: ${faint};
+    --color-accent: ${accent};
+    --color-accent-2: ${accent2};
+    --radius-lg: ${t.radii.lg ?? "24px"};
+    --radius-md: ${t.radii.md ?? "16px"};
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 3rem 1.25rem;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: ${t.fonts.sans?.split(",")[0] ?? "system-ui"};
+    line-height: 1.6;
+  }
+  .wrap { max-width: 42rem; margin: 0 auto; }
+  .kicker {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-accent-2);
+  }
+  h1 { margin: 0.5rem 0 0; font-size: 2.25rem; line-height: 1.1; letter-spacing: -0.02em; }
+  .gradient {
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .panel {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    background: var(--color-panel);
+  }
+  .panel h2 { margin: 0; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-ink-faint); }
+  .panel p { margin: 0.6rem 0 0; color: var(--color-ink-dim); }
+  .stats { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); margin-top: 2rem; }
+  .stat { padding: 0.9rem 1rem; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-md); }
+  .stat dt { font-size: 0.7rem; color: var(--color-ink-faint); }
+  .stat dd { margin: 0.2rem 0 0; font-size: 1.35rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.25rem; }
+  .chip {
+    padding: 0.3rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    color: var(--color-ink-dim);
+  }
+  footer { margin-top: 3rem; font-size: 0.75rem; color: var(--color-ink-faint); }
+  footer a { color: var(--color-accent-2); }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="kicker">Single-file starter</p>
+    <h1>Copy less. <span class="gradient">Ship more.</span></h1>
+
+    <section class="panel">
+      <h2>Where these values came from</h2>
+      <p>
+        Every colour above is a token from the site's stylesheet, written into this file once.
+        There is no stylesheet request, no font file and no script: open it from disk and it renders.
+      </p>
+    </section>
+
+    <dl class="stats">
+      <div class="stat"><dt>Tokens inlined</dt><dd>${Object.keys(t.colors).length + Object.keys(t.radii).length}</dd></div>
+      <div class="stat"><dt>Network requests</dt><dd>0</dd></div>
+      <div class="stat"><dt>Script bytes</dt><dd>0</dd></div>
+      <div class="stat"><dt>File weight</dt><dd>{{WEIGHT}} KB</dd></div>
+    </dl>
+
+    <div class="chips">
+      <span class="chip">no framework</span>
+      <span class="chip">no build step</span>
+      <span class="chip">tokens only</span>
+      <span class="chip">printable</span>
+    </div>
+
+    <footer>
+      Generated from <code>/api/exports/tokens.json</code>. The catalog's component source is not stored,
+      so this starter carries the layout vocabulary rather than a copy of any demo.
+    </footer>
+  </main>
+</body>
+</html>
+`;
+}
+
+/* ---------- CodeSandbox file set ---------- */
+
+/** The three files a sandbox needs, as one JSON bundle. The page explains why
+ *  this is a file set rather than a one-click deep link. */
+export function codesandboxFiles(): string {
+  const tokens = JSON.parse(tokensJson()) as { color: Record<string, { $value: string }> };
+  const cssVars = Object.entries(tokens.color)
+    .map(([k, v]) => `  --color-${k}: ${v.$value};`)
+    .join("\n");
+  const payload = {
+    $description:
+      "Files for a CodeSandbox project. Paste them into a new sandbox, or upload them as a zip. The one-click define link is a named gap — see /integrations/codesandbox.",
+    files: {
+      "sandbox.config.json": JSON.stringify({ template: "static" }, null, 2) + "\n",
+      "package.json":
+        JSON.stringify(
+          {
+            name: "motif-single-file",
+            version: "0.0.0",
+            private: true,
+            description: "Motif UI tokens as a static page.",
+          },
+          null,
+          2
+        ) + "\n",
+      "index.html": `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motif tokens in a sandbox</title>
+<style>
+  :root {
+${cssVars}
+    --radius-lg: 24px;
+  }
+  body { margin: 0; padding: 3rem 1.25rem; background: var(--color-bg); color: var(--color-ink);
+         font-family: ui-sans-serif, system-ui, sans-serif; }
+  .card { max-width: 38rem; margin: 0 auto; padding: 1.5rem; border: 1px solid rgba(255,255,255,.08);
+          border-radius: var(--radius-lg); background: var(--color-panel); }
+  p { color: var(--color-ink-dim); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Motif tokens, running in a sandbox</h1>
+    <p>${Object.keys(tokens.color).length} colour tokens, inlined. Edit any value and the page follows.</p>
+  </div>
+</body>
+</html>
+`,
+    },
+  };
+  return JSON.stringify(payload, null, 2) + "\n";
+}
+
 /* ---------- the print stylesheet, as text ---------- */
 
 /** The print block, read out of the stylesheet. The page that documents it
@@ -428,6 +653,30 @@ export const EXPORTS: ExportEntry[] = [  {
     item: "#419",
     blurb: "Five snippets for the layout patterns this site repeats, using its real utility classes.",
     build: vscodeSnippets,
+  },
+  {
+    file: "motif-react-wrapper.jsx",
+    label: "React token provider",
+    contentType: "text/jsx; charset=utf-8",
+    item: "#424",
+    blurb: "The one component a package could ship honestly: tokens as custom properties on a subtree.",
+    build: reactWrapper,
+  },
+  {
+    file: "single-file.html",
+    label: "Single-file starter",
+    contentType: "text/html; charset=utf-8",
+    item: "#425",
+    blurb: "One self-contained page — inline tokens, zero requests, no script — for the layout vocabulary.",
+    build: () => singleFileHtml().replace("{{WEIGHT}}", (Buffer.byteLength(singleFileHtml(), "utf8") / 1024).toFixed(1)),
+  },
+  {
+    file: "codesandbox-files.json",
+    label: "CodeSandbox file set",
+    contentType: "application/json; charset=utf-8",
+    item: "#426",
+    blurb: "Three files to paste into a sandbox, because the one-click deep link cannot be verified here.",
+    build: codesandboxFiles,
   },
   {
     file: "changelog.xml",
