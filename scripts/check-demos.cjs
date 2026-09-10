@@ -42,6 +42,9 @@ const NEW_SCENES = [
   { slug: "logo-chase", marker: "Roster chase", behaviors: ["hover", "click"] },
   { slug: "shimmer-text", marker: "One-pass shimmer", behaviors: ["scroll"] },
   { slug: "ring-ticks", marker: "Audit ring", behaviors: ["click"] },
+  { slug: "bezier-drawer", marker: "Cubic-bezier drawer", behaviors: ["drag", "keyboard"] },
+  { slug: "counter-band", marker: "Counters, in a row", behaviors: ["click", "scroll"] },
+  { slug: "linked-cards", marker: "Hover-linked cards", behaviors: ["hover", "keyboard"] },
 ];
 
 (async () => {
@@ -78,6 +81,12 @@ const NEW_SCENES = [
     const embed = await get(`/embed/${scene.slug}`);
     ok(`/embed/${scene.slug} renders it without chrome`, embed.status === 200 && !embed.text.includes("Skip to content"));
   }
+
+  // The counter band is the one scene whose content is a number, so it has to
+  // survive having no script: the HTML must carry the real total, not a zero.
+  const band = await get("/components/counter-band");
+  const catalogTotal = catalog.components.length;
+  ok("counter band prints the real totals without JavaScript", band.text.includes(catalogTotal.toLocaleString("en-US")) && band.text.includes("135,020"), `expected ${catalogTotal}`);
 
   const hub = await get("/components");
   ok("the library lists every scene this guard knows about", hub.status === 200 && NEW_SCENES.every((s) => hub.text.includes(s.slug)));

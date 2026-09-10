@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 442 / 500 shipped (batches 1–64, in order) · Sections 1–16 complete ✅ · Section 17 in progress (12/25)
+## Progress — 445 / 500 shipped (batches 1–65, in order) · Sections 1–16 complete ✅ · Section 17 in progress (15/25)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -454,6 +454,9 @@ names, behaviours and where they plug into the existing pages.
 | 440 | Infinite logo chase | [/components/logo-chase](/components/logo-chase) · two columns of roster wordmarks at different speeds, drawn as type rather than images, stopped for reduced motion until Play |
 | 441 | Shimmer text reveal | [/components/shimmer-text](/components/shimmer-text) · one 1400ms gradient pass when the headline enters view, ending on the final frame; the words are in the DOM the whole time |
 | 442 | Progress ring with threshold ticks | [/components/ring-ticks](/components/ring-ticks) · the ring draws a real share of the catalog (audit ≥ 95) and pauses at each labelled tick, with the line printed because the site publishes no threshold |
+| 443 | Interactive bezier drawer | [/components/bezier-drawer](/components/bezier-drawer) · two draggable handles (arrow keys too), the CSS value printed live, a probe cursor reading y at any t, and a preview dot animated by the exported curve itself |
+| 444 | Animated counters band | [/components/counter-band](/components/counter-band) · four figures counting to the catalog's real totals — components, prompts, guides, copies — with the single-value odometer asset linked from the card |
+| 445 | Hover-linked cards | [/components/linked-cards](/components/linked-cards) · focus dims siblings exactly as hover does, nothing is disabled, contrast stays readable, and reduced motion drops the saturation shift |
 
 ---
 
@@ -1043,7 +1046,7 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 17. More interactive scenes & motion — 25 demos — 12/25 shipped, in progress
+## 17. More interactive scenes & motion — 25 demos — 15/25 shipped, in progress
 
 - **Drag-to-reorder list**: rows that glide when you drag, with a11y keyboard reorder.
 - **Swipeable cards (deck)**: tinder-style stack with undo and reduced-motion note.

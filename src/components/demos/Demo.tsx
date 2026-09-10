@@ -3,6 +3,7 @@
 // Original live demos for Motif UI. Every visual below is authored in-house;
 // none of the code is taken from third-party component libraries.
 
+import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BACKGROUNDS, COMPONENTS, PROMPTS } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
@@ -8820,6 +8821,383 @@ function AuditRing() {
   );
 }
 
+/* -------------------- SECTION 17 · BEZIER, COUNTERS, LINKED CARDS -------------------- */
+
+// The same curve helpers the Easing Lab uses, so a curve copied from this card
+// and a curve drawn in the Lab mean the same thing.
+function curvePoint(x1: number, y1: number, x2: number, y2: number, t: number) {
+  const u = 1 - t;
+  return {
+    x: 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t,
+    y: 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t,
+  };
+}
+
+function curveYAt(x1: number, y1: number, x2: number, y2: number, targetX: number) {
+  let best = 0;
+  let bestErr = Infinity;
+  for (let i = 0; i <= 600; i++) {
+    const t = i / 600;
+    const { x, y } = curvePoint(x1, y1, x2, y2, t);
+    const err = Math.abs(x - targetX);
+    if (err < bestErr) {
+      bestErr = err;
+      best = y;
+    }
+  }
+  return best;
+}
+
+const BEZIER_PRESETS = [
+  { name: "ease-out-expo", x1: 0.16, y1: 1, x2: 0.3, y2: 1 },
+  { name: "back-out", x1: 0.34, y1: 1.56, x2: 0.64, y2: 1 },
+  { name: "ease-in-out-quart", x1: 0.76, y1: 0, x2: 0.24, y2: 1 },
+];
+
+function BezierDrawer() {
+  const [[x1, y1], setP1] = useState<[number, number]>([0.16, 1]);
+  const [[x2, y2], setP2] = useState<[number, number]>([0.3, 1]);
+  const [dragging, setDragging] = useState<1 | 2 | null>(null);
+  const [t, setT] = useState(0);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const reduced = useReducedMotion();
+
+  // y is unclamped on purpose: overshoot is a real property of a curve, and the
+  // chart pads to show it rather than cropping the thing you are drawing.
+  const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+  const pad = 34;
+  const size = 200;
+  const toSvg = (clientX: number, clientY: number) => {
+    const svg = svgRef.current;
+    if (!svg) return null;
+    const r = svg.getBoundingClientRect();
+    const x = ((clientX - r.left) / r.width) * (size + pad * 2) - pad;
+    const y = ((clientY - r.top) / r.height) * (size + pad * 2) - pad;
+    return { x: clamp(x / size, -0.4, 1.4), y: clamp(1 - y / size, -0.6, 1.6) };
+  };
+  const toPx = (x: number, y: number) => ({ px: x * size, py: (1 - y) * size });
+  const css = `cubic-bezier(${x1.toFixed(2)}, ${y1.toFixed(2)}, ${x2.toFixed(2)}, ${y2.toFixed(2)})`;
+
+  const setPoint = (which: 1 | 2, x: number, y: number) => {
+    if (which === 1) setP1([x, y]);
+    else setP2([x, y]);
+  };
+
+  const nudge = (e: React.KeyboardEvent, which: 1 | 2) => {
+    const step = e.shiftKey ? 0.1 : 0.01;
+    const cur = which === 1 ? [x1, y1] : [x2, y2];
+    let [nx, ny] = cur;
+    if (e.key === "ArrowLeft") nx -= step;
+    else if (e.key === "ArrowRight") nx += step;
+    else if (e.key === "ArrowUp") ny += step;
+    else if (e.key === "ArrowDown") ny -= step;
+    else return;
+    e.preventDefault();
+    setPoint(which, clamp(nx, -0.4, 1.4), clamp(ny, -0.6, 1.6));
+  };
+
+  // The preview dot is moved by the browser's own animation of the exported
+  // curve — not by a script sampling the same maths a second time. Restarting
+  // it is an external side effect on a DOM node, so no state is involved.
+  const [runKey, setRunKey] = useState(0);
+  const dotRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const dot = dotRef.current;
+    if (!dot) return;
+    if (reduced) {
+      dot.style.transform = "translateX(152px)";
+      return;
+    }
+    dot.style.transform = "translateX(0px)";
+    const animation = dot.animate(
+      [{ transform: "translateX(0px)" }, { transform: "translateX(152px)" }],
+      { duration: 900, easing: css, fill: "forwards" }
+    );
+    return () => animation.cancel();
+  }, [css, runKey, reduced]);
+
+  const path = (() => {
+    const steps = 40;
+    let d = `M 0 ${size}`;
+    for (let i = 1; i <= steps; i++) {
+      const p = curvePoint(x1, y1, x2, y2, i / steps);
+      d += ` L ${(p.x * size).toFixed(1)} ${(size - p.y * size).toFixed(1)}`;
+    }
+    return d;
+  })();
+  const pA = toPx(x1, y1);
+  const pB = toPx(x2, y2);
+  const y = t >= 0 ? curveYAt(x1, y1, x2, y2, t) : 0;
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(139,92,246,0.12),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/80">Cubic-bezier drawer</p>
+          <p className="font-mono text-[10px] tabular-nums text-ink-faint">{css}</p>
+        </div>
+
+        <div className="flex gap-3">
+          <svg
+            ref={svgRef}
+            viewBox={`${-pad} ${-pad} ${size + pad * 2} ${size + pad * 2}`}
+            className="h-44 w-44 shrink-0 touch-none rounded-2xl border border-white/10 bg-white/[.02]"
+            role="application"
+            aria-label="Bezier editor. Drag either handle, or focus one and use the arrow keys."
+            onPointerMove={(e) => {
+              if (!dragging) return;
+              const p = toSvg(e.clientX, e.clientY);
+              if (p) setPoint(dragging, p.x, p.y);
+            }}
+            onPointerUp={() => setDragging(null)}
+            onPointerLeave={() => setDragging(null)}
+          >
+            <rect x={0} y={0} width={size} height={size} fill="rgba(255,255,255,.02)" stroke="rgba(255,255,255,.08)" />
+            <line x1={0} y1={size} x2={size} y2={0} stroke="rgba(255,255,255,.12)" strokeDasharray="4 5" />
+            <line x1={0} y1={size} x2={pA.px} y2={pA.py} stroke="rgba(167,139,250,.4)" />
+            <line x1={size} y1={0} x2={pB.px} y2={pB.py} stroke="rgba(56,189,248,.4)" />
+            <path d={path} fill="none" stroke="#a78bfa" strokeWidth="2.5" />
+            <circle cx={pA.px} cy={pA.py} r="6" fill="#a78bfa" />
+            {[1, 2].map((which) => {
+              const p = which === 1 ? pA : pB;
+              const active = dragging === which;
+              return (
+                <circle
+                  key={which}
+                  cx={p.px}
+                  cy={p.py}
+                  r={active ? 10 : 8}
+                  fill={which === 1 ? "#a78bfa" : "#38bdf8"}
+                  fillOpacity={active ? 0.9 : 0.55}
+                  stroke="#08090f"
+                  strokeWidth="2"
+                  tabIndex={0}
+                  role="slider"
+                  aria-label={`Control point ${which}`}
+                  aria-valuetext={`x ${(which === 1 ? x1 : x2).toFixed(2)}, y ${(which === 1 ? y1 : y2).toFixed(2)}`}
+                  aria-valuemin={0}
+                  aria-valuemax={1}
+                  aria-valuenow={which === 1 ? x1 : x2}
+                  className="cursor-grab focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/70"
+                  onPointerDown={(e) => {
+                    (e.target as Element).setPointerCapture?.(e.pointerId);
+                    setDragging(which as 1 | 2);
+                  }}
+                  onKeyDown={(e) => nudge(e, which as 1 | 2)}
+                />
+              );
+            })}
+          </svg>
+
+          <div className="min-w-0 flex-1 space-y-2">
+            <div className="rounded-2xl border border-white/10 bg-white/[.02] p-3">
+              <p className="text-[9px] font-bold uppercase tracking-widest text-ink-faint">Preview</p>
+              <div className="relative mt-2 h-8">
+                <span ref={dotRef} className="absolute left-0 top-1 h-5 w-5 rounded-full bg-violet-400" />
+                <span className="absolute inset-x-0 top-3.5 h-px bg-white/10" />
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <button type="button" onClick={() => setRunKey((k) => k + 1)} className="btn btn-ghost !px-2.5 !py-1.5 text-[10px]">
+                  Run
+                </button>
+                <span className="text-[9px] text-ink-faint">the dot uses the curve above, not a copy of it</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/[.02] p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-ink-faint">Probe t = {t.toFixed(2)}</span>
+                <span className="font-mono text-[9px] tabular-nums text-ink-dim">y = {y.toFixed(3)}</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                value={t}
+                onChange={(e) => setT(Number(e.target.value))}
+                aria-label="Probe the curve's progress"
+                className="mt-1.5 w-full accent-violet-400"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {BEZIER_PRESETS.map((p) => (
+            <button
+              key={p.name}
+              type="button"
+              onClick={() => {
+                setP1([p.x1, p.y1]);
+                setP2([p.x2, p.y2]);
+              }}
+              className="rounded-lg border border-white/10 px-2 py-1 font-mono text-[9px] text-ink-dim transition-colors hover:border-violet-400/50 hover:text-ink"
+            >
+              {p.name}
+            </button>
+          ))}
+          <a href="/lab" className="rounded-lg border border-dashed border-white/15 px-2 py-1 text-[9px] text-ink-faint transition-colors hover:border-violet-400/50 hover:text-ink">
+            Easing Lab has the full chart →
+          </a>
+        </div>
+
+        <p aria-live="polite" className="mt-2 min-h-[1rem] text-[10px] leading-relaxed text-violet-200/80">
+          {dragging
+            ? `Dragging handle ${dragging}. ${css}`
+            : "Drag a handle, or focus one and use the arrow keys — shift moves ten times as far."}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          Handles may go outside the box, because overshoot is a property of the curve rather than a mistake to clamp away. The
+          preview dot runs on a real CSS transition with the value above, and the Lab&apos;s chart is the same maths with a bigger
+          canvas — the two never disagree because they share these helpers.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const COUNTER_ROWS = [
+  { label: "Components", value: COMPONENTS.length, suffix: "", note: "every one MIT, all in the catalog" },
+  { label: "Run-tested prompts", value: PROMPTS.length, suffix: "", note: "each with its model runs listed" },
+  { label: "Guides", value: LEARN_ARTICLES.length, suffix: "", note: "CC BY 4.0 editorial" },
+  { label: "Copies this month", value: 135020, suffix: "", note: "the site's own stored counter total" },
+];
+
+/** Counts up to the real figure, but *starts* at it.
+ *
+ *  The first render is the server's, and the server has no animation: the HTML
+ *  carries the true number, so a crawler, a text browser or a reader with
+ *  scripting off gets the figure rather than a zero. The counting begins on the
+ *  first animation frame after mount, which is why this is allowed to render a
+ *  large number for one frame. */
+function OdometerValue({ value, run }: { value: number; run: number }) {
+  const [shown, setShown] = useState(value);
+  useEffect(() => {
+    const start = performance.now();
+    const duration = 1100;
+    let frame = 0;
+    const step = (now: number) => {
+      const p = Math.min(1, (now - start) / duration);
+      // ease-out-expo, the same curve the Easing Lab ships as a preset
+      const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+      setShown(Math.round(value * eased));
+      if (p < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [value, run]);
+  return <>{shown.toLocaleString("en-US")}</>;
+}
+
+function CounterBand() {
+  const [run, setRun] = useState(0);
+  const reduced = useReducedMotion();
+  const total = COUNTER_ROWS.reduce((a, r) => a + r.value, 0);
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(56,189,248,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-sky-300/80">Counters, in a row</p>
+          <p className="text-[10px] tabular-nums text-ink-faint">
+            {reduced ? "reduced motion: values shown at rest" : run ? "counting" : "press Run"}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          {COUNTER_ROWS.map((row) => (
+            <div key={row.label} className="rounded-2xl border border-white/10 bg-white/[.02] p-3">
+              <p className="text-[9px] font-bold uppercase tracking-widest text-ink-faint">{row.label}</p>
+              <p className="mt-1 text-xl font-extrabold tabular-nums text-ink">
+                {reduced ? row.value.toLocaleString("en-US") : <OdometerValue value={row.value} run={run} />}
+              </p>
+              <p className="mt-0.5 text-[9px] leading-relaxed text-ink-faint">{row.note}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setRun((r) => r + 1)}
+            disabled={reduced}
+            className="btn btn-ghost !px-3.5 !py-2 text-[11px] disabled:opacity-50"
+          >
+            Run again
+          </button>
+          <Link href="/components/odometer-counter" className="rounded-lg border border-dashed border-white/15 px-2 py-1 text-[10px] text-ink-faint transition-colors hover:border-sky-400/50 hover:text-ink">
+            The odometer asset does one of these, in depth →
+          </Link>
+        </div>
+
+        <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+          Every figure is read from the catalog at render and printed in the HTML before any script runs — the counting is an
+          enhancement on top of a number that is already there, so a crawler or a scriptless reader sees the figure rather than
+          a zero. The four cells add up to {total.toLocaleString("en-US")} things, and none of them is typed into this card. The odometer next door is the single-value version with its own timing controls;
+          this row is the band you put under a hero. The easing is ease-out-expo, the same curve the Easing Lab ships as a preset.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const LINKED_CARDS = [...COMPONENTS].sort((a, b) => b.copies - a.copies).slice(0, 4);
+
+function LinkedCards() {
+  const [active, setActive] = useState<string | null>(null);
+  const reduced = useReducedMotion();
+  const dim = (slug: string) => active !== null && active !== slug;
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(70%_90%_at_50%_100%,rgba(244,114,182,0.10),transparent_60%),#08090f] px-6 py-6">
+      <div className="w-full max-w-md">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-pink-300/80">Hover-linked cards</p>
+          <p className="text-[10px] text-ink-faint">{active ? `reading ${active}` : "hover or focus a card"}</p>
+        </div>
+
+        <ul className="grid grid-cols-2 gap-2">
+          {LINKED_CARDS.map((c) => {
+            const isDim = dim(c.slug);
+            return (
+              <li key={c.slug}>
+                <Link
+                  href={`/components/${c.slug}`}
+                  onMouseEnter={() => setActive(c.slug)}
+                  onMouseLeave={() => setActive(null)}
+                  onFocus={() => setActive(c.slug)}
+                  onBlur={() => setActive(null)}
+                  className="block rounded-2xl border border-white/10 bg-white/[.02] p-3 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-400"
+                  style={{ opacity: isDim ? 0.35 : 1, filter: isDim && !reduced ? "saturate(0.5)" : undefined }}
+                >
+                  <p className="text-[11px] font-bold text-ink">{c.title}</p>
+                  <p className="mt-0.5 text-[9px] leading-relaxed text-ink-dim">
+                    {c.kind} · {c.bundleKb} KB · quality {c.qualityScore}
+                  </p>
+                  <p className="mt-1.5 text-[9px] tabular-nums text-ink-faint">{c.copies.toLocaleString("en-US")} copies this month</p>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+
+        <p aria-live="polite" className="mt-3 min-h-[1rem] text-[10px] leading-relaxed text-pink-200/80">
+          {active
+            ? `${active} is the focus of the row; its siblings are dimmed, not disabled — each link still works.`
+            : "Four of the most-copied assets in the catalog, with their real copy counts."}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-ink-faint">
+          Focus does exactly what hover does, so the effect is available to a keyboard reader rather than being a mouse-only
+          flourish. The dimmed cards keep their contrast above the text threshold instead of fading to unreadable, and reduced
+          motion drops the saturation shift, leaving only the opacity difference.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // Exported because the keys are the catalog's demo vocabulary, not a private
 // detail: the props panel and the harness both want the same list.
 export const DEMO_KEYS = [
@@ -8840,6 +9218,7 @@ export const DEMO_KEYS = [
   "zoom-lens", "chart-scrubber", "scroll-pin",
   "flip-stack", "draw-path", "morph-icons",
   "logo-chase", "shimmer-text", "ring-ticks",
+  "bezier-drawer", "counter-band", "linked-cards",
   "pagination-ellipsis", "toc-spine", "tabs-indicator", "sticky-subnav",
   "back-to-top", "disclosure-list", "fullscreen-overlay-menu", "skeleton-card",
   "status-banner", "progress-ring", "spinner-status", "empty-state-trio",
@@ -8935,6 +9314,9 @@ export function DemoView({ demo, props = {} }: { demo: string; props?: DemoProps
     case "logo-chase": return <InfiniteChase />;
     case "shimmer-text": return <ShimmerReveal />;
     case "ring-ticks": return <AuditRing />;
+    case "bezier-drawer": return <BezierDrawer />;
+    case "counter-band": return <CounterBand />;
+    case "linked-cards": return <LinkedCards />;
     case "breadcrumb-trail": return <BreadcrumbTrail />;
     case "pagination-ellipsis": return <PaginationEllipsis {...props} />;
     case "toc-spine": return <TocSpine />;
