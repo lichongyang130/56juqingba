@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-## Progress — 419 / 500 shipped (batches 1–57, in order) · Sections 1–15 complete ✅ · Section 16 in progress (5/15)
+## Progress — 423 / 500 shipped (batches 1–58, in order) · Sections 1–15 complete ✅ · Section 16 in progress (9/15)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -431,6 +431,10 @@ names, behaviours and where they plug into the existing pages.
 | 417 | Figma variable sync | [/integrations/figma](/integrations/figma) · 19 variables in Figma's import shape, with anything unrepresentable listed instead of coerced |
 | 418 | Catalog metadata endpoint | [/api/exports/catalog.json](/api/exports/catalog.json) · 107 components and 74 prompts with their stored scores, so a claim can be diffed rather than screenshotted |
 | 419 | VS Code snippet pack | [/api/exports/motif.code-snippets](/api/exports/motif.code-snippets) · 5 snippets using the site's real utility classes, with the components excluded and the reason stated |
+| 420 | RSS for the changelog | [/api/exports/changelog.xml](/api/exports/changelog.xml) · all 12 entries as RSS 2.0, each measured size change travelling inside the item description |
+| 421 | Storybook decorator | [/api/exports/motif-storybook-decorator.jsx](/api/exports/motif-storybook-decorator.jsx) · real decorator code setting the palette as custom properties, with "not published to npm" said plainly |
+| 422 | Open Graph helper | [/integrations/og](/integrations/og) · blocks built from the three most-copied catalog records, containing no image reference and saying why |
+| 423 | Print stylesheet for Learn | [/integrations/print](/integrations/print) · an @media print block compiled into the site and printed on the page from the stylesheet itself |
 
 ---
 
@@ -995,7 +999,7 @@ The cache work is the section's other carry-forward. `src/lib/cache-rules.ts` ho
 
 ---
 
-## 16. Integrations & exports — 15 bridges — 5/15 shipped, in progress
+## 16. Integrations & exports — 15 bridges — 9/15 shipped, in progress
 
 - **VS Code snippet pack**: install Motif snippets as editor completions.
 - **Figma variable sync**: export tokens as Figma variables (documented format).

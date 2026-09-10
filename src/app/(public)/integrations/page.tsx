@@ -6,15 +6,25 @@ export const metadata = {
   description: "Five live export endpoints built from the site's own tokens and catalog data, with what each one leaves out.",
 };
 
+/** Where each export is documented. One entry per registry file, so adding an
+ *  export without a page fails the type check rather than the link. */
+const PAGE_FOR: Record<string, string> = {
+  "tokens.json": "/integrations/tokens",
+  "motif-preset.cjs": "/integrations/tailwind",
+  "figma-variables.json": "/integrations/figma",
+  "catalog.json": "/integrations/catalog",
+  "motif.code-snippets": "/integrations/vscode",
+  "changelog.xml": "/integrations/feed",
+  "motif-storybook-decorator.jsx": "/integrations/storybook",
+  "learn-print.css": "/integrations/print",
+};
+
 const NOT_SHIPPED = [
   ["CodeSandbox export", "A deep link needs a hosted sandbox service and a place to upload the file; both are outside a static build."],
-  ["Storybook decorator", "Publishing it means owning a package on npm, which this project does not."],
-  ["iframe embed", "Embedding a demo on someone else's site needs an embed route with its own caching and origin rules."],
-  ["Browser bookmarklet", "The palette it would save is already readable from the page's own CSS variables — the bookmarklet would be a wrapper over a value the reader can see."],
-  ["CLI", "`npx motif add` needs a published package and a registry lookup. The command's intended behaviour is sketched in the docs, not shipped."],
-  ["Per-asset CI badge", "A badge that reports a score needs a badge service. What can be published honestly is the number, which is on every asset page."],
-  ["RSS for the changelog", "Requires a generated feed file at a stable URL — scheduled, not shipped in this batch."],
-  ["Print stylesheet for Learn", "A print stylesheet is a stylesheet, not a feature: it ships when the guides stop being read on screens. The guides print today with the browser's defaults."],
+  ["iframe embed", "Embedding a demo on someone else's site needs an embed route with its own caching and origin rules, and a page here that promises one without it would be a screenshot of a feature."],
+  ["Browser bookmarklet", "The palette it would save is already readable from the page's own CSS variables — the bookmarklet would be a wrapper over a value the reader can inspect."],
+  ["CLI", "`npx motif add` needs a published package and a registry lookup. There is no registry entry, so there is no command."],
+  ["Per-asset CI badge", "A badge that reports a score needs a badge service. What can be published honestly is the number, and it is on every asset page."],
 ];
 
 export default function IntegrationsPage() {
@@ -46,17 +56,7 @@ export default function IntegrationsPage() {
                 Download
               </a>
               <Link
-                href={
-                  e.file === "tokens.json"
-                    ? "/integrations/tokens"
-                    : e.file === "motif-preset.cjs"
-                      ? "/integrations/tailwind"
-                      : e.file === "figma-variables.json"
-                        ? "/integrations/figma"
-                        : e.file === "catalog.json"
-                          ? "/integrations/catalog"
-                          : "/integrations/vscode"
-                }
+                href={PAGE_FOR[e.file] ?? "/integrations"}
                 className="btn btn-ghost !px-3 !py-1.5 text-[11px]"
               >
                 Read it
@@ -66,7 +66,18 @@ export default function IntegrationsPage() {
         ))}
       </div>
 
-      <div className="mt-12 rounded-3xl border border-white/8 bg-panel p-6">
+      <div className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Hand-written markup, generated blocks</p>
+        <p className="mt-2 text-[11px] leading-relaxed text-ink-dim">
+          The Open Graph helper has no file of its own — it builds a block per asset. It lives at{" "}
+          <Link href="/integrations/og" className="underline decoration-dotted">
+            /integrations/og
+          </Link>{" "}
+          where three assets&apos; blocks are printed from their catalog records.
+        </p>
+      </div>
+
+      <div className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
         <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">How these are generated</p>
         <pre className="mt-3 overflow-x-auto rounded-2xl border border-white/8 bg-[#07090f] p-4 font-mono text-[10px] leading-relaxed text-ink-dim">{`src/app/globals.css  @theme block  →  src/lib/exports.ts  →  /api/exports/<file>
 src/lib/data.ts      catalog       →        "            →   printed on each page`}</pre>

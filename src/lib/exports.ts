@@ -225,6 +225,120 @@ export function vscodeSnippets(): string {
   return JSON.stringify(snippets, null, 2) + "\n";
 }
 
+/* ---------- changelog feed ---------- */
+
+/** RSS 2.0 for the changelog. Dates are the stored ISO dates; the feed says so
+ *  rather than inventing publication times. */
+export function changelogRss(site = "https://motif.example"): string {
+  const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const items = CHANGELOG.map((c) => {
+    const perf = c.perf ? ` Measured size change: ${c.perf.deltaKb} KB (${c.perf.scope}, ${c.perf.build}).` : "";
+    return `    <item>
+      <title>${esc(c.title)}</title>
+      <link>${site}/#changelog</link>
+      <guid isPermaLink="false">motif-changelog-${c.date}-${esc(c.title).slice(0, 24).replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase()}</guid>
+      <pubDate>${c.date}T00:00:00Z</pubDate>
+      <category>${esc(c.tag)}</category>
+      <description>${esc(c.body + perf)}</description>
+    </item>`;
+  }).join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Motif UI — changelog</title>
+    <link>${site}/#changelog</link>
+    <description>Studio log for Motif UI. ${CHANGELOG.length} entries; dates are the stored publication dates, not feed times.</description>
+    <language>en</language>
+${items}
+  </channel>
+</rss>
+`;
+}
+
+/* ---------- the print stylesheet, as text ---------- */
+
+/** The print block, read out of the stylesheet. The page that documents it
+ *  prints exactly these rules, so the documentation cannot describe a
+ *  print stylesheet that no longer exists. */
+export function printCss(): string {
+  const css = fs.readFileSync(path.join(ROOT, "src/app/globals.css"), "utf8");
+  const marker = "@media print {";
+  const start = css.indexOf(marker);
+  if (start === -1) return "/* no @media print block in src/app/globals.css */";
+  const end = css.indexOf("\n}", css.indexOf("@page", start));
+  return css.slice(start, end === -1 ? undefined : end + 2).trim();
+}
+
+/* ---------- Storybook decorator ---------- */
+
+export function storybookDecorator(): string {
+  const t = tokenSet();
+  const vars = Object.entries(t.colors)
+    .map(([k, v]) => `        "--color-${k}": "${v}",`)
+    .join("\n");
+  return `/* Motif UI Storybook decorator — tokens from src/app/globals.css.
+ *
+ * Wrap a preview so stories inherit this site's palette. The decorator sets
+ * custom properties rather than importing a stylesheet: the tokens are the
+ * contract, the component classes are not part of this export.
+ *
+ * Usage:  // .storybook/preview.js
+ *         import { withMotif } from "./motif-storybook-decorator";
+ *         export const decorators = [withMotif];
+ */
+import React from "react";
+
+const TOKENS = {
+${vars}
+};
+
+export const withMotif = (Story) =>
+  React.createElement(
+    "div",
+    {
+      style: {
+        ...TOKENS,
+        background: TOKENS["--color-bg"],
+        color: TOKENS["--color-ink"],
+        padding: "2rem",
+        fontFamily: ${JSON.stringify(t.fonts.sans?.split(",")[0] ?? "system-ui")},
+      },
+    },
+    React.createElement(Story)
+  );
+
+export default withMotif;
+`;
+}
+
+/* ---------- Open Graph markup ---------- */
+
+export interface OgMarkup {
+  slug: string;
+  title: string;
+  markup: string;
+  hasImage: false;
+}
+
+/** #4xx — the OG block for an asset page. There is no image to point at: this
+ *  site ships none, so the markup declares a title and description only and the
+ *  page says what adding a card image would cost. */
+export function ogMarkup(slug: string, origin = "https://motif.example"): OgMarkup | null {
+  const asset = COMPONENTS.find((c) => c.slug === slug);
+  if (!asset) return null;
+  const title = `${asset.title} — Motif UI`;
+  const description = `${asset.description} ${asset.stack.join(" / ")} · ${asset.bundleKb} KB · a11y ${asset.a11yScore} · MIT.`;
+  const url = `${origin}/components/${asset.slug}`;
+  const markup = `<meta property="og:type" content="article" />
+<meta property="og:title" content="${title}" />
+<meta property="og:description" content="${description.slice(0, 200)}" />
+<meta property="og:url" content="${url}" />
+<meta name="twitter:card" content="summary" />
+<!-- No og:image: this site ships no raster artwork. A card image would need a
+     build step that rasterises, which is a deliberate gap, not an oversight. -->`;
+  return { slug: asset.slug, title, markup, hasImage: false };
+}
+
 /* ---------- the catalog, as data ---------- */
 
 export function catalogJson(): string {
@@ -275,8 +389,7 @@ export interface ExportEntry {
   build: () => string;
 }
 
-export const EXPORTS: ExportEntry[] = [
-  {
+export const EXPORTS: ExportEntry[] = [  {
     file: "tokens.json",
     label: "Design tokens (DTCG)",
     contentType: "application/json; charset=utf-8",
@@ -315,6 +428,30 @@ export const EXPORTS: ExportEntry[] = [
     item: "#419",
     blurb: "Five snippets for the layout patterns this site repeats, using its real utility classes.",
     build: vscodeSnippets,
+  },
+  {
+    file: "changelog.xml",
+    label: "Changelog feed",
+    contentType: "application/rss+xml; charset=utf-8",
+    item: "#420",
+    blurb: "RSS for the studio log, with each entry's measured size change carried in the description.",
+    build: () => changelogRss(),
+  },
+  {
+    file: "motif-storybook-decorator.jsx",
+    label: "Storybook decorator",
+    contentType: "text/jsx; charset=utf-8",
+    item: "#421",
+    blurb: "A decorator that hands your stories this site's palette as custom properties.",
+    build: storybookDecorator,
+  },
+  {
+    file: "learn-print.css",
+    label: "Print stylesheet",
+    contentType: "text/css; charset=utf-8",
+    item: "#423",
+    blurb: "The @media print block this site compiles, served as a file so it can be copied into another project.",
+    build: printCss,
   },
 ];
 
