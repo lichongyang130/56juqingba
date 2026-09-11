@@ -298,6 +298,47 @@ function parseCheck(label, source) {
     ok("the embed states that preview copy is sample content", embed.text.includes("Preview copy is sample content"));
   }
 
+  /* ---------- demo figures the pages print ---------- */
+
+  // /brand/voice uses the size of the demo modules as its example of "a number
+  // is checkable". It was a typed-in literal ("13 files and 428 KB") and went
+  // stale the moment the scenes were split, so the two pages that print these
+  // figures are now compared against the files. Counted the same way
+  // src/lib/perf.ts counts them: every module that holds scene code.
+  {
+    const demoDir = path.join("src", "components", "demos");
+    const demoModules = [
+      "Demo.tsx",
+      "scene-kit.tsx",
+      "scenes-17.tsx",
+      ...fs
+        .readdirSync(path.join(demoDir, "scenes"))
+        .filter((f) => f.endsWith(".tsx"))
+        .map((f) => `scenes/${f}`),
+    ];
+    const demoLines = demoModules.reduce((a, f) => a + fs.readFileSync(path.join(demoDir, f), "utf8").split("\n").length, 0);
+    const phrase = `${demoLines.toLocaleString("en-US")} lines across ${demoModules.length} modules`;
+    // React puts comment markers between an expression and the text around it,
+    // so the comparison runs over the document with tags and comments removed.
+    const textOf = (html) =>
+      html
+        .replace(/<!--[\s\S]*?-->/g, "")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/\s+/g, " ");
+    const voice = await get("/brand/voice");
+    ok(
+      "/brand/voice prints the demo count the files have",
+      voice.status === 200 && textOf(voice.text).includes(phrase),
+      `${demoLines} lines across ${demoModules.length} modules`,
+    );
+    const layers = await get("/lab/layers");
+    ok(
+      "/lab/layers prints the same demo count",
+      layers.status === 200 && textOf(layers.text).includes(phrase),
+      String(layers.status),
+    );
+  }
+
   /* ---------- per-route JavaScript budgets ---------- */
 
   // #512 — the build report has always printed every route's weight and nothing

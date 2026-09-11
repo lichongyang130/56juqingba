@@ -54,7 +54,7 @@ export default function PerfNoJsPage() {
           ))}
         </ul>
         <p className="mt-3 text-[11px] leading-relaxed text-ink-dim">
-          Each one is rendered on its own page by the same demo module, which is a client component. That is the honest limit of
+          Each one is rendered on its own page by the same demo registry, which is a client component. That is the honest limit of
           this claim: the <em>asset</em> needs no JavaScript — the site that previews it currently does, because the preview is a
           React island. Making the previews themselves server-rendered is a real piece of work, and it is not claimed here.
         </p>

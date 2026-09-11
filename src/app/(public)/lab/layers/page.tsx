@@ -106,8 +106,8 @@ animation: spin 4s infinite → name recorded, properties unknown`}</pre>
         <p className="text-[10px] leading-relaxed text-ink-faint">
           The inspector component is <span className="font-mono">src/components/layer-inspector.tsx</span> and the source scan is{" "}
           <span className="font-mono">motionAudit()</span> in <span className="font-mono">src/lib/perf.ts</span>. Because the
-          inspector mounts a real demo, this page is the one route in the section that ships the demo module — the budget page
-          reports that cost rather than hiding it.
+          inspector mounts a real demo, this page is the route in the section that pulls a scene set rather than rendering none — and since
+          batch 85 that means the set it mounts, not all ten of them. The budget page reports that cost rather than hiding it.
         </p>
       </div>
     </div>

@@ -661,7 +661,7 @@ export function BuildPanel() {
             the keyframes the demos share. Loaded by every route, demo or not.
           </li>
           <li className="rounded-2xl border border-white/8 bg-white/[.02] px-3.5 py-2.5">
-            <span className="font-bold text-ink">Per-route client chunks</span> — the demo module, the admin console, the studio
+            <span className="font-bold text-ink">Per-route client chunks</span> — the demo scene sets, the admin console, the studio
             panels, the lab tools. {rows.filter((r) => r.ownJsKb === 0).length} routes have none at all.
           </li>
           <li className="rounded-2xl border border-white/8 bg-white/[.02] px-3.5 py-2.5">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { OVERCLAIM_DICTIONARY, toneScan } from "@/lib/quality-utils";
+import { motionAudit } from "@/lib/perf";
 
 export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
@@ -21,6 +22,14 @@ export const metadata: Metadata = {
  * many hits were negations (a sentence explaining why a word is banned may
  * contain the word).
  */
+
+/** The demo-scene figure in the table below is read from the source tree at
+ *  build time rather than typed in. It used to be a literal ("13 files and
+ *  428 KB"), which a later refactor turned into a false statement on a page
+ *  whose whole argument is that a count is checkable — so this page reads the
+ *  count the way /lab/layers does, and the export harness compares the served
+ *  page against the files. */
+const DEMO = motionAudit();
 
 interface VoiceLine {
   we: string;
@@ -55,7 +64,7 @@ const LINES: VoiceLine[] = [
     why: "Selection with a rejection rate is curation; selection with no numbers is a synonym for 'we chose some'.",
   },
   {
-    we: "The demo module is 13 files and 428 KB of JS.",
+    we: `The demo scenes are ${DEMO.demoLines.toLocaleString("en-US")} lines across ${DEMO.demoModules} modules.`,
     never: "Lightweight.",
     why: "Lightweight compared to what? A count is comparable; a word is a mood.",
   },

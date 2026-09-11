@@ -1,6 +1,6 @@
 {
-  "measuredAt": "2026-09-11T03:46:36.961Z",
-  "buildId": "cHe0dd33CRGVBqvJuJ8ir",
+  "measuredAt": "2026-09-11T03:49:54.265Z",
+  "buildId": "4TLicEijh_qCdbYiVBfAt",
   "command": "npm run build && npm run measure",
   "summary": {
     "routes": 141,
@@ -13,7 +13,7 @@
     "fontFiles": 2,
     "fontKb": 80,
     "htmlFiles": 291,
-    "htmlKb": 13879.6,
+    "htmlKb": 13879.8,
     "fallbackDocuments": 1
   },
   "fallbackDocuments": [
@@ -607,7 +607,7 @@
       "ownJsKb": 29.9,
       "totalJsKb": 476.6,
       "cssKb": 217.7,
-      "htmlKb": 69,
+      "htmlKb": 69.2,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [

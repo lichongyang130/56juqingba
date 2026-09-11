@@ -69,7 +69,7 @@ curl -o ~/Library/Application\\ Support/Code/User/snippets/motif.code-snippets \
         <div className="rounded-3xl border border-dashed border-amber-300/25 bg-amber-300/[.04] p-6">
           <p className="text-sm font-extrabold text-amber-200">What is not in the pack</p>
           <p className="mt-2 text-[11px] leading-relaxed text-amber-100/80">
-            Snippets for the {COMPONENTS.length} catalog components. Each asset&apos;s implementation lives in this site&apos;s demo module rather
+            Snippets for the {COMPONENTS.length} catalog components. Each asset&apos;s implementation lives in this site&apos;s demo modules rather
             than in the catalog data, so an editor snippet could only reproduce a simplified version of it — which is exactly the
             kind of export that makes a library feel bigger than it is. The pack covers the layout vocabulary; the components
             themselves are on the{" "}
