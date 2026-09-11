@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import path from "node:path";
-import { A11Y_FIXES, a11yBands } from "@/lib/a11y-audit";
+import { A11Y_FIXES, MANUAL_CHECKS, a11yBands } from "@/lib/a11y-audit";
 import { MARKUP_CHECKS, scanBuiltHtml } from "@/lib/markup-a11y";
 
 // Rendered per request rather than prerendered: the pass reads the built HTML
@@ -156,8 +156,10 @@ export default function AriaAuditPage() {
             one. That is what the guides at <Link href="/learn/the-keyboard-walk" className="font-semibold text-emerald-300 hover:text-emerald-200">the keyboard walk</Link> exist for.
           </li>
           <li>
-            <strong>Anything in the demo scenes themselves.</strong> Their interactive controls carry real labels, but the scenes are previews of
-            other people&apos;s pages and are exempt from the host document&apos;s outline by design.
+            <strong>What the demo scenes do at runtime.</strong> Their markup is no longer exempt — the rules above run over the scenes like any
+            other markup, which is how the closed listbox behind an <span className="font-mono">aria-controls</span> was caught. What no static pass
+            can see is behaviour: where focus goes when a sheet closes, what a live region announces, whether a drag has a keyboard equivalent. The
+            demo harness asserts the behaviours a scene declares (drag, click, keyboard, type, scroll); the checklist below is for the rest.
           </li>
         </ul>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
@@ -170,6 +172,48 @@ export default function AriaAuditPage() {
           files, and fail on any finding — so this page cannot report green while the served HTML is not. The three counted different documents
           once; the rule for what is a page now has one home, in the same module the three read.
         </p>
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">What a machine cannot decide here: the manual checklist</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          Seven checks, in the order a reviewer should run them. Each one names the automated half that does exist, so the list is what is left rather
+          than a pile of work someone already did. <strong className="text-amber-100">None of these has been run in a browser by this project.</strong>{" "}
+          The build has no browser in it, no session has been recorded, and this page will not imply otherwise.
+        </p>
+        <ol className="mt-4 space-y-3">
+          {MANUAL_CHECKS.map((c, i) => (
+            <li key={c.title} className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+              <div className="flex flex-wrap items-baseline gap-2">
+                <span className="font-mono text-[10px] text-ink-faint">{String(i + 1).padStart(2, "0")}</span>
+                <span className="text-[12.5px] font-bold text-ink">{c.title}</span>
+                {c.automated ? (
+                  <span className="rounded-full border border-emerald-300/25 bg-emerald-400/10 px-2 py-0.5 font-mono text-[9px] text-emerald-200">
+                    automated half: {c.automated}
+                  </span>
+                ) : (
+                  <span className="rounded-full border border-white/12 bg-white/5 px-2 py-0.5 font-mono text-[9px] text-ink-faint">
+                    nothing automated
+                  </span>
+                )}
+              </div>
+              <p className="mt-2 text-[11.5px] leading-relaxed text-ink-dim">{c.how}</p>
+              <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+                <span className="font-bold uppercase tracking-wider">Fails when</span> {c.fails}
+              </p>
+              {c.where.length > 0 && (
+                <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px] text-ink-faint">
+                  <span className="font-bold uppercase tracking-wider">Where</span>
+                  {c.where.map((w) => (
+                    <Link key={w.href} href={w.href} className="font-mono text-emerald-300 hover:text-emerald-200">
+                      {w.href}
+                    </Link>
+                  ))}
+                </p>
+              )}
+            </li>
+          ))}
+        </ol>
       </section>
 
       <p className="mt-8 text-[11px] leading-relaxed text-ink-faint">

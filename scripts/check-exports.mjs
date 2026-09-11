@@ -423,6 +423,22 @@ function parseCheck(label, source) {
       ariaPage.status === 200 && ariaPage.text.includes("What this page does not check") && ariaPage.text.includes("Documents scanned"),
       String(ariaPage.status),
     );
+    // The manual half is content, and content drifts. Two things have to stay
+    // true: the checklist exists and says it has not been run, and the old
+    // claim that the demo scenes were exempt from the pass stays deleted.
+    ok(
+      "/quality/aria carries the manual checklist, with the runs it has not done",
+      ariaPage.text.includes("What a machine cannot decide here") &&
+        ariaPage.text.includes("None of these has been run in a browser by this project") &&
+        (ariaPage.text.match(/automated half:/g) || []).length >= 4,
+      `${(ariaPage.text.match(/automated half:/g) || []).length} items name their automated half`,
+    );
+    ok(
+      "/quality/aria no longer calls the demo scenes exempt from the pass",
+      !ariaPage.text.includes("exempt from the host document"),
+      ariaPage.text.includes("exempt from the host document") ? "old sentence still present" : "clean",
+    );
+
     ok(
       "/quality/aria prints the same document count as the pass it describes",
       ariaPage.text.includes(`Documents scanned`) && ariaPage.text.includes(`>${documents}<`),

@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/quality" },
   title: "Quality bar — Motif UI",
   description:
-    "Motif's quality, accessibility and testing bar in the open: audit score distributions, contrast CI pairs, reduced-motion fallback, size budgets, the dependency ledger, keyboard walks and screen-reader smoke assertions — all recomputed from the live catalog.",
+    "Motif's quality, accessibility and testing bar in the open: audit score distributions, contrast CI pairs, reduced-motion fallback, size budgets, the dependency ledger, the written keyboard walks and screen-reader smoke assertions — with every number recomputed from the live catalog.",
 };
 
 export default function QualityPage() {

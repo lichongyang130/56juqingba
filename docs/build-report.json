@@ -1,6 +1,6 @@
 {
-  "measuredAt": "2026-09-11T03:03:20.570Z",
-  "buildId": "1r_5Uv3gU_JImBD3k5pkF",
+  "measuredAt": "2026-09-11T03:05:52.274Z",
+  "buildId": "_WVscLB38RTB9gDwwQPD0",
   "command": "npm run build && npm run measure",
   "summary": {
     "routes": 141,
@@ -13,7 +13,7 @@
     "fontFiles": 2,
     "fontKb": 80,
     "htmlFiles": 290,
-    "htmlKb": 13907.5,
+    "htmlKb": 13907.6,
     "fallbackDocuments": 1
   },
   "fallbackDocuments": [
@@ -1542,7 +1542,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.2,
       "cssKb": 217.7,
-      "htmlKb": 549.6,
+      "htmlKb": 549.7,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1688,7 +1688,7 @@
     },
     {
       "file": ".next/server/app/quality.html",
-      "kb": 549.6
+      "kb": 549.7
     },
     {
       "file": ".next/server/app/prompts.html",
