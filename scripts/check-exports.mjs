@@ -1405,6 +1405,66 @@ function parseCheck(label, source) {
     `sitemap ${comps} component URLs, catalog ${catalog.components.length}`,
   );
 
+  /* ---------- the next-hundred open items this batch closes ---------- */
+
+  // #8 — the motion contract is a file the page links, and its three rules are
+  // the sentences the page quotes. A docs file that goes missing, or gets
+  // edited into a shrug, is a promise the site no longer keeps.
+  {
+    const contractPath = "docs/motion-contract.md";
+    const contract = fs.existsSync(contractPath) ? fs.readFileSync(contractPath, "utf8") : "";
+    ok(
+      "the motion contract states the three rules",
+      contract.includes("A scene that loops declares a branch") &&
+        contract.includes("Reduced motion never removes content that only animation revealed") &&
+        contract.includes("The branch is named in the scene's own body"),
+      fs.existsSync(contractPath) ? "contract present" : "missing docs/motion-contract.md",
+    );
+  }
+
+  // #10 — a share card is a still; the animated ones are labelled. The decision
+  // (which demo keys drive a moving scene) is read from the same audit the
+  // reduced-motion gate uses, and the route's application of the label is read
+  // from its source — a PNG has no text to scrape, so the route and the harness
+  // read one function, and the harness asserts the route calls it and prints the
+  // label that function names.
+  {
+    const { movingDemoKeys, demoSceneLinks } = await import("../src/lib/motion-audit.ts");
+    const moving = movingDemoKeys();
+    const links = demoSceneLinks();
+    const route = fs.readFileSync("src/app/og/[slug]/route.tsx", "utf8");
+    const demos = [...catalog.components.map((c) => c.demo), ...catalog.backgrounds.map((b) => b.demo)];
+    const inCatalog = [...moving].filter((k) => demos.includes(k));
+    ok(
+      "every moving demo key is a demo the catalog ships",
+      moving.size > 0 && inCatalog.length === moving.size,
+      `${inCatalog.length}/${moving.size} moving demos are catalog demos`,
+    );
+    ok(
+      "the share-card route marks animated demos as stills",
+      route.includes("movingDemoKeys") &&
+        route.includes('"demo animates · this card is a still"') &&
+        route.includes("MOVING_DEMOS.has("),
+      "route reads movingDemoKeys and appends the still chip",
+    );
+    ok(
+      "every loader line resolves to a demo key",
+      links.length > 100 && links.every((l) => l.key && l.module && l.component),
+      `${links.length} loader lines`,
+    );
+    // One moving card and one still card both render — the label is applied to
+    // the former, not a reason to stop serving a card at all.
+    const movingSample = catalog.components.find((c) => moving.has(c.demo));
+    const staticSample = catalog.components.find((c) => !moving.has(c.demo));
+    const movingCard = movingSample ? await get(`/og/${movingSample.slug}`) : null;
+    const stillCard = staticSample ? await get(`/og/${staticSample.slug}`) : null;
+    ok(
+      "a moving and a still asset both serve cards",
+      movingCard?.status === 200 && movingCard.type.includes("image/png") && stillCard?.status === 200 && stillCard.type.includes("image/png"),
+      `${movingSample?.slug ?? "none"} → ${movingCard?.status}, ${staticSample?.slug ?? "none"} → ${stillCard?.status}`,
+    );
+  }
+
   const rss = await get("/api/exports/changelog.xml");
   // The feed is generated from the same list the page renders, so the count is
   // compared against the page rather than against a number here: a literal 12

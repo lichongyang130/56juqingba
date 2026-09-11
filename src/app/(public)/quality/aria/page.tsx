@@ -3,7 +3,7 @@ import Link from "next/link";
 import path from "node:path";
 import { A11Y_FIXES, MANUAL_CHECKS, a11yBands } from "@/lib/a11y-audit";
 import { MARKUP_CHECKS, SERVED_EXTRAS, scanBuiltHtml } from "@/lib/markup-a11y";
-import { motionAudit } from "@/lib/motion-audit";
+import { motionAudit, motionByModule } from "@/lib/motion-audit";
 import sitemap from "@/app/sitemap";
 import { COMPONENTS } from "@/lib/data";
 import { SITE_URL } from "@/lib/seo";
@@ -47,6 +47,10 @@ export default function AriaAuditPage() {
   // 523 — the same count the checklist item and check:demos read, so the two
   // sentences on this page cannot disagree about how many scenes move.
   const motion = motionAudit();
+  // #6 — the same audit grouped by module, so the split above is readable as a
+  // table rather than rounded into one number.
+  const modules = motionByModule();
+  const moduleTotals = modules.reduce((a, m) => ({ scenes: a.scenes + m.scenes, animate: a.animate + m.animate }), { scenes: 0, animate: 0 });
   // Same rules as `npm run check:a11y` and the export harness, from one module.
   // No `.next` directory (a dev server, a fresh clone) means the pass has
   // nothing to read — the page says so instead of printing a fake zero.
@@ -120,6 +124,88 @@ export default function AriaAuditPage() {
           {fallbacks.length === 1 ? "is" : "are"} whatever Next had cached by the time you asked: {fallbacks.map((f) => f.file).join(", ") || "none right now"}.
           The measurement applies the same rule at build time and publishes the count it skipped, and probing a URL that does not exist is enough to add
           one — which is how a removed changelog slug ended up counted as a page, and this page ended up reporting it as missing a language attribute.
+        </p>
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">Motion, counted per module</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          The split above, broken down by the module each scene lives in. <span className="font-mono">animate</span> counts
+          every scene that drives motion; <span className="font-mono">guarded</span> counts only the JavaScript-driven ones
+          that name the preference — CSS-only motion is stopped by the stylesheet, so it has no branch to count.
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[560px] text-left text-[11px]">
+            <thead>
+              <tr className="border-b border-white/10 text-[10px] uppercase tracking-widest text-ink-faint">
+                <th className="py-2 pr-4 font-bold">module</th>
+                <th className="py-2 pr-4 font-bold">scenes</th>
+                <th className="py-2 pr-4 font-bold">animate</th>
+                <th className="py-2 pr-4 font-bold">guarded</th>
+                <th className="py-2 font-bold">first unguarded</th>
+              </tr>
+            </thead>
+            <tbody>
+              {modules.map((m) => (
+                <tr key={m.module} className="border-b border-white/6 last:border-0">
+                  <td className="py-2 pr-4 font-mono text-ink-dim">{m.module}</td>
+                  <td className="py-2 pr-4 font-mono tabular-nums text-ink-dim">{m.scenes}</td>
+                  <td className="py-2 pr-4 font-mono tabular-nums text-ink-dim">{m.animate}</td>
+                  <td className={`py-2 pr-4 font-mono tabular-nums ${m.guarded === m.jsDriven ? "text-emerald-200" : "text-rose-200"}`}>
+                    {m.guarded}
+                  </td>
+                  <td className="py-2 font-mono text-ink-faint">{m.firstUnguarded ?? "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+          {`${modules.length} modules · ${moduleTotals.scenes} scenes · ${moduleTotals.animate} animate`} — the same
+          numbers as the split above, generated from the same audit.
+        </p>
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">The motion contract</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          Three rules every demo scene promises, written down so a scene is added the same way it is reviewed. The full
+          contract lives in the repository, and the two automated halves are named with it:
+        </p>
+        <ul className="mt-3 space-y-2 text-[11px] leading-relaxed text-ink-dim">
+          <li>
+            <strong>A scene that loops declares a branch.</strong> A scene that drives motion from JavaScript without
+            naming the preference fails check:demos.
+          </li>
+          <li>
+            <strong>Reduced motion never removes content that only animation revealed.</strong> The reduced version is
+            the same content, still or instant — never an empty frame.
+          </li>
+          <li>
+            <strong>The branch is named in the scene&apos;s own body.</strong> A shared stylesheet rule is a net, not the
+            scene&apos;s answer: the code that moves names the preference next to the loop it guards.
+          </li>
+        </ul>
+        <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+          The stylesheet rule itself is asserted in the built CSS by check:exports. The contract is{" "}
+          <a
+            href="https://github.com/lichongyang130/56juqingba/blob/main/docs/motion-contract.md"
+            target="_blank"
+            rel="noreferrer"
+            className="font-mono text-emerald-300 hover:text-emerald-200"
+          >
+            docs/motion-contract.md
+          </a>
+          , and the template every scene imports from is{" "}
+          <a
+            href="https://github.com/lichongyang130/56juqingba/blob/main/src/components/demos/scene-kit.tsx"
+            target="_blank"
+            rel="noreferrer"
+            className="font-mono text-emerald-300 hover:text-emerald-200"
+          >
+            scene-kit.tsx
+          </a>
+          .
         </p>
       </section>
 

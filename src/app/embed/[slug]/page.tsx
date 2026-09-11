@@ -12,6 +12,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DemoView } from "@/components/demos/Demo";
+import { EmbedShell } from "@/components/embed-shell";
 import { COMPONENTS } from "@/lib/data";
 
 export const dynamicParams = true;
@@ -39,7 +40,11 @@ export default async function EmbedPage({ params }: { params: Promise<{ slug: st
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-[#07090f] p-4 text-ink">
       <div className="w-full max-w-3xl">
-        <DemoView demo={asset.demo} props={{}} />
+        {/* #9 — the shell names the preference the scenes inside read, so an
+            embed honours reduced motion and can be checked for it. */}
+        <EmbedShell>
+          <DemoView demo={asset.demo} props={{}} />
+        </EmbedShell>
       </div>
       <p className="text-[10px] text-ink-faint">
         Preview copy is sample content; catalog figures are read from the catalog. ·{" "}

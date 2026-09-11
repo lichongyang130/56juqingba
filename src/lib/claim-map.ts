@@ -79,6 +79,12 @@ export const CLAIMS: Claim[] = [
   },
   {
     file: "src/app/(public)/quality/aria/page.tsx",
+    says: "naming the preference fails check:demos",
+    checkedBy: "every scene that drives motion from JavaScript names the preference",
+    in: "check:demos",
+  },
+  {
+    file: "src/app/(public)/quality/aria/page.tsx",
     says: "npm run check:a11y:served",
     checkedBy: "the served pass walks the sitemap and the extras",
     in: "check:a11y:served",

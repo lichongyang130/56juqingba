@@ -268,7 +268,7 @@ const NEW_SCENES = [
   // them, /quality/aria and the checklist print the split, and this gate is
   // what makes the sentence true.
   try {
-    const { motionAudit, reducedMotionPolicyInCss } = await import("../src/lib/motion-audit.ts");
+    const { motionAudit, motionByModule, reducedMotionPolicyInCss } = await import("../src/lib/motion-audit.ts");
     const audit = motionAudit();
     ok(
       "the motion audit reads the scene modules",
@@ -299,6 +299,53 @@ const NEW_SCENES = [
       "the reduced-motion checklist item reports the JavaScript count as covered",
       ariaText.includes(`every scene that drives motion from JavaScript names the preference — ${audit.jsGuarded} of ${audit.js.length}`),
       `expected "${audit.jsGuarded} of ${audit.js.length}"`,
+    );
+
+    // #6 — the per-module table, generated from the same audit rather than
+    // typed. The heading proves the table exists, the column header proves the
+    // shape, and the module names plus the summary line prove the wiring is the
+    // audit and not a hand-written grid.
+    const byModule = motionByModule();
+    const moduleScenes = byModule.reduce((a, m) => a + m.scenes, 0);
+    const moduleAnimate = byModule.reduce((a, m) => a + m.animate, 0);
+    ok(
+      "/quality/aria prints the motion split per module",
+      aria.status === 200 &&
+        ariaText.includes("Motion, counted per module") &&
+        ariaText.includes("first unguarded") &&
+        byModule.every((m) => ariaText.includes(m.module)) &&
+        ariaText.includes(`${byModule.length} modules · ${moduleScenes} scenes · ${moduleAnimate} animate`),
+      `${byModule.length} modules · ${moduleScenes} scenes · ${moduleAnimate} animate`,
+    );
+
+    // #8 — the contract the table and the checklist both point at, linked from
+    // the page that prints the split.
+    ok(
+      "/quality/aria links the motion contract and names its three rules",
+      ariaText.includes("docs/motion-contract.md") &&
+        ariaText.includes("A scene that loops declares a branch") &&
+        ariaText.includes("Reduced motion never removes content") &&
+        ariaText.includes("The branch is named in the scene"),
+      "contract link + three rules",
+    );
+
+    // #9 — the embed shell names the preference it honours, and the docs say
+    // so. The attribute is in the served HTML; the media-query read is in the
+    // shell's source, because a shell that stamps an attribute without reading
+    // the preference would be the lie this check exists to catch.
+    const embedHtml = (await get("/embed/halo-button")).text.replace(/<!-- -->/g, "");
+    const shellSrc = fs.readFileSync("src/components/embed-shell.tsx", "utf8");
+    ok(
+      "the embed shell honours prefers-reduced-motion",
+      embedHtml.includes('data-embed-motion="honours-preference"') &&
+        shellSrc.includes('matchMedia("(prefers-reduced-motion: reduce)")'),
+      embedHtml.includes('data-embed-motion="honours-preference"') ? "marker served" : "marker missing",
+    );
+    const embedDocs = await get("/integrations/embed");
+    ok(
+      "the embed docs say the frame honours the preference",
+      embedDocs.status === 200 && embedDocs.text.replace(/<!-- -->/g, "").includes("prefers-reduced-motion"),
+      String(embedDocs.status),
     );
   } catch (err) {
     ok("the motion audit module loads", false, String(err && err.message ? err.message : err));

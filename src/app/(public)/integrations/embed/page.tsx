@@ -71,6 +71,18 @@ export default function IntegrationsEmbedPage() {
             </ul>
             <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">{EMBED_HEADERS[0].why}</p>
           </div>
+          <div className="rounded-3xl border border-white/8 bg-panel p-6">
+            <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Reduced motion inside the frame</p>
+            <p className="mt-3 text-[11px] leading-relaxed text-ink-dim">
+              An embed honours <span className="font-mono">prefers-reduced-motion</span> the same way the site does: the
+              stylesheet collapse applies inside the frame, the shell reads the preference and reflects it on the frame
+              (a <span className="font-mono">data-prefers-reduced-motion</span> attribute), and scenes that drive motion
+              from JavaScript read the same media query. A reader who asked the system for less motion gets a still scene
+              in an embed, not a frame that keeps moving on someone else&apos;s page. This is documented rather than
+              promised silently — the rule lives in the motion contract and the scenes carry their branch in their own
+              body.
+            </p>
+          </div>
         </div>
         <div className="space-y-4">
           <div className="rounded-3xl border border-white/8 bg-panel p-6">

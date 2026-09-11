@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { BACKGROUNDS, CHANGELOG, COMPONENTS, PROMPTS, accentHue } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
 import { changeLogSlug } from "@/lib/spine";
+import { movingDemoKeys } from "@/lib/motion-audit";
 
 // #503–#506 — the share-card route, generalised to every family.
 //
@@ -17,10 +18,28 @@ import { changeLogSlug } from "@/lib/spine";
 // 519 — the studio log joined as a fifth family: an entry can be linked and
 // quoted on its own, so it can be shared on its own, with its date and tag on
 // the card instead of the site fallback.
+//
+// #10 — a share card is a static PNG, so it can never show the motion the live
+// scene has. For an asset whose demo scene drives motion, the card says so in a
+// chip — "demo animates · this card is a still" — rather than letting a viewer
+// infer that the card froze mid-flight. There is no scene rasteriser in this
+// build, so there is no t≠0 frame to worry about: every card is a still by
+// construction, and the animated ones are labelled as such. `movingDemoKeys`
+// is the same audit the reduced-motion gate reads, so the label and the
+// `check:exports` assertion cannot drift apart.
 
 export const dynamic = "force-static";
 
 const SIZE = { width: 1200, height: 630 };
+
+/** Demo keys whose live scene moves, read once from the same audit the
+ *  reduced-motion gate uses. */
+const MOVING_DEMOS = movingDemoKeys();
+
+/** The still-chip every animated asset's card carries, so a card never implies
+ *  motion the image cannot show. Kept a literal so the harness can assert the
+ *  route applies it by reading this file. */
+const STILL_CHIP = "demo animates · this card is a still";
 
 export function generateStaticParams() {
   return [
@@ -50,6 +69,7 @@ interface Card {
 function cardFor(slug: string): Card | null {
   const component = COMPONENTS.find((c) => c.slug === slug);
   if (component) {
+    const moving = MOVING_DEMOS.has(component.demo);
     return {
       kicker: `${component.kind} component`,
       title: component.title,
@@ -61,6 +81,7 @@ function cardFor(slug: string): Card | null {
         `quality ${component.qualityScore}`,
         `${component.copies.toLocaleString()} copies`,
         component.license,
+        ...(moving ? [STILL_CHIP] : []),
       ],
       hue: accentHue(component.slug),
       foot: "motif · component library",
@@ -110,6 +131,7 @@ function cardFor(slug: string): Card | null {
 
   const bg = BACKGROUNDS.find((b) => b.slug === slug);
   if (bg) {
+    const moving = MOVING_DEMOS.has(bg.demo);
     return {
       kicker: `${bg.category} background`,
       title: bg.title,
@@ -120,6 +142,7 @@ function cardFor(slug: string): Card | null {
         `${bg.bundleKb.toFixed(1)} KB`,
         `${bg.copies.toLocaleString()} copies`,
         bg.themeable ? "themeable" : "fixed palette",
+        ...(moving ? [STILL_CHIP] : []),
       ],
       hue: accentHue(bg.category),
       foot: "motif · backgrounds",

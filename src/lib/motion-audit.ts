@@ -69,6 +69,20 @@ export interface MotionAudit {
   unguarded: MotionScene[];
 }
 
+/** The scene modules, in a stable order so a per-module table does not jump
+ *  around between runs. */
+function sceneFiles(): string[] {
+  try {
+    const sets = fs
+      .readdirSync(path.join(DEMO_DIR, "scenes"))
+      .filter((f) => f.endsWith(".tsx"))
+      .map((f) => path.join("scenes", f));
+    return [...sets, "scenes-17.tsx"].sort();
+  } catch {
+    return [];
+  }
+}
+
 function scenesIn(source: string): { name: string; body: string }[] {
   return source
     .split("\nexport function ")
@@ -78,18 +92,8 @@ function scenesIn(source: string): { name: string; body: string }[] {
 
 export function motionAudit(): MotionAudit {
   const empty: MotionAudit = { scenes: 0, moving: 0, css: [], js: [], jsGuarded: 0, unguarded: [] };
-  let files: string[];
-  try {
-    files = [
-      ...fs
-        .readdirSync(path.join(DEMO_DIR, "scenes"))
-        .filter((f) => f.endsWith(".tsx"))
-        .map((f) => path.join("scenes", f)),
-      "scenes-17.tsx",
-    ];
-  } catch {
-    return empty;
-  }
+  const files = sceneFiles();
+  if (files.length === 0) return empty;
 
   let scenes = 0;
   const css: MotionScene[] = [];
@@ -116,6 +120,92 @@ export function motionAudit(): MotionAudit {
   }
   const unguarded = js.filter((s) => !s.guarded);
   return { scenes, moving: css.length + js.length, css, js, jsGuarded: js.length - unguarded.length, unguarded };
+}
+
+/** #6 — the same audit, grouped by module, so /quality/aria can print a
+ *  per-module table instead of rounding the gap into one number. */
+export interface MotionModuleRow {
+  /** `scenes/set-01.tsx` or `scenes-17.tsx`. */
+  module: string;
+  /** Total scenes the module exports. */
+  scenes: number;
+  /** Of them, the ones that drive motion (CSS or JavaScript). */
+  animate: number;
+  /** Scenes whose motion is JavaScript-driven. */
+  jsDriven: number;
+  /** Of the JS-driven scenes, the ones that name the preference. */
+  guarded: number;
+  /** The first unguarded scene's id, or null when the module is clean. */
+  firstUnguarded: string | null;
+}
+
+export function motionByModule(): MotionModuleRow[] {
+  const audit = motionAudit();
+  const rows: MotionModuleRow[] = [];
+  for (const rel of sceneFiles()) {
+    let source: string;
+    try {
+      source = fs.readFileSync(path.join(DEMO_DIR, rel), "utf8");
+    } catch {
+      continue;
+    }
+    const prefix = `${rel}:`;
+    const modCss = audit.css.filter((s) => s.id.startsWith(prefix));
+    const modJs = audit.js.filter((s) => s.id.startsWith(prefix));
+    const unguarded = modJs.filter((s) => !s.guarded);
+    rows.push({
+      module: rel,
+      scenes: scenesIn(source).length,
+      animate: modCss.length + modJs.length,
+      jsDriven: modJs.length,
+      guarded: modJs.length - unguarded.length,
+      firstUnguarded: unguarded[0]?.id ?? null,
+    });
+  }
+  return rows.sort((a, b) => a.module.localeCompare(b.module));
+}
+
+/** #10 — a demo key (the catalog's `demo` field) joined to the scene that
+ *  renders it, by reading Demo.tsx's loader map. The share-card route uses this
+ *  to know which assets' live scenes animate, so a card can say it is a still. */
+export interface DemoSceneLink {
+  key: string;
+  module: string;
+  component: string;
+}
+
+export function demoSceneLinks(): DemoSceneLink[] {
+  let source: string;
+  try {
+    source = fs.readFileSync(path.join(DEMO_DIR, "Demo.tsx"), "utf8");
+  } catch {
+    return [];
+  }
+  const start = source.indexOf("const SCENE_LOADERS");
+  if (start === -1) return [];
+  const block = source.slice(start, source.indexOf("\n};", start));
+  const links: DemoSceneLink[] = [];
+  for (const line of block.split("\n")) {
+    const key = (line.match(/"([a-z0-9-]+)":/) || [])[1];
+    const target = (line.match(/import\("\.\/([^"]+)"\)/) || [])[1];
+    const component = (line.match(/default: m\.([A-Za-z0-9_]+)/) || [])[1];
+    if (key && target && component) links.push({ key, module: target, component });
+  }
+  return links;
+}
+
+/** Every demo key whose scene drives motion (CSS or JavaScript), by joining the
+ *  loader map with the audit. These are the assets whose share card must say it
+ *  is a still rather than imply the image can show the motion. */
+export function movingDemoKeys(): Set<string> {
+  const audit = motionAudit();
+  const moving = new Set([...audit.css, ...audit.js].map((s) => s.id));
+  const out = new Set<string>();
+  for (const link of demoSceneLinks()) {
+    const rel = `${link.module}.tsx`;
+    if (moving.has(`${rel}:${link.component}`)) out.add(link.key);
+  }
+  return out;
 }
 
 /** True when the built stylesheet carries the site-wide reduced-motion policy.
