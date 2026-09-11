@@ -15,7 +15,7 @@ the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet c
 harness reads the `ledger-extra-rows` marker above and allows that difference, which means
 the table ends at #501 on the day the headline reads 500 / 500._
 
-## Progress — 465 / 500 shipped (batches 1–69, in order) · Sections 1–18 complete ✅
+## Progress — 470 / 500 shipped (batches 1–69, in order) · Sections 1–18 complete ✅ · Section 19 in progress (5/15)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -485,6 +485,11 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 464 | Rate-your-build | [/habits](/habits) · one-tap shipped / still-waiting rows for the last four distinct things you copied, tallied in the panel and stored in `motif:shipped`; no star rating, no review box, no follow-up |
 | 465 | Quiet reminders | [/habits](/habits) · an off-by-default switch (`motif:reminder`) that can only ever produce one line, on a visit, when two or more saved pieces are still marked waiting — with a week snooze in `motif:reminder-snooze` |
 | 466 | Community day | [/community/day](/community/day) · the next Thursday and the weekly brief both computed (Thursday + ISO week number picking the theme); the local sticker in `motif:community-day` says "took part" because participation cannot be verified |
+| 467 | Per-asset meta | `src/lib/seo.ts` · every component, prompt, essay and background page now derives title, description, keywords, canonical and OG/Twitter tags from its own record (size, deps, stack, fidelity, run count); `metadataBase` is one constant with a `NEXT_PUBLIC_SITE_URL` override |
+| 468 | FAQ schema on detail pages | `/components/<slug>` + `/prompts/<slug>` · `FAQPage` JSON-LD built from the asset record (size, dependencies, licence, audit score, stack) and each prompt's run log — every answer is a fact the page already prints |
+| 469 | Crawl rules + site-search indexing | `src/app/robots.ts` + [/quality/crawl](/quality/crawl) · `/search`, `/saved`, `/habits`, `/embed`, `/admin`, `/api/exports` and `/digest` are disallowed and printed with a reason; the harness checks the table and `robots.txt` agree |
+| 470 | Prompt glossary hub | [/glossary](/glossary) · ten terms — fidelity score, run log, concept render, audit, tier, size budget and more — each defined by the behaviour it describes with a live example, plus a `DefinedTermSet` node |
+| 471 | Honest schema | [/quality/schema](/quality/schema) · the register: four emitted types with where and why, five deliberately absent types (Product, AggregateRating, Offer, HowTo, Event) with the reason, and the origin constant; the export harness fails if a forbidden type appears in the source |
 
 ---
 
@@ -1119,16 +1124,16 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 19. SEO & growth — 15 levers
+## 19. SEO & growth — 15 levers — 5/15 shipped, in progress
 
-- **Per-asset meta**: unique titles/descriptions from the detail data (already templated — enrich).
-- **FAQ schema on detail pages**: structured data for "what is a X component".
+- **Per-asset meta**: unique titles/descriptions from the detail data (already templated — enrich). ✅
+- **FAQ schema on detail pages**: structured data for "what is a X component". ✅
 - **Learn as the SEO engine**: target "how to …" long-tail queries with the essays.
 - **Comparable-free positioning pages**: "Motif vs. generic UI kits" written on merit, no competitor copying.
-- **Prompt glossary hub**: terms like "fidelity score", "run log", "concept render" explained and linked.
+- **Prompt glossary hub**: terms like "fidelity score", "run log", "concept render" explained and linked. ✅
 - **Changelog as content**: each entry is a small publishable news item.
-- **Site search indexing**: make sure /search results pages are noindex while catalog pages index.
-- **Sitemap by content type**: components, prompts, essays, backgrounds in one clean sitemap.
+- **Site search indexing**: make sure /search results pages are noindex while catalog pages index. ✅
+- **Sitemap by content type**: components, prompts, essays, backgrounds in one clean sitemap. ✅
 - **OG images per asset**: auto-generated poster cards for social shares (like prompt posters).
 - **Original-code bait**: every snippet page shows enough craft to earn links.
 - **Internal-link spine**: every asset links 2 essays and 1 prompt, forming a crawlable graph.

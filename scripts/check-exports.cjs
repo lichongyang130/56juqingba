@@ -108,6 +108,60 @@ function parseCheck(label, source) {
     `${secHeads.length} headings, ${secHeads.filter((m) => /complete|✅/.test(m[2])).length} complete`,
   );
 
+  /* ---------- section 19 crawl surface and schema ---------- */
+
+  const sm = await get("/sitemap.xml");
+  ok("sitemap.xml is served", sm.status === 200 && sm.text.includes("<urlset"), String(sm.status));
+  // Counted against the catalog, which is fetched later for its own checks —
+  // so the sitemap comparison happens there, where the number exists.
+  const comps = (sm.text.match(/\/components\/[a-z0-9-]+/g) || []).length;
+  ok("sitemap carries essays and prompts", sm.text.includes("/learn/") && sm.text.includes("/prompts/"));
+  const rb = await get("/robots.txt");
+  ok("robots.txt disallows the thin surfaces", rb.status === 200 && rb.text.includes("Disallow: /search") && rb.text.includes("Disallow: /admin"));
+  ok("robots.txt points at the sitemap", /Sitemap: https?:\/\/\S+\/sitemap\.xml/.test(rb.text));
+
+  const crawl = await get("/quality/crawl");
+  ok(
+    "/quality/crawl prints the exclusion list",
+    crawl.status === 200 && crawl.text.includes("/saved/stack") && crawl.text.includes("noindex"),
+    String(crawl.status),
+  );
+  const schemaPage = await get("/quality/schema");
+  ok("/quality/schema names the absent types", schemaPage.status === 200 && schemaPage.text.includes("AggregateRating"));
+  const glossary = await get("/glossary");
+  ok("/glossary defines the fidelity score", glossary.status === 200 && glossary.text.includes("Fidelity score") && glossary.text.includes("Run log"));
+
+  const detail = await get("/components/halo-button");
+  ok("a component page carries FAQPage markup", detail.text.includes('"@type":"FAQPage"'));
+  ok("a component page carries a breadcrumb trail", detail.text.includes('"@type":"BreadcrumbList"'));
+  ok("a component page declares a canonical", /rel="canonical" href="https?:\/\/[^"]+\/components\/halo-button"/.test(detail.text));
+  const essay = await get("/learn/the-keyboard-walk");
+  ok("an essay carries Article markup", essay.text.includes('"@type":"Article"') && essay.text.includes("dateModified"));
+
+  // The absent list is a promise: check no forbidden type is written anywhere in src/.
+  const srcFiles = [];
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (/\.(ts|tsx)$/.test(entry.name)) srcFiles.push(full);
+    }
+  };
+  walk("src");
+  // The list itself is read out of the .ts source: a CJS script cannot require
+  // TypeScript, and duplicating the list here would defeat the check.
+  const schemaMap = fs.readFileSync("src/lib/schema-map.ts", "utf8");
+  const FORBIDDEN_SCHEMA_TYPES = [...schemaMap.matchAll(/"(Product|Offer|AggregateRating|Review)"/g)].map((m) => m[1]);
+  ok("the forbidden-type list is readable", FORBIDDEN_SCHEMA_TYPES.length >= 4, FORBIDDEN_SCHEMA_TYPES.join(", "));
+  const offenders = [];
+  for (const file of srcFiles) {
+    const text = fs.readFileSync(file, "utf8");
+    for (const type of FORBIDDEN_SCHEMA_TYPES) {
+      if (new RegExp(`"@type"\\s*:\\s*"${type}"`).test(text)) offenders.push(`${file}:${type}`);
+    }
+  }
+  ok("no forbidden schema type is emitted anywhere", offenders.length === 0, offenders.join(", "));
+
   /* ---------- section 18 retention surfaces ---------- */
 
   const paths = await get("/learn/paths");
@@ -201,6 +255,11 @@ function parseCheck(label, source) {
     "catalog carries every component, and /quality agrees",
     catalog.components.length > 100 && catalog.components.length === printed,
     `catalog ${catalog.components.length}, /quality ${printed}`,
+  );
+  ok(
+    "sitemap lists every component page",
+    comps === catalog.components.length,
+    `sitemap ${comps} component URLs, catalog ${catalog.components.length}`,
   );
 
   const rss = await get("/api/exports/changelog.xml");

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { SITE } from "@/lib/site";
+import { SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
 // #401 — the font audit's two findings, fixed in the layout rather than
@@ -42,6 +43,9 @@ const sora = localFont({
 });
 
 export const metadata: Metadata = {
+  // Relative canonicals and OG images resolve against this, so a page only has
+  // to name its own path.
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${SITE.name} — ${SITE.tagline}`,
     template: `%s · ${SITE.name}`,
@@ -55,7 +59,11 @@ export const metadata: Metadata = {
     title: `${SITE.name} — ${SITE.tagline}`,
     description: SITE.description,
     type: "website",
+    siteName: SITE.name,
+    url: SITE_URL,
   },
+  twitter: { card: "summary_large_image" },
+  alternates: { canonical: "/" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
