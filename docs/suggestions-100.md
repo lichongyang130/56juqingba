@@ -177,6 +177,34 @@ plus the pages that make the blocked parts legible.
 
 ---
 
+## Register — what has shipped from this list
+
+_The rule this list was written under ("清单与交付必须一致"): a suggestion is only
+marked shipped when the commit that did the work is named, and the check that keeps it
+true is named with it. Everything else stays open, including the items that turned out
+to be a different problem than the one they were written for._
+
+| items | what shipped | commit | kept true by |
+| --- | --- | --- | --- |
+| 1–3, 5–7 | The measured version of the motion gap: 88 scenes are covered by the site-wide CSS policy and **32 that drive motion from JavaScript** now branch — all 32 of them, re-derived rather than written from an effect. The old count (63 without a branch) measured the wrong thing | `f91c610` | `check:demos`: the split, the 32-of-32, the stylesheet policy, and the served page printing both numbers |
+| 4 | `useReducedMotion()` / `useSceneMotion()` in `scene-kit.tsx` — one hook, not sixteen copies | `f91c610` | the 32 call sites |
+| 31 | `/metrics` names the four numbers the harness actually compares instead of promising it "will usually find" a disagreement | `9fd1ec3` | claim map entry |
+| 32 | `keyframes.tsx`'s header describes the ten-module reality it has had since batch 85 | `9fd1ec3` | claim map entry |
+| 33 | A file's line count may not be printed as a literal — the gate that would have caught the stale `41 lines` by itself | `9fd1ec3` | `check:exports`: verified failing with the literal restored |
+| 34 | The claim map: a file that says the harness does something must name the check that does it | `9fd1ec3` | `check:exports`: stale claim, fictional check, unmapped file. Verified failing with a planted claim |
+| 38 | Every route the 526-row ledger cites answers 200 (336 distinct routes, 324 fetched) | `9fd1ec3` | `check:exports`: "every route the ledger registers still answers" |
+| 39 | `npm run check:all` — four suites, one run, wall times written to `docs/check-report.json` with a 2× regression flag | `9fd1ec3` | the report itself |
+| 50 | `/learn/feed.xml` (60 guides) and `/changelog/feed.xml` (13 entries, permalinks included) | `9fd1ec3` | `check:exports`: both counts derived from the pages they mirror |
+| 61 | `/digest/copy-of-the-week` was linked from zero pages; `/digest` links it now | `9fd1ec3` | `check:exports` |
+| 63 | `/sitemap` — the crawler sitemap for a person, importing `sitemap()` rather than re-listing it | `9fd1ec3` | `check:exports`: page count equals `<loc>` count |
+
+**Open, and worth saying so:** items 8, 9, 10 and everything not in the table above. The
+motion section's remaining work (a per-module table on `/quality/aria`, the motion
+contract, the embed shell passing the preference through, the still poster for animated
+cards) is unstarted, not done-in-passing.
+
+---
+
 ## What this list deliberately excludes
 
 - **Accounts, prompt re-runs, marketplace payouts, certificates, the desktop helper, SSO/SLA/DPA, a real admin backend** — all `infra`; the roadmap's slices for them already exist and this list does not pretend otherwise. `infra`

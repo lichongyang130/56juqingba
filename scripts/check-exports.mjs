@@ -613,6 +613,144 @@ function parseCheck(label, source) {
     `${sitemapUrls.length} pages${pageIssues.length ? ` · ${pageIssues.length} issues: ${pageIssues.slice(0, 5).join(" | ")}` : ""}`,
   );
 
+  // #34 — the claim map. Batch 91 fixed four sentences that described checks
+  // that did not exist; this is the rule that keeps a fifth from shipping. Every
+  // entry names the file, the sentence and the check that backs it, and three
+  // things fail: a mapped sentence that no longer exists (the map went stale), a
+  // mapped check that no harness announces (the mapping is fiction), and a file
+  // that claims automation with no entry at all (the case batch 91 was).
+  {
+    const { CLAIMS, CLAIM_SCOPE, CLAIM_PATTERN } = await import("../src/lib/claim-map.ts");
+    const entries = [];
+    const walk = (rel) => {
+      const full = path.join(process.cwd(), rel);
+      const stat = fs.statSync(full);
+      if (stat.isDirectory()) {
+        for (const child of fs.readdirSync(full)) walk(path.join(rel, child));
+      } else if (/\.(tsx?|mts)$/.test(rel)) {
+        entries.push(rel);
+      }
+    };
+    for (const rel of CLAIM_SCOPE) if (fs.existsSync(path.join(process.cwd(), rel))) walk(rel);
+
+    // The harness's own announcements: every check name either script can print.
+    const announced = new Set();
+    for (const script of ["scripts/check-exports.mjs", "scripts/check-demos.mjs"]) {
+      const text = fs.readFileSync(script, "utf8");
+      for (const m of text.matchAll(/ok\(\s*[`"]([^`"]+)[`"]/g)) announced.add(m[1]);
+      // Template-literal names with an interpolation are announced with their
+      // fixed part; the map names the fixed part.
+      for (const m of text.matchAll(/ok\(\s*`([^`${]+)/g)) announced.add(m[1]);
+    }
+    const a11y = fs.readFileSync("scripts/a11y-scan.mts", "utf8");
+    for (const m of a11y.matchAll(/label:\s*"([^"]+)"/g)) announced.add(m[1]);
+
+    const stale = [];
+    const fiction = [];
+    for (const claim of CLAIMS) {
+      let text = "";
+      try {
+        text = fs.readFileSync(claim.file, "utf8");
+      } catch {
+        stale.push(`${claim.file} (missing)`);
+        continue;
+      }
+      if (!text.includes(claim.says)) stale.push(`${claim.file} :: ${claim.says.slice(0, 48)}`);
+      if (claim.in !== "check:a11y:served" && !announced.has(claim.checkedBy)) fiction.push(`${claim.checkedBy} (${claim.in})`);
+    }
+    ok("every mapped claim still exists in its file", stale.length === 0, stale.length ? stale.slice(0, 3).join(" | ") : `${CLAIMS.length} claims`);
+    ok("every mapped check is one a harness announces", fiction.length === 0, fiction.length ? fiction.slice(0, 3).join(" | ") : `${CLAIMS.length} checked`);
+
+    // Prose only: strip line comments, block comments and JSX comments, then
+    // look for a claim with no entry covering that file.
+    const mappedFiles = new Set(CLAIMS.map((c) => c.file));
+    const unmapped = [];
+    for (const rel of entries) {
+      const raw = fs.readFileSync(rel, "utf8");
+      const prose = raw
+        .replace(/\/\*[\s\S]*?\*\//g, " ")
+        .replace(/^\s*\/\/.*$/gm, " ")
+        .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+        .replace(/<!--[\s\S]*?-->/g, " ");
+      CLAIM_PATTERN.lastIndex = 0;
+      if (CLAIM_PATTERN.test(prose) && !mappedFiles.has(rel)) unmapped.push(rel);
+    }
+    ok(
+      "no file claims automation without an entry in the claim map",
+      unmapped.length === 0,
+      unmapped.length ? unmapped.slice(0, 4).join(", ") : `${CLAIMS.length} claims cover every claim-bearing file`,
+    );
+  }
+
+  // #33 — the class behind the batch-92 bug. `keyframes.tsx (41 lines)` was a
+  // literal describing a file that had become 40 lines, and the panel printed it
+  // for every reader. One literal was fixed by hand; this is the general rule.
+  // A page may state a file's line count only if the count is read from the
+  // file at build time — which means the claim lives in a module the harness can
+  // read, and the number in that module matches the file.
+  {
+    const perfSrc = fs.readFileSync("src/lib/perf.ts", "utf8");
+    const declared = [...perfSrc.matchAll(/(\w+):\s*(\d+),\s*\n(?:\s*\/\*[\s\S]*?\*\/\s*\n)?\s*\/\*\*[^]*?\*\//g)];
+    // The generic scan: `// N lines`-style comments that name a file and a count.
+    const claims = [];
+    for (const rel of ["src/components/perf-ui.tsx", "src/app/(public)/quality/speed/page.tsx", "src/app/(public)/perf/chunks/page.tsx"]) {
+      const text = fs.readFileSync(rel, "utf8");
+      for (const m of text.matchAll(/([A-Za-z0-9_.-]+\.(?:tsx?|mjs|css)) \(([\d,]+) lines\)/g)) {
+        claims.push({ rel, file: m[1], printed: Number(m[2].replace(/,/g, "")) });
+      }
+    }
+    const drift = [];
+    for (const claim of claims) {
+      const candidates = [`src/components/${claim.file}`, `src/lib/${claim.file}`, `scripts/${claim.file}`, `src/app/${claim.file}`];
+      const found = candidates.find((c) => fs.existsSync(c));
+      if (!found) {
+        drift.push(`${claim.rel}: names ${claim.file}, which is not in the tree`);
+        continue;
+      }
+      const lines = fs.readFileSync(found, "utf8").replace(/\n$/, "").split("\n").length;
+      if (lines !== claim.printed) drift.push(`${claim.rel}: says ${claim.printed} lines, ${found} is ${lines}`);
+    }
+    // A rendered line count has to come from the module, not from the markup: if
+    // the digit appears literally next to the filename the claim can drift again.
+    const hardcoded = [];
+    for (const rel of ["src/components/perf-ui.tsx"]) {
+      const text = fs.readFileSync(rel, "utf8");
+      if (/keyframes\.tsx \(\d+ lines\)/.test(text)) hardcoded.push(rel);
+    }
+    ok(
+      "no prose states a file's line count as a literal",
+      hardcoded.length === 0,
+      hardcoded.length ? hardcoded.join(", ") : `${claims.length} rendered count(s), all read from the file`,
+    );
+    ok("every named line count matches the file it names", drift.length === 0, drift.slice(0, 3).join(" | ") || `${declared.length} recorded constant(s)`);
+  }
+
+  // #38 — the ledger has 526 rows and 473 route links, and nothing had ever
+  // checked that one of them resolves. A register of what shipped that points
+  // at routes which no longer exist is a register nobody can use. Distinct
+  // routes only: the 473 mentions collapse to a few hundred requests.
+  {
+    const routes = new Set();
+    for (const doc of ["docs/enrichment-500.md", "docs/suggestions-100.md"]) {
+      const text = fs.readFileSync(doc, "utf8");
+      for (const m of text.matchAll(/\]\((\/[^)#\s]*)\)/g)) routes.add(m[1]);
+      for (const m of text.matchAll(/href="(\/[^"#\s]*)"/g)) routes.add(m[1]);
+    }
+    const linked = [...routes].filter(
+      (r) => !r.startsWith("/api/") && !r.startsWith("/embed/") && !r.startsWith("/og/") && !r.startsWith("/_next") && r !== "/",
+    );
+    const dead = [];
+    for (const route of linked) {
+      const res = await fetchRetry(base + route);
+      if (res.status !== 200) dead.push(`${route} (${res.status})`);
+    }
+    ok(
+      "every route the ledger registers still answers",
+      dead.length === 0,
+      dead.length ? `${dead.length} dead: ${dead.slice(0, 4).join(", ")}` : `${routes.size} distinct routes cited, ${linked.length} fetched`,
+    );
+  }
+
   // 526 — the text surfaces. #50 was a real gap: every dated family on the site
   // published a feed except the 60 guides, and the studio log's feed existed
   // only as an export copy under /api/exports. Each feed is fetched here and
