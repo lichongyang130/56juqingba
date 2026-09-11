@@ -3,6 +3,9 @@ import { exportFor } from "@/lib/exports";
 import { CHANGELOG } from "@/lib/data";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/integrations/feed" },
   title: "Changelog feed — Motif UI",
   description: "RSS for the studio log, with each entry's measured size change carried inside the description.",
 };

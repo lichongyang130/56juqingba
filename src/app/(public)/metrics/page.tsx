@@ -5,6 +5,9 @@ import { LEARN_ARTICLES } from "@/lib/learn";
 import report from "../../../../docs/build-report.json";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/metrics" },
   title: "Open metrics — everything we can measure — Motif UI",
   description:
     "Library counters, prompt runs, build weight and changelog deltas, all recomputed at build time — plus the one number that is missing on purpose: visitors.",

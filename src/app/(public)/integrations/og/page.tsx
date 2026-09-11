@@ -3,6 +3,9 @@ import { ogMarkup } from "@/lib/exports";
 import { COMPONENTS } from "@/lib/data";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/integrations/og" },
   title: "Open Graph helper — Motif UI",
   description: "Copy-paste OG markup for any asset, and the reason this site ships no preview image.",
 };

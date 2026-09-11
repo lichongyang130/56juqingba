@@ -4,6 +4,9 @@ import { TrialRail } from "@/components/pro-ui-2";
 import { TRIAL_DAYS, featuresByState } from "@/lib/pro";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/pro/trial" },
   title: "The 7-day Pro trial — Motif UI",
   description: "A day-by-day trial walkthrough whose order is the honest one: working features first, server-bound promises last.",
 };

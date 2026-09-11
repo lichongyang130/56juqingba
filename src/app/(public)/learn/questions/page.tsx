@@ -6,6 +6,9 @@ import { QUERIES } from "@/lib/queries";
 import { faqLd, jsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/learn/questions" },
   title: "Questions the guides answer — Motif UI",
   description:
     "Eighteen questions people actually search for, each paired with the guide that answers it and the component that proves it — curated, not generated.",

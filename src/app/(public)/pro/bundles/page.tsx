@@ -4,6 +4,9 @@ import { CostMeter } from "@/components/pro-ui-2";
 import { PACKS, planOf } from "@/lib/pro";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/pro/bundles" },
   title: "Bundle vs ala-carte — Motif UI",
   description: "A cost meter over the real pack prices that will tell you when buying one thing beats the bundle.",
 };

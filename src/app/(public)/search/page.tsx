@@ -1,6 +1,9 @@
 import SearchExplorer, { type Scope } from "./search-client";
 
-export const metadata = { title: "Search the library — Motif UI" };
+export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/search" }, title: "Search the library — Motif UI" };
 
 const SCOPES: Scope[] = ["all", "components", "prompts", "backgrounds", "guides"];
 

@@ -63,10 +63,10 @@ export const metadata: Metadata = {
     url: SITE_URL,
   },
   twitter: { card: "summary_large_image" },
-  // #475 — the English side of the multilingual title test. /es declares the
-  // same pair from its own metadata, so the relationship is two-way rather
-  // than a one-way claim.
-  alternates: { canonical: "/", languages: { en: "/", es: "/es", "x-default": "/" } },
+  // No `alternates` here on purpose. A canonical declared at the layout level
+  // is inherited by every page that forgot to declare its own — which is how a
+  // hundred pages end up pointing at "/". Canonicals, and the #475
+  // multilingual pair, are declared by the pages they describe.
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

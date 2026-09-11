@@ -4,6 +4,9 @@ import { CHANGELOG } from "@/lib/data";
 import { changeLogSlug } from "@/lib/spine";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/brand/notes" },
   title: "Build notes — twelve one-liners with numbers in them — Motif UI",
   description:
     "Each changelog entry reduced to a post-sized line carrying its own figure — assembled from the changelog data, not written for a thread.",

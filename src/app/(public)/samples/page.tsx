@@ -2,7 +2,10 @@ import Link from "next/link";
 import { COMPONENTS, accentCss } from "@/lib/data";
 import { SAMPLE_BUILDS } from "@/lib/samples";
 
-export const metadata = { title: "Made with Motif — case studies" };
+export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/samples" }, title: "Made with Motif — case studies" };
 
 export default function SamplesIndexPage() {
   return (

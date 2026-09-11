@@ -3,6 +3,9 @@ import Link from "next/link";
 import { COLLECTIONS, collectionMatches } from "@/lib/community";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/collections" },
   title: "Collections — Motif UI",
   description: "Curated Motif collections built as real filters over the live catalog — under 5 KB, zero-dependency motion, a11y 98+, landing sections and verified prompts.",
 };

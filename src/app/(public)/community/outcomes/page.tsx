@@ -5,6 +5,9 @@ import { LocalDecisions } from "@/components/community-ui-2";
 import { MODERATION_STORAGE_KEY } from "@/lib/community";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/outcomes" },
   title: "Moderation outcomes — Motif UI",
   description: "What happens to submissions: the sample queue's gate outcomes aggregated, the rule behind every decision path, and your own reviews read back from this browser.",
 };

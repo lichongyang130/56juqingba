@@ -27,6 +27,9 @@ import {
 } from "@/components/quality-panels-2";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/quality" },
   title: "Quality bar — Motif UI",
   description:
     "Motif's quality, accessibility and testing bar in the open: audit score distributions, contrast CI pairs, reduced-motion fallback, size budgets, the dependency ledger, keyboard walks and screen-reader smoke assertions — all recomputed from the live catalog.",

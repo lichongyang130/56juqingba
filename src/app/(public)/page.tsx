@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { AssetCard, BackgroundCard, HueStage, Stage, ToolCard } from "@/components/cards";
 import { DemoView } from "@/components/demos/Demo";
@@ -7,6 +8,14 @@ import { SAMPLE_BUILDS } from "@/lib/samples";
 import AfternoonTimeline from "@/components/home-story";
 import { ChangelogList } from "@/components/home-cues";
 import { NewSinceStrip } from "@/components/retention-ui";
+
+export const metadata: Metadata = {
+  // The layout deliberately sets no canonical: a page that inherits "/" lies
+  // about where it lives. This one declares its own.
+  // #475 — the English side of the multilingual pair: /es points here and
+  // this page points back, so the hreflang claim is two-way.
+  alternates: { canonical: "/", languages: { en: "/", es: "/es", "x-default": "/" } },
+};
 
 const SUPER_POWERS = [
   {

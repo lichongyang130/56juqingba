@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
 import { EasingLab, GradientForge, ScrollLab, SpringLab } from "@/components/lab-tools";
 import { BackgroundPainter, ColourRampChecker, FilterLab, RadiusPlayground, ShadowStacker, StaggerCalculator, TextAnimationLab, TimingComposer } from "@/components/lab-additions";
 import { BreakpointInspector, ExportClipboard, FavouriteRecipes, HueShiftSimulator, MotionPreferencePreview, PerfMeter, RandomInspiration, UrlStateLabs } from "@/components/lab-additions-2";
 import { DiffViewer, IconLineWeightLab, LogoDriftPreview, TypingSpeedMeter } from "@/components/lab-additions-3";
 import { ToolCard } from "@/components/cards";
 import { LAB_TOOLS } from "@/lib/data";
+
+export const metadata: Metadata = {
+  // The layout deliberately sets no canonical: a page that inherits "/" lies
+  // about where it lives. This one declares its own.
+  alternates: { canonical: "/lab" },
+};
 
 export default function LabPage() {
   return (

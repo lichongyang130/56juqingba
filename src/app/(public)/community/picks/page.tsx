@@ -3,6 +3,9 @@ import Link from "next/link";
 import { weekPicks } from "@/lib/community";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/picks" },
   title: "Weekly picks — Motif UI",
   description: "Three community submissions a week, chosen by a published rule: clean gates first, then the highest audit score. Rotates weekly with no hand-picking.",
 };

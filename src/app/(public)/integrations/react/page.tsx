@@ -3,6 +3,9 @@ import { exportFor, tokenSet } from "@/lib/exports";
 import { COMPONENTS } from "@/lib/data";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/integrations/react" },
   title: "React package scaffold — Motif UI",
   description: "The one component an npm package could honestly ship today, and the layout it would publish.",
 };

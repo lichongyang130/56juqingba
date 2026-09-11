@@ -4,6 +4,9 @@ import { COMPONENTS } from "@/lib/data";
 import { LovedBoard } from "@/components/community-ui";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/loved" },
   title: "Community loved — Motif UI",
   description: "The most-thanked Motif assets: the shared catalog ranking, reordered for you by the thanks you leave in this browser.",
 };

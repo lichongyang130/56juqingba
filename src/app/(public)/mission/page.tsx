@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { accentCss, COMPONENTS, PROMPTS } from "@/lib/data";
 
-export const metadata = { title: "Mission — Motif UI" };
+export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/mission" }, title: "Mission — Motif UI" };
 
 const PRINCIPLES = [
   {

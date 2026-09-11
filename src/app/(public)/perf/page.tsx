@@ -3,6 +3,9 @@ import { BudgetSummary, BudgetTable, PERF_ROUTES, MeasuredNote, PerfNav } from "
 import { buildAvailable, buildSummary, routeBudgets } from "@/lib/perf";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/perf" },
   title: "Page budgets — Motif UI",
   description: "Every route's own JavaScript, its CSS and its HTML, measured from the compiled build rather than estimated.",
 };

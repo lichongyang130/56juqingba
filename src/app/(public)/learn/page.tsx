@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { LEARN_ARTICLES } from "@/lib/learn";
 import { accentHue } from "@/lib/data";
+
+export const metadata: Metadata = {
+  // The layout deliberately sets no canonical: a page that inherits "/" lies
+  // about where it lives. This one declares its own.
+  alternates: { canonical: "/learn" },
+};
 
 const LEVEL_STYLE: Record<string, string> = {
   Beginner: "text-mint",

@@ -3,6 +3,9 @@ import { ProDemoBanner, ProSectionNav, UnlimitedPanel } from "@/components/pro-u
 import { unlimitedRows } from "@/lib/pro";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/pro/unlimited" },
   title: "What unlimited means — Motif UI",
   description: "The word 'unlimited' measured against what this build actually does: unlimited copies, yes; unlimited API calls, no API.",
 };

@@ -3,6 +3,9 @@ import Link from "next/link";
 import { OVERCLAIM_DICTIONARY, toneScan } from "@/lib/quality-utils";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/brand/voice" },
   title: "Voice guide — 10 lines we say and 10 we never do — Motif UI",
   description:
     "The tone rules behind the copy: ten things Motif says, ten it never says, and the scanner that enforces them over the site's own prose.",

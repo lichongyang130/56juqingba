@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { accentCss, BACKGROUNDS, CHANGELOG, COMPONENTS, PROMPTS } from "@/lib/data";
 
-export const metadata = { title: "This week at Motif — weekly digest" };
+export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/digest" }, title: "This week at Motif — weekly digest" };
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 

@@ -20,6 +20,7 @@ import {
   ThemePreviewPanel,
 } from "@/components/studio-panels";
 import { ProLabGate } from "@/components/pro-lab-gate";
+
 import {
   ApiPreviewPanel,
   IconPanel,
@@ -28,6 +29,7 @@ import {
   SemanticMapPanel,
   SpacingPanel,
 } from "@/components/studio-panels-2";
+
 
 const PRESETS: (Tokens & { id: string; label: string; note: string })[] = [
   { id: "violet", label: "Motif Violet", hue: 262, sat: 82, radius: 12, mode: "dark", note: "the house default — calm, generative" },

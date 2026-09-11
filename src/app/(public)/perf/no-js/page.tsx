@@ -3,6 +3,9 @@ import { NoJsPanel, MeasuredNote, PerfNav } from "@/components/perf-ui";
 import { zeroJsAssets } from "@/lib/perf";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/perf/no-js" },
   title: "Zero-JS showcase — Motif UI",
   description: "Which assets need no JavaScript, and what the catalog actually looks like to a client with scripts switched off.",
 };

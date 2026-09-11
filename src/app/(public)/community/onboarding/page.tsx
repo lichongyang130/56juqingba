@@ -4,6 +4,9 @@ import { COMPONENTS } from "@/lib/data";
 import { MODERATION_SEED, queueReport } from "@/lib/community";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/onboarding" },
   title: "How to submit — Motif UI",
   description: "The contributor onboarding guide: the audit criteria each submission is measured against, the gates, the thresholds, the reasons entries get sent back, and a checklist you can run before you submit.",
 };

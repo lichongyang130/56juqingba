@@ -3,6 +3,9 @@ import { PerfNav, Stat, MeasuredNote } from "@/components/perf-ui";
 import { SW_PLAN, buildSummary } from "@/lib/perf";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/perf/service-worker" },
   title: "Service worker plan — Motif UI",
   description: "What an offline catalog would cache, how it would be versioned, and why it ships after the API rather than before.",
 };

@@ -4,6 +4,9 @@ import { COMPONENTS, PROMPTS } from "@/lib/data";
 import { jsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/glossary" },
   title: "Glossary — the words this site uses — Motif UI",
   description:
     "Fidelity score, run log, concept render, audit, tier and the rest of Motif's vocabulary, each defined with a live example rather than a marketing gloss.",

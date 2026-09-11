@@ -211,6 +211,19 @@ function parseCheck(label, source) {
   }
   ok("no forbidden schema type is emitted anywhere", offenders.length === 0, offenders.join(", "));
 
+  /* ---------- canonicals ---------- */
+
+  // The layout sets no canonical on purpose: a page-level canonical inherited
+  // from a layout points every page at "/". This samples one page per family,
+  // including the two client-component segments whose canonical lives in a
+  // one-line layout.
+  for (const p of ["/", "/metrics", "/brand/logo", "/glossary", "/lab", "/prompts", "/backgrounds", "/studio", "/es", "/changelog", "/components/halo-button", "/learn/the-keyboard-walk"]) {
+    const res = await get(p);
+    const canonical = (res.text.match(/<link rel="canonical" href="([^"]*)"/) || [])[1] || "";
+    const expected = p === "/" ? "https://motifui.dev" : `https://motifui.dev${p}`;
+    ok(`canonical for ${p} is its own URL`, canonical === expected, canonical || "none");
+  }
+
   /* ---------- section 20 brand & launch ---------- */
 
   const brandLogo = await get("/brand/logo");

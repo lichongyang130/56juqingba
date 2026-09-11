@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { BackgroundCard } from "@/components/cards";
 import { BACKGROUNDS } from "@/lib/data";
 
+
+
 const CATS = ["All", "animated", "gradient", "texture", "particles"] as const;
 const TECHS = ["All", "CSS", "WebGL", "SVG"];
 

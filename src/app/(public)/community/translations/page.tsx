@@ -3,6 +3,9 @@ import Link from "next/link";
 import { LEARN_ARTICLES } from "@/lib/learn";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/translations" },
   title: "Translations — Motif UI",
   description: "Crowd translations of the Motif guides: what CC BY 4.0 allows, the workflow, a do-not-translate glossary, and an honest status table that currently reads zero community translations.",
 };

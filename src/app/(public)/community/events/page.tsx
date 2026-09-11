@@ -3,6 +3,9 @@ import Link from "next/link";
 import { ROSTER } from "@/lib/community";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/events" },
   title: "Events — Motif UI",
   description: "Motif's build-along and office-hours schedule: a real recurring cadence with computed upcoming dates, no past sessions claimed, and no attendance numbers invented.",
 };

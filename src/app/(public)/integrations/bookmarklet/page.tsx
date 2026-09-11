@@ -3,6 +3,9 @@ import { BookmarkletInstall } from "@/components/bookmarklet-install";
 import { exportFor } from "@/lib/exports";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/integrations/bookmarklet" },
   title: "Palette bookmarklet — Motif UI",
   description: "Drag one link to your bookmarks bar to read any page's colour custom properties, without sending anything anywhere.",
 };

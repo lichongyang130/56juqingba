@@ -3,6 +3,9 @@ import Link from "next/link";
 import { Mascot } from "@/components/mascot";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/brand/thanks" },
   title: "Thank-you page — what happens after a demo signup — Motif UI",
   description:
     "The design for the page after a mock signup: no confetti, no upsell — three concrete first steps through the library, in order, with reasons.",

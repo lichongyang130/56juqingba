@@ -5,6 +5,8 @@ import { PromptCard } from "@/components/cards";
 import { PROMPTS } from "@/lib/data";
 import type { PromptTemplate } from "@/lib/types";
 
+
+
 const INDUSTRIES = ["All", ...Array.from(new Set(PROMPTS.map((p) => p.industry)))];
 
 export default function PromptsPage() {

@@ -3,6 +3,9 @@ import { printCss, tokenSet } from "@/lib/exports";
 import { LEARN_ARTICLES } from "@/lib/learn";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/integrations/print" },
   title: "Print stylesheet — Motif UI",
   description: "The @media print rules this site compiles, printed as text, with what they change and what they cannot fix.",
 };

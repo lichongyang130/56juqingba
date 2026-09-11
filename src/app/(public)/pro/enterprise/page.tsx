@@ -3,6 +3,9 @@ import { EnterpriseAsks, ProDemoBanner, ProSectionNav } from "@/components/pro-u
 import { ENTERPRISE_ASKS } from "@/lib/pro";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/pro/enterprise" },
   title: "Enterprise asks — Motif UI",
   description: "SSO, SLA, DPA, security questionnaires and purchase orders: what is answerable today, what is not, and what each would take.",
 };

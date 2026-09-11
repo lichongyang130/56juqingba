@@ -4,6 +4,9 @@ import { COMPONENTS, PROMPTS } from "@/lib/data";
 import { prefetchAudit } from "@/lib/perf";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/perf/prefetch" },
   title: "Prefetch strategy — Motif UI",
   description: "Why catalog cards wait for intent before fetching, with the payload of one prefetch measured against this build.",
 };

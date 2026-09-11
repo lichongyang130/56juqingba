@@ -3,6 +3,9 @@ import Link from "next/link";
 import { LAUNCH_ITEMS } from "@/lib/brand";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/brand/launch" },
   title: "Launch checklist — what shipped, what we left out — Motif UI",
   description:
     "The real pre-launch list behind Motif: twelve items, three of them deliberate omissions, two still open, each pointing at the surface that proves it.",

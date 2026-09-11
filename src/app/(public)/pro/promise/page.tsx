@@ -2,6 +2,9 @@ import Link from "next/link";
 import { GrandfatherPanel, ProDemoBanner, ProSectionNav } from "@/components/pro-ui";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/pro/promise" },
   title: "The grandfather promise — Motif UI",
   description: "The price you join at is the price you keep, with the four cases it does not cover and the gap named.",
 };

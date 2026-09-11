@@ -3,6 +3,9 @@ import { COMPONENTS } from "@/lib/data";
 import { badgeSvg } from "@/lib/exports";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/integrations/badge" },
   title: "Score badge — Motif UI",
   description: "A real SVG badge per asset, built from the same stored scores the asset page shows.",
 };

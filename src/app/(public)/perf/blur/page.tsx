@@ -3,6 +3,9 @@ import { BlurPanel, PerfNav } from "@/components/perf-ui";
 import { blurSites } from "@/lib/perf";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/perf/blur" },
   title: "Blur budget — Motif UI",
   description: "Every backdrop-blur in the project classified by the surface it covers, so the polish does not become the lag.",
 };

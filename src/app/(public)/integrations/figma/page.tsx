@@ -2,6 +2,9 @@ import Link from "next/link";
 import { figmaVariables } from "@/lib/exports";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/integrations/figma" },
   title: "Figma variable sync — Motif UI",
   description: "The token set as Figma colour and number variables, with the values it cannot hold named rather than coerced.",
 };

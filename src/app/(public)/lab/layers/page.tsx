@@ -5,6 +5,9 @@ import { COMPONENTS } from "@/lib/data";
 import { motionAudit } from "@/lib/perf";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/lab/layers" },
   title: "Animation layer inspector — Motif UI",
   description: "Mount a catalog demo, read every property it animates, and see which of them the compositor can take over.",
 };

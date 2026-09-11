@@ -5,6 +5,9 @@ import { LEARN_ARTICLES } from "@/lib/learn";
 import { localDay } from "@/lib/retention";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/digest/copy-of-the-week" },
   title: "Copy of the week — a previewable digest email",
   description:
     "The weekly digest as a designed email mock: the most-copied component, the best-fidelity prompt and one essay, all read from the catalog.",

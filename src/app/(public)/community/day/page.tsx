@@ -4,6 +4,9 @@ import { CommunityDay, TodayLine } from "@/components/retention-ui-2";
 import { localDay } from "@/lib/retention";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/day" },
   title: "Community day — every Thursday — Motif UI",
   description:
     "A weekly themed brief that runs every Thursday. The date and theme are computed from the calendar; the sticker is a local note, not a certificate.",

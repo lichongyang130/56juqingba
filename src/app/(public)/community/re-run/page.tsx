@@ -5,6 +5,9 @@ import { RerunStudio } from "@/components/community-ui";
 import { promptLeaderboard } from "@/lib/community";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/re-run" },
   title: "Community re-run — Motif UI",
   description: "Ask whether a Motif prompt still holds on a model: pick a verified prompt, stream a simulated run log and compare against the published fidelity average.",
 };

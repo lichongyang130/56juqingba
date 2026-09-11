@@ -2,6 +2,9 @@ import Link from "next/link";
 import { BuildPanel, MeasuredNote, PerfNav } from "@/components/perf-ui";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/perf/build" },
   title: "Build report — Motif UI",
   description: "What the production build compiles in: route counts, chunk counts, stylesheets, fonts and prerendered HTML.",
 };

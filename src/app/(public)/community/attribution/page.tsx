@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/attribution" },
   title: "Attribution policy — Motif UI",
   description: "How remixes credit the original author: what the MIT and CC BY 4.0 licences require, what we ask for on top, and what happens when a credit goes missing.",
 };

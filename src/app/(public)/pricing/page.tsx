@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { DemoView } from "@/components/demos/Demo";
 import { Stage } from "@/components/cards";
 import { PricingAudit, ProSectionNav } from "@/components/pro-ui";
 import { MONEY_GAP, PLANS, yearlySaving } from "@/lib/pro";
+
+export const metadata: Metadata = {
+  // The layout deliberately sets no canonical: a page that inherits "/" lies
+  // about where it lives. This one declares its own.
+  alternates: { canonical: "/pricing" },
+};
 
 const FAQ = [
   ["Is the library really free?", "Yes — the core library (elements, animated assets, backgrounds, sections) is MIT-licensed and free forever, no watermark."],

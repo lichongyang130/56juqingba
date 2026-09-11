@@ -4,6 +4,9 @@ import { SubmitForm } from "@/components/community-ui";
 import { MODERATION_SEED } from "@/lib/community";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/submit" },
   title: "Submit a remix — Motif UI",
   description: "Send a remix of any Motif asset into the moderation queue. The form is a browser-local demo; the queue, the gates and the review flow it feeds are real surfaces.",
 };

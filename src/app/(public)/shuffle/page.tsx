@@ -2,7 +2,10 @@ import Link from "next/link";
 import ShuffleView from "@/components/shuffle-view";
 import { COMPONENTS } from "@/lib/data";
 
-export const metadata = { title: "Get inspired — Motif UI shuffle" };
+export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/shuffle" }, title: "Get inspired — Motif UI shuffle" };
 
 export default function ShufflePage() {
   return (

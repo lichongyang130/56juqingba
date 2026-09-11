@@ -3,6 +3,9 @@ import Link from "next/link";
 import { Mascot, type MascotPose } from "@/components/mascot";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/brand/mascot" },
   title: "The mascot — one dot that left the frame — Motif UI",
   description:
     "An original character for empty states and 404s: the logo's dot, escaped. Three poses, drawn in the same 6-unit geometry as the mark.",

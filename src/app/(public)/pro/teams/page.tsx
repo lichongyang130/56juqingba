@@ -4,6 +4,9 @@ import { SeatDemo } from "@/components/pro-ui-2";
 import { TEAM_EXTRA_SEAT_PRICE, TEAM_SEATS_INCLUDED, planOf } from "@/lib/pro";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/pro/teams" },
   title: "Team seats — Motif UI",
   description: "An invite demo with role descriptions and the seat arithmetic the plan card leaves unsaid.",
 };

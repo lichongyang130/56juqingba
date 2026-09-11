@@ -4,6 +4,9 @@ import { assetLeaderboard, promptLeaderboard } from "@/lib/community";
 import { kindLabel } from "@/lib/quality-utils";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/leaderboard" },
   title: "Copy leaderboard — Motif UI",
   description: "The most-copied Motif components and the highest-fidelity prompts, with author credits and an honest note about what copy counts measure.",
 };

@@ -4,6 +4,9 @@ import { Mascot } from "@/components/mascot";
 import { SAMPLE_BUILDS } from "@/lib/samples";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/brand/proof" },
   title: "Proof shelf — labelled examples, not testimonials — Motif UI",
   description:
     "Three build stories, each clearly labelled as an authored demo persona rather than a real customer. The format is the deliverable; the quotes are not real people.",

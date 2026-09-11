@@ -5,6 +5,9 @@ import { QuietReminder, RateYourBuild, StreakBoard, TodayLine } from "@/componen
 import { localDay } from "@/lib/retention";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/habits" },
   title: "Maker habits — Motif UI",
   description:
     "Three optional, browser-local habits: a copy streak, a one-tap did-this-ship check-in, and a reminder that can only ever be one line on a visit.",

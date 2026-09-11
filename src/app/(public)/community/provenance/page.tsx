@@ -4,6 +4,9 @@ import { COMPONENTS } from "@/lib/data";
 import { snippetProvenance } from "@/lib/community";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/provenance" },
   title: "Snippet provenance — Motif UI",
   description: "Who touched this code: per-asset provenance built from the record the catalog actually keeps — version, author, publication date and matching changelog entries, with the rule printed.",
 };

@@ -3,7 +3,10 @@ import TemplateHub from "@/components/template-hub";
 import { COMPONENTS } from "@/lib/data";
 import type { Asset } from "@/lib/types";
 
-export const metadata = { title: "Templates — Motif UI" };
+export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/templates" }, title: "Templates — Motif UI" };
 
 export default function TemplatesPage() {
   const templates: Asset[] = COMPONENTS.filter(

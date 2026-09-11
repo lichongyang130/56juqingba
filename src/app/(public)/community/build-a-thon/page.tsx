@@ -4,6 +4,9 @@ import { BuildAThonCalendar } from "@/components/retention-ui-2";
 import { localDay } from "@/lib/retention";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/community/build-a-thon" },
   title: "Build-a-thon calendar — Motif UI",
   description:
     "A monthly build challenge with a computed countdown: the window opens on the 1st, closes on the last day, and the theme rotates by month.",

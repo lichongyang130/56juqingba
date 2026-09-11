@@ -3,6 +3,9 @@ import { MountingPanel, MeasuredNote, PerfNav } from "@/components/perf-ui";
 import { COMPONENTS } from "@/lib/data";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/perf/mounting" },
   title: "Lazy scene mounting — Motif UI",
   description: "Catalog demos mount when they come near the viewport, with the HTML savings and the no-JavaScript trade-off measured.",
 };

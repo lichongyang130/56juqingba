@@ -2,6 +2,9 @@ import Link from "next/link";
 import { exportFor } from "@/lib/exports";
 
 export const metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/integrations/codesandbox" },
   title: "CodeSandbox export — Motif UI",
   description: "Three files that make a sandbox project, and the one-click deep link this build cannot honestly promise.",
 };

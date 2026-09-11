@@ -5,6 +5,9 @@ import { MEASURED } from "@/lib/perf";
 import report from "../../../../../docs/build-report.json";
 
 export const metadata: Metadata = {
+  // canonical per page — the layout no longer sets one, so a page that
+  // forgot its own would emit nothing rather than point at the homepage.
+  alternates: { canonical: "/quality/speed" },
   title: "Speed — the measured story — Motif UI",
   description:
     "The performance numbers this site can actually measure: JavaScript per route, font weight, the split that halved both, and an explicit note on the scores it does not claim.",
