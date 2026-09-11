@@ -189,6 +189,26 @@ function FakeBars({ seed, n = 6, hue }: { seed: string; n?: number; hue: number 
   );
 }
 
+/** The poster, in two compositions.
+ *
+ *  `hero` is the wide banner on a prompt's own page: a full faux landing page
+ *  at 21/8, where there is room for a navbar, a headline, two buttons and the
+ *  block list to sit without touching.
+ *
+ *  `thumb` is the grid card (~390×244). It used to render the same scaffold,
+ *  and the result was fourteen text elements fighting in a box the size of a
+ *  postcard: a 30px `font-black` white headline with a drop shadow, an 8px
+ *  sub-line, a faux navbar, two buttons, block chips and a stack list. The
+ *  headline is decorative — the industry sample, not the prompt — so at that
+ *  size it was the loudest thing on the page and the least useful.
+ *
+ *  The thumbnail answers that with less: the ambient scene, the fidelity badge
+ *  (the status is printed in the card body, where it is real text rather than a
+ *  picture of a label) and one anchored block — an accent
+ *  rule, the industry kicker and the sample's two title lines at 14px. Four
+ *  text elements, none under 9px, nothing overlapping. The blocks and stacks
+ *  that used to be printed over the scene live in the card body below, where
+ *  there is room to read them. */
 export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate; hero?: boolean }) {
   const hue = accentHue(prompt.slug);
   const h = hashSeed(prompt.slug);
@@ -208,13 +228,27 @@ export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate;
     <div
       className="relative overflow-hidden"
       style={{ aspectRatio: hero ? "21 / 8" : "16 / 10" }}
+      // A concept render is decoration: the fake navbar, the industry sample's
+      // headline and the placeholder behind it are not content. Without this,
+      // every card link on /prompts is named "Poster scene mounts on scroll
+      // Verified 89 avg fidelity · concept render FINTECH / TRUST Security you
+      // can actually read …" — 40 words of nothing before the prompt's name.
+      aria-hidden
     >
       {/* ambient scene, cropped-in so self-labels stay out of frame */}
       <div className="absolute -inset-[38%]" aria-hidden>
         <LazyDemo demo={scene} props={sceneProps} minHeight={0} label="Poster scene" />
       </div>
-      {/* legibility scrims */}
+      {/* legibility scrims — the thumbnail needs a floor under its headline,
+          because the ambient scenes are brightest in the lower half */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(120deg, rgba(5,6,10,0.72) 0%, rgba(5,6,10,0.32) 55%, rgba(5,6,10,0.6) 100%)` }} aria-hidden />
+      {!hero && (
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(to top, rgba(5,6,10,0.88) 0%, rgba(5,6,10,0.42) 38%, transparent 68%)" }}
+          aria-hidden
+        />
+      )}
       <div className="absolute inset-0" style={{ background: `radial-gradient(120% 140% at 12% 0%, hsl(${hue} 60% 30% / 0.32), transparent 55%)` }} aria-hidden />
 
       {/* status + fidelity badges */}
@@ -231,10 +265,28 @@ export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate;
         </span>
       </div>
 
-      {/* ------- fake page scaffold inside the scene ------- */}
-      <div className={`absolute inset-0 ${hero ? "px-12" : "px-5"} py-4 ${hero ? "md:py-7" : ""}`}>
+      {!hero && (
+        /* ------- thumbnail composition: nothing but the sample's headline ------- */
+        <div className="absolute inset-x-0 bottom-0 p-3.5">
+          <span className="block h-0.5 w-7 rounded-full" style={{ background: `hsl(${hue} 90% 66%)` }} />
+          <div className="mt-2 text-[9px] font-bold uppercase tracking-[0.22em] text-white/55">{sample.kicker}</div>
+          <div className="mt-1 text-[14px] font-bold leading-[1.15] tracking-tight text-white/95">
+            {titleLines.map((l) => (
+              <span key={l} className="block truncate">
+                {l}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ------- fake page scaffold inside the scene (hero only) -------
+          Rendered, not hidden: `hidden` would leave a fake page's markup in all
+          74 thumbnails for the browser to parse and the page to carry. */}
+      {hero && (
+      <div className="absolute inset-0 px-12 py-4 md:py-7">
         {/* faux navbar */}
-        <div className="flex items-center gap-3" style={{ opacity: hero ? 1 : 0.9 }}>
+        <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full" style={{ background: `hsl(${hue} 90% 65%)`, boxShadow: `0 0 8px hsl(${hue} 90% 65% / .8)` }} />
             <span className="text-[10px] font-black tracking-[0.18em] text-white/80">MOTIF</span>
@@ -324,11 +376,13 @@ export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate;
           </div>
         )}
       </div>
+      )}
 
-      {/* bottom corner: blocks used */}
+      {/* bottom corner: blocks used — hero only, the card body carries them */}
+      {hero && (
       <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between gap-2">
         <div className="flex min-w-0 flex-wrap items-center gap-1" style={{ maxWidth: "72%" }}>
-          {prompt.blocks.slice(0, hero ? 6 : 4).map((b) => (
+          {prompt.blocks.slice(0, 6).map((b) => (
             <span key={b} className="rounded-md bg-black/45 px-1.5 py-0.5 text-[7px] font-semibold uppercase tracking-wider text-white/55 backdrop-blur-sm">
               {b}
             </span>
@@ -338,6 +392,7 @@ export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate;
           {prompt.stacks.join(" · ")}
         </span>
       </div>
+      )}
     </div>
   );
 }
@@ -345,6 +400,7 @@ export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate;
 /* ---------------- prompt card ---------------- */
 
 export function PromptCard({ prompt }: { prompt: PromptTemplate }) {
+  const statusMeta = promptStatusMeta(prompt.status);
   return (
     <IntentLink
       href={`/prompts/${prompt.slug}`}
@@ -365,7 +421,10 @@ export function PromptCard({ prompt }: { prompt: PromptTemplate }) {
           </div>
         </div>
         <div className="mt-auto flex items-center justify-between gap-2 pt-3.5">
-          <div className="flex gap-1 overflow-hidden">
+          <div className="flex flex-wrap items-center gap-1 overflow-hidden">
+            {/* the poster's status badge is decorative now, so the card states
+                the status itself — same label, and it is real text */}
+            <span className={`chip border !text-[9px] ${statusMeta.cls}`} aria-hidden>{statusMeta.label}</span>
             {prompt.stacks.map((s) => (
               <span key={s} className="chip !text-[9px]">{s}</span>
             ))}
