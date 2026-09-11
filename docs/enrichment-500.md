@@ -15,7 +15,7 @@ the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet c
 harness reads the `ledger-extra-rows` marker above and allows that difference, which means
 the table ends at #501 on the day the headline reads 500 / 500._
 
-## Progress — 459 / 500 shipped (batches 1–69, in order) · Sections 1–17 complete ✅ · Section 18 in progress (4/10)
+## Progress — 465 / 500 shipped (batches 1–69, in order) · Sections 1–18 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -479,6 +479,12 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 458 | Learning paths | [/learn/paths](/learn/paths) · three build-time sequences (motion starter, springs, scroll) drawn from the essays and catalog; each step is a real link, progress dots live in `motif:paths`, and there is no certificate or email gate |
 | 459 | Saved-stack share prompt | [/saved](/saved) + [/saved/stack](/saved/stack?items=a~halo-button,a~aurora-veil) · at five saved items the panel builds a recipe link with the slugs in the query string; the route renders that stack, names any slug the catalog cannot resolve, and stores nothing |
 | 460 | Weekly self-score | [/saved](/saved) · "library fitness" out of 15 from three printed components — breadth, top-quartile taste (against the real copies quartile) and kind range — with the formula and the median copies shown next to it |
+| 461 | "Copy of the week" email mock | [/digest/copy-of-the-week](/digest/copy-of-the-week) · the digest as a rendered issue — most-copied component, best-fidelity prompt, newest essay and the runner-up by copies, all sorted from the catalog with no editor in the loop; the footer states there is no list and no tracking pixel |
+| 462 | Streak for makers | [/habits](/habits) · day streaks from `motif:copy-log`, written only while the opt-in switch is on (one entry per asset per day, capped at 120); 28-day strip, longest run kept in the same panel, and switching off clears the log |
+| 463 | Build-a-thon calendar | [/community/build-a-thon](/community/build-a-thon) · monthly windows computed as arithmetic on the month (open the 1st, close the last day) with the theme rotating by month index, plus a countdown recomputed from the visitor's own clock |
+| 464 | Rate-your-build | [/habits](/habits) · one-tap shipped / still-waiting rows for the last four distinct things you copied, tallied in the panel and stored in `motif:shipped`; no star rating, no review box, no follow-up |
+| 465 | Quiet reminders | [/habits](/habits) · an off-by-default switch (`motif:reminder`) that can only ever produce one line, on a visit, when two or more saved pieces are still marked waiting — with a week snooze in `motif:reminder-snooze` |
+| 466 | Community day | [/community/day](/community/day) · the next Thursday and the weekly brief both computed (Thursday + ISO week number picking the theme); the local sticker in `motif:community-day` says "took part" because participation cannot be verified |
 
 ---
 
@@ -1098,18 +1104,18 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 18. Engagement & retention — 10 habits — 4/10 shipped, in progress
+## 18. Engagement & retention — 10 habits — complete (10/10 shipped ✅)
 
-- **"Copy of the week" email mock**: a designed digest page people can preview.
-- **Streak for makers**: track days with a copy/contribution (fun, opt-in).
-- **Build-a-thon calendar**: monthly challenge with a public countdown.
-- **Rate-your-build**: after copying, a 1-tap "did this ship?" check-in.
+- **"Copy of the week" email mock**: a designed digest page people can preview. ✅
+- **Streak for makers**: track days with a copy/contribution (fun, opt-in). ✅
+- **Build-a-thon calendar**: monthly challenge with a public countdown. ✅
+- **Rate-your-build**: after copying, a 1-tap "did this ship?" check-in. ✅
 - **Returning-visitor "new since you left" strip** on the home feed. ✅
 - **Learning paths**: "Motion starter → springs → scroll" sequences with progress dots. ✅
 - **Saved-stack share prompts**: when you save 5 assets, offer a shareable recipe. ✅
-- **Quiet reminders**: an optional "your saved stack hasn't shipped yet" nudge.
+- **Quiet reminders**: an optional "your saved stack hasn't shipped yet" nudge. ✅
 - **Weekly self-score**: a playful "your library fitness" meter from copies/reads. ✅
-- **Community day**: every Thursday a themed prompt (+ badge for participants).
+- **Community day**: every Thursday a themed prompt (+ badge for participants). ✅
 
 ---
 

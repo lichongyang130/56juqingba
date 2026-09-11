@@ -6,6 +6,7 @@ import { POSTER_SCENE_META, PromptCard, PromptPoster, posterSceneFor } from "@/c
 import { PROMPTS, accentHue, fidelityColor, promptStatusMeta } from "@/lib/data";
 import { PromptStar } from "@/components/community-ui";
 import type { PromptTemplate } from "@/lib/types";
+import { logCopy } from "@/lib/copy-log";
 
 export default function PromptDetail({ prompt }: { prompt: PromptTemplate }) {
   const [copied, setCopied] = useState(false);
@@ -20,6 +21,7 @@ export default function PromptDetail({ prompt }: { prompt: PromptTemplate }) {
     try {
       await navigator.clipboard.writeText(prompt.promptBody);
     } catch { /* noop */ }
+    logCopy({ slug: prompt.slug, title: prompt.title });
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };

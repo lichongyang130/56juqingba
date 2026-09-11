@@ -129,6 +129,28 @@ function parseCheck(label, source) {
     String(stack.status),
   );
   ok("/saved/stack names the slugs it cannot resolve", stack.text.includes("nope~ghost"));
+  const habits = await get("/habits");
+  ok(
+    "/habits carries the three opt-in panels",
+    habits.status === 200 && habits.text.includes("Maker streak") && habits.text.includes("Quiet reminder") && habits.text.includes("Did this ship?"),
+    String(habits.status),
+  );
+  const buildAThon = await get("/community/build-a-thon");
+  ok(
+    "/community/build-a-thon renders the computed windows",
+    buildAThon.status === 200 &&
+      buildAThon.text.includes("left") &&
+      (buildAThon.text.match(/\d{4}-\d{2}-\d{2}/g) || []).length >= 6,
+    `${(buildAThon.text.match(/\d{4}-\d{2}-\d{2}/g) || []).length} dates`,
+  );
+  const communityDay = await get("/community/day");
+  ok(
+    "/community/day names its Thursday",
+    communityDay.status === 200 && /\d{4}-W\d+/.test(communityDay.text) && communityDay.text.includes("Community day"),
+  );
+  const cotw = await get("/digest/copy-of-the-week");
+  ok("/digest/copy-of-the-week previews the issue", cotw.status === 200 && cotw.text.includes("Copy of the week") && cotw.text.includes("Motif Weekly"));
+
   const homeFeed = await get("/");
   ok("the home feed opens with the newest batch", homeFeed.status === 200 && /\d+ new · \d{4}-\d{2}-\d{2}/.test(homeFeed.text));
 

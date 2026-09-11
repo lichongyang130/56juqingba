@@ -10,6 +10,7 @@ import CourseRailThree from "@/components/course-rail-3";
 import { CourseRailFinal } from "@/components/course-rail-3";
 import TemplateKit, { TemplateKitMore } from "@/components/template-kit";
 import { accentCss, COMPONENTS, KIND_META } from "@/lib/data";
+import { logCopy } from "@/lib/copy-log";
 import { ReviewNotes, StarButton, ThanksButton } from "@/components/community-ui";
 import { snippetProvenance } from "@/lib/community";
 import type { Asset } from "@/lib/types";
@@ -2414,13 +2415,13 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
   const copy = async (label: string, text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      setCopied(label);
-      setTimeout(() => setCopied(null), 1600);
     } catch {
-      /* clipboard unavailable in sandbox previews */
-      setCopied(label);
-      setTimeout(() => setCopied(null), 1600);
+      /* clipboard unavailable in sandbox previews — the label still confirms the intent */
     }
+    // #462 — no-op unless the maker streak is switched on (see lib/copy-log.ts).
+    logCopy({ slug: asset.slug, title: asset.title });
+    setCopied(label);
+    setTimeout(() => setCopied(null), 1600);
   };
 
   const related = COMPONENTS.filter((c) => c.slug !== asset.slug).slice(0, 3);

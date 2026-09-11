@@ -128,6 +128,12 @@ const NEW_SCENES = [
   const shipped = /complete \(25\/25 shipped ✅\)/.test(s17Head)
     ? 25
     : Number((s17Head.match(/(\d+)\/25/) || [])[1] || 0);
+  const s18Head = (ledger.match(/^## 18\.[^\n]*$/m) || [])[0] || "";
+  ok(
+    "Section 18 is closed before Section 19 opens",
+    /complete \(10\/10 shipped ✅\)/.test(s18Head),
+    s18Head.slice(0, 60),
+  );
   const inSection17 = NEW_SCENES.filter((s) => s.section !== 1).length;
   ok(
     "the ledger's Section 17 count matches the scenes verified here",
