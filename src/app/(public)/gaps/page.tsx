@@ -73,8 +73,8 @@ const ENVIRONMENT: { thing: string; needs: string; today: string; href: string; 
     thing: "Absolute-URL round trips from the harness",
     needs: "Network egress. The suites request the local server; a fetch to a public URL fails with ENOTFOUND inside this environment.",
     today: "The checks that need an origin take it from the incoming request, so no origin is hard-coded anywhere in the tree.",
-    href: "/quality/aria",
-    label: "/quality/aria",
+    href: "/quality/gates",
+    label: "/quality/gates",
   },
   {
     thing: "A browser-run accessibility session",

@@ -658,6 +658,89 @@ function parseCheck(label, source) {
     // links to is a statement nobody reads.
     const home = (await get("/")).text;
     ok("the footer reaches both honesty pages", home.includes('href="/gaps"') && home.includes('href="/accessibility"'));
+
+  /* ---------- #35: the check index ---------- */
+
+  {
+    // The page is generated from the two scripts, so the harness can hold it to
+    // them: every name it parsed has to be printed, and the numbers it prints
+    // have to be the numbers the last recorded run produced. The commit column
+    // comes from a checked-in blame index, which is regenerated here and
+    // compared — the one thing a generated file cannot do is stay true on its
+    // own.
+    const { gateEntries, gateCounts, lastRun } = await import("../src/lib/gates.ts");
+    const indexPage = decode((await get("/quality/gates")).text);
+    const entries = gateEntries();
+    const counts = gateCounts(entries);
+    const printed = counts.reduce((n, c) => n + Number(c.printed ?? 0), 0);
+
+    const missing = entries.filter((e) => !indexPage.includes(e.name)).map((e) => e.name);
+    ok(
+      "the check index prints every check the scripts announce",
+      entries.length > 0 && missing.length === 0,
+      `${entries.length - missing.length}/${entries.length}${missing.length ? ` · missing ${missing.slice(0, 3).join(" | ")}` : ""}`,
+    );
+
+    // The numbers live in separate elements from their labels, so the reading
+    // pass strips tags before looking for them — but only after decoding, or a
+    // check named `<slug>` would be stripped as markup.
+    const indexText = decode((await get("/quality/gates")).text.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ");
+    ok(
+      "the check index prints the counts it derived",
+      indexText.includes(`${entries.length} named checks`) &&
+        indexText.includes(` ${printed} `) &&
+        counts.every((c) => indexText.includes(c.suite)),
+      `${entries.length} calls · ${printed} printed from ${counts.length} suites`,
+    );
+
+    const dynamicNames = entries.filter((e) => e.dynamic).length;
+    ok(
+      "the check index admits which names are composed at run time",
+      indexPage.includes(`${dynamicNames} names are composed at run time`),
+      `${dynamicNames} of ${entries.length}`,
+    );
+
+    // Same extraction the /accessibility check uses: the audit module is not
+    // importable from here (it pulls in extensionless imports), so the titles
+    // are read out of its source text.
+    const a11ySource = fs.readFileSync("src/lib/a11y-audit.ts", "utf8");
+    const manualTitles = [...a11ySource.slice(a11ySource.indexOf("export const MANUAL_CHECKS")).matchAll(/^\s{4}title:\s*"([^"]+)"/gm)].map(
+      (m) => m[1],
+    );
+    const manualNamed = manualTitles.filter((t) => indexPage.includes(t));
+    ok(
+      "the check index names the checks no command runs",
+      manualNamed.length === manualTitles.length && indexPage.includes("/accessibility"),
+      `${manualNamed.length}/${manualTitles.length} manual checks named`,
+    );
+
+    // Freshness: re-derive the blame index in memory and compare with the file.
+    let indexError = "";
+    let fresh = false;
+    try {
+      const { buildIndex } = await import("../scripts/gen-gates-index.mts");
+      const rebuilt = buildIndex();
+      const committed = JSON.parse(fs.readFileSync("src/lib/gates-added.json", "utf8"));
+      fresh = JSON.stringify(rebuilt.checks) === JSON.stringify(committed.checks);
+      if (!fresh) {
+        const was = new Set(Object.keys(committed.checks ?? {}));
+        const now = new Set(Object.keys(rebuilt.checks));
+        const gone = [...was].filter((k) => !now.has(k));
+        const added = [...now].filter((k) => !was.has(k));
+        const moved = [...now].filter(
+          (k) => was.has(k) && committed.checks[k].c !== rebuilt.checks[k].c,
+        );
+        indexError = `changed ${added.length + gone.length + moved.length}: ${[...added.slice(0, 2), ...moved.slice(0, 2), ...gone.slice(0, 2)].join(", ")}`;
+      }
+    } catch (err) {
+      indexError = String(err.message ?? err).slice(0, 120);
+    }
+    ok(
+      "the gate index matches the scripts it was generated from",
+      fresh,
+      fresh ? `${Object.keys(gateEntries()).length} checks · blame current` : `${indexError} — run npm run gates:index`,
+    );
+  }
   }
 
   // #34 — the claim map. Batch 91 fixed four sentences that described checks

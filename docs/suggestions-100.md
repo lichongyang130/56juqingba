@@ -199,7 +199,7 @@ to be a different problem than the one they were written for._
 | 63 | `/sitemap` — the crawler sitemap for a person, importing `sitemap()` rather than re-listing it | `9fd1ec3` | `check:exports`: page count equals `<loc>` count |
 | 17 | `/accessibility` — the statement, distinct from the engineering record: what is verified on every build, what a build cannot see (all 7 manual checks named), and how to report a problem | `efdb100` | `check:exports`: every checklist title printed, "none has been run in a browser" present, footer link exists |
 | 91 | `/gaps` — the two registers in one page: **6 infrastructure-blocked bets** (derived from `BETS`, so a bet going live leaves this page in the same commit) and **8 environment-blocked numbers**, each naming what exists instead | `efdb100` | `check:exports`: every non-live bet present, no live bet named, the environment rows, footer link |
-
+| 35 | `/quality/gates` — the index of the checks, generated from the scripts rather than typed: 172 named checks parsed out of their `ok(…)` calls with the condition each asserts, the commit that last wrote each line (a `git blame` index, refreshed by `npm run gates:index` and gated for freshness), the 12 markup rules with the failure each prevents, and the 7 checks no command runs | `PENDING` | `check:exports`: every name printed, the derived counts, the run-time-composed names admitted, the manual checks named, the index fresh |
 **Open, and worth saying so:** items 8, 9, 10 and everything not in the table above. The
 motion section's remaining work (a per-module table on `/quality/aria`, the motion
 contract, the embed shell passing the preference through, the still poster for animated

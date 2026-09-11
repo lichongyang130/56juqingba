@@ -157,6 +157,9 @@ export default function QualityPage() {
           <Link href="/quality/crawl" className="chip !text-[10px] transition-colors hover:!text-ink">
             Crawl surface
           </Link>
+          <Link href="/quality/gates" className="chip !text-[10px] transition-colors hover:!text-ink">
+            Index of the checks
+          </Link>
         </div>
       </div>
 

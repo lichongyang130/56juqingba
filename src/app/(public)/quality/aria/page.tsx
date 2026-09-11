@@ -251,6 +251,10 @@ export default function AriaAuditPage() {
         and{" "}
         <Link href="/quality/crawl" className="font-semibold text-emerald-300 hover:text-emerald-200">
           the crawl surface
+        </Link>{" "}
+        and{" "}
+        <Link href="/quality/gates" className="font-semibold text-emerald-300 hover:text-emerald-200">
+          the index of every check
         </Link>
         .
       </p>

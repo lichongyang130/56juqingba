@@ -125,6 +125,18 @@ export const CLAIMS: Claim[] = [
     checkedBy: "every scene that drives motion from JavaScript names the preference",
     in: "check:demos",
   },
+  {
+    file: "src/app/(public)/quality/gates/page.tsx",
+    says: "the export gate re-derives it and",
+    checkedBy: "the gate index matches the scripts it was generated from",
+    in: "check:exports",
+  },
+  {
+    file: "src/app/(public)/quality/gates/page.tsx",
+    says: "the list is the code, not a description of it",
+    checkedBy: "the check index prints every check the scripts announce",
+    in: "check:exports",
+  },
 ];
 
 /** Files whose prose is scanned for unmapped claims: the public pages, the

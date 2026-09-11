@@ -137,6 +137,7 @@ export const SITEMAP_EXTRA_PATHS: string[] = [
   "/quality",
   "/quality/aria",
   "/quality/craft",
+  "/quality/gates",
   "/quality/speed",
   "/roadmap",
   "/roadmap/embed",
