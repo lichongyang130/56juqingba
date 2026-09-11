@@ -13,6 +13,11 @@
 
 import fs from "node:fs";
 import path from "node:path";
+// The rule for "this HTML file is not a page of the site" lives with the markup
+// pass, because the pass counts documents too and the two numbers have to agree:
+// a fallback document counted here but skipped there is how the report came to
+// say 292 files while the a11y page said 291 documents and flagged a finding.
+import { nextFallbackDocument } from "../src/lib/markup-a11y.ts";
 
 const ROOT = process.cwd();
 const NEXT = path.join(ROOT, ".next");
@@ -64,8 +69,18 @@ function walk(dir, out = []) {
 
 const allFiles = walk(SERVER_APP);
 
+// Page documents, and the documents Next writes for its own error paths.
+const fallbackDocuments = [];
+const htmlFiles = allFiles.filter((f) => {
+  if (!f.endsWith(".html")) return false;
+  const why = nextFallbackDocument(f, fs.readFileSync(f, "utf8"));
+  if (!why) return true;
+  fallbackDocuments.push({ file: path.relative(ROOT, f), why });
+  return false;
+});
+
 const htmlIndex = new Map();
-for (const file of allFiles.filter((f) => f.endsWith(".html"))) {
+for (const file of htmlFiles) {
   const rel = path.relative(SERVER_APP, file).replace(/\.html$/, "").replace(/\/page$/, "");
   const url = rel === "index" || rel === "" ? "/" : "/" + rel;
   const entry = { kb: kb(fs.statSync(file).size), file: path.relative(ROOT, file) };
@@ -149,7 +164,6 @@ const chunkFiles = fs.existsSync(CHUNK_DIR) ? fs.readdirSync(CHUNK_DIR) : [];
 const jsFiles = chunkFiles.filter((f) => f.endsWith(".js"));
 const cssFiles = chunkFiles.filter((f) => f.endsWith(".css"));
 const fontFilesOnDisk = fs.existsSync(MEDIA_DIR) ? fs.readdirSync(MEDIA_DIR).filter((f) => f.endsWith(".woff2")) : [];
-const htmlFiles = allFiles.filter((f) => f.endsWith(".html"));
 
 /* ---------- fonts + preload coverage ---------- */
 
@@ -216,7 +230,12 @@ const report = {
     fontKb: Math.round(fonts.reduce((a, f) => a + f.kb, 0) * 10) / 10,
     htmlFiles: htmlFiles.length,
     htmlKb: Math.round(htmlFiles.reduce((a, f) => a + kb(fs.statSync(f).size), 0) * 10) / 10,
+    // Documents in the output directory that are not pages: Next's global error
+    // shell and any path the build refused to prerender. Published rather than
+    // silently skipped, so the count can be audited against the directory.
+    fallbackDocuments: fallbackDocuments.length,
   },
+  fallbackDocuments,
   sharedJsKb: Math.round([...baselineSet].reduce((a, f) => a + chunkKb(f), 0) * 10) / 10,
   baseline: {
     url: baselineUrl,
@@ -246,5 +265,6 @@ fs.writeFileSync(OUT, JSON.stringify(report, null, 2) + "\n");
 console.log(
   `measure-build: ${report.summary.routes} routes · ${report.summary.prerendered} prerendered · ` +
     `${report.summary.jsFiles} JS chunks (${report.summary.jsKb} KB) · ${report.summary.htmlFiles} HTML files · ` +
-    `fonts ${report.summary.fontKb} KB preloaded on ${pagesWithPreload}/${htmlFiles.length} pages → docs/build-report.json`
+    `fonts ${report.summary.fontKb} KB preloaded on ${pagesWithPreload}/${htmlFiles.length} pages · ` +
+    `${report.summary.fallbackDocuments} fallback document(s) skipped → docs/build-report.json`
 );

@@ -12,7 +12,7 @@
  * reachable from the library, the embed route and the catalog endpoint.
  */
 
-const fs = require("node:fs");
+import fs from "node:fs";
 
 const base = (process.env.BASE || "http://127.0.0.1:3139").replace(/\/+$/, "");
 let pass = 0;

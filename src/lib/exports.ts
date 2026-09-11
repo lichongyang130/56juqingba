@@ -816,7 +816,7 @@ export function catalogJson(): string {
       themeable: c.themeable,
       tags: c.tags,
       // Behaviour claims and the demo key travel with the entry, so a reader
-      // (or scripts/check-demos.cjs) can verify that a "drag" tag points at a
+      // (or scripts/check-demos.mjs) can verify that a "drag" tag points at a
       // scene that exists instead of taking the label's word for it.
       behaviors: c.behaviors,
       demo: c.demo,
@@ -833,7 +833,7 @@ export function catalogJson(): string {
       models: [...new Set(p.runs.map((r) => r.model))],
     })),
     // Backgrounds belong to the catalog too, and leaving them out made the
-    // drift guard in scripts/check-demos.cjs report 31 demos as orphans — the
+    // drift guard in scripts/check-demos.mjs report 31 demos as orphans — the
     // export was the incomplete side, not the switch.
     backgrounds: BACKGROUNDS.map((b) => ({
       slug: b.slug,

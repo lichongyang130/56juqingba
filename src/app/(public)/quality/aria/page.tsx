@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import fs from "node:fs";
 import path from "node:path";
-import { A11Y_CHECKS, A11Y_FIXES, a11yBands, type A11yIssue } from "@/lib/a11y-audit";
+import { A11Y_FIXES, a11yBands } from "@/lib/a11y-audit";
+import { MARKUP_CHECKS, scanBuiltHtml } from "@/lib/markup-a11y";
 
 // Rendered per request rather than prerendered: the pass reads the built HTML
 // from disk, and a page prerendered mid-build would report a partial count
@@ -28,106 +28,11 @@ export const metadata: Metadata = {
 
 const ROOT = path.join(process.cwd(), ".next", "server", "app");
 
-function scan(): { pages: number; issues: A11yIssue[] } {
-  const files: string[] = [];
-  const walk = (dir: string) => {
-    let entries: string[] = [];
-    try {
-      entries = fs.readdirSync(dir);
-    } catch {
-      return;
-    }
-    for (const e of entries) {
-      const p = path.join(dir, e);
-      let isDir = false;
-      try {
-        isDir = fs.statSync(p).isDirectory();
-      } catch {
-        continue;
-      }
-      if (isDir) walk(p);
-      else if (e.endsWith(".html") && e !== "_global-error.html") files.push(p);
-    }
-  };
-  walk(ROOT);
-
-  const issues: A11yIssue[] = [];
-  const add = (kind: string, file: string, detail: string) =>
-    issues.push({ kind, page: file.replace(`${ROOT}${path.sep}`, ""), detail });
-
-  const textOf = (frag: string) =>
-    frag
-      .replace(/<[^>]+>/g, " ")
-      .replace(/&[a-z]+;|&#\d+;/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-
-  for (const f of files) {
-    let html = "";
-    try {
-      html = fs.readFileSync(f, "utf8");
-    } catch {
-      continue;
-    }
-    // The flight payload repeats the markup; the checks below are about the
-    // document, so only the rendered HTML is examined.
-    const head = html.split("<script>self.__next_f")[0];
-    const wrapped = (index: number) => {
-      const before = head.slice(0, index);
-      return (before.match(/<label\b/g) || []).length > (before.match(/<\/label>/g) || []).length;
-    };
-
-    if (!/<html[^>]+lang="/.test(html)) add("no-lang", f, "");
-
-    for (const m of head.matchAll(/<img\b[^>]*>/g)) {
-      if (!/\balt=/.test(m[0])) add("img-no-alt", f, m[0].slice(0, 90));
-    }
-
-    for (const m of head.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/g)) {
-      if (/aria-hidden="true"|aria-label|aria-labelledby|title=/.test(m[1])) continue;
-      if (textOf(m[2])) continue;
-      add("button-no-name", f, m[0].replace(/\s+/g, " ").slice(0, 90));
-    }
-
-    for (const m of head.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)) {
-      if (/aria-hidden="true"|aria-label|aria-labelledby|title=/.test(m[1])) continue;
-      if (/<img[^>]+alt="[^"]+"/.test(m[2])) continue;
-      if (textOf(m[2])) continue;
-      add("link-no-name", f, m[0].replace(/\s+/g, " ").slice(0, 90));
-    }
-
-    for (const m of head.matchAll(/<(input|select|textarea)\b([^>]*)>/g)) {
-      const attrs = m[2];
-      if (/type="(hidden|submit|button|reset|image)"/.test(attrs)) continue;
-      if (/aria-hidden="true"|aria-label|aria-labelledby/.test(attrs)) continue;
-      if (wrapped(m.index)) continue;
-      const id = (attrs.match(/\sid="([^"]+)"/) || [])[1];
-      if (id && new RegExp(`<label[^>]+for="${id}"`).test(head)) continue;
-      add(`${m[1]}-no-label`, f, m[0].replace(/\s+/g, " ").slice(0, 90));
-    }
-
-    const ids = [...head.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]).filter((id) => !id.startsWith("__"));
-    const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
-    if (dupes.length) add("duplicate-id", f, [...new Set(dupes)].slice(0, 4).join(", "));
-
-    const levels = [...head.matchAll(/<h([1-6])[\s>]/g)].map((m) => Number(m[1]));
-    for (let i = 1; i < levels.length; i++) {
-      if (levels[i] > levels[i - 1] + 1) {
-        add("heading-skip", f, `h${levels[i - 1]} then h${levels[i]}`);
-        break;
-      }
-    }
-  }
-
-  return { pages: files.length, issues };
-}
-
 export default function AriaAuditPage() {
+  // Same rules as `npm run check:a11y` and the export harness, from one module.
   // No `.next` directory (a dev server, a fresh clone) means the pass has
   // nothing to read — the page says so instead of printing a fake zero.
-  const { pages, issues } = scan();
-  const byKind: Record<string, number> = {};
-  for (const i of issues) byKind[i.kind] = (byKind[i.kind] || 0) + 1;
+  const { documents: pages, fallbacks, issues, byKind } = scanBuiltHtml(ROOT);
   const bands = a11yBands();
   const total = Object.values(bands).reduce((a, b) => a + b, 0);
 
@@ -150,17 +55,22 @@ export default function AriaAuditPage() {
         <h1 className="mt-2 text-4xl font-extrabold tracking-tight md:text-5xl">What a machine can check</h1>
         <p className="mt-3 text-sm leading-relaxed text-ink-dim">
           Accessibility has two halves. One needs a person and a browser; the other is decidable from markup, and that half should never be
-          shipped broken. This page runs the mechanical half over {pages} built HTML documents at build time — the same files the server sends —
-          and reports what it finds, including the findings that were real and have been fixed.
+          shipped broken. This page runs the mechanical half over {pages} page documents in the finished build — the same files the server sends
+          — and reports what it finds, including the findings that were real and have been fixed.
         </p>
       </div>
 
       <section className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Documents scanned", value: pages.toLocaleString(), note: "every HTML document in the finished build" },
+          { label: "Documents scanned", value: pages.toLocaleString(), note: "every page document in the finished build" },
           { label: "Open findings", value: String(issues.length), note: issues.length === 0 ? "clean at this commit" : "listed below" },
           { label: "Editorial a11y ≥ 95", value: `${bands["95-100"]}/${total}`, note: "the per-asset score kept in the catalog" },
           { label: "Found and fixed", value: String(A11Y_FIXES.length), note: "repairs recorded below, not hidden" },
+          {
+            label: "Next fallbacks skipped",
+            value: String(fallbacks.length),
+            note: "error shells, not pages: they carry no lang and no content",
+          },
         ].map((c) => (
           <div key={c.label} className="rounded-2xl border border-white/8 bg-panel p-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">{c.label}</p>
@@ -171,9 +81,9 @@ export default function AriaAuditPage() {
       </section>
 
       <section className="mt-8 rounded-3xl border border-white/8 bg-panel p-6">
-        <h2 className="text-sm font-extrabold tracking-tight">The seven checks, and the count for each</h2>
+        <h2 className="text-sm font-extrabold tracking-tight">The {MARKUP_CHECKS.length} checks, and the count for each</h2>
         <ul className="mt-4 space-y-2">
-          {A11Y_CHECKS.map((c) => (
+          {MARKUP_CHECKS.map((c) => (
             <li key={c.id} className="flex items-baseline justify-between gap-4 border-b border-white/6 pb-2 last:border-0">
               <span className="text-[11.5px] leading-relaxed text-ink-dim">{c.what}</span>
               <span className={`shrink-0 font-mono text-sm tabular-nums ${(byKind[c.id] ?? 0) === 0 ? "text-emerald-200" : "text-rose-200"}`}>
@@ -185,7 +95,11 @@ export default function AriaAuditPage() {
         <p className="mt-4 text-[10px] leading-relaxed text-ink-faint">
           A control that is inside a <span className="font-mono">aria-hidden</span> subtree is exempt (decorative mock controls are not interactive
           for anybody), and a control with an explicit <span className="font-mono">&lt;label for&gt;</span> is satisfied by that association — the
-          pass implements the rule rather than a count of tags.
+          pass implements the rule rather than a count of tags. This page reads the directory live, so the{" "}
+          {fallbacks.length} document{fallbacks.length === 1 ? "" : "s"} it skipped here
+          {fallbacks.length === 1 ? "is" : "are"} whatever Next had cached by the time you asked: {fallbacks.map((f) => f.file).join(", ") || "none right now"}.
+          The measurement applies the same rule at build time and publishes the count it skipped, and probing a URL that does not exist is enough to add
+          one — which is how a removed changelog slug ended up counted as a page, and this page ended up reporting it as missing a language attribute.
         </p>
       </section>
 
@@ -205,8 +119,8 @@ export default function AriaAuditPage() {
       <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
         <h2 className="text-sm font-extrabold tracking-tight">What this pass found, and what changed</h2>
         <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
-          A green dashboard that has always been green is usually a dashboard nobody ran. These are the real findings from the first two runs of
-          this pass, kept on the page because the fixes are the evidence:
+          A green dashboard that has always been green is usually a dashboard nobody ran. These are the real findings from the runs of this pass,
+          kept on the page because the fixes are the evidence:
         </p>
         <ul className="mt-4 space-y-3">
           {A11Y_FIXES.map((f) => (
@@ -215,7 +129,8 @@ export default function AriaAuditPage() {
                 {f.commit}
               </span>
               <span className="text-[11.5px] leading-relaxed text-ink-dim">
-                {f.what} <span className="text-ink-faint">— {f.pages} pages affected</span>
+                {f.what}
+                {f.pages > 0 ? <span className="text-ink-faint"> — {f.pages} pages affected</span> : null}
               </span>
             </li>
           ))}
@@ -244,8 +159,9 @@ export default function AriaAuditPage() {
           </li>
         </ul>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
-          The export harness runs the same seven checks from outside the build and fails on any finding, so this page cannot report green while the
-          served HTML is not.
+          The export harness and <span className="font-mono">npm run check:a11y</span> run the same rules from a separate process over the same
+          files, and fail on any finding — so this page cannot report green while the served HTML is not. The three counted different documents
+          once; the rule for what is a page now has one home, in the same module the three read.
         </p>
       </section>
 

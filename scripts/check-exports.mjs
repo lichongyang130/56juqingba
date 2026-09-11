@@ -12,10 +12,10 @@
  * step later even though nothing runs it today.
  */
 
-const fs = require("node:fs");
-const os = require("node:os");
-const path = require("node:path");
-const { execFileSync } = require("node:child_process");
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { execFileSync } from "node:child_process";
 
 const base = (process.env.BASE || "http://127.0.0.1:3139").replace(/\/+$/, "");
 let pass = 0;
@@ -147,8 +147,33 @@ function parseCheck(label, source) {
   );
   const log = await get("/changelog");
   ok("/changelog lists every entry", log.status === 200 && (log.text.match(/\/changelog\//g) || []).length >= 12);
-  const entry = await get("/changelog/2026-08-19-ui-kit-launches-with-20-verified-elements");
-  ok("/changelog/<slug> renders an entry", entry.status === 200 || (await get("/changelog/2026-09-10-the-demo-module-leaves-every-page-that-does-not-render-one")).status === 200);
+  // The slug is read from the page, not written here. This check used to carry
+  // a literal slug that named an entry already retitled when the line was
+  // written; the assertion ORed in a second slug, so it passed for twenty
+  // batches while testing nothing — and the request it made for a slug that did
+  // not exist left an error document in the build output, which is the phantom
+  // page /quality/aria reported as missing a lang attribute. See batch 82.
+  const slug = (log.text.match(/href="\/changelog\/([a-z0-9-]+)"/) || [])[1];
+  const entry = slug ? await get(`/changelog/${slug}`) : { status: 0, text: "" };
+  ok(
+    "/changelog/<slug> renders the entry the list links to",
+    Boolean(slug) && entry.status === 200 && entry.text.includes("Studio log"),
+    slug ? `/${slug} → ${entry.status}` : "no slug found on /changelog",
+  );
+  // A slug that no longer exists has to 404, and probing that is not free: on a
+  // cold server Next caches the not-found result as an __next_error__ document
+  // under .next/server/app. That is the mechanism behind the phantom count, so
+  // the probe cleans up what it writes instead of leaving it for the next
+  // measurement to find.
+  const GONE_SLUG = "2026-01-01-an-entry-that-does-not-exist";
+  const gone = await get(`/changelog/${GONE_SLUG}`);
+  ok("a changelog slug that no longer exists answers 404", gone.status === 404, String(gone.status));
+  if (/^http:\/\/(127\.0\.0\.1|localhost)/.test(base)) {
+    const dir = path.join(".next", "server", "app", "changelog");
+    for (const f of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
+      if (f.startsWith(GONE_SLUG)) fs.rmSync(path.join(dir, f), { recursive: true, force: true });
+    }
+  }
   const esPage = await get("/es");
   const enHome = await get("/");
   ok(
@@ -221,7 +246,6 @@ function parseCheck(label, source) {
   // sample copy.
   {
     const demoFiles = ["src/components/demos/Demo.tsx", "src/components/demos/scenes-17.tsx"];
-    const catalogWords = /(verified prompts|components?|assets|guides|prompt runs|stars|teams|users)/i;
     const offenders = [];
     for (const f of demoFiles) {
       const src = fs.readFileSync(f, "utf8");
@@ -340,64 +364,50 @@ function parseCheck(label, source) {
 
   /* ---------- markup accessibility pass ---------- */
 
-  // The seven checks /quality/aria documents, run from outside the build so the
-  // page cannot report green while the served HTML is not.
+  // One implementation, three callers: the /quality/aria page, `npm run
+  // check:a11y`, and this harness. An earlier version of this block kept its own
+  // copy of the rules, and the copies drifted — the page counted a stale
+  // prerender artifact as a document and reported a missing-lang finding the
+  // harness called clean. The rules now live in src/lib/markup-a11y.ts and this
+  // block runs them the way a reader would.
   {
-    const walkHtml = (dir) => {
-      const out = [];
-      for (const e of fs.readdirSync(dir)) {
-        const p = path.join(dir, e);
-        if (fs.statSync(p).isDirectory()) out.push(...walkHtml(p));
-        else if (e.endsWith(".html") && e !== "_global-error.html") out.push(p);
-      }
-      return out;
-    };
-    const docs = walkHtml(path.join(".next", "server", "app"));
-    const textOf = (frag) =>
-      frag.replace(/<[^>]+>/g, " ").replace(/&[a-z]+;|&#\d+;/g, " ").replace(/\s+/g, " ").trim();
-    const findings = [];
-    for (const f of docs) {
-      const html = fs.readFileSync(f, "utf8");
-      // Next leaves an error document behind for paths its static export
-      // refuses; it carries id="__next_error__" and is not a page we ship.
-      if (/<html[^>]*id="__next_error__"/.test(html)) continue;
-      const head = html.split("<script>self.__next_f")[0];
-      const wrapped = (i) => (head.slice(0, i).match(/<label\b/g) || []).length > (head.slice(0, i).match(/<\/label>/g) || []).length;
-      if (!/<html[^>]+lang="/.test(html)) findings.push(`no-lang ${f}`);
-      for (const m of head.matchAll(/<img\b[^>]*>/g)) if (!/\balt=/.test(m[0])) findings.push(`img-no-alt ${f}`);
-      for (const m of head.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/g))
-        if (!/aria-hidden="true"|aria-label|aria-labelledby|title=/.test(m[1]) && !textOf(m[2])) findings.push(`button-no-name ${f}`);
-      for (const m of head.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g))
-        if (!/aria-hidden="true"|aria-label|aria-labelledby|title=/.test(m[1]) && !/<img[^>]+alt="[^"]+"/.test(m[2]) && !textOf(m[2])) findings.push(`link-no-name ${f}`);
-      for (const m of head.matchAll(/<(input|select|textarea)\b([^>]*)>/g)) {
-        const attrs = m[2];
-        if (/type="(hidden|submit|button|reset|image)"/.test(attrs)) continue;
-        if (/aria-hidden="true"|aria-label|aria-labelledby/.test(attrs)) continue;
-        if (wrapped(m.index)) continue;
-        const id = (attrs.match(/\sid="([^"]+)"/) || [])[1];
-        if (id && new RegExp(`<label[^>]+for="${id}"`).test(head)) continue;
-        findings.push(`control-no-label ${f}`);
-      }
-      const ids = [...head.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]).filter((id) => !id.startsWith("__"));
-      const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
-      if (dupes.length) findings.push(`duplicate-id ${f} ${[...new Set(dupes)].join(",")}`);
-      const levels = [...head.matchAll(/<h([1-6])[\s>]/g)].map((m) => Number(m[1]));
-      for (let i = 1; i < levels.length; i++)
-        if (levels[i] > levels[i - 1] + 1) {
-          findings.push(`heading-skip ${f} h${levels[i - 1]}->h${levels[i]}`);
-          break;
-        }
+    let scanOut = "";
+    let scanOk = true;
+    try {
+      scanOut = execFileSync("node", ["scripts/a11y-scan.mts"], { encoding: "utf8" });
+    } catch (err) {
+      scanOk = false;
+      scanOut = `${err.stdout ?? ""}${err.stderr ?? ""}`;
     }
+    const documents = Number((scanOut.match(/page documents: (\d+)/) || [])[1] ?? NaN);
+    const fallbacks = Number((scanOut.match(/fallback documents skipped: (\d+)/) || [])[1] ?? NaN);
     ok(
       "the markup accessibility pass finds nothing in the built HTML",
-      docs.length > 250 && findings.length === 0,
-      `${docs.length} documents${findings.length ? ` · ${findings.length} findings: ${[...new Set(findings)].slice(0, 4).join(" | ")}` : ""}`,
+      scanOk && scanOut.includes("no findings") && documents > 250,
+      `${documents} page documents · ${fallbacks} fallback documents skipped`,
     );
+
+    // The discrepancy that took three batches to pin down was a counting one:
+    // the report walked the output directory, the pass skipped a document, and
+    // the page in between reported a finding. Both numbers now come from the
+    // same rule, and this asserts it rather than trusting it.
+    const report = JSON.parse(fs.readFileSync("docs/build-report.json", "utf8"));
+    ok(
+      "the build report and the markup pass count the same documents",
+      report.summary.htmlFiles === documents,
+      `report ${report.summary.htmlFiles} vs pass ${documents} · fallbacks measured ${report.summary.fallbackDocuments}, present now ${fallbacks}`,
+    );
+
     const ariaPage = await get("/quality/aria");
     ok(
       "/quality/aria documents the pass and its findings",
       ariaPage.status === 200 && ariaPage.text.includes("What this page does not check") && ariaPage.text.includes("Documents scanned"),
       String(ariaPage.status),
+    );
+    ok(
+      "/quality/aria prints the same document count as the pass it describes",
+      ariaPage.text.includes(`Documents scanned`) && ariaPage.text.includes(`>${documents}<`),
+      `expected ${documents}`,
     );
   }
 

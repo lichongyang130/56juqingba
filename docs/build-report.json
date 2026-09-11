@@ -1,6 +1,6 @@
 {
-  "measuredAt": "2026-09-11T02:32:10.620Z",
-  "buildId": "G-HHWguQ9ii_5apRWgnl0",
+  "measuredAt": "2026-09-11T02:58:45.861Z",
+  "buildId": "V8APAIYYT0CtDlC6UeIEV",
   "command": "npm run build && npm run measure",
   "summary": {
     "routes": 141,
@@ -12,9 +12,16 @@
     "cssKb": 217.7,
     "fontFiles": 2,
     "fontKb": 80,
-    "htmlFiles": 291,
-    "htmlKb": 13912.7
+    "htmlFiles": 290,
+    "htmlKb": 13903.8,
+    "fallbackDocuments": 1
   },
+  "fallbackDocuments": [
+    {
+      "file": ".next/server/app/_global-error.html",
+      "why": "Next's global error shell"
+    }
+  ],
   "sharedJsKb": 446.2,
   "baseline": {
     "url": "/brand/launch",
@@ -1595,7 +1602,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.2,
       "cssKb": 217.7,
-      "htmlKb": 85.8,
+      "htmlKb": 85.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1672,7 +1679,7 @@
     ],
     "totalKb": 80,
     "pagesWithPreload": 289,
-    "pages": 291
+    "pages": 290
   },
   "heaviestHtml": [
     {
