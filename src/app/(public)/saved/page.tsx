@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SavedBoard } from "@/components/community-ui";
 import { ForkedList } from "@/components/community-ui-2";
+import { LibraryFitness, StackRecipe } from "@/components/retention-ui";
 
 export const metadata: Metadata = {
   title: "Your saved list — Motif UI",
@@ -27,6 +28,11 @@ export default function SavedPage() {
         </p>
       </div>
       <SavedBoard />
+
+      <section className="mt-10 grid gap-4 lg:grid-cols-2">
+        <StackRecipe />
+        <LibraryFitness />
+      </section>
 
       <section className="mt-12">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/6 pb-3">

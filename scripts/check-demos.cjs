@@ -93,8 +93,24 @@ const NEW_SCENES = [
     const [num, body] = [sections[i], sections[i + 1].split("\n## ")[0]];
     const bullets = (body.match(/^- \*\*/gm) || []).length;
     const ticked = (body.match(/^- \*\*.*✅/gm) || []).length;
-    if (!bullets || !ticked) continue; // sections that record shipped rows instead
-    ok(`§${num} claims complete and has every bullet ticked`, bullets === ticked, `${ticked}/${bullets} ticked`);
+    if (!bullets) continue;
+    // §12–§16 log shipped rows in the table instead of ticking bullets, so a
+    // zero-tick section is skipped rather than flagged; everything that ticks
+    // at least one bullet is checked against its own heading.
+    if (!ticked) continue;
+    const heading = sections[i + 1].split("\n")[0] || "";
+    const frac = heading.match(/\((\d+)\/(\d+) shipped/);
+    if (/complete/.test(heading)) {
+      ok(`§${num} claims complete and has every bullet ticked`, bullets === ticked, `${ticked}/${bullets} ticked`);
+    } else if (frac) {
+      // An in-progress section states its own count; that count has to match the
+      // bullets actually ticked, or the heading is the false claim this guard exists for.
+      ok(
+        `§${num}'s shipped count matches its ticked bullets`,
+        Number(frac[1]) === ticked && Number(frac[2]) === bullets,
+        `heading ${frac[1]}/${frac[2]}, ticked ${ticked}/${bullets}`,
+      );
+    }
   }
   const headline = Number((ledger.match(/## Progress — (\d+) \/ 500 shipped/) || [])[1]);
   const rows = (ledger.match(/^\| \d+ \|/gm) || []).length;

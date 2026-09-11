@@ -6,6 +6,7 @@ import { accentCss, BACKGROUNDS, CHANGELOG, COMPONENTS, LAB_TOOLS, PROMPTS } fro
 import { SAMPLE_BUILDS } from "@/lib/samples";
 import AfternoonTimeline from "@/components/home-story";
 import { ChangelogList } from "@/components/home-cues";
+import { NewSinceStrip } from "@/components/retention-ui";
 
 const SUPER_POWERS = [
   {
@@ -95,6 +96,14 @@ export default function HomePage() {
     { value: `${Math.round(PROMPTS.reduce((sum, p) => sum + p.avgFidelity, 0) / Math.max(1, PROMPTS.length))}%`, label: "average fidelity", proof: `${totalRuns} recorded runs, failures kept on the log`, tone: "text-amber-200" },
   ] as const;
   const leaderboard = trending.slice(0, 4);
+  // #457 — the newest published date in the catalog, and everything that
+  // landed on it. The strip frames those items against this browser's last
+  // visit; both inputs are real, so the sentence can be checked.
+  const newestDate = COMPONENTS.reduce((a, c) => (c.published > a ? c.published : a), COMPONENTS[0].published);
+  const newestBatch = {
+    date: newestDate,
+    items: COMPONENTS.filter((c) => c.published === newestDate),
+  };
   const nightBuild = SAMPLE_BUILDS.find((b) => b.slug === "nightfolio") ?? SAMPLE_BUILDS[0];
   const latestNote = CHANGELOG[0];
 
@@ -289,6 +298,12 @@ export default function HomePage() {
           </div>
           <Link href="/components" className="btn btn-ghost !py-2 text-xs">Browse everything</Link>
         </div>
+
+        {/* #457 — the feed opens with the newest batch, and this browser's last visit decides how it is framed. */}
+        <NewSinceStrip
+          latestDate={newestBatch.date}
+          batch={newestBatch.items.map((c) => ({ slug: c.slug, title: c.title, kind: c.kind }))}
+        />
 
         <div className="mt-9 grid gap-6 [&>*]:min-w-0 lg:grid-cols-[1.3fr_1fr]">
           {/* editor's pick — big, editorial */}

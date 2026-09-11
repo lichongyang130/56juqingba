@@ -108,6 +108,30 @@ function parseCheck(label, source) {
     `${secHeads.length} headings, ${secHeads.filter((m) => /complete|✅/.test(m[2])).length} complete`,
   );
 
+  /* ---------- section 18 retention surfaces ---------- */
+
+  const paths = await get("/learn/paths");
+  const pathTitles = ["Motion starter", "Springs, understood", "Scroll, honestly"];
+  ok(
+    "/learn/paths lists three paths",
+    paths.status === 200 && pathTitles.every((t) => paths.text.includes(t)),
+    `${pathTitles.filter((t) => paths.text.includes(t)).length}/3 paths present`,
+  );
+  const savedPage = await get("/saved");
+  ok(
+    "/saved carries the share prompt and the fitness meter",
+    savedPage.status === 200 && savedPage.text.includes("Share the stack") && savedPage.text.includes("Your library fitness"),
+  );
+  const stack = await get("/saved/stack?items=a~halo-button,a~aurora-veil,nope~ghost");
+  ok(
+    "/saved/stack resolves catalog slugs from the URL",
+    stack.status === 200 && stack.text.includes("Halo Button") && stack.text.includes("Aurora Veil"),
+    String(stack.status),
+  );
+  ok("/saved/stack names the slugs it cannot resolve", stack.text.includes("nope~ghost"));
+  const homeFeed = await get("/");
+  ok("the home feed opens with the newest batch", homeFeed.status === 200 && /\d+ new · \d{4}-\d{2}-\d{2}/.test(homeFeed.text));
+
   /* ---------- the library and the hub ---------- */
 
   const lib = fs.readFileSync("src/lib/exports.ts", "utf8");

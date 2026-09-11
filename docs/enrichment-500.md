@@ -15,7 +15,7 @@ the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet c
 harness reads the `ledger-extra-rows` marker above and allows that difference, which means
 the table ends at #501 on the day the headline reads 500 / 500._
 
-## Progress — 455 / 500 shipped (batches 1–69, in order) · Sections 1–17 complete ✅
+## Progress — 459 / 500 shipped (batches 1–69, in order) · Sections 1–17 complete ✅ · Section 18 in progress (4/10)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -475,6 +475,10 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 454 | Ripple nav dots | [/components/ripple-dots](/components/ripple-dots) · a five-dot rail whose ring travels from the dot you left to the dot you picked while the section text swaps in the same frame; arrow keys walk it, `aria-current` marks the dot, and reduced motion snaps the ring without travel |
 | 455 | Tilted hero CTA | [/components/tilted-cta](/components/tilted-cta) · a real link that tips toward the pointer inside an 8° cap, label counter-rotated so the words stay level; arrow keys tilt it for keyboard readers, Escape/0 resets, locks and reduced motion leave it upright |
 | 456 | Success-state celebration | [/components/success-burst](/components/success-burst) · an account-created panel with twelve particles fired once per deliberate submit (never on load); the copy states nothing is posted or stored, and reduced motion drops the particles so the check mark carries it |
+| 457 | Returning-visitor strip | [/](/)-fed by `motif:feed-seen` · the feed opens with the newest catalog batch (derived from `published`) and the strip says whether it landed after your last visit to the feed — first visit, same-day return and "nothing newer" are each stated plainly |
+| 458 | Learning paths | [/learn/paths](/learn/paths) · three build-time sequences (motion starter, springs, scroll) drawn from the essays and catalog; each step is a real link, progress dots live in `motif:paths`, and there is no certificate or email gate |
+| 459 | Saved-stack share prompt | [/saved](/saved) + [/saved/stack](/saved/stack?items=a~halo-button,a~aurora-veil) · at five saved items the panel builds a recipe link with the slugs in the query string; the route renders that stack, names any slug the catalog cannot resolve, and stores nothing |
+| 460 | Weekly self-score | [/saved](/saved) · "library fitness" out of 15 from three printed components — breadth, top-quartile taste (against the real copies quartile) and kind range — with the formula and the median copies shown next to it |
 
 ---
 
@@ -1094,17 +1098,17 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 18. Engagement & retention — 10 habits
+## 18. Engagement & retention — 10 habits — 4/10 shipped, in progress
 
 - **"Copy of the week" email mock**: a designed digest page people can preview.
 - **Streak for makers**: track days with a copy/contribution (fun, opt-in).
 - **Build-a-thon calendar**: monthly challenge with a public countdown.
 - **Rate-your-build**: after copying, a 1-tap "did this ship?" check-in.
-- **Returning-visitor "new since you left" strip** on the home feed.
-- **Learning paths**: "Motion starter → springs → scroll" sequences with progress dots.
-- **Saved-stack share prompts**: when you save 5 assets, offer a shareable recipe.
+- **Returning-visitor "new since you left" strip** on the home feed. ✅
+- **Learning paths**: "Motion starter → springs → scroll" sequences with progress dots. ✅
+- **Saved-stack share prompts**: when you save 5 assets, offer a shareable recipe. ✅
 - **Quiet reminders**: an optional "your saved stack hasn't shipped yet" nudge.
-- **Weekly self-score**: a playful "your library fitness" meter from copies/reads.
+- **Weekly self-score**: a playful "your library fitness" meter from copies/reads. ✅
 - **Community day**: every Thursday a themed prompt (+ badge for participants).
 
 ---
