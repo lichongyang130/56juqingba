@@ -1,33 +1,33 @@
 {
-  "measuredAt": "2026-09-11T08:14:48.026Z",
+  "measuredAt": "2026-09-11T08:15:54.786Z",
   "note": "Wall times for the four suites, so a regression is noticed rather than endured. A timing is a record of the machine that produced it, not a constant: the baseline here is the previous run in this file.",
   "suites": {
     "check:exports": {
-      "ms": 22127,
+      "ms": 22900,
       "ok": true,
       "summary": "ALL PASS — 193 passed, 0 failed",
-      "baselineMs": 23432,
+      "baselineMs": 22127,
       "regression": false
     },
     "check:demos": {
-      "ms": 1591,
+      "ms": 1415,
       "ok": true,
       "summary": "ALL PASS — 110 passed, 0 failed",
-      "baselineMs": 1505,
+      "baselineMs": 1591,
       "regression": false
     },
     "check:a11y": {
-      "ms": 939,
+      "ms": 898,
       "ok": true,
       "summary": "no findings",
-      "baselineMs": 880,
+      "baselineMs": 939,
       "regression": false
     },
     "check:a11y:served": {
-      "ms": 7095,
+      "ms": 7289,
       "ok": true,
       "summary": "no findings",
-      "baselineMs": 7021,
+      "baselineMs": 7095,
       "regression": false
     }
   }

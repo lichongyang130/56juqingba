@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-09-11T08:13:55.268Z",
+  "measuredAt": "2026-09-11T08:15:55.219Z",
   "buildId": "H2pRBFBOUt6dLyGBOjl4Y",
   "command": "npm run build && npm run measure",
   "summary": {
