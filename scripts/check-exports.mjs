@@ -5,9 +5,13 @@
  *   BASE=https://example.com npm run check:exports
  *
  * A documentation page and the file it documents are two places for the same
- * claim to drift apart. This script fetches every endpoint the Hub links,
- * reads the bytes back against the page that prints them, parses both served
- * scripts with `node --check`, and keeps the ledger's row count honest. It
+ * claim to drift apart. This script fetches every endpoint the Hub links and
+ * holds it to the page that documents it — a content type and a 404 for the
+ * unknown, every token colour printed on /integrations/tokens, the stylesheet's
+ * block on /integrations/print, the catalog against the total /quality prints,
+ * the feed against the entry list, each badge against its stored score — parses
+ * both served scripts with `node --check`, and keeps the ledger's row count
+ * honest. It
  * exits non-zero on the first category of failure it finds, so it can be a CI
  * step later even though nothing runs it today.
  */

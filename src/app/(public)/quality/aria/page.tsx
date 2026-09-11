@@ -3,6 +3,7 @@ import Link from "next/link";
 import path from "node:path";
 import { A11Y_FIXES, MANUAL_CHECKS, a11yBands } from "@/lib/a11y-audit";
 import { MARKUP_CHECKS, SERVED_EXTRAS, scanBuiltHtml } from "@/lib/markup-a11y";
+import { motionAudit } from "@/lib/motion-audit";
 import sitemap from "@/app/sitemap";
 import { COMPONENTS } from "@/lib/data";
 import { SITE_URL } from "@/lib/seo";
@@ -42,6 +43,9 @@ export default function AriaAuditPage() {
   const entries = sitemap();
   const listedPaths = new Set(entries.map((e) => e.url.replace(SITE_URL, "") || "/"));
   const served = entries.length + SERVED_EXTRAS.filter((e) => !listedPaths.has(e)).length;
+  // 523 — the same count the checklist item and check:demos read, so the two
+  // sentences on this page cannot disagree about how many scenes move.
+  const motion = motionAudit();
   // Same rules as `npm run check:a11y` and the export harness, from one module.
   // No `.next` directory (a dev server, a fresh clone) means the pass has
   // nothing to read — the page says so instead of printing a fake zero.
@@ -157,8 +161,9 @@ export default function AriaAuditPage() {
         <ul className="mt-3 space-y-2 text-[11px] leading-relaxed text-ink-dim">
           <li>
             <strong>Focus order and keyboard reachability.</strong> Deciding whether Tab reaches every control, and in a sensible order, needs a
-            running browser. The three scenes that handle <span className="font-mono">prefers-reduced-motion</span> are tested by the demo harness
-            in the same sense — markup and state, not a real key press.
+            running browser. The scenes that name <span className="font-mono">prefers-reduced-motion</span> are counted rather than tested — {motion.guarded} of
+            the {motion.moving} scenes that animate name the preference, read from the scene modules by <span className="font-mono">check:demos</span> — and
+            what the branch does at runtime is a hand check like everything else on this list.
           </li>
           <li>
             <strong>Contrast in context.</strong> Token-level contrast is computed on /quality from the real colour pairs, but whether a specific
@@ -172,7 +177,9 @@ export default function AriaAuditPage() {
             <strong>What the demo scenes do at runtime.</strong> Their markup is no longer exempt — the rules above run over the scenes like any
             other markup, which is how the closed listbox behind an <span className="font-mono">aria-controls</span> was caught. What no static pass
             can see is behaviour: where focus goes when a sheet closes, what a live region announces, whether a drag has a keyboard equivalent. The
-            demo harness asserts the behaviours a scene declares (drag, click, keyboard, type, scroll); the checklist below is for the rest.
+            demo harness compares the behaviour list each scene it knows about declares (drag, click, keyboard, type, scroll) with the list that
+            scene&apos;s catalog record publishes — two declarations against each other, which is a weaker thing than an assertion about the code. The
+            checklist below is for the rest.
           </li>
         </ul>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">

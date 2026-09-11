@@ -10,6 +10,13 @@
 // of what the pass found and what was changed because of it.
 
 import { COMPONENTS } from "./data";
+import { motionAudit } from "./motion-audit";
+
+// 523 — the reduced-motion item below claimed an automated half that did not
+// exist. It has one now, and it is the honest one: a count of the scenes that
+// animate and the scenes that branch on the preference, taken from the module
+// `check:demos` reads as well.
+const motion = motionAudit();
 
 /** What the first run of this pass found, and what was changed. Kept in the
  *  source because /quality/aria is a record of the fix, not just a green tick. */
@@ -123,7 +130,7 @@ export const MANUAL_CHECKS: ManualCheck[] = [
     how:
       "Turn on the system preference and walk the animated half of the catalog. The part that moves has to stop or become instant; a scene that only slows down has not honoured it.",
     fails: "animation that keeps running, or content that disappears because it only ever appeared through animation.",
-    automated: "the demo harness checks that each scene declares a reduced-motion branch",
+    automated: `a count, not a pass: ${motion.guarded} of the ${motion.moving} scenes that animate name the preference, and check:demos fails if that number falls — the other ${motion.moving - motion.guarded} are still only checkable by hand`, 
     where: [{ href: "/quality" }],
   },
   {

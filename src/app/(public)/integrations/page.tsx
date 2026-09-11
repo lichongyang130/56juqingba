@@ -136,7 +136,10 @@ src/lib/data.ts      catalog       →        "            →   printed on each
         <p className="mt-3 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
           The endpoint and the pages call the same builder, which is the only way to keep a download and its documentation
           honest. A change to a token or a catalog score shows up in the file, on the page and in the exports list in one step —
-          and the harness fetches each endpoint and checks that the bytes it returns are the bytes the page printed.
+          and the harness holds the two sides together: every endpoint must answer with a content type, anything unknown must 404,
+          both served scripts are parsed with `node --check`, the tokens page must print every colour the tokens endpoint serves, the
+          print page must carry the block from the stylesheet it serves, the catalog must agree with the counted total printed on
+          /quality, the feed must carry every entry the changelog lists, and a badge must carry the score stored in its record.
         </p>
       </div>
 

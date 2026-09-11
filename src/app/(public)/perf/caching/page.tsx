@@ -55,8 +55,8 @@ export default function PerfCachingPage() {
         <pre className="mt-3 overflow-x-auto rounded-2xl border border-white/8 bg-[#07090f] p-4 font-mono text-[10px] leading-relaxed text-ink-dim">{`curl -sI https://<host>/pricing | grep -i cache-control
 curl -sI https://<host>/_next/static/chunks/<file>.js | grep -i cache-control`}</pre>
         <p className="mt-3 text-[11px] leading-relaxed text-ink-dim">
-          The build harness runs the same two checks against the running server for every batch, so a config edit that drops
-          a header fails the batch rather than shipping quietly.
+          The build harness fetches these headers from the running server every batch and compares each one with the rules documented
+          above, so a config edit that drops a header — or moves the catch-all off the first line — fails the batch rather than shipping quietly.
         </p>
       </div>
 

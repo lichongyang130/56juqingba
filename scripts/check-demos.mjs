@@ -13,7 +13,7 @@
  * the catalog endpoint.
  *
  * The scenes used to be one file with a switch over the demo key. They are now
- * nine modules behind a loader map, so this reads the map instead of the cases
+ * ten modules behind a loader map, so this reads the map instead of the cases
  * and, on top of the key list, verifies that each loader names a component its
  * target module actually exports. That is the failure the split could have
  * introduced silently: a key pointing at the right file but the wrong name.
@@ -258,6 +258,35 @@ const NEW_SCENES = [
       Boolean(entry) && scene.behaviors.every((b) => entry.behaviors.includes(b)),
       entry ? entry.behaviors.join("+") : "missing",
     );
+  }
+
+  // 523 — the reduced-motion claim /quality/aria used to make ("the demo
+  // harness checks that each scene declares a reduced-motion branch") was not
+  // true: nothing read the scenes for it. This is the checkable version — how
+  // many of the scenes that animate name the preference — measured by the same
+  // module the page reads, with the count as a floor so it can only rise.
+  try {
+    const { motionAudit } = await import("../src/lib/motion-audit.ts");
+    const audit = motionAudit();
+    const FLOOR = 39; // measured at batch 91; raise it when scenes gain a branch
+    ok(
+      "the motion audit reads the scene modules",
+      audit.scenes === keys.length && audit.moving > 50,
+      `${audit.scenes} scenes · ${audit.moving} animate · ${audit.guarded} declare a branch`,
+    );
+    ok(
+      "no scene that animates lost its reduced-motion branch",
+      audit.guarded >= FLOOR,
+      `${audit.guarded} of ${audit.moving} (floor ${FLOOR})`,
+    );
+    const aria = await get("/quality/aria");
+    ok(
+      "/quality/aria prints the reduced-motion count the audit measured",
+      aria.status === 200 && aria.text.includes(`${audit.guarded} of the ${audit.moving} scenes that animate`),
+      `expected "${audit.guarded} of the ${audit.moving} scenes that animate"`,
+    );
+  } catch (err) {
+    ok("the motion audit module loads", false, String(err && err.message ? err.message : err));
   }
 
   console.log(`\n${fail === 0 ? "ALL PASS" : "FAILURES"} — ${pass} passed, ${fail} failed`);
