@@ -131,6 +131,38 @@ function parseCheck(label, source) {
   const glossary = await get("/glossary");
   ok("/glossary defines the fidelity score", glossary.status === 200 && glossary.text.includes("Fidelity score") && glossary.text.includes("Run log"));
 
+  const spine = await get("/components/halo-button");
+  const spineEssays = new Set((spine.text.match(/\/learn\/[a-z0-9-]+/g) || []));
+  const spinePrompts = new Set((spine.text.match(/\/prompts\/[a-z0-9-]+/g) || []));
+  ok(
+    "the spine rail links two essays and a prompt",
+    spine.text.includes("Read next") && spineEssays.size >= 2 && spinePrompts.size >= 1,
+    `${spineEssays.size} essays, ${spinePrompts.size} prompts`,
+  );
+  const refreshed = await get("/quality/refreshed");
+  ok(
+    "/quality/refreshed prints the review schedule",
+    refreshed.status === 200 && refreshed.text.includes("Review due") && refreshed.text.includes("added"),
+    String(refreshed.status),
+  );
+  const log = await get("/changelog");
+  ok("/changelog lists every entry", log.status === 200 && (log.text.match(/\/changelog\//g) || []).length >= 12);
+  const entry = await get("/changelog/2026-08-19-ui-kit-launches-with-20-verified-elements");
+  ok("/changelog/<slug> renders an entry", entry.status === 200 || (await get("/changelog/2026-09-10-the-demo-module-leaves-every-page-that-does-not-render-one")).status === 200);
+  const esPage = await get("/es");
+  const enHome = await get("/");
+  ok(
+    "the multilingual title test declares both directions",
+    /hreflang="en"/i.test(esPage.text) && /hreflang="es"/i.test(esPage.text) && /hreflang="es"/i.test(enHome.text),
+    `es ${(esPage.text.match(/hreflang="[a-z-]+"/gi) || []).length} tags, home ${(enHome.text.match(/hreflang="[a-z-]+"/gi) || []).length}`,
+  );
+  const compare = await get("/compare");
+  ok(
+    "/compare appraises five approaches",
+    compare.status === 200 && (compare.text.match(/What Motif does instead/g) || []).length >= 5,
+    `${(compare.text.match(/What Motif does instead/g) || []).length} mentions`,
+  );
+
   const detail = await get("/components/halo-button");
   ok("a component page carries FAQPage markup", detail.text.includes('"@type":"FAQPage"'));
   ok("a component page carries a breadcrumb trail", detail.text.includes('"@type":"BreadcrumbList"'));

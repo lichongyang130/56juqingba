@@ -15,7 +15,7 @@ the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet c
 harness reads the `ledger-extra-rows` marker above and allows that difference, which means
 the table ends at #501 on the day the headline reads 500 / 500._
 
-## Progress — 470 / 500 shipped (batches 1–69, in order) · Sections 1–18 complete ✅ · Section 19 in progress (5/15)
+## Progress — 476 / 500 shipped (batches 1–69, in order) · Sections 1–18 complete ✅ · Section 19 in progress (11/15)
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -490,6 +490,12 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 469 | Crawl rules + site-search indexing | `src/app/robots.ts` + [/quality/crawl](/quality/crawl) · `/search`, `/saved`, `/habits`, `/embed`, `/admin`, `/api/exports` and `/digest` are disallowed and printed with a reason; the harness checks the table and `robots.txt` agree |
 | 470 | Prompt glossary hub | [/glossary](/glossary) · ten terms — fidelity score, run log, concept render, audit, tier, size budget and more — each defined by the behaviour it describes with a live example, plus a `DefinedTermSet` node |
 | 471 | Honest schema | [/quality/schema](/quality/schema) · the register: four emitted types with where and why, five deliberately absent types (Product, AggregateRating, Offer, HowTo, Event) with the reason, and the origin constant; the export harness fails if a forbidden type appears in the source |
+| 472 | Internal-link spine | `/components/<slug>` · a deterministic rail of two essays + one prompt scored by tag overlap (`src/lib/spine.ts`), with the match counts printed under the cards so the choice can be reproduced; every asset resolves to two essays and a prompt |
+| 473 | Evergreen refresh dates | `/components/<slug>` + [/quality/refreshed](/quality/refreshed) · "added" and "updated" come from the records, "review due" is a computed 90-day schedule; the register page lists every component with its due date, counts what falls due in 30 days and how many essays have gone 90 days untouched |
+| 474 | Changelog as content | [/changelog](/changelog) + per-entry permalinks · all 12 entries get addressable pages (`date-kebab-title`), each carrying its measured size delta or an explicit "no measurement recorded", plus newer/older navigation and Article markup |
+| 475 | Multilingual title test | `/es` · the translated title/description now declares its relationship with the English home page both ways (`hreflang` en/es/x-default from each side); slugs stay English because one translated page is not a parallel site |
+| 476 | Comparable-free positioning | [/compare](/compare) · five approaches appraised on merit — generic kit, template marketplace, motion library, prompt gallery, playground — with what each is better at before what it costs; no competitor named, and every Motif claim links to the page that proves it |
+| 477 | Quality bar — audit scores published | [/quality](/quality) · Section 11's missing row: every asset's accessibility score is banded and published with the catalog distribution (92–100 range) and a per-asset audit sheet; the panel names what the score checks and what it does not — it is an automated audit of the source, not an axe-core run in a browser |
 
 ---
 
@@ -1124,23 +1130,23 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 19. SEO & growth — 15 levers — 5/15 shipped, in progress
+## 19. SEO & growth — 15 levers — 11/15 shipped, in progress
 
 - **Per-asset meta**: unique titles/descriptions from the detail data (already templated — enrich). ✅
 - **FAQ schema on detail pages**: structured data for "what is a X component". ✅
 - **Learn as the SEO engine**: target "how to …" long-tail queries with the essays.
-- **Comparable-free positioning pages**: "Motif vs. generic UI kits" written on merit, no competitor copying.
+- **Comparable-free positioning pages**: "Motif vs. generic UI kits" written on merit, no competitor copying. ✅
 - **Prompt glossary hub**: terms like "fidelity score", "run log", "concept render" explained and linked. ✅
-- **Changelog as content**: each entry is a small publishable news item.
+- **Changelog as content**: each entry is a small publishable news item. ✅
 - **Site search indexing**: make sure /search results pages are noindex while catalog pages index. ✅
 - **Sitemap by content type**: components, prompts, essays, backgrounds in one clean sitemap. ✅
 - **OG images per asset**: auto-generated poster cards for social shares (like prompt posters).
 - **Original-code bait**: every snippet page shows enough craft to earn links.
-- **Internal-link spine**: every asset links 2 essays and 1 prompt, forming a crawlable graph.
+- **Internal-link spine**: every asset links 2 essays and 1 prompt, forming a crawlable graph. ✅
 - **Speed as SEO**: publish the Lighthouse story and let performance earn ranking.
-- **Multilingual titles**: page slugs stay English; add one translated title test later.
-- **Evergreen refresh dates**: visible "updated" stamps (learn articles have them — reuse site-wide).
-- **Honest schema**: avoid product/aggregate markup until the data truly exists.
+- **Multilingual titles**: page slugs stay English; add one translated title test later. ✅
+- **Evergreen refresh dates**: visible "updated" stamps (learn articles have them — reuse site-wide). ✅
+- **Honest schema**: avoid product/aggregate markup until the data truly exists. ✅
 
 ---
 

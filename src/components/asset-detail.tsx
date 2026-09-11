@@ -11,6 +11,8 @@ import { CourseRailFinal } from "@/components/course-rail-3";
 import TemplateKit, { TemplateKitMore } from "@/components/template-kit";
 import { accentCss, COMPONENTS, KIND_META } from "@/lib/data";
 import { logCopy } from "@/lib/copy-log";
+import { REVIEW_CYCLE_DAYS, reviewDue } from "@/lib/freshness";
+import { spineFor } from "@/lib/spine";
 import { ReviewNotes, StarButton, ThanksButton } from "@/components/community-ui";
 import { snippetProvenance } from "@/lib/community";
 import type { Asset } from "@/lib/types";
@@ -2425,6 +2427,9 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
   };
 
   const related = COMPONENTS.filter((c) => c.slug !== asset.slug).slice(0, 3);
+  // #472 — the crawlable spine: two essays and one prompt, scored by shared
+  // tags (see lib/spine.ts) and disclosed underneath the rail.
+  const spine = spineFor(asset);
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
@@ -2463,7 +2468,12 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
           <span className="chip">zero dependencies</span>
         )}
         <span className="chip">by {asset.author}</span>
-        <span className="chip">updated {asset.published}</span>
+        {/* #473 — "added" is the record's own date; "review due" is a schedule
+            computed from it, and the wording keeps the two apart. */}
+        <span className="chip">added {asset.published}</span>
+        <span className="chip" title={`Every ${REVIEW_CYCLE_DAYS} days, computed from the added date — a plan, not a record of a review`}>
+          review due {reviewDue(asset.published)}
+        </span>
       </div>
 
       <div className="mt-8 grid gap-6 [&>*]:min-w-0 lg:grid-cols-[1.7fr_1fr]">
@@ -2799,6 +2809,46 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
             <AssetCard key={a.slug} asset={a} />
           ))}
         </div>
+      </div>
+
+      {/* #472 — the internal-link spine: two essays and one prompt, chosen by
+          shared tags. Small on purpose: three links a reader might actually
+          take beat a wall of "you may also like". */}
+      <div className="mt-14 rounded-3xl border border-white/8 bg-panel p-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h2 className="text-sm font-extrabold tracking-tight">Read next — two guides and a prompt</h2>
+          <span className="font-mono text-[10px] text-ink-faint">picked by tag overlap, not by hand</span>
+        </div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          {spine.essays.map((a) => (
+            <Link
+              key={a.slug}
+              href={`/learn/${a.slug}`}
+              className="card-hover rounded-2xl border border-white/8 bg-white/[.02] p-4"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-300">Guide</p>
+              <p className="mt-1 text-[12px] font-bold leading-snug">{a.title}</p>
+              <p className="mt-1 text-[10px] text-ink-faint">
+                {a.minutes} min · {a.level} · updated {a.updated}
+              </p>
+            </Link>
+          ))}
+          <Link
+            href={`/prompts/${spine.prompt.slug}`}
+            className="card-hover rounded-2xl border border-white/8 bg-white/[.02] p-4"
+          >
+            <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-300">Prompt</p>
+            <p className="mt-1 text-[12px] font-bold leading-snug">{spine.prompt.title}</p>
+            <p className="mt-1 text-[10px] text-ink-faint">
+              {spine.prompt.industry} · {spine.prompt.avgFidelity}% fidelity
+            </p>
+          </Link>
+        </div>
+        <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+          How these three were chosen: {spine.reasons.join(", then ")}. The rule lives in{" "}
+          <span className="font-mono">src/lib/spine.ts</span>, so the same asset always links to the same three pages and a
+          second reader can reproduce the choice.
+        </p>
       </div>
     </div>
   );

@@ -1,11 +1,38 @@
 import Link from "next/link";
 import { COMPONENTS } from "@/lib/data";
 
+// #475 — the multilingual title test.
+//
+// Slugs stay English on purpose: /es is one translated landing page, not a
+// parallel site, and inventing Spanish URLs for 261 untranslated pages would
+// promise a translation that does not exist. What ships here is the part that
+// can be honest today — a translated title/description and the two-way
+// hreflang relationship between this page and the English home page, so a
+// crawler can tell they are the same page in two languages.
+const EN_TITLE = "Motif UI — Copy less. Ship more.";
+const ES_TITLE = "Motif UI — copia menos, publica más";
+
 export const metadata = {
-  title: "Motif UI — prueba de localización (ES)",
+  title: { absolute: ES_TITLE },
   description:
     "Copia menos, publica más: componentes originales, prompts probados y laboratorios de movimiento. Página de prueba para validar la ruta de internacionalización.",
+  alternates: {
+    canonical: "/es",
+    languages: {
+      en: "/",
+      es: "/es",
+      "x-default": "/",
+    },
+  },
+  openGraph: {
+    title: ES_TITLE,
+    description: "Una página traducida, declarada como tal: los slugs siguen en inglés y sólo el título y el texto cambian.",
+    locale: "es_ES",
+    alternateLocale: ["en_US"],
+  },
 };
+
+export const TRANSLATED_TITLE_TEST = { en: EN_TITLE, es: ES_TITLE };
 
 const PILLARS = [
   {

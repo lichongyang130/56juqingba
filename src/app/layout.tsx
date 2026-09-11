@@ -63,7 +63,10 @@ export const metadata: Metadata = {
     url: SITE_URL,
   },
   twitter: { card: "summary_large_image" },
-  alternates: { canonical: "/" },
+  // #475 — the English side of the multilingual title test. /es declares the
+  // same pair from its own metadata, so the relationship is two-way rather
+  // than a one-way claim.
+  alternates: { canonical: "/", languages: { en: "/", es: "/es", "x-default": "/" } },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
