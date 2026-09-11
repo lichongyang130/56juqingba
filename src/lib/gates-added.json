@@ -12,9 +12,34 @@
       "s": "Batch 69: close Section 17 (preloader handoff, ripple dots, tilted CTA, success burst)",
       "d": "2026-09-10"
     },
+    "check:demos|/quality/aria labels target size as a candidate, not a measurement": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
+      "d": "2026-09-11"
+    },
     "check:demos|/quality/aria links the motion contract and names its three rules": {
       "c": "201bf62",
       "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
+      "d": "2026-09-11"
+    },
+    "check:demos|/quality/aria lists target-size candidates, labelled as candidates": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
+      "d": "2026-09-11"
+    },
+    "check:demos|/quality/aria prints the announced sentences for both live regions": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
+      "d": "2026-09-11"
+    },
+    "check:demos|/quality/aria prints the fixed-height inventory": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
+      "d": "2026-09-11"
+    },
+    "check:demos|/quality/aria prints the focus-ring ratios": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
       "d": "2026-09-11"
     },
     "check:demos|/quality/aria prints the motion split per module": {
@@ -27,9 +52,24 @@
       "s": "Suggestions 1-5: 32 scenes that move in JavaScript now ask first",
       "d": "2026-09-11"
     },
+    "check:demos|/quality/aria publishes the RTL dry run and names the untested remainder": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
+      "d": "2026-09-11"
+    },
+    "check:demos|/quality/aria says whether the forced-colors block shipped": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
+      "d": "2026-09-11"
+    },
     "check:demos|Section 18 is closed before Section 19 opens": {
       "c": "ef1a692",
       "s": "Batch 71: close Section 18 (digest mock, streak, build-a-thon, check-in, reminders, community day)",
+      "d": "2026-09-11"
+    },
+    "check:demos|accessible-name fixtures match the built markup": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
       "d": "2026-09-11"
     },
     "check:demos|counter band prints the real totals without JavaScript": {
@@ -52,9 +92,19 @@
       "s": "Batch 85: each demo scene loads where it is used, not everywhere",
       "d": "2026-09-11"
     },
+    "check:demos|every drag declaration has code evidence": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
+      "d": "2026-09-11"
+    },
     "check:demos|every helper a scene module exports is imported somewhere": {
       "c": "93d11b4",
       "s": "Batch 85: each demo scene loads where it is used, not everywhere",
+      "d": "2026-09-11"
+    },
+    "check:demos|every keyboard declaration has code evidence": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
       "d": "2026-09-11"
     },
     "check:demos|every loader names a component its module exports": {
@@ -75,6 +125,21 @@
     "check:demos|no loader is missing from the key list": {
       "c": "93d11b4",
       "s": "Batch 85: each demo scene loads where it is used, not everywhere",
+      "d": "2026-09-11"
+    },
+    "check:demos|no scene reorders visually without explaining its reading order": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
+      "d": "2026-09-11"
+    },
+    "check:demos|the a11y-deep module loads": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
+      "d": "2026-09-11"
+    },
+    "check:demos|the built stylesheet carries the forced-colors block": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
       "d": "2026-09-11"
     },
     "check:demos|the built stylesheet carries the site-wide reduced-motion policy": {
@@ -100,6 +165,11 @@
     "check:demos|the embed shell honours prefers-reduced-motion": {
       "c": "201bf62",
       "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
+      "d": "2026-09-11"
+    },
+    "check:demos|the focus ring clears 3:1 on every flat surface it sits on": {
+      "c": "e5e862d",
+      "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
       "d": "2026-09-11"
     },
     "check:demos|the ledger table matches its headline": {
