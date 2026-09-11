@@ -211,6 +211,69 @@ function parseCheck(label, source) {
   }
   ok("no forbidden schema type is emitted anywhere", offenders.length === 0, offenders.join(", "));
 
+  /* ---------- markup accessibility pass ---------- */
+
+  // The seven checks /quality/aria documents, run from outside the build so the
+  // page cannot report green while the served HTML is not.
+  {
+    const walkHtml = (dir) => {
+      const out = [];
+      for (const e of fs.readdirSync(dir)) {
+        const p = path.join(dir, e);
+        if (fs.statSync(p).isDirectory()) out.push(...walkHtml(p));
+        else if (e.endsWith(".html") && e !== "_global-error.html") out.push(p);
+      }
+      return out;
+    };
+    const docs = walkHtml(path.join(".next", "server", "app"));
+    const textOf = (frag) =>
+      frag.replace(/<[^>]+>/g, " ").replace(/&[a-z]+;|&#\d+;/g, " ").replace(/\s+/g, " ").trim();
+    const findings = [];
+    for (const f of docs) {
+      const html = fs.readFileSync(f, "utf8");
+      // Next leaves an error document behind for paths its static export
+      // refuses; it carries id="__next_error__" and is not a page we ship.
+      if (/<html[^>]*id="__next_error__"/.test(html)) continue;
+      const head = html.split("<script>self.__next_f")[0];
+      const wrapped = (i) => (head.slice(0, i).match(/<label\b/g) || []).length > (head.slice(0, i).match(/<\/label>/g) || []).length;
+      if (!/<html[^>]+lang="/.test(html)) findings.push(`no-lang ${f}`);
+      for (const m of head.matchAll(/<img\b[^>]*>/g)) if (!/\balt=/.test(m[0])) findings.push(`img-no-alt ${f}`);
+      for (const m of head.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/g))
+        if (!/aria-hidden="true"|aria-label|aria-labelledby|title=/.test(m[1]) && !textOf(m[2])) findings.push(`button-no-name ${f}`);
+      for (const m of head.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g))
+        if (!/aria-hidden="true"|aria-label|aria-labelledby|title=/.test(m[1]) && !/<img[^>]+alt="[^"]+"/.test(m[2]) && !textOf(m[2])) findings.push(`link-no-name ${f}`);
+      for (const m of head.matchAll(/<(input|select|textarea)\b([^>]*)>/g)) {
+        const attrs = m[2];
+        if (/type="(hidden|submit|button|reset|image)"/.test(attrs)) continue;
+        if (/aria-hidden="true"|aria-label|aria-labelledby/.test(attrs)) continue;
+        if (wrapped(m.index)) continue;
+        const id = (attrs.match(/\sid="([^"]+)"/) || [])[1];
+        if (id && new RegExp(`<label[^>]+for="${id}"`).test(head)) continue;
+        findings.push(`control-no-label ${f}`);
+      }
+      const ids = [...head.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]).filter((id) => !id.startsWith("__"));
+      const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
+      if (dupes.length) findings.push(`duplicate-id ${f} ${[...new Set(dupes)].join(",")}`);
+      const levels = [...head.matchAll(/<h([1-6])[\s>]/g)].map((m) => Number(m[1]));
+      for (let i = 1; i < levels.length; i++)
+        if (levels[i] > levels[i - 1] + 1) {
+          findings.push(`heading-skip ${f} h${levels[i - 1]}->h${levels[i]}`);
+          break;
+        }
+    }
+    ok(
+      "the markup accessibility pass finds nothing in the built HTML",
+      docs.length > 250 && findings.length === 0,
+      `${docs.length} documents${findings.length ? ` · ${findings.length} findings: ${[...new Set(findings)].slice(0, 4).join(" | ")}` : ""}`,
+    );
+    const ariaPage = await get("/quality/aria");
+    ok(
+      "/quality/aria documents the pass and its findings",
+      ariaPage.status === 200 && ariaPage.text.includes("What this page does not check") && ariaPage.text.includes("Documents scanned"),
+      String(ariaPage.status),
+    );
+  }
+
   /* ---------- site-wide page audit (added after the 500-item programme) ---------- */
 
   // Walks the sitemap: every page must answer 200 with one h1, its own
@@ -423,9 +486,13 @@ function parseCheck(label, source) {
     String(metrics.status),
   );
   const mascot = await get("/brand/mascot");
-  ok("/brand/mascot shows three poses", mascot.status === 200 && (mascot.text.match(/mascot-body/g) || []).length >= 3, String(mascot.status));
+  ok(
+    "/brand/mascot shows three poses",
+    mascot.status === 200 && ["mascot-lost", "mascot-found", "mascot-idle"].every((id) => mascot.text.includes(id)),
+    String(mascot.status),
+  );
   const notFound = await get("/definitely-not-a-route");
-  ok("the 404 page renders the mascot", notFound.status === 404 && notFound.text.includes("mascot-body"));
+  ok("the 404 page renders the mascot", notFound.status === 404 && notFound.text.includes("mascot-404"));
   const walls = await get("/brand/wallpapers");
   ok("/brand/wallpapers links three downloads", walls.status === 200 && (walls.text.match(/\/api\/brand\//g) || []).length >= 3, String(walls.status));
   for (const slug of ["dots-4k", "ribbon-light", "type-quiet", "badge"]) {

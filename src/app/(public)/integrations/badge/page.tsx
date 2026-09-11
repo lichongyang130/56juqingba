@@ -39,7 +39,7 @@ export default function IntegrationsBadgePage() {
       </p>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        {sample.map((a) => (
+        {sample.map((a, i) => (
           <div key={a.slug} className="rounded-3xl border border-white/8 bg-panel p-5">
             {/* The badge is inlined as SVG markup rather than loaded through an
                 <img>: the route and this page build it from the same function,
@@ -49,7 +49,7 @@ export default function IntegrationsBadgePage() {
               className="inline-block"
               role="img"
               aria-label={`Quality badge for ${a.title}: ${a.qualityScore} of 100`}
-              dangerouslySetInnerHTML={{ __html: badgeSvg(a.slug) ?? "" }}
+              dangerouslySetInnerHTML={{ __html: badgeSvg(a.slug, `-${i}`) ?? "" }}
             />
             <p className="mt-3 text-sm font-bold">{a.title}</p>
             <p className="mt-0.5 text-[11px] text-ink-dim">

@@ -14,7 +14,8 @@ import { useRef, useState } from "react";
 export function Frame({ id, title, blurb, children }: { id: string; title: string; blurb: string; children: React.ReactNode }) {
   return (
     <section id={id} className="scroll-mt-24 rounded-3xl border border-white/8 bg-panel p-6">
-      <h3 className="text-lg font-extrabold tracking-tight">{title}</h3>
+      {/* h2: every Frame is a top-level tool panel under the page h1. */}
+      <h2 className="text-lg font-extrabold tracking-tight">{title}</h2>
       <p className="mt-1 text-xs leading-relaxed text-ink-dim">{blurb}</p>
       <div className="mt-5">{children}</div>
     </section>
@@ -83,7 +84,7 @@ function Phase({
         <input type="range" min={100} max={1600} step={50} value={dur} onChange={(e) => onDur(Number(e.target.value))} className="w-28 accent-violet-400" />
         <span className="w-14 text-ink-dim">{dur}ms</span>
       </label>
-      <select value={ease} onChange={(e) => onEase(e.target.value)} className="rounded-lg border border-white/10 bg-[#0b0d14] px-2 py-1 text-[11px] text-ink-dim">
+      <select aria-label="Easing curve" value={ease} onChange={(e) => onEase(e.target.value)} className="rounded-lg border border-white/10 bg-[#0b0d14] px-2 py-1 text-[11px] text-ink-dim">
         {eases.map((x) => <option key={x} value={x}>{x}</option>)}
       </select>
     </div>
@@ -232,7 +233,8 @@ export function TextAnimationLab() {
           </button>
         ))}
       </div>
-      <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Your headline…" className="mt-3 w-full rounded-xl border border-white/10 bg-[#0b0d14] px-3 py-2 text-sm text-ink" />
+      <input value={text} onChange={(e) => setText(e.target.value)} aria-label="Headline text to animate"
+      placeholder="Your headline…" className="mt-3 w-full rounded-xl border border-white/10 bg-[#0b0d14] px-3 py-2 text-sm text-ink" />
       <div className="mt-3 overflow-hidden rounded-xl border border-white/8 bg-[#07090f] p-4">
         <div
           key={mode + sample.slice(0, 4)}

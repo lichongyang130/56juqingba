@@ -121,7 +121,10 @@ export function AssetCard({ asset }: { asset: Asset }) {
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h3 className="text-[15px] font-bold tracking-tight group-hover:text-white">{asset.title}</h3>
+            {/* h2, not h3: the catalog renders this card directly under the page
+                h1, and h1 -> h3 is a heading-order skip. A section heading above
+                a list of h2 cards is still valid nesting. */}
+            <h2 className="text-[15px] font-bold tracking-tight group-hover:text-white">{asset.title}</h2>
             <p className="mt-0.5 text-xs text-ink-faint">
               {asset.bundleKb} KB · a11y {asset.a11yScore} · Q {asset.qualityScore}
             </p>
@@ -252,9 +255,9 @@ export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate;
             <span className="chip !text-[8px] uppercase tracking-[0.3em]" style={{ color: `hsl(${hue} 90% 70%)`, borderColor: `hsl(${hue} 90% 65% / .35)`, background: `hsl(${hue} 90% 60% / .1)` }}>
               {sample.kicker}
             </span>
-            <h4 className="mt-1.5 text-xl font-black leading-[1.05] tracking-tight text-white drop-shadow md:text-3xl">
+            <div className="mt-1.5 text-xl font-black leading-[1.05] tracking-tight text-white drop-shadow md:text-3xl">
               {titleLines.map((l) => <span key={l} className="block">{l}</span>)}
-            </h4>
+            </div>
             <p className="mt-1 max-w-xs text-[8px] leading-relaxed text-white/60 md:text-[10px]">{sub}</p>
             <div className="mt-2 flex items-center gap-2">
               <span className="rounded-lg px-3 py-1 text-[9px] font-black text-black" style={{ background: `hsl(${hue} 90% 68%)` }}>{sample.cta}</span>
@@ -269,9 +272,9 @@ export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate;
               <span className="chip !text-[8px] uppercase tracking-[0.3em]" style={{ color: `hsl(${hue} 90% 70%)`, borderColor: `hsl(${hue} 90% 65% / .35)`, background: `hsl(${hue} 90% 60% / .1)` }}>
                 {sample.kicker}
               </span>
-              <h4 className="mt-1.5 text-lg font-black leading-[1.06] tracking-tight text-white drop-shadow md:text-2xl">
+              <div className="mt-1.5 text-lg font-black leading-[1.06] tracking-tight text-white drop-shadow md:text-2xl">
                 {titleLines.map((l) => <span key={l} className="block">{l}</span>)}
-              </h4>
+              </div>
               <p className="mt-1 line-clamp-2 max-w-[24ch] text-[8px] leading-relaxed text-white/60 md:text-[9px]">{sub}</p>
               <div className="mt-2 w-fit rounded-lg px-2.5 py-1 text-[9px] font-black text-black" style={{ background: `hsl(${hue} 90% 68%)` }}>
                 {sample.cta} →
@@ -299,9 +302,9 @@ export function PromptPoster({ prompt, hero = false }: { prompt: PromptTemplate;
                 <span className="chip !text-[8px] uppercase tracking-[0.3em]" style={{ color: `hsl(${hue} 90% 70%)`, borderColor: `hsl(${hue} 90% 65% / .35)`, background: `hsl(${hue} 90% 60% / .1)` }}>
                   {sample.kicker}
                 </span>
-                <h4 className="mt-1 text-xl font-black leading-[1.05] tracking-tight text-white drop-shadow md:text-3xl">
+                <div className="mt-1 text-xl font-black leading-[1.05] tracking-tight text-white drop-shadow md:text-3xl">
                   {titleLines.map((l) => <span key={l} className="block">{l}</span>)}
-                </h4>
+                </div>
               </div>
               <span className="hidden shrink-0 rounded-lg px-3 py-1 text-[9px] font-black text-black sm:block" style={{ background: `hsl(${hue} 90% 68%)` }}>
                 {sample.cta}
@@ -356,7 +359,8 @@ export function PromptCard({ prompt }: { prompt: PromptTemplate }) {
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="text-[15px] font-bold leading-snug tracking-tight group-hover:text-white">{prompt.title}</h3>
+            {/* h2: PromptCard is rendered directly under the page h1 on /prompts. */}
+            <h2 className="text-[15px] font-bold leading-snug tracking-tight group-hover:text-white">{prompt.title}</h2>
             <p className="mt-1 line-clamp-1 text-xs text-ink-faint">{prompt.vibe}</p>
           </div>
         </div>

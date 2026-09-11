@@ -414,10 +414,10 @@ function HeroAurora() {
         <span className="chip mb-4 border-violet-300/30 bg-violet-400/10 text-violet-200">
           ✦ New · 300 verified prompts
         </span>
-        {/* #506 — a demo is a preview of somebody else's hero, not this page's
-            title. It was an <h1>, so every component page previewing this scene
-            (and every card previewing a template that contains it) shipped a
-            second, third and eleventh top-level heading. Same classes, no tag. */}
+        {/* #506/#507 — a demo is a preview of somebody else's page: none of its
+            mock titles are headings. Every <h1>…<h6> in this file is a <div>
+            now, so a component page previewing a scene, or a card previewing a
+            template that contains one, cannot ship a second outline. */}
         <div className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
           Ship pages that <span className="text-gradient">feel alive</span>
         </div>
@@ -774,8 +774,8 @@ function WipeReveal({ loop = true, speed = 1.1 }: DemoProps) {
       `}</style>
       <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/40">Headline system</div>
       <div className="relative mt-3 w-full max-w-lg select-none">
-        <h3 className="text-center text-4xl font-black tracking-tight text-white/14 md:text-6xl">{line}</h3>
-        <h3
+        <div className="text-center text-4xl font-black tracking-tight text-white/14 md:text-6xl" data-demo-heading="h3">{line}</div>
+        <div
           aria-hidden
           className="absolute inset-0 text-center text-4xl font-black tracking-tight text-transparent md:text-6xl"
           style={{
@@ -786,9 +786,9 @@ function WipeReveal({ loop = true, speed = 1.1 }: DemoProps) {
             animation: `mf-wipe ${sp * 2.2}s cubic-bezier(.6,.05,.25,1) ${repeat}`,
             animationDelay: "0.4s",
           }}
-        >
+         data-demo-heading="h3">
           {line}
-        </h3>
+        </div>
       </div>
       <p className="mt-4 text-center text-[11px] text-white/45">A light edge travels the headline once — then it’s just typography.</p>
     </div>
@@ -1946,6 +1946,7 @@ function ComboBox() {
             role="combobox"
             aria-expanded={open}
             aria-controls="cb-list"
+            aria-label="Search the component library"
             aria-activedescendant={open && list[act] ? `cb-${list[act].v}` : undefined}
             className="input !rounded-xl !py-2.5 !pl-10 !pr-9"
             placeholder="Find a component…"
@@ -4033,7 +4034,7 @@ function ScrollLinkedHueHero() {
             <span className="rounded-full border border-white/15 bg-black/25 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.22em] text-white/70 backdrop-blur">
               scroll-linked
             </span>
-            <h3 className="mt-3 text-xl font-black tracking-tight text-white">the skyline repaints as you read</h3>
+            <div className="mt-3 text-xl font-black tracking-tight text-white" data-demo-heading="h3">the skyline repaints as you read</div>
             <p className="mt-2 text-[11px] leading-relaxed text-white/60">
               Hue is treated as data: one scroll handler converts scrollTop into a colour angle, and the section repaints
               through the whole journey — from indigo dusk to ember orange.
@@ -4679,7 +4680,7 @@ function ScrollVignette() {
           <div className="mx-auto max-w-sm space-y-5">
             {VIG_COPY.map(([t, body]) => (
               <section key={t}>
-                <h3 className="text-sm font-black tracking-tight text-white">{t}</h3>
+                <div className="text-sm font-black tracking-tight text-white" data-demo-heading="h3">{t}</div>
                 <p className="mt-1.5 text-[11.5px] leading-relaxed text-white/60">{body}</p>
               </section>
             ))}
@@ -5408,7 +5409,7 @@ function NewsletterBandTiers() {
         <span className="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-emerald-200">
           the motif post
         </span>
-        <h3 className="mt-3 text-xl font-black tracking-tight text-white">one useful letter a week</h3>
+        <div className="mt-3 text-xl font-black tracking-tight text-white" data-demo-heading="h3">one useful letter a week</div>
         <p className="mx-auto mt-1.5 max-w-[300px] text-[11px] leading-relaxed text-ink-dim">
           design notes, fresh assets and honest a11y lessons — never a sales blast, unsubscribe in one click.
         </p>
@@ -5472,9 +5473,9 @@ function HeroProductMock() {
             <span className="rounded-full border border-violet-300/25 bg-violet-300/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-violet-200">
               dev-tool hero
             </span>
-            <h3 className="mt-2 text-2xl font-black leading-[1.05] tracking-tight text-white">
+            <div className="mt-2 text-2xl font-black leading-[1.05] tracking-tight text-white" data-demo-heading="h3">
               your UI, shipped <span className="text-violet-300">as systems</span>
-            </h3>
+            </div>
             <p className="mt-2 text-[11px] leading-relaxed text-ink-dim">
               components, tokens and motion language — assembled, not bolted on.
             </p>
@@ -5592,7 +5593,7 @@ function SplitFeatureRows() {
                 </div>
                 <div className="flex min-w-0 flex-col justify-center">
                   <span className="font-mono text-[9px] text-ink-faint">{r.k}</span>
-                  <h3 className="mt-0.5 text-sm font-black leading-tight tracking-tight text-white">{r.t}</h3>
+                  <div className="mt-0.5 text-sm font-black leading-tight tracking-tight text-white" data-demo-heading="h3">{r.t}</div>
                   <p className="mt-1.5 text-[10.5px] leading-relaxed text-ink-dim">{r.body}</p>
                   <div className="mt-2 flex gap-1.5">
                     {r.tags.map((t) => (
@@ -5628,9 +5629,9 @@ function CaseStudyHeader() {
           <span className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-2 py-0.5 text-cyan-200">case study</span>
           <span>design systems</span>
         </div>
-        <h3 className="mt-3 text-xl font-black leading-tight tracking-tight text-white">
+        <div className="mt-3 text-xl font-black leading-tight tracking-tight text-white" data-demo-heading="h3">
           Bringing 14 storefronts onto one design system — without a freeze
-        </h3>
+        </div>
         <p className="mt-2 text-[11px] leading-relaxed text-ink-dim">
           How Northwind’s five squads shipped a token pipeline, a living component set and an a11y bar, all while the roadmap kept moving.
         </p>
@@ -6014,7 +6015,7 @@ function TemplateDocsSite() {
               ["motion", "A motion language, not a toolbox", "Under 200ms for feedback, 500ms+ for story beats, and reduced-motion kills the theatre — by design."],
             ].map(([id, t, b]) => (
               <section key={id} data-sec={id} className="scroll-mt-4">
-                <h3 className="text-[13px] font-black tracking-tight text-white">{t}</h3>
+                <div className="text-[13px] font-black tracking-tight text-white" data-demo-heading="h3">{t}</div>
                 <p className="mt-1.5 text-[10.5px] leading-relaxed text-ink-dim">{b}</p>
               </section>
             ))}
@@ -6078,9 +6079,9 @@ function TemplateLandingSaas() {
             <span className="rounded-full border border-violet-300/25 bg-violet-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-violet-200">
               dark SaaS template
             </span>
-            <h2 className="mt-3 text-2xl font-black leading-tight tracking-tight text-white">
+            <div className="mt-3 text-2xl font-black leading-tight tracking-tight text-white" data-demo-heading="h2">
               The component library your roadmap <span className="text-violet-300">kept promising</span>
-            </h2>
+            </div>
             <p className="mx-auto mt-2 max-w-[300px] text-[11px] leading-relaxed text-ink-dim">
               Original assets, honest a11y and a motion language — assembled from the same sections on this page.
             </p>
@@ -6198,7 +6199,7 @@ function TemplateWaitlist() {
         <span className="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-emerald-200">
           waitlist · batch {pad(hrs + days * 24)}h
         </span>
-        <h3 className="mt-3 text-xl font-black tracking-tight text-white">motif desktop is almost here</h3>
+        <div className="mt-3 text-xl font-black tracking-tight text-white" data-demo-heading="h3">motif desktop is almost here</div>
         <p className="mx-auto mt-1.5 max-w-[300px] text-[11px] leading-relaxed text-ink-dim">
           invite-only access opens at 09:00 on the first of next month. Your spot is saved the moment you join.
         </p>

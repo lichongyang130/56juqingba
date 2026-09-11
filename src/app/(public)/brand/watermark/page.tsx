@@ -65,7 +65,7 @@ export default function WatermarkPage() {
 
       <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
         <div className="flex items-start gap-4">
-          <Mascot pose="idle" size={56} className="shrink-0" />
+          <Mascot pose="idle" size={56} className="shrink-0" id="mascot-badge" />
           <div>
             <h2 className="text-sm font-extrabold tracking-tight">The rules, including the awkward one</h2>
             <ul className="mt-3 space-y-2 text-[11px] leading-relaxed text-ink-dim">

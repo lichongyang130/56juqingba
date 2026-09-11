@@ -10,7 +10,7 @@ export default function NotFound() {
       <div className="relative w-full max-w-2xl text-center">
         {/* #488 — the mascot's one job: make a dead end feel drawn on purpose. */}
         <div className="mb-2 flex justify-center">
-          <Mascot pose="lost" size={88} />
+          <Mascot pose="lost" size={88} id="mascot-404" />
         </div>
         <p className="font-mono text-xs font-bold uppercase tracking-[0.3em] text-violet-300">Error 404</p>
         <h1 className="mt-4 text-balance text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">

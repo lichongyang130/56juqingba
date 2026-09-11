@@ -455,7 +455,7 @@ export function CmsEditor() {
               as a code change.
             </p>
           </div>
-          <select value={slug} onChange={(e) => loadAsset(e.target.value)} className="input max-w-xs !py-2 text-xs">
+          <select value={slug} onChange={(e) => loadAsset(e.target.value)} className="input max-w-xs !py-2 text-xs" aria-label="Choose the asset to inspect">
             {COMPONENTS.map((c) => (
               <option key={c.slug} value={c.slug}>
                 {c.title}
@@ -793,6 +793,7 @@ export function AdminSearch() {
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
+        aria-label="Search records by title, slug, tag, behaviour, industry or gate result"
         placeholder="Search titles, slugs, tags, behaviours, industries, gate results…"
         className="input mt-4 !py-2.5 text-sm"
       />

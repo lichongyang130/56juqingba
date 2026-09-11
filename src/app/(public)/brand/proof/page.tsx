@@ -39,7 +39,7 @@ export default function ProofShelfPage() {
 
       <div className="mt-8 rounded-3xl border border-amber-300/30 bg-amber-400/[.05] p-5">
         <div className="flex items-start gap-4">
-          <Mascot pose="idle" size={56} className="shrink-0" />
+          <Mascot pose="idle" size={56} className="shrink-0" id="mascot-proof" />
           <div>
             <h2 className="text-sm font-extrabold tracking-tight text-amber-100">Read this label first</h2>
             <p className="mt-1.5 text-[11.5px] leading-relaxed text-ink-dim">

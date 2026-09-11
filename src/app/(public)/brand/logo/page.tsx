@@ -20,12 +20,14 @@ export const metadata: Metadata = {
 // (7,7) and (19,19) full, (19,7) and (7,19) at 0.55; gradient
 // #8b5cf6 → #6366f1 at 0.55 → #22d3ee on the diagonal.
 
-function Mark({ size = 32, tone = "gradient" }: { size?: number; tone?: "gradient" | "ink" | "dim" }) {
-  const paint = tone === "gradient" ? "url(#logo-check)" : tone === "ink" ? "#e8e9f2" : "#6b7085";
+function Mark({ size = 32, tone = "gradient", id = "logo-mark" }: { size?: number; tone?: "gradient" | "ink" | "dim"; id?: string }) {
+  // #507 — one gradient id per drawing. This page renders the mark a dozen
+  // times; sharing one id made every copy after the first a duplicate.
+  const paint = tone === "gradient" ? `url(#${id})` : tone === "ink" ? "#e8e9f2" : "#6b7085";
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden>
       <defs>
-        <linearGradient id="logo-check" x1="0" y1="0" x2="32" y2="32">
+        <linearGradient id={id} x1="0" y1="0" x2="32" y2="32">
           <stop stopColor="#8b5cf6" />
           <stop offset="0.55" stopColor="#6366f1" />
           <stop offset="1" stopColor="#22d3ee" />
@@ -82,14 +84,14 @@ export default function LogoSystemPage() {
         <div className="mt-5 flex flex-wrap items-end gap-6">
           {SIZES.map((s) => (
             <div key={s} className="text-center">
-              <Mark size={s} />
+              <Mark size={s} id={`logo-${s}`} />
               <p className="mt-2 font-mono text-[10px] text-ink-faint">{s}px</p>
             </div>
           ))}
         </div>
         <div className="mt-6 flex flex-wrap items-center gap-6 border-t border-white/8 pt-5">
-          <Mark size={32} tone="ink" />
-          <Mark size={32} tone="dim" />
+          <Mark size={32} tone="ink" id="logo-ink" />
+          <Mark size={32} tone="dim" id="logo-dim" />
           <span className="text-[11px] leading-relaxed text-ink-dim">
             Single-colour renderings, for print and for anywhere the gradient would fight the background — same geometry, one paint. The dim tone
             is what a disabled or decorative use looks like; neither is a second logo.
@@ -106,7 +108,7 @@ export default function LogoSystemPage() {
           </p>
           <div className="mt-4 flex justify-center">
             <div className="relative rounded-2xl border border-dashed border-violet-300/40 p-[18px]">
-              <Mark size={96} />
+              <Mark size={96} id="logo-clearspace" />
             </div>
           </div>
           <p className="mt-3 text-center font-mono text-[10px] text-ink-faint">18px of clear space at 96px</p>
@@ -119,7 +121,7 @@ export default function LogoSystemPage() {
             mark sits 10px from the wordmark at 28px, vertically centred on the x-height rather than the box.
           </p>
           <div className="mt-5 flex items-center gap-3">
-            <Mark size={28} />
+            <Mark size={28} id="logo-wordmark" />
             <span className="font-display text-2xl font-extrabold tracking-tight">Motif UI</span>
           </div>
           <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
@@ -142,7 +144,7 @@ export default function LogoSystemPage() {
                   <span className="font-display text-2xl font-extrabold">M..</span>
                 ) : (
                   <span style={m.style}>
-                    <Mark size={40} />
+                    <Mark size={40} id={`logo-misuse-${m.label.toLowerCase()}`} />
                   </span>
                 )}
               </div>

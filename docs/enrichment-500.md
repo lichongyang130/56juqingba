@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-<!-- ledger-extra-rows: 6 (row 27 predates the programme; rows 502-506 are the post-programme audit repairs) -->
+<!-- ledger-extra-rows: 9 (row 27 predates the programme; rows 502-509 are post-programme audit repairs) -->
 _One row in the table below is not an idea from the bank: #27 upload progress ring
 (`/components/progress-ring`) shipped alongside the Section 1 batch and was never one of
 the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet count. The
@@ -525,6 +525,9 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 504 | Site audit repair — metadata window | descriptions were clamped at 300 characters, which a search result truncates anyway: the clamp is 200 with a word-boundary ellipsis, two over-long prompt titles were shortened, and `/community` (no canonical — it inherited the homepage) now declares its own |
 | 505 | Share cards for every family | `/og/<slug>` covers prompts, guides and backgrounds in addition to components, each card built from that record's own numbers; a page without a bespoke card inherits the site card at `/og/default`, so no page unfurls as an empty frame |
 | 506 | Regression gates for the above | `check:exports` walks the sitemap (279 pages: status, single h1, own canonical, og:image, description length) and fetches every distinct internal link, plus one card check per family — the audit that found these problems is now the check that prevents them |
+| 507 | Markup accessibility repair | the automated half of a11y, run over every built document: fixed 134 pages whose logo gradient carried the same id three times per document (header, footer, press kit), every mock heading inside demo scenes and card previews, six panel titles that rendered as h3 directly under a page h1, four unlabeled lab/palette controls, and the badge page's per-card SVG ids |
+| 508 | /quality/aria — the audit page | the seven decidable checks (alt text, control names, label association, duplicate ids, heading order, document language) with live counts, the real findings from the first two runs and the repairs they caused, and an explicit list of what markup alone cannot decide (focus order, contrast in context, screen-reader output) |
+| 509 | Markup gate in the export harness | the same seven checks run from outside the build over all 291 documents and fail on any finding, so /quality/aria cannot report green while the served HTML is not; the page renders on demand precisely so its count is the finished build rather than a mid-build slice |
 
 ---
 

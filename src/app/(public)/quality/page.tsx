@@ -135,6 +135,30 @@ export default function QualityPage() {
         </div>
       </div>
 
+      {/* #507 — the mechanical half of accessibility, next to the editorial half. */}
+      <div className="mt-8 rounded-3xl border border-white/8 bg-panel p-6">
+        <p className="text-sm font-extrabold">The automated half</p>
+        <p className="mt-1 max-w-2xl text-xs leading-relaxed text-ink-dim">
+          The per-asset a11y score above is an editorial review. Separately, every page&apos;s built HTML is walked at build time for the things a
+          machine can decide — images without alt text, controls without names, duplicate ids, heading-order skips, missing language attributes —
+          and the findings, including the ones that were real, are on the markup audit.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link href="/quality/aria" className="chip !text-[10px] transition-colors hover:!text-ink">
+            Markup &amp; ARIA audit
+          </Link>
+          <Link href="/quality/craft" className="chip !text-[10px] transition-colors hover:!text-ink">
+            Craft excerpts
+          </Link>
+          <Link href="/quality/speed" className="chip !text-[10px] transition-colors hover:!text-ink">
+            The measured speed story
+          </Link>
+          <Link href="/quality/crawl" className="chip !text-[10px] transition-colors hover:!text-ink">
+            Crawl surface
+          </Link>
+        </div>
+      </div>
+
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-white/8 bg-panel p-6">
         <div className="max-w-xl">
           <p className="text-sm font-extrabold">Where the numbers come from</p>

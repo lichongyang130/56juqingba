@@ -35,7 +35,7 @@ export default function ThanksPage() {
 
       <section className="mt-10 rounded-3xl border border-emerald-300/25 bg-emerald-400/[.05] p-6">
         <div className="flex items-start gap-4">
-          <Mascot pose="found" size={64} className="shrink-0" />
+          <Mascot pose="found" size={64} className="shrink-0" id="mascot-thanks" />
           <div>
             <h2 className="text-lg font-extrabold tracking-tight">You&apos;re on the list — here is what to do with the next ten minutes</h2>
             <p className="mt-2 text-[12px] leading-relaxed text-ink-dim">

@@ -668,7 +668,12 @@ Promise.resolve(command === "badge" ? badge(operand) : run()).catch((err) => { c
 
 /** The badge SVG, built from the stored catalog scores. Kept here so the route
  *  that serves it and the page that inlines it cannot disagree. */
-export function badgeSvg(slug: string): string | null {
+export function badgeSvg(slug: string, idSuffix = ""): string | null {
+  // #507 — callers that render several badges on one page pass a suffix; the
+  // gradient and clip-path ids are document-scoped, so two copies of the badge
+  // are two duplicate ids without it.
+  const gradId = `s${idSuffix}`;
+  const clipId = `r${idSuffix}`;
   const asset = COMPONENTS.find((c) => c.slug === slug);
   if (!asset) return null;
   const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -682,15 +687,15 @@ export function badgeSvg(slug: string): string | null {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="20" role="img" aria-label="${esc(label)}: ${value}">
   <title>${esc(asset.title)} — quality ${value}/100</title>
   <desc>${esc(desc)}</desc>
-  <linearGradient id="s" x2="0" y2="100%">
+  <linearGradient id="${gradId}" x2="0" y2="100%">
     <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
-  <clipPath id="r"><rect width="${width}" height="20" rx="3" fill="#fff"/></clipPath>
-  <g clip-path="url(#r)">
+  <clipPath id="${clipId}"><rect width="${width}" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#${clipId})">
     <rect width="${labelWidth}" height="20" fill="#22242e"/>
     <rect x="${labelWidth}" width="${valueWidth}" height="20" fill="${colour}"/>
-    <rect width="${width}" height="20" fill="url(#s)"/>
+    <rect width="${width}" height="20" fill="url(#${gradId})"/>
   </g>
   <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
     <text x="${labelWidth / 2}" y="15" fill="#010101" fill-opacity=".3">${esc(label)}</text>

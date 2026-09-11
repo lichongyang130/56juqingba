@@ -90,7 +90,8 @@ export function RequestsBoard({ requests }: { requests: ContentRequest[] }) {
                   <span className={`chip !text-[10px] ${KIND_STYLE[r.kind]}`}>{r.kind}</span>
                   <span className="font-mono text-[10px] text-ink-faint">{r.id}</span>
                 </div>
-                <h3 className="mt-2 text-[15px] font-extrabold tracking-tight">{r.title}</h3>
+                {/* h2: these requests are listed directly under the page h1, and h1 -> h3 skips a level. */}
+                <h2 className="mt-2 text-[15px] font-extrabold tracking-tight">{r.title}</h2>
               </div>
               <button
                 type="button"

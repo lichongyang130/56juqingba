@@ -129,7 +129,7 @@ export function CopyInspector() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <select value={slug} onChange={(e) => load(e.target.value)} className="input max-w-xs !py-2 text-xs">
+            <select value={slug} onChange={(e) => load(e.target.value)} className="input max-w-xs !py-2 text-xs" aria-label="Choose the asset to open">
               {COMPONENTS.map((c) => (
                 <option key={c.slug} value={c.slug}>
                   {c.title}
@@ -213,7 +213,8 @@ export function CopyInspector() {
                     <span>/</span>
                     <span className="text-ink-dim">{preview.title}</span>
                   </nav>
-                  <h3 className="mt-4 text-2xl font-extrabold tracking-tight">{preview.title}</h3>
+                  {/* h2, not h3: this is a preview of a detail-page title inside a panel, and an h3 straight after the page h1 is a heading-order skip. */}
+                  <h2 className="mt-4 text-2xl font-extrabold tracking-tight">{preview.title}</h2>
                   <p className="mt-2 text-sm leading-relaxed text-ink-dim">{preview.description}</p>
                   <div className="mt-4 flex flex-wrap gap-1.5">
                     <span className="chip">{preview.license} license</span>

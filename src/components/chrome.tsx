@@ -114,21 +114,30 @@ export function CtaRail({ counts }: { counts: SiteCounts }) {
   );
 }
 
-export function LogoMark({ size = 26 }: { size?: number }) {
+/**
+ * #507 — the mark takes an id for its gradient.
+ *
+ * It is drawn three times on a page (header, footer, press-kit line) and every
+ * copy used to carry `id="mf-logo"`, so a third of the site shipped a document
+ * with duplicate ids: invalid HTML, and a wrong first match if anything else
+ * ever referenced the fragment. The header keeps `mf-logo` because the embed
+ * check greps for it; the other copies name their own.
+ */
+export function LogoMark({ size = 26, id = "mf-logo" }: { size?: number; id?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden>
       <defs>
-        <linearGradient id="mf-logo" x1="0" y1="0" x2="32" y2="32">
+        <linearGradient id={id} x1="0" y1="0" x2="32" y2="32">
           <stop stopColor="#8b5cf6" />
           <stop offset="0.55" stopColor="#6366f1" />
           <stop offset="1" stopColor="#22d3ee" />
         </linearGradient>
       </defs>
-      <rect x="1.5" y="1.5" width="29" height="29" rx="9" stroke="url(#mf-logo)" strokeWidth="2" />
-      <rect x="7" y="7" width="6" height="6" rx="2" fill="url(#mf-logo)" />
-      <rect x="19" y="7" width="6" height="6" rx="2" fill="url(#mf-logo)" opacity="0.55" />
-      <rect x="7" y="19" width="6" height="6" rx="2" fill="url(#mf-logo)" opacity="0.55" />
-      <rect x="19" y="19" width="6" height="6" rx="2" fill="url(#mf-logo)" />
+      <rect x="1.5" y="1.5" width="29" height="29" rx="9" stroke={`url(#${id})`} strokeWidth="2" />
+      <rect x="7" y="7" width="6" height="6" rx="2" fill={`url(#${id})`} />
+      <rect x="19" y="7" width="6" height="6" rx="2" fill={`url(#${id})`} opacity="0.55" />
+      <rect x="7" y="19" width="6" height="6" rx="2" fill={`url(#${id})`} opacity="0.55" />
+      <rect x="19" y="19" width="6" height="6" rx="2" fill={`url(#${id})`} />
     </svg>
   );
 }
@@ -248,7 +257,7 @@ export function Footer({ counts }: { counts: SiteCounts }) {
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-[1.4fr_repeat(5,1fr)] lg:px-8">
         <div>
           <div className="flex items-center gap-2.5">
-            <LogoMark size={22} />
+            <LogoMark size={22} id="mf-logo-footer" />
             <span className="font-extrabold tracking-tight">{SITE.name}</span>
           </div>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-dim">{SITE.description}</p>
@@ -296,7 +305,7 @@ export function Footer({ counts }: { counts: SiteCounts }) {
 
           <div className="mt-5 rounded-2xl border border-white/6 bg-white/[.02] p-3.5">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink-faint">
-              <LogoMark size={14} /> Press &amp; media kit
+              <LogoMark size={14} id="mf-logo-press" /> Press &amp; media kit
             </div>
             <p className="mt-1.5 text-[11px] leading-relaxed text-ink-dim">
               Logo lockup · fact sheet · brand palette. One click, no forms.

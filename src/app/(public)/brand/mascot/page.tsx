@@ -58,7 +58,7 @@ export default function MascotPage() {
         {POSES.map((p) => (
           <div key={p.pose} className="rounded-3xl border border-white/8 bg-panel p-5 text-center">
             <div className="grid h-32 place-items-center rounded-2xl bg-black/25">
-              <Mascot pose={p.pose} size={96} />
+              <Mascot pose={p.pose} size={96} id={`mascot-${p.pose}`} />
             </div>
             <h2 className="mt-3 text-sm font-extrabold tracking-tight">{p.name}</h2>
             <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-ink-faint">{p.where}</p>

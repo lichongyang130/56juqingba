@@ -94,7 +94,8 @@ export function FeatureLedger() {
         {PRO_FEATURES.map((f) => (
           <div key={f.id} className="rounded-3xl border border-white/8 bg-panel p-5">
             <div className="flex flex-wrap items-center gap-3">
-              <h3 className="text-sm font-extrabold">{f.name}</h3>
+              {/* h2: feature panels sit directly under the page h1. */}
+              <h2 className="text-sm font-extrabold">{f.name}</h2>
               <StateChip state={f.state} />
               {f.href && (
                 <Link href={f.href} className="ml-auto text-[11px] font-semibold text-ink-faint hover:text-ink">

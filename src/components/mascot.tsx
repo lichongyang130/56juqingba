@@ -7,7 +7,19 @@
 
 export type MascotPose = "lost" | "found" | "idle";
 
-export function Mascot({ pose = "idle", size = 96, className }: { pose?: MascotPose; size?: number; className?: string }) {
+export function Mascot({
+  pose = "idle",
+  size = 96,
+  className,
+  id = "mascot",
+}: {
+  pose?: MascotPose;
+  size?: number;
+  className?: string;
+  /** #507 — the body gradient's id. The mascot page draws three poses; two of
+   *  them sharing an id is a duplicate in the document. */
+  id?: string;
+}) {
   const tilt = pose === "lost" ? -8 : pose === "found" ? 4 : 0;
   const eyeShift = pose === "lost" ? -1.6 : 0;
   const nub = pose === "found" ? 5 : pose === "lost" ? -3 : 0;
@@ -15,7 +27,7 @@ export function Mascot({ pose = "idle", size = 96, className }: { pose?: MascotP
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" className={className} aria-hidden>
       <defs>
-        <linearGradient id="mascot-body" x1="0" y1="0" x2="64" y2="64">
+        <linearGradient id={id} x1="0" y1="0" x2="64" y2="64">
           <stop stopColor="#8b5cf6" />
           <stop offset="0.55" stopColor="#6366f1" />
           <stop offset="1" stopColor="#22d3ee" />
@@ -25,12 +37,12 @@ export function Mascot({ pose = "idle", size = 96, className }: { pose?: MascotP
         {/* the nub — the character's only expressive part */}
         <path
           d={`M32 ${10 - nub} q3 -6 6 -2`}
-          stroke="url(#mascot-body)"
+          stroke={`url(#${id})`}
           strokeWidth="3"
           strokeLinecap="round"
           fill="none"
         />
-        <rect x="10" y="14" width="44" height="44" rx="15" fill="url(#mascot-body)" />
+        <rect x="10" y="14" width="44" height="44" rx="15" fill={`url(#${id})`} />
         <g fill="#08090f">
           {pose === "idle" ? (
             <>

@@ -72,7 +72,8 @@ function OutputLine({ text }: { text: string }) {
 function Panel({ title, blurb, children }: { title: string; blurb: string; children: React.ReactNode }) {
   return (
     <div className="rounded-3xl border border-white/8 bg-panel p-6">
-      <h3 className="text-lg font-extrabold tracking-tight">{title}</h3>
+      {/* h2: each lab tool is a top-level panel on /lab, directly under the h1. */}
+      <h2 className="text-lg font-extrabold tracking-tight">{title}</h2>
       <p className="mt-1 text-xs leading-relaxed text-ink-dim">{blurb}</p>
       {children}
     </div>
@@ -164,6 +165,7 @@ export function EasingLab() {
         <div className="min-w-44">
           <span className="field-label">Curve preset</span>
           <select
+            aria-label="Curve preset"
             className="input !cursor-pointer text-sm"
             value={curveIdx}
             onChange={(e) => setCurveIdx(Number(e.target.value))}
@@ -176,6 +178,7 @@ export function EasingLab() {
         <div className="w-36">
           <span className="field-label">Duration</span>
           <input
+            aria-label="Comparison duration in milliseconds"
             className="input" type="number" min={200} max={4000} step={50} value={duration}
             onChange={(e) => setDuration(Math.max(200, Math.min(4000, Number(e.target.value))))}
           />
