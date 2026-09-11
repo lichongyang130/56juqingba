@@ -18,13 +18,28 @@ import path from "node:path";
 // a fallback document counted here but skipped there is how the report came to
 // say 292 files while the a11y page said 291 documents and flagged a finding.
 import { nextFallbackDocument } from "../src/lib/markup-a11y.ts";
+// #26 — glyph coverage of the shipped subsets, decoded from the woff2 cmap.
+import { probeFontFiles } from "./woff2-cmap.mjs";
 
 const ROOT = process.cwd();
 const NEXT = path.join(ROOT, ".next");
 const SERVER_APP = path.join(NEXT, "server", "app");
 const CHUNK_DIR = path.join(NEXT, "static", "chunks");
 const MEDIA_DIR = path.join(NEXT, "static", "media");
-const OUT = path.join(ROOT, "docs", "build-report.json");
+// MEASURE_OUT lets the determinism check measure twice into temp files without
+// clobbering the committed report. Defaults to the committed path.
+const OUT = process.env.MEASURE_OUT ? path.resolve(process.env.MEASURE_OUT) : path.join(ROOT, "docs", "build-report.json");
+
+// #30 — the shared shell (the file set 89 of 145 routes start from) is recorded
+// here with a budget, and the export harness fails the batch if a build grows
+// past it. The budget is a recorded constant, not a copy of the measurement:
+// 446.8 KB measured at batch 92 with headroom.
+const SHARED_JS_BUDGET_KB = 470;
+
+// #27 — a share card is fetched by crawlers with no cache warm, so the heaviest
+// card is capped. Measured heaviest is ~100 KB (the studio-log entries, whose
+// body text is long); 120 KB leaves a fifth of headroom for a longer title.
+const OG_CARD_BUDGET_KB = 120;
 
 const kb = (bytes) => Math.round((bytes / 1024) * 10) / 10;
 
@@ -89,6 +104,11 @@ for (const file of htmlFiles) {
 }
 
 const routeEntries = [];
+// #23 — invert the client-reference manifests: chunk → the client modules the
+// build put inside it. The manifest maps a module to the chunks that load it;
+// this is the same table read backwards, so "which of my files made this chunk
+// heavy" is answerable from the build rather than from a guess.
+const chunkModules = new Map();
 for (const file of allFiles.filter((f) => f.endsWith("page_client-reference-manifest.js"))) {
   let payload;
   try {
@@ -107,6 +127,14 @@ for (const file of allFiles.filter((f) => f.endsWith("page_client-reference-mani
     }
   }
   for (const files of Object.values(payload.entryCSSFiles ?? {})) for (const f of files) css.add(f.path);
+  for (const [mod, info] of Object.entries(payload.clientModules ?? {})) {
+    for (const c of info.chunks ?? []) {
+      const key = c.replace(/^\/_next\//, "");
+      if (!key.startsWith("static/chunks/")) continue;
+      if (!chunkModules.has(key)) chunkModules.set(key, new Set());
+      chunkModules.get(key).add(mod.replace("[project]/", ""));
+    }
+  }
   const rel = path.relative(SERVER_APP, file).replace(/\/page_client-reference-manifest\.js$/, "");
   // Next emits manifests for its own built-in pages too (_global-error,
   // not-found). They are not routes of this site, and one of them would
@@ -154,15 +182,33 @@ const baselineUrl = baselineRoute?.url ?? "/";
 const baselineSet = new Set(baselineRoute?.js ?? []);
 const baselineShares = sharedBy.get(setKey(baselineRoute)) ?? 1;
 
+// #21 — the CSS half of the same baseline logic. The build emits one shared
+// stylesheet (two files) that every route loads, so the most-shared CSS set is
+// the whole sheet and every route's own CSS is zero. That zero is the point of
+// the budget: a page adding a stylesheet of its own would be the one thing that
+// could move it, and the gate fails if one does.
+const cssSetKey = (r) => [...r.css].sort().join(" ");
+const cssSharedBy = new Map();
+for (const r of routeEntries) cssSharedBy.set(cssSetKey(r), (cssSharedBy.get(cssSetKey(r)) ?? 0) + 1);
+const cssBaselineRoute = [...routeEntries].sort(
+  (a, b) => cssSharedBy.get(cssSetKey(b)) - cssSharedBy.get(cssSetKey(a)) || a.url.localeCompare(b.url),
+)[0];
+const cssBaselineUrl = cssBaselineRoute?.url ?? "/";
+const cssBaselineSet = new Set(cssBaselineRoute?.css ?? []);
+const cssBaselineShares = cssSharedBy.get(cssSetKey(cssBaselineRoute)) ?? 1;
+const sharedCssKb = Math.round([...cssBaselineSet].reduce((a, f) => a + chunkKb(f), 0) * 10) / 10;
+
 const routes = routeEntries
   .map((r) => {
     const own = r.js.filter((f) => !baselineSet.has(f));
+    const ownCss = r.css.filter((f) => !cssBaselineSet.has(f));
     const html = htmlIndex.get(r.url);
     return {
       url: r.url,
       ownJsKb: Math.round(own.reduce((a, f) => a + chunkKb(f), 0) * 10) / 10,
       totalJsKb: Math.round(totals.get(r.url) * 10) / 10,
       cssKb: Math.round(r.css.reduce((a, f) => a + chunkKb(f), 0) * 10) / 10,
+      ownCssKb: Math.round(ownCss.reduce((a, f) => a + chunkKb(f), 0) * 10) / 10,
       htmlKb: html?.kb ?? 0,
       prerendered: Boolean(html),
       jsFiles: r.js.length,
@@ -203,6 +249,55 @@ const fonts = fontFilesOnDisk
     };
   })
   .sort((a, b) => b.kb - a.kb);
+
+/* ---------- #26 — glyph coverage of the shipped subsets ---------- */
+
+const fontGlyphs = probeFontFiles(MEDIA_DIR);
+
+/* ---------- #24 — prefetch links in the built documents ---------- */
+
+// The build prerenders its pages with <link rel="preload"> for the fonts and
+// the shared shell, but no <link rel="prefetch"> at all: Next's router does its
+// prefetching in script, on intent, not as a static link tag. That zero is the
+// budget — a document that starts emitting static prefetch links is the one
+// thing that could move it, and the gate fails if one does.
+let pagesWithPrefetch = 0;
+let prefetchLinks = 0;
+const prefetchPages = [];
+for (const file of htmlFiles) {
+  const links = [...fs.readFileSync(file, "utf8").matchAll(/<link rel="prefetch"/g)].length;
+  if (links) {
+    pagesWithPrefetch++;
+    prefetchLinks += links;
+    prefetchPages.push({ file: path.relative(ROOT, file), links });
+  }
+}
+
+/* ---------- #27 — the share cards ---------- */
+
+const OG_DIR = path.join(SERVER_APP, "og");
+const ogCards = [];
+if (fs.existsSync(OG_DIR)) {
+  for (const entry of fs.readdirSync(OG_DIR)) {
+    if (!entry.endsWith(".body")) continue;
+    ogCards.push({ slug: entry.replace(/\.body$/, ""), kb: kb(fs.statSync(path.join(OG_DIR, entry)).size) });
+  }
+}
+ogCards.sort((a, b) => b.kb - a.kb);
+
+/* ---------- #23 — the chunk table, with module attribution ---------- */
+
+const chunks = [];
+for (const [name, mods] of chunkModules) {
+  const projectModules = [...mods].filter((m) => m.startsWith("src/")).sort();
+  chunks.push({
+    file: name,
+    kb: chunkKb(name),
+    modules: projectModules,
+      frameworkModules: mods.size - projectModules.length,
+  });
+}
+chunks.sort((a, b) => b.kb - a.kb || a.file.localeCompare(b.file));
 
 /* ---------- the JavaScript-off view ---------- */
 
@@ -250,14 +345,43 @@ const report = {
   },
   fallbackDocuments,
   sharedJsKb: Math.round([...baselineSet].reduce((a, f) => a + chunkKb(f), 0) * 10) / 10,
+  sharedJsBudgetKb: SHARED_JS_BUDGET_KB,
+  sharedJsNote:
+    "The shell (the file set the most routes share) is measured from the entry manifests and capped at the budget recorded next to it; the export harness fails a build that grows the shell past it.",
   baseline: {
     url: baselineUrl,
     jsKb: Math.round(totals.get(baselineUrl) * 10) / 10,
     routesSharing: baselineShares,
     note: `The file set ${baselineShares} of ${routeEntries.length} routes share — the shell those routes start from. Owner: ${baselineUrl}.`,
   },
+  sharedCssKb,
+  cssBaseline: {
+    url: cssBaselineUrl,
+    cssKb: sharedCssKb,
+    routesSharing: cssBaselineShares,
+    note: `The stylesheet set ${cssBaselineShares} of ${routeEntries.length} routes share — one sheet for the whole site, so every route's own CSS is zero.`,
+  },
   routes,
   fonts: { files: fonts, totalKb: Math.round(fonts.reduce((a, f) => a + f.kb, 0) * 10) / 10, pagesWithPreload, pages: htmlFiles.length },
+  fontGlyphs,
+  prefetch: {
+    pages: htmlFiles.length,
+    pagesWithPrefetch,
+    links: prefetchLinks,
+    maxOnAPage: prefetchPages.reduce((a, p) => Math.max(a, p.links), 0),
+    budget: 0,
+    pagesWithLinks: prefetchPages.slice(0, 8),
+  },
+  og: {
+    cards: ogCards.length,
+    totalKb: Math.round(ogCards.reduce((a, c) => a + c.kb, 0) * 10) / 10,
+    maxKb: ogCards[0]?.kb ?? 0,
+    minKb: ogCards[ogCards.length - 1]?.kb ?? 0,
+    meanKb: ogCards.length ? Math.round((ogCards.reduce((a, c) => a + c.kb, 0) / ogCards.length) * 10) / 10 : 0,
+    budgetKb: OG_CARD_BUDGET_KB,
+    heaviest: ogCards.slice(0, 8),
+  },
+  chunks,
   heaviestHtml: [...htmlIndex.values()]
     .sort((a, b) => b.kb - a.kb)
     .slice(0, 8)
@@ -289,5 +413,5 @@ console.log(
   `measure-build: ${report.summary.routes} routes · ${report.summary.prerendered} prerendered · ` +
     `${report.summary.jsFiles} JS chunks (${report.summary.jsKb} KB) · ${report.summary.htmlFiles} HTML files · ` +
     `fonts ${report.summary.fontKb} KB preloaded on ${pagesWithPreload}/${htmlFiles.length} pages · ` +
-    `${report.summary.fallbackDocuments} fallback document(s) skipped → docs/build-report.json`
+    `${report.og.cards} share cards (${report.og.maxKb} KB max) · ${report.summary.fallbackDocuments} fallback document(s) skipped → docs/build-report.json`
 );

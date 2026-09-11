@@ -80,6 +80,36 @@ export const CACHE_RULES: CacheRule[] = [
   },
 ];
 
+/** A concrete URL to reproduce a rule with curl. Dynamic segments stay as
+ *  placeholders — a reader substitutes a real slug or chunk name — because the
+ *  point is a copy-paste block, not a URL that answers forever. */
+export function ruleSampleUrl(source: string): string {
+  switch (source) {
+    case "/:path*":
+      return "/pricing";
+    case "/_next/static/:path*":
+      return "/_next/static/chunks/<content-hashed-file>.js";
+    case "/_next/image":
+      return "/_next/image?url=%2Fog%2Fdefault&w=64&q=75";
+    case "/embed.js":
+      return "/embed.js";
+    case "/community/rss.xml":
+      return "/community/rss.xml";
+    case "/community/feed.xml":
+      return "/community/feed.xml";
+    case "/learn/feed.xml":
+      return "/learn/feed.xml";
+    case "/changelog/feed.xml":
+      return "/changelog/feed.xml";
+    case "/api/brand/:path*":
+      return "/api/brand/<slug>";
+    case "/og/:path*":
+      return "/og/<slug>";
+    default:
+      return source;
+  }
+}
+
 export const CACHE_PLAN = {
   shipped: "These rules run in this build, in this order; /perf/caching prints them, next.config.ts imports them, and the harness reads a sample of the served headers so a rule that stops winning fails the batch.",
   notConfigured: [

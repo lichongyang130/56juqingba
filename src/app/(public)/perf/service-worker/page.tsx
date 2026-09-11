@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PerfNav, Stat, MeasuredNote } from "@/components/perf-ui";
+import { OfflineShellPanel, PerfNav, Stat, MeasuredNote } from "@/components/perf-ui";
 import { SW_PLAN, buildSummary } from "@/lib/perf";
 
 export const metadata = {
@@ -34,6 +34,15 @@ export default function PerfServiceWorkerPage() {
         <Stat label="HTML to precache" value={`${s.htmlKb} KB`} sub={`${s.htmlFiles} prerendered files`} />
         <Stat label="Assets to precache" value={`${s.cssKb + s.fontKb} KB`} sub={`${s.cssFiles} stylesheet + ${s.fontFiles} fonts`} />
         <Stat label="Chunks on demand" value={`${s.jsFiles}`} sub={`${s.jsKb} KB — hashed, so cache-first is safe`} />
+      </div>
+
+      <div className="mt-8">
+        <OfflineShellPanel />
+      </div>
+
+      <div className="mt-8 rounded-3xl border border-white/8 bg-panel p-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">The decision, written down</p>
+        <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-ink-dim">{SW_PLAN.decision}</p>
       </div>
 
       <div className="mt-8 grid gap-5 md:grid-cols-3">

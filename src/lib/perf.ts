@@ -9,6 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { BACKGROUNDS, COMPONENTS, LAB_TOOLS, PROMPTS } from "./data";
+import { CSS_TOTAL_KB, DEFAULT_OWN_CSS_KB, applyCssBudgets } from "./budgets";
 
 const ROOT = process.cwd();
 const REPORT = path.join(ROOT, "docs", "build-report.json");
@@ -27,6 +28,7 @@ export interface ReportRoute {
   ownJsKb: number;
   totalJsKb: number;
   cssKb: number;
+  ownCssKb: number;
   htmlKb: number;
   prerendered: boolean;
   jsFiles: number;
@@ -51,6 +53,10 @@ export interface BuildReport {
     htmlKb: number;
   };
   sharedJsKb: number;
+  sharedJsBudgetKb?: number;
+  sharedJsNote?: string;
+  sharedCssKb?: number;
+  cssBaseline?: { url: string; cssKb: number; routesSharing: number; note: string };
   baseline: { url: string; jsKb: number; note: string };
   routes: ReportRoute[];
   fonts: {
@@ -59,6 +65,10 @@ export interface BuildReport {
     pagesWithPreload: number;
     pages: number;
   };
+  fontGlyphs?: { file: string; family: string; codepoints: number | null; probes: { name: string; char: string; cp: number; covered: boolean }[]; unreadable?: boolean }[];
+  prefetch?: { pages: number; pagesWithPrefetch: number; links: number; maxOnAPage: number; budget: number; pagesWithLinks: { file: string; links: number }[] };
+  og?: { cards: number; totalKb: number; maxKb: number; minKb: number; meanKb: number; budgetKb: number; heaviest: { slug: string; kb: number }[] };
+  chunks?: { file: string; kb: number; modules: string[]; frameworkModules: number }[];
   heaviestHtml: { file: string; kb: number }[];
   jsOff: Record<string, { htmlKb: number; pending: number; mounted: number; links: number; headings: number } | null>;
 }
@@ -583,6 +593,9 @@ export const SW_PLAN = {
     "A decision about how long an offline copy may be shown as current, which is a copy question as much as a caching one.",
   ],
   measured: "For scale: this build's static output is the whole thing a worker would cache — the numbers are on the build report page, and none of them are large enough to need a worker today. The reason to add one later is offline reading, not speed.",
+  /** #29 — the written decision, so the page is a record rather than a shrug. */
+  decision:
+    "Decision: no service worker ships yet. The shell an offline reader would need (shared JS + the one stylesheet + both fonts, plus a single prerendered page) is small enough that a worker would not make the site faster today — the prerendered HTML is already one request, and the hashed assets are already cache-first. The only remaining reason to add one is offline reading, and offline reading needs the API's revalidation story first; a cache you cannot invalidate is a stale catalog, and a stale catalog is worse than no offline copy. This page is the decision record: it names the cost, the trigger and the blocker, and it will change in the same commit that ships the API hook.",
 };
 
 /* -------------------------------------------------------------------
@@ -631,4 +644,139 @@ export function typeWeights() {
     { label: "Lab tools", items: LAB_TOOLS.length, kb: 0, href: "/lab" },
   ];
   return groups;
+}
+
+/* -------------------------------------------------------------------
+   #21 — CSS budgets (own CSS must stay zero, sheet must stay under cap)
+   ------------------------------------------------------------------- */
+
+export function cssBudgetAudit() {
+  const r = report();
+  const routes = r?.routes ?? [];
+  const applied = applyCssBudgets(routes as { url: string; cssKb?: number; ownCssKb?: number }[]);
+  return {
+    ok: Boolean(r),
+    sharedCssKb: r?.sharedCssKb ?? 0,
+    baseline: r?.cssBaseline ?? null,
+    ownLimit: DEFAULT_OWN_CSS_KB,
+    totalLimit: CSS_TOTAL_KB,
+    ownCssEverywhereZero: routes.every((x) => (x.ownCssKb ?? 0) === 0),
+    ...applied,
+  };
+}
+
+/* -------------------------------------------------------------------
+   #24 — prefetch links in the built documents
+   ------------------------------------------------------------------- */
+
+export function prefetchLinkAudit() {
+  const r = report();
+  return {
+    ok: Boolean(r),
+    pages: r?.prefetch?.pages ?? 0,
+    pagesWithPrefetch: r?.prefetch?.pagesWithPrefetch ?? 0,
+    links: r?.prefetch?.links ?? 0,
+    maxOnAPage: r?.prefetch?.maxOnAPage ?? 0,
+    budget: r?.prefetch?.budget ?? 0,
+    pagesWithLinks: r?.prefetch?.pagesWithLinks ?? [],
+  };
+}
+
+/* -------------------------------------------------------------------
+   #26 — glyph coverage of the shipped subsets
+   ------------------------------------------------------------------- */
+
+export function fontGlyphAudit() {
+  const r = report();
+  const files = r?.fontGlyphs ?? [];
+  const probes = (files[0]?.probes ?? []).map((p) => {
+    const coverage = files.map((f) => ({
+      family: f.family,
+      covered: (f.probes ?? []).find((q) => q.cp === p.cp)?.covered ?? false,
+    }));
+    return { ...p, coverage, every: coverage.every((c) => c.covered), none: coverage.every((c) => !c.covered) };
+  });
+  return {
+    ok: Boolean(r),
+    files,
+    probes,
+    missing: probes.filter((p) => p.none),
+    partial: probes.filter((p) => !p.every && !p.none),
+  };
+}
+
+/* -------------------------------------------------------------------
+   #27 — the share cards' weight
+   ------------------------------------------------------------------- */
+
+export function ogWeightAudit() {
+  const r = report();
+  const budget = r?.og?.budgetKb ?? 0;
+  return {
+    ok: Boolean(r),
+    cards: r?.og?.cards ?? 0,
+    totalKb: r?.og?.totalKb ?? 0,
+    maxKb: r?.og?.maxKb ?? 0,
+    minKb: r?.og?.minKb ?? 0,
+    meanKb: r?.og?.meanKb ?? 0,
+    budgetKb: budget,
+    heaviest: r?.og?.heaviest ?? [],
+    over: (r?.og?.heaviest ?? []).filter((h) => h.kb > budget),
+  };
+}
+
+/* -------------------------------------------------------------------
+   #30 — the shared shell against its recorded budget
+   ------------------------------------------------------------------- */
+
+export function sharedJsRatchet() {
+  const r = report();
+  const budget = r?.sharedJsBudgetKb ?? 0;
+  return {
+    ok: Boolean(r),
+    sharedJsKb: r?.sharedJsKb ?? 0,
+    budgetKb: budget,
+    note: r?.sharedJsNote ?? "",
+    over: (r?.sharedJsKb ?? 0) > budget,
+  };
+}
+
+/* -------------------------------------------------------------------
+   #23 — chunk attribution: each route's largest own chunk, with the
+   modules the manifest put inside it
+   ------------------------------------------------------------------- */
+
+export function chunkAttribution() {
+  const r = report();
+  const byFile = new Map((r?.chunks ?? []).map((c) => [c.file, c]));
+  const routes = (r?.routes ?? [])
+    .map((route) => {
+      const own = (route.ownFiles ?? [])
+        .map((f) => ({
+          file: f,
+          kb: byFile.get(f)?.kb ?? 0,
+          modules: byFile.get(f)?.modules ?? [],
+          frameworkModules: byFile.get(f)?.frameworkModules ?? 0,
+        }))
+        .sort((a, b) => b.kb - a.kb);
+      return { url: route.url, largestOwnChunk: own[0] ?? null };
+    })
+    .filter((x) => x.largestOwnChunk !== null);
+  return { ok: Boolean(r), routes, chunkCount: r?.chunks?.length ?? 0 };
+}
+
+/* -------------------------------------------------------------------
+   #29 — what an HTML-only offline shell would cost to precache
+   ------------------------------------------------------------------- */
+
+export function offlineShellCost() {
+  const r = report();
+  if (!r || !r.summary) return { ok: false as const, assetsKb: 0, lightestHtmlKb: 0, totalKb: 0 };
+  const prerendered = (r.routes ?? []).filter((x) => x.prerendered && x.htmlKb > 0);
+  const lightestHtmlKb = prerendered.length ? Math.min(...prerendered.map((x) => x.htmlKb)) : 0;
+  // The shell a worker would precache: the shared JS, the one stylesheet and the
+  // two fonts, plus a single prerendered page.
+  const assetsKb = Math.round(((r.sharedJsKb ?? 0) + (r.sharedCssKb ?? 0) + r.summary.fontKb) * 10) / 10;
+  const totalKb = Math.round((assetsKb + lightestHtmlKb) * 10) / 10;
+  return { ok: true as const, assetsKb, lightestHtmlKb, totalKb };
 }

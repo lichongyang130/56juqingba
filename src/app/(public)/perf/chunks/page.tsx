@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PerfNav, SplitPanel, MeasuredNote } from "@/components/perf-ui";
+import { PerfNav, SplitPanel, MeasuredNote, ChunkPanel } from "@/components/perf-ui";
 
 export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
@@ -35,6 +35,10 @@ export default function PerfChunksPage() {
 
       <div className="mt-10">
         <SplitPanel />
+      </div>
+
+      <div className="mt-10">
+        <ChunkPanel />
       </div>
 
       <div className="mt-10 flex flex-wrap gap-2">

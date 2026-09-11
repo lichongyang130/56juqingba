@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MeasuredNote, PerfNav, Stat } from "@/components/perf-ui";
+import { MeasuredNote, PerfNav, PrefetchLinksPanel, Stat } from "@/components/perf-ui";
 import { COMPONENTS, PROMPTS } from "@/lib/data";
 import { prefetchAudit } from "@/lib/perf";
 
@@ -107,6 +107,10 @@ curl -s "${probe.url}" | wc -c    # ${Math.round(probe.htmlKb * 1024)} bytes`}</
             </ul>
           </div>
         </div>
+      </div>
+
+      <div className="mt-10">
+        <PrefetchLinksPanel />
       </div>
 
       <div className="mt-10 flex flex-wrap gap-2">

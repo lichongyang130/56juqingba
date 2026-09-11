@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CHANGELOG } from "@/lib/data";
 import { MEASURED } from "@/lib/perf";
+import { CssBudgetPanel } from "@/components/perf-ui";
 import report from "../../../../../docs/build-report.json";
 import { DEFAULT_OWN_JS_KB, DEFAULT_WHY, ROUTE_BUDGETS, applyBudgets } from "@/lib/budgets";
 
@@ -234,6 +235,18 @@ export default function SpeedPage() {
             now — ten more chunk files than before it — so a route that renders no scene never downloads one, and the routes above lost 416–812 KB
             each. These are the figures measured when the split shipped; the report from the current build sits beside this page.
           </p>
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="text-sm font-extrabold tracking-tight">CSS budget per route</h2>
+        <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-ink-dim">
+          Own JS has had a ratchet since the budget table above; the stylesheet had none. The build emits one sheet every route loads, so a
+          page&apos;s own CSS is zero — and the budget is exactly that zero, plus a cap on the sheet itself. The same export harness that
+          enforces the JavaScript budgets enforces this one, from the numbers in the build report.
+        </p>
+        <div className="mt-4">
+          <CssBudgetPanel />
         </div>
       </section>
 

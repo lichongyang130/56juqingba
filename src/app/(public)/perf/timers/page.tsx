@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PerfNav, TimerPanel } from "@/components/perf-ui";
+import { PerfNav, TimerPanel, TimerRegistryPanel } from "@/components/perf-ui";
 
 export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
@@ -31,6 +31,10 @@ export default function PerfTimersPage() {
 
       <div className="mt-10">
         <TimerPanel />
+      </div>
+
+      <div className="mt-10">
+        <TimerRegistryPanel />
       </div>
 
       <div className="mt-10 rounded-3xl border border-white/8 bg-panel p-6">

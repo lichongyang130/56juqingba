@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FontPanel, MeasuredNote, PerfNav } from "@/components/perf-ui";
+import { FontPanel, GlyphPanel, MeasuredNote, PerfNav } from "@/components/perf-ui";
 
 export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
@@ -34,6 +34,10 @@ export default function PerfFontsPage() {
 
       <div className="mt-10">
         <FontPanel />
+      </div>
+
+      <div className="mt-10">
+        <GlyphPanel />
       </div>
 
       <div className="mt-10 flex flex-wrap gap-2">

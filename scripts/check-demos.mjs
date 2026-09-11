@@ -451,6 +451,23 @@ const NEW_SCENES = [
     ok("the a11y-deep module loads", false, String(err && err.message ? err.message : err));
   }
 
+  // 25 — the timer registry: every scene loop, named and printed.
+  try {
+    const { timerRegistry } = await import("../src/lib/timer-registry.ts");
+    const reg = timerRegistry();
+    const timersText = (await get("/perf/timers")).text.replace(/<!-- -->/g, "");
+    const flagged = reg.sub100ms.map((x) => x.scene);
+    ok(
+      "/perf/timers publishes the named timer registry",
+      timersText.includes("Every loop in the scene modules") &&
+        timersText.includes(`${reg.totals.intervals - reg.totals.uncleanedIntervals}/${reg.totals.intervals}`) &&
+        flagged.every((s) => timersText.includes(s)),
+      `${reg.totals.loops} loops · ${reg.totals.uncleanedIntervals} uncleaned · flagged ${flagged.join(", ") || "none"}`,
+    );
+  } catch (err) {
+    ok("the timer-registry module loads", false, String(err && err.message ? err.message : err));
+  }
+
   console.log(`\n${fail === 0 ? "ALL PASS" : "FAILURES"} — ${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
 })();

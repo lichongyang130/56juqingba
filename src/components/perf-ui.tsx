@@ -12,16 +12,24 @@ import {
   blurSites,
   buildAvailable,
   buildSummary,
+  chunkAttribution,
+  cssBudgetAudit,
   fontAudit,
+  fontGlyphAudit,
   heaviestHtml,
   jsOffReport,
+  offlineShellCost,
+  ogWeightAudit,
+  prefetchLinkAudit,
   routeBudgets,
   routeWhy,
+  sharedJsRatchet,
   timerAudit,
   typeWeights,
   zeroJsAssets,
 } from "@/lib/perf";
-import { CACHE_PLAN, CACHE_RULES } from "@/lib/cache-rules";
+import { timerRegistry } from "@/lib/timer-registry";
+import { CACHE_PLAN, CACHE_RULES, ruleSampleUrl } from "@/lib/cache-rules";
 import { COMPONENTS } from "@/lib/data";
 
 export const PERF_ROUTES: { href: string; label: string; item: string; blurb: string }[] = [
@@ -718,6 +726,7 @@ export function CachePanel() {
               <th className="px-3 py-2.5 font-bold">Path</th>
               <th className="px-3 py-2.5 font-bold">Cache-Control</th>
               <th className="px-3 py-2.5 font-bold">Why</th>
+              <th className="px-3 py-2.5 font-bold">Reproduce</th>
             </tr>
           </thead>
           <tbody>
@@ -726,6 +735,11 @@ export function CachePanel() {
                 <td className="px-3 py-2.5 font-mono text-[10px]">{r.source}</td>
                 <td className="px-3 py-2.5 font-mono text-[10px]">{r.value}</td>
                 <td className="px-3 py-2.5 text-ink-dim">{r.why}</td>
+                <td className="px-3 py-2.5">
+                  <code className="block whitespace-nowrap font-mono text-[9px] leading-relaxed text-ink-faint">
+                    {`curl -sI https://<host>${ruleSampleUrl(r.source)} | grep -i cache-control`}
+                  </code>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -752,6 +766,307 @@ export function CachePanel() {
           </ul>
         </Panel>
       </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #21 — CSS budgets
+   ------------------------------------------------------------------- */
+
+export function CssBudgetPanel() {
+  const a = cssBudgetAudit();
+  if (!a.ok) return <PerfGap />;
+  return (
+    <div className="space-y-5">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Stat label="Shared stylesheet" value={`${a.sharedCssKb} KB`} sub={`the sheet set ${a.baseline?.routesSharing ?? 0} routes load`} />
+        <Stat label="Own CSS budget" value={`${a.ownLimit} KB`} sub="no route may add a stylesheet of its own" />
+        <Stat label="Sheet cap" value={`${a.totalLimit} KB`} sub="about a third above the measured sheet" />
+      </div>
+      <Panel
+        title="Own CSS is zero for every route"
+        note="The build emits one stylesheet that every route loads, so the most-shared CSS set is the whole sheet and a page adds nothing on top of it. The budget mirrors the own-JS ratchet: own CSS may not move off zero, and the sheet itself may not grow past the cap — the export harness fails a build that breaks either."
+      >
+        <p className="text-[11px] leading-relaxed text-ink-dim">
+          {a.ownCssEverywhereZero
+            ? `Measured: ${a.checked} routes, every one at ${a.ownLimit} KB of own CSS, against a shared sheet of ${a.sharedCssKb} KB.`
+            : `${a.checked} routes measured, and some route adds its own CSS — which is exactly what the budget exists to catch.`}
+        </p>
+        {a.over.length > 0 ? (
+          <ul className="mt-3 space-y-1.5 font-mono text-[10.5px] text-amber-200/80">
+            {a.over.map((o) => (
+              <li key={o.route}>
+                {o.route} · own {o.own} KB / {o.ownLimit} · total {o.total} KB / {o.totalLimit}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-3 font-mono text-[10.5px] text-emerald-200/80">No route is over the CSS budget at this commit.</p>
+        )}
+      </Panel>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #24 — prefetch links
+   ------------------------------------------------------------------- */
+
+export function PrefetchLinksPanel() {
+  const a = prefetchLinkAudit();
+  if (!a.ok) return <PerfGap />;
+  return (
+    <div className="space-y-5">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Stat label="Documents measured" value={a.pages} sub="prerendered pages in this build" />
+        <Stat label="Static prefetch links" value={a.links} sub='`<link rel="prefetch">` across the build' />
+        <Stat label="Budget" value={a.budget} sub="no document may emit one" />
+      </div>
+      <Panel
+        title="The build emits no static prefetch links"
+        note="Next prefetches on intent at runtime, in script — it does not write &lt;link rel=&quot;prefetch&quot;&gt; into the prerendered HTML. That zero is the budget: the distribution across all built documents is published here, and the export harness fails a build that starts emitting static prefetch links, because a document with twenty of them is a reader paying for twenty routes they never opened."
+      >
+        <p className="text-[11px] leading-relaxed text-ink-dim">
+          Measured {a.links} prefetch link{`s`} on {a.pagesWithPrefetch} of {a.pages} documents; the most any single page carries is{" "}
+          {a.maxOnAPage}. The intentional prefetching this site does — the intent link on catalog cards — is scripted and is the subject of the
+          page above, not of this count.
+        </p>
+      </Panel>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #26 — glyph coverage
+   ------------------------------------------------------------------- */
+
+export function GlyphPanel() {
+  const a = fontGlyphAudit();
+  if (!a.ok) return <PerfGap />;
+  return (
+    <div className="space-y-5">
+      <div className="grid gap-3 sm:grid-cols-3">
+        {a.files.map((f) => (
+          <Stat key={f.file} label={`${f.family} subset`} value={f.unreadable ? "unread" : `${f.codepoints} glyphs`} sub={f.file} />
+        ))}
+        <Stat label="Characters probed" value={a.probes.length} sub="the glyphs the copy actually uses" />
+      </div>
+      <Panel
+        title="Which glyphs the shipped subsets actually contain"
+        note="Decoded from the woff2 cmap at build time — the files themselves, not a manifest someone wrote by hand — so a missing glyph is caught by the build rather than by a screenshot."
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[34rem] text-left text-[11px]">
+            <thead className="border-b border-white/8 text-[10px] uppercase tracking-widest text-ink-faint">
+              <tr>
+                <th className="px-3 py-2.5 font-bold">Glyph</th>
+                <th className="px-3 py-2.5 font-bold">Codepoint</th>
+                {a.files.map((f) => (
+                  <th key={f.file} className="px-3 py-2.5 font-bold">{f.family}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {a.probes.map((p) => (
+                <tr key={p.cp} className="border-b border-white/5 last:border-0">
+                  <td className="px-3 py-2.5">
+                    <span className="text-base">{p.char}</span> <span className="ml-2 text-ink-dim">{p.name}</span>
+                  </td>
+                  <td className="px-3 py-2.5 font-mono text-ink-faint">U+{p.cp.toString(16).toUpperCase().padStart(4, "0")}</td>
+                  {p.coverage.map((c) => (
+                    <td key={c.family} className={`px-3 py-2.5 font-mono ${c.covered ? "text-emerald-200/80" : "text-amber-200/80"}`}>
+                      {c.covered ? "covered" : "missing"}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-[11px] leading-relaxed text-amber-100/80">
+          The arrows are the finding: → (U+2192) and ← (U+2190) are in neither subset, so the arrows in the nav and the panels fall back to the
+          system font; Inter carries ↑ and ↓, Sora carries none. Everything else the copy uses — the em dash, ·, ×, ° and the latin accents —
+          is covered by both.
+        </p>
+      </Panel>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #27 — the share cards' weight
+   ------------------------------------------------------------------- */
+
+export function OgWeightPanel() {
+  const a = ogWeightAudit();
+  if (!a.ok) return <PerfGap />;
+  return (
+    <div className="space-y-5">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Stat label="Share cards" value={a.cards} sub="one per asset, plus the site fallback" />
+        <Stat label="Heaviest card" value={`${a.maxKb} KB`} sub={a.heaviest[0]?.slug} />
+        <Stat label="Budget" value={`${a.budgetKb} KB`} sub="per card, fetched with no cache warm" />
+        <Stat label="Mean" value={`${a.meanKb} KB`} sub={`${a.totalKb} KB across all ${a.cards} cards`} />
+      </div>
+      <Panel
+        title="The eight heaviest cards"
+        note="A share card is fetched by a crawler with no cache warm, so the heaviest card is the number that matters. The budget is recorded in the build report and the export harness fails a build that ships a card over it."
+      >
+        <table className="w-full min-w-[32rem] text-left text-[11px]">
+          <thead className="border-b border-white/8 text-[10px] uppercase tracking-widest text-ink-faint">
+            <tr>
+              <th className="px-3 py-2.5 font-bold">Card</th>
+              <th className="px-3 py-2.5 font-bold">Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            {a.heaviest.map((h) => (
+              <tr key={h.slug} className="border-b border-white/5 last:border-0">
+                <td className="px-3 py-2.5 font-mono text-[10px]">{h.slug}</td>
+                <td className={`px-3 py-2.5 font-mono ${h.kb > a.budgetKb ? "text-amber-200/80" : "text-ink-dim"}`}>{h.kb} KB</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="mt-3 font-mono text-[10.5px] text-ink-faint">
+          {a.over.length === 0 ? `No card exceeds the ${a.budgetKb} KB budget.` : `${a.over.length} card(s) exceed the ${a.budgetKb} KB budget.`}
+        </p>
+      </Panel>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #30 — the shared shell's ratchet
+   ------------------------------------------------------------------- */
+
+export function SharedJsPanel() {
+  const r = sharedJsRatchet();
+  if (!r.ok) return <PerfGap />;
+  return (
+    <Panel
+      title="The shared shell, under a recorded budget"
+      note="The shell is the file set the most routes start from, measured from the compiled entry manifests. Its budget is recorded in the build report next to the measurement — not copied from it — and the export harness fails a build that grows the shell past it."
+    >
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Stat label="Measured shell" value={`${r.sharedJsKb} KB`} sub="this build" />
+        <Stat label="Budget" value={`${r.budgetKb} KB`} sub={r.over ? "over budget — the build fails" : `${Math.round((r.budgetKb - r.sharedJsKb) * 10) / 10} KB of headroom`} />
+      </div>
+      <p className="mt-3 text-[11px] leading-relaxed text-ink-dim">{r.note}</p>
+    </Panel>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #23 — chunk attribution
+   ------------------------------------------------------------------- */
+
+export function ChunkPanel() {
+  const a = chunkAttribution();
+  if (!a.ok) return <PerfGap />;
+  return (
+    <Panel
+      title="Each route's largest own chunk, with the modules inside it"
+      note="The client-reference manifest maps a module to the chunks that load it; read backwards it says which modules a chunk carries. The table below takes each route's largest own chunk — the one its own imports pulled in — and names the project modules inside it, so a heavy route is readable instead of a single number. Modules are the client modules the manifest references; server-only code never appears."
+    >
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[40rem] text-left text-[11px]">
+          <thead className="border-b border-white/8 text-[10px] uppercase tracking-widest text-ink-faint">
+            <tr>
+              <th className="px-3 py-2.5 font-bold">Route</th>
+              <th className="px-3 py-2.5 font-bold">Largest own chunk</th>
+              <th className="px-3 py-2.5 font-bold">Size</th>
+              <th className="px-3 py-2.5 font-bold">Project modules inside</th>
+            </tr>
+          </thead>
+          <tbody>
+            {a.routes.slice(0, 12).map((r) => (
+              <tr key={r.url} className="border-b border-white/5 align-top last:border-0">
+                <td className="px-3 py-2.5 font-mono text-[10px]">{r.url}</td>
+                <td className="px-3 py-2.5 font-mono text-[10px] text-ink-faint">{r.largestOwnChunk.file.split("/").pop()}</td>
+                <td className="px-3 py-2.5 font-mono">{r.largestOwnChunk.kb} KB</td>
+                <td className="px-3 py-2.5 text-[10px] leading-relaxed text-ink-dim">
+                  {r.largestOwnChunk.modules.length === 0
+                    ? "server-only chunk"
+                    : r.largestOwnChunk.modules.slice(0, 5).map((m) => <span key={m} className="block font-mono">{m}</span>)}
+                  {r.largestOwnChunk.modules.length > 5 && (
+                    <span className="block text-ink-faint">+{r.largestOwnChunk.modules.length - 5} more</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Panel>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #29 — the offline shell's cost
+   ------------------------------------------------------------------- */
+
+export function OfflineShellPanel() {
+  const cost = offlineShellCost();
+  if (!cost.ok) return <PerfGap />;
+  return (
+    <div className="grid gap-3 sm:grid-cols-3">
+      <Stat label="Shared assets" value={`${cost.assetsKb} KB`} sub="shell JS + one stylesheet + both fonts" />
+      <Stat label="Lightest page" value={`${cost.lightestHtmlKb} KB`} sub="the smallest prerendered body" />
+      <Stat label="Cold offline shell" value={`${cost.totalKb} KB`} sub="one page plus the assets above" />
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------
+   #25 — the timer registry
+   ------------------------------------------------------------------- */
+
+export function TimerRegistryPanel() {
+  const r = timerRegistry();
+  const intervals = r.totals.intervals;
+  return (
+    <div className="space-y-5">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Stat label="Loops in scenes" value={r.totals.loops} sub={`${intervals} interval · ${r.totals.timeouts} timeout · ${r.totals.rafs} rAF`} />
+        <Stat label="Intervals cleared" value={`${intervals - r.totals.uncleanedIntervals}/${intervals}`} sub="setInterval against clearInterval" />
+        <Stat label="Sub-100 ms intervals" value={r.totals.sub100ms} sub="tight loops, flagged below" />
+        <Stat label="Uncleaned intervals" value={r.totals.uncleanedIntervals} sub="a loop with no clear in its scene" />
+      </div>
+      <Panel
+        title="Every loop in the scene modules, by scene"
+        note="Extracted from source at build time: the scene, the kind of loop, its interval and whether the same function cleans it up. This is a registry, not a verdict — a one-shot rAF and a timeout on a message that goes away both legitimately need no cleanup — but a setInterval with no clear, or one firing faster than 100 ms, is visible here before a browser has to prove it leaks."
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[44rem] text-left text-[11px]">
+            <thead className="border-b border-white/8 text-[10px] uppercase tracking-widest text-ink-faint">
+              <tr>
+                <th className="px-3 py-2.5 font-bold">Scene</th>
+                <th className="px-3 py-2.5 font-bold">Kind</th>
+                <th className="px-3 py-2.5 font-bold">Interval</th>
+                <th className="px-3 py-2.5 font-bold">Cleanup</th>
+                <th className="px-3 py-2.5 font-bold">Where</th>
+              </tr>
+            </thead>
+            <tbody>
+              {r.rows.map((row) => (
+                <tr key={`${row.file}:${row.line}`} className="border-b border-white/5 last:border-0">
+                  <td className="px-3 py-2.5">{row.scene}</td>
+                  <td className="px-3 py-2.5 font-mono text-ink-dim">{row.kind}</td>
+                  <td className={`px-3 py-2.5 font-mono ${row.kind === "interval" && row.interval !== null && row.interval < 100 ? "text-amber-200/80" : ""}`}>
+                    {row.intervalText}
+                  </td>
+                  <td className={`px-3 py-2.5 font-mono ${row.cleared ? "text-emerald-200/80" : "text-ink-faint"}`}>
+                    {row.cleared ? "cleared" : row.kind === "raf" ? "one-shot" : "uncleared"}
+                  </td>
+                  <td className="px-3 py-2.5 font-mono text-[10px] text-ink-faint">{row.file.replace("src/components/demos/", "")}:{row.line}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
     </div>
   );
 }

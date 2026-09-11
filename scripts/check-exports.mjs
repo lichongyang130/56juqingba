@@ -412,6 +412,146 @@ function parseCheck(label, source) {
     }
   }
 
+  /* ---------- 21–30: the measured performance items ---------- */
+
+  {
+    const report = JSON.parse(fs.readFileSync(path.join("docs", "build-report.json"), "utf8"));
+
+    // #21 — CSS budgets: own CSS stays zero, the shared sheet stays under cap.
+    const budgetsSrc = fs.readFileSync(path.join("src", "lib", "budgets.ts"), "utf8");
+    const ownCssLimit = Number((budgetsSrc.match(/DEFAULT_OWN_CSS_KB = (\d+)/) || [])[1] ?? 0);
+    const cssTotalLimit = Number((budgetsSrc.match(/CSS_TOTAL_KB = (\d+)/) || [])[1] ?? 0);
+    const cssOver = (report.routes ?? []).filter((r) => (r.ownCssKb ?? 0) > ownCssLimit || (r.cssKb ?? 0) > cssTotalLimit);
+    ok(
+      "every route is within its CSS budget",
+      report.routes.length > 100 && cssOver.length === 0,
+      `${report.routes.length} routes · own CSS ${ownCssLimit} KB · sheet ${cssTotalLimit} KB${cssOver.length ? ` · over: ${cssOver.slice(0, 4).map((o) => `${o.url} ${o.cssKb}KB`).join(", ")}` : ""}`,
+    );
+    const speedCss = await get("/quality/speed");
+    ok(
+      "/quality/speed publishes the CSS budget it is held to",
+      speedCss.status === 200 && speedCss.text.includes("CSS budget") && speedCss.text.includes(`${cssTotalLimit} KB`),
+      String(speedCss.status),
+    );
+
+    // #30 — the shared shell stays under its recorded budget.
+    const shellBudget = report.sharedJsBudgetKb;
+    ok(
+      "the shared shell stays under its recorded budget",
+      typeof shellBudget === "number" && report.sharedJsKb > 0 && report.sharedJsKb <= shellBudget,
+      `${report.sharedJsKb} KB ≤ ${shellBudget} KB`,
+    );
+    const buildPage = await get("/perf/build");
+    ok(
+      "/perf/build publishes the shared-shell budget",
+      buildPage.status === 200 && buildPage.text.includes("shared shell") && buildPage.text.includes(`${shellBudget} KB`),
+      String(buildPage.status),
+    );
+
+    // #23 — chunk attribution: the page names the modules inside each route's
+    // largest own chunk, from the same inverted manifest the report records.
+    const byFile = new Map((report.chunks ?? []).map((c) => [c.file, c]));
+    const shownModules = (report.routes ?? []).slice(0, 12).flatMap((r) => {
+      const own = (r.ownFiles ?? [])
+        .map((f) => ({ kb: byFile.get(f)?.kb ?? 0, modules: byFile.get(f)?.modules ?? [] }))
+        .sort((a, b) => b.kb - a.kb);
+      return own[0]?.modules ?? [];
+    });
+    const chunksPage = await get("/perf/chunks");
+    ok(
+      "/perf/chunks names the modules inside each route's largest chunk",
+      chunksPage.status === 200 && chunksPage.text.includes("Project modules inside") && shownModules.some((m) => chunksPage.text.includes(m)),
+      `${report.chunks?.length ?? 0} chunks · ${new Set(shownModules).size} modules attributed across the 12 shown routes`,
+    );
+
+    // #24 — no built document emits a static prefetch link.
+    const prefetch = report.prefetch ?? {};
+    ok(
+      "no built document emits a static prefetch link",
+      prefetch.pages > 0 && prefetch.links === 0 && prefetch.pagesWithPrefetch === 0,
+      `${prefetch.pages} documents · ${prefetch.links} prefetch links`,
+    );
+    const prefetchPage = await get("/perf/prefetch");
+    ok(
+      "/perf/prefetch publishes the prefetch distribution",
+      prefetchPage.status === 200 && prefetchPage.text.includes("no static prefetch links") && prefetchPage.text.includes("prefetch"),
+      String(prefetchPage.status),
+    );
+
+    // #26 — the glyph report matches the woff2 cmap on disk, and the page
+    // prints the missing-arrow finding.
+    const { probeFontFiles } = await import("./woff2-cmap.mjs");
+    const recomputed = probeFontFiles(path.join(".next", "static", "media"));
+    const stored = report.fontGlyphs ?? [];
+    const glyphsMatch =
+      stored.length > 0 &&
+      stored.length === recomputed.length &&
+      stored.every((s, i) => {
+        const r = recomputed[i];
+        return (
+          s.file === r.file &&
+          s.codepoints === r.codepoints &&
+          (s.probes ?? []).every((p, j) => p.cp === r.probes[j]?.cp && p.covered === r.probes[j]?.covered)
+        );
+      });
+    ok("the glyph report matches the woff2 cmap on disk", glyphsMatch, `${stored.length} subsets decoded`);
+    const fontsPage = await get("/perf/fonts");
+    ok(
+      "/perf/fonts prints the missing-arrow finding",
+      fontsPage.status === 200 && fontsPage.text.includes("U+2192") && fontsPage.text.includes("neither subset"),
+      String(fontsPage.status),
+    );
+
+    // #27 — every share card stays under the recorded weight cap.
+    const og = report.og ?? {};
+    const ogOver = (og.heaviest ?? []).filter((h) => h.kb > og.budgetKb);
+    ok(
+      "every share card stays under the recorded weight cap",
+      og.cards > 0 && og.maxKb <= og.budgetKb && ogOver.length === 0,
+      `${og.cards} cards · ${og.maxKb} KB max · ${og.budgetKb} KB cap`,
+    );
+    ok(
+      "/perf/build publishes the share-card cap",
+      buildPage.status === 200 && buildPage.text.includes("Share cards") && buildPage.text.includes(`${og.budgetKb} KB`),
+      String(buildPage.status),
+    );
+
+    // #28 — every cache rule has a copy-paste curl block on /perf/caching.
+    const cacheSrc = fs.readFileSync(path.join("src", "lib", "cache-rules.ts"), "utf8");
+    const sampleFn = cacheSrc.slice(cacheSrc.indexOf("function ruleSampleUrl"), cacheSrc.indexOf("export const CACHE_PLAN"));
+    const samples = Object.fromEntries([...sampleFn.matchAll(/case "([^"]+)":\s*return "([^"]+)";/g)].map((m) => [m[1], m[2]]));
+    const rules = [...cacheSrc.slice(cacheSrc.indexOf("export const CACHE_RULES"), cacheSrc.indexOf("export const CACHE_PLAN")).matchAll(/source:\s*"([^"]+)"/g)].map(
+      (m) => m[1],
+    );
+    const cachingPage = await get("/perf/caching");
+    // The served HTML escapes the angle brackets and the ampersand in the
+    // sample URLs, so the expectation is escaped the same way before matching.
+    const htmlEscape = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    ok(
+      "every cache rule has a copy-paste curl block",
+      rules.length >= 8 && rules.every((r) => cachingPage.text.includes(htmlEscape(`curl -sI https://<host>${samples[r] ?? r}`))),
+      `${rules.length} rules`,
+    );
+
+    // #29 — the service-worker page is a decision record with a measured cost.
+    const swPage = await get("/perf/service-worker");
+    ok(
+      "/perf/service-worker writes the decision down with a measured cost",
+      swPage.status === 200 && swPage.text.includes("Decision: no service worker ships yet") && swPage.text.includes("Cold offline shell"),
+      String(swPage.status),
+    );
+
+    // #22 — the determinism gate exists and is wired, even though it is too
+    // slow for check:all (two clean builds). It is the opt-in command, and the
+    // presence of the command is what a cheap gate can hold on to.
+    const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+    ok(
+      "the determinism gate is wired as an opt-in command",
+      typeof pkg.scripts?.["check:determinism"] === "string" && fs.existsSync(path.join("scripts", "check-determinism.mjs")),
+      pkg.scripts?.["check:determinism"] ?? "missing",
+    );
+  }
+
   /* ---------- no invented movement ---------- */
 
   // Nothing in this repository records a change over time for the catalog, so a

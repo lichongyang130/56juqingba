@@ -105,3 +105,51 @@ export function applyBudgets(routes: RouteMeasurement[]): BudgetResult {
     .map((r) => ({ route: r.url, own: r.ownJsKb ?? 0, limit: budgetFor(r.url).limit }));
   return { checked: routes.length, over, heaviest };
 }
+
+/* ------------------------------------------------------------------
+   #21 — CSS budgets, the other half of the ratchet.
+   ------------------------------------------------------------------
+   Own JS has had a budget since #512; the stylesheet had none. The build emits
+   one shared sheet (two files) that every route loads, so the most-shared CSS
+   set is the whole sheet and every route's own CSS is zero. The budget is
+   therefore two numbers: own CSS may not move off zero, and the shared sheet
+   may not grow past the cap. */
+
+/** No route may add CSS beyond the shared sheet — the own-CSS budget is zero. */
+export const DEFAULT_OWN_CSS_KB = 0;
+
+/** The shared sheet itself, capped with roughly a third of headroom above the
+ *  measured build (219.1 KB at batch 92). */
+export const CSS_TOTAL_KB = 290;
+
+export const CSS_WHY =
+  "one stylesheet for the whole site. Any route adding a second one, or the sheet itself growing past the cap, fails the build rather than shipping quietly.";
+
+export interface CssRouteMeasurement {
+  url: string;
+  cssKb?: number;
+  ownCssKb?: number;
+}
+
+export interface CssBudgetResult {
+  checked: number;
+  over: { route: string; own: number; total: number; ownLimit: number; totalLimit: number }[];
+  heaviest: { route: string; total: number; totalLimit: number }[];
+}
+
+/** Apply the CSS budget to a route table, mirroring applyBudgets. */
+export function applyCssBudgets(routes: CssRouteMeasurement[]): CssBudgetResult {
+  const over: CssBudgetResult["over"] = [];
+  for (const r of routes) {
+    const own = r.ownCssKb ?? 0;
+    const total = r.cssKb ?? 0;
+    if (own > DEFAULT_OWN_CSS_KB || total > CSS_TOTAL_KB) {
+      over.push({ route: r.url, own, total, ownLimit: DEFAULT_OWN_CSS_KB, totalLimit: CSS_TOTAL_KB });
+    }
+  }
+  const heaviest = [...routes]
+    .sort((a, b) => (b.cssKb ?? 0) - (a.cssKb ?? 0))
+    .slice(0, 8)
+    .map((r) => ({ route: r.url, total: r.cssKb ?? 0, totalLimit: CSS_TOTAL_KB }));
+  return { checked: routes.length, over, heaviest };
+}

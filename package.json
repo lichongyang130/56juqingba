@@ -17,6 +17,7 @@
     "check:a11y": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/a11y-scan.mts",
     "check:a11y:served": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/a11y-scan.mts --served",
     "check:demos": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-demos.mjs",
+    "check:determinism": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-determinism.mjs",
     "check:all": "node scripts/check-all.mjs",
     "gates:index": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/gen-gates-index.mts"
   },

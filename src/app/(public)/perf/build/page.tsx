@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BuildPanel, MeasuredNote, PerfNav } from "@/components/perf-ui";
+import { BuildPanel, MeasuredNote, OgWeightPanel, PerfNav, SharedJsPanel } from "@/components/perf-ui";
 
 export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
@@ -34,6 +34,14 @@ export default function PerfBuildPage() {
 
       <div className="mt-10">
         <BuildPanel />
+      </div>
+
+      <div className="mt-10">
+        <SharedJsPanel />
+      </div>
+
+      <div className="mt-10">
+        <OgWeightPanel />
       </div>
 
       <div className="mt-10 rounded-3xl border border-white/8 bg-panel p-6">
