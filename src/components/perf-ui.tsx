@@ -390,21 +390,25 @@ export function SplitPanel() {
   return (
     <div className="space-y-5">
       <div className="grid gap-3 sm:grid-cols-3">
-        <Stat label="JS on a page with no demo" value={`${before.noDemoPageJsKb} → ${after.noDemoPageJsKb} KB`} sub="e.g. /quality, /learn, /community/attribution" />
+        <Stat
+          label="JS on a page with no demo"
+          value={`${before.noDemoPageJsKb} → ${after.noDemoPageJsKb} KB`}
+          sub={`recorded on ${before.build} → ${after.build}, e.g. /quality, /learn, /community/attribution`}
+        />
         <Stat label="/studio main chunk" value={`${before.studioJsKb} → ${after.studioJsKb} KB`} sub="after splitting the Pro gate out of the Section 14 demos" />
         <Stat label="Routes at the shell baseline" value={demoFree.length} sub="pages whose file set is the shell itself — no chunk of their own" />
       </div>
 
       <Panel
         title="The import that was on every page"
-        note="The public layout renders <KeyframesStyle />. It used to import it from cards.tsx to get it, and cards.tsx imports the demo module — so all 80 public routes shipped the 7,416-line demo file whether or not they rendered a demo."
+        note="The public layout renders <KeyframesStyle />. It used to import it from cards.tsx to get it, and cards.tsx imported the single demo file — so all 80 public routes then shipped 7,416 lines of scenes whether or not they rendered a demo. Both figures are recorded from that build; the scenes are ten modules now."
       >
-        <pre className="overflow-x-auto rounded-2xl border border-white/8 bg-[#07090f] p-4 font-mono text-[10px] leading-relaxed text-ink-dim">{`before:  (public)/layout.tsx → cards.tsx → demos/Demo.tsx   ${before.noDemoPageJsKb} KB on a page with no demo
-after:   (public)/layout.tsx → keyframes.tsx (41 lines)     ${after.noDemoPageJsKb} KB on the same page
+        <pre className="overflow-x-auto rounded-2xl border border-white/8 bg-[#07090f] p-4 font-mono text-[10px] leading-relaxed text-ink-dim">{`before:  (public)/layout.tsx → cards.tsx → demos/Demo.tsx        ${before.noDemoPageJsKb} KB on a page with no demo   [${before.build}]
+after:   (public)/layout.tsx → keyframes.tsx (${MEASURED.keyframesLines} lines)   ${after.noDemoPageJsKb} KB on the same page   [${after.build}]
 
 The keyframes moved into their own module. A page that renders a demo still
-loads the demo module, because it uses it; a page that does not, no longer
-pays for it.`}</pre>
+loads the scene modules, because it uses them; a page that does not, no longer
+pays for them.`}</pre>
       </Panel>
 
       <Panel title="Where the weight goes by content type" note="Catalog bundle sizes are per-asset numbers from the data, not measurements of this build's chunks — a template is a whole page, an element is a control.">

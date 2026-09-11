@@ -42,7 +42,8 @@ export default function AriaAuditPage() {
   // walked once.
   const entries = sitemap();
   const listedPaths = new Set(entries.map((e) => e.url.replace(SITE_URL, "") || "/"));
-  const served = entries.length + SERVED_EXTRAS.filter((e) => !listedPaths.has(e)).length;
+  const extrasNotListed = SERVED_EXTRAS.filter((e) => !listedPaths.has(e));
+  const served = entries.length + extrasNotListed.length;
   // 523 — the same count the checklist item and check:demos read, so the two
   // sentences on this page cannot disagree about how many scenes move.
   const motion = motionAudit();
@@ -184,7 +185,7 @@ export default function AriaAuditPage() {
         </ul>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
           The rules also run a second time over HTTP. <span className="font-mono">npm run check:a11y:served</span> fetches every page the sitemap
-          lists plus the {SERVED_EXTRAS.length} server-rendered pages the sitemap cannot list — {served} URLs in this build, including the{" "}
+          lists plus the {extrasNotListed.length} server-rendered pages the sitemap cannot list — {served} URLs in this build, including the{" "}
           {COMPONENTS.length} component pages rendered on demand, which have no HTML on disk to scan — reports any URL that did not answer instead of
           skipping it, and fails on the same findings. The counts above come from the disk pass.
         </p>

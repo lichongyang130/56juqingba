@@ -613,6 +613,27 @@ function parseCheck(label, source) {
     `${sitemapUrls.length} pages${pageIssues.length ? ` · ${pageIssues.length} issues: ${pageIssues.slice(0, 5).join(" | ")}` : ""}`,
   );
 
+  // 524 — the split panel's before/after figures are recorded measurements from
+  // named builds, and the module length beside them was a literal that had gone
+  // stale ("41 lines" for a 40-line file). The numbers stay recorded — a past
+  // build cannot be re-measured — but the labels and the live count are read
+  // from the source and the served page.
+  {
+    const kfLines = fs.readFileSync("src/components/keyframes.tsx", "utf8").replace(/\n$/, "").split("\n").length;
+    const perfSrc = fs.readFileSync("src/lib/perf.ts", "utf8");
+    const claimed = Number((perfSrc.match(/keyframesLines:\s*(\d+)/) || [])[1]);
+    const beforeBuild = (perfSrc.match(/before:\s*\{[\s\S]*?build:\s*"([^"]+)"/) || [])[1] || "";
+    const afterBuild = (perfSrc.match(/after:\s*\{[\s\S]*?build:\s*"([^"]+)"/) || [])[1] || "";
+    ok("the keyframes module is the length the page prints", claimed === kfLines, `page says ${claimed}, file is ${kfLines}`);
+    const split = await get("/perf/chunks");
+    const splitText = split.text.replace(/<!-- -->/g, "");
+    ok(
+      "the split panel prints the live module length and both build labels",
+      splitText.includes(`keyframes.tsx (${kfLines} lines)`) && splitText.includes(beforeBuild) && splitText.includes(afterBuild),
+      `${kfLines} lines · ${beforeBuild} → ${afterBuild}`,
+    );
+  }
+
   // 519 — the sitemap was written by hand in src/app/sitemap.ts while pages were
   // created elsewhere, and nothing compared the two: the audit found 103
   // indexable pages missing from it (the whole studio log, /brand/*, /perf/*,
