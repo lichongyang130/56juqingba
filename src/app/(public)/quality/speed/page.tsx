@@ -3,7 +3,7 @@ import Link from "next/link";
 import { CHANGELOG } from "@/lib/data";
 import { MEASURED } from "@/lib/perf";
 import report from "../../../../../docs/build-report.json";
-import { DEFAULT_OWN_JS_KB, DEFAULT_WHY, ROUTE_BUDGETS, applyBudgets, budgetFor } from "@/lib/budgets";
+import { DEFAULT_OWN_JS_KB, DEFAULT_WHY, ROUTE_BUDGETS, applyBudgets } from "@/lib/budgets";
 
 export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
@@ -165,8 +165,8 @@ export default function SpeedPage() {
         <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-ink-dim">
           A weight nobody checks is a dashboard. These are the limits the export harness enforces on every build: the unit is{" "}
           <strong className="text-ink">own JS</strong> — the JavaScript a route adds beyond the shared shell — because that is the part a change to
-          a page can move. Budgets sit about 10% above the measured build, so they fail on an accident rather than on ordinary work, and raising one
-          means editing this table in the same commit as the code.
+          a page can move. Budgets sit about a third above the measured build, so they fail on an accident rather than on ordinary work, and
+          raising one means editing this table in the same commit as the code.
         </p>
         <div className="mt-4 grid gap-4 lg:grid-cols-[1.3fr,1fr]">
           <ul className="space-y-2">
@@ -205,20 +205,34 @@ export default function SpeedPage() {
           </div>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-amber-300/25 bg-amber-400/[.04] p-4">
-          <p className="text-[11px] font-extrabold text-amber-100">The one structural cost these budgets expose</p>
+        <div className="mt-5 rounded-2xl border border-white/8 bg-white/[.02] p-4">
+          <p className="text-[11px] font-extrabold text-ink">The scene split, in the same numbers</p>
           <p className="mt-1.5 text-[11px] leading-relaxed text-ink-dim">
-            Three routes needed their own line in the table for one reason: `src/components/demos/Demo.tsx` is a single {Math.round(379.8)} KB
-            module holding every scene, so a page that renders <em>one</em> demo pays for all of them. A component detail page, a pricing page with
-            a live sample and the shuffle view therefore all carry roughly the same weight. Splitting the module scene-by-scene would be the
-            largest remaining win on this site, and it is the open item below rather than a claim: the demo harness checks that all 99 scenes
-            render, so the split has to keep every one of them working.
+            Every scene used to live in one module, so a page that rendered <em>one</em> demo paid for all 162 of them, and three routes needed
+            their own line in the table because of it. The scenes now load per module: the registry in `src/components/demos/Demo.tsx` maps each
+            key to a dynamic import of the set that holds it, and a page downloads the set it renders plus the shared kit. Measured on the builds
+            either side of the change:
           </p>
+          <ul className="mt-2 space-y-1 font-mono text-[10.5px] text-ink-dim">
+            {[
+              ["/components/halo-button", 1112.4, 696.2],
+              ["/pricing", 900.6, 484.4],
+              ["/shuffle", 901.6, 485.5],
+              ["/lab", 955.7, 539.5],
+              ["/embed/halo-button", 866.2, 54.2],
+            ].map(([route, before, after]) => (
+              <li key={route as string} className="flex items-center justify-between gap-3">
+                <span className="truncate">{route as string}</span>
+                <span className="shrink-0 tabular-nums text-ink-faint">
+                  {`${(before as number).toFixed(1)} → ${(after as number).toFixed(1)} KB`}
+                </span>
+              </li>
+            ))}
+          </ul>
           <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
-            Budgets for those three routes:{" "}
-            {["/pricing", "/shuffle", "/lab/layers"]
-              .map((r) => `${r} ${budgetFor(r).limit} KB`)
-              .join(" · ")}
+            Total JavaScript per route, from the build report either side of the change. The scene sets are chunks of their own now — ten more chunk
+            files in the build than before the split — so a route that renders no scene never downloads one, and the routes above lost 416–812 KB
+            each.
           </p>
         </div>
       </section>
@@ -239,8 +253,9 @@ export default function SpeedPage() {
             <strong>No comparative claim.</strong> These numbers describe this build; they are not a statement about anybody else&apos;s.
           </li>
           <li>
-            <strong>No per-route split of the demo module yet.</strong> Every page that shows one demo loads all {Math.round(379.8)} KB of scene
-            code; the budgets above are set around that cost rather than pretending it is not there.
+            <strong>No claim that every scene is now cheap.</strong> The split moved the cost of a scene to the pages that render it: a component
+            page still loads the set its scene lives in, and a catalog grid that previews many scenes loads several. What changed is that a page
+            which renders <em>no</em> scene no longer pays for anyone else&apos;s.
           </li>
         </ul>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">

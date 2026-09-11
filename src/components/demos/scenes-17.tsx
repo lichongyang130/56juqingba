@@ -5,11 +5,14 @@
 // These scenes lived in Demo.tsx until that file crossed 500 KB, at which point
 // Babel logged that it was deoptimising the module's styling. Nothing about the
 // scenes changed in the move: same components, same helpers, same behaviour —
-// only the file they live in. Demo.tsx imports them and keeps the switch that
-// maps a catalog entry's demo key to a component.
+// only the file they live in. Demo.tsx keeps the loader map that points a
+// catalog entry's demo key at the module holding its component, and batch 85
+// moved the other 136 scenes into seven sibling sets under scenes/ so that a
+// page loads one set rather than all of them.
 //
-// Shared helpers (useReducedMotion, the curve maths) are exported because the
-// Easing Lab and the drawer both need the same numbers.
+// The helpers these scenes share (useReducedMotion, the curve maths) stay
+// module-local: nothing outside this file imports them, and `check:demos` fails
+// if a scene module exports something no loader and no other file names.
 
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
@@ -24,7 +27,7 @@ import { contrastChecks, THEME_PRESETS, type ThemeValues } from "@/lib/admin-ops
  *  kills keyframe animation for `prefers-reduced-motion`; a demo that moves
  *  elements with an inline transform has to ask for itself, which is what this
  *  hook is for. */
-export function useReducedMotion() {
+function useReducedMotion() {
   const [reduced, setReduced] = useState<boolean>(() =>
     typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false
   );
@@ -1632,7 +1635,7 @@ export function AuditRing() {
 
 // The same curve helpers the Easing Lab uses, so a curve copied from this card
 // and a curve drawn in the Lab mean the same thing.
-export function curvePoint(x1: number, y1: number, x2: number, y2: number, t: number) {
+function curvePoint(x1: number, y1: number, x2: number, y2: number, t: number) {
   const u = 1 - t;
   return {
     x: 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t,
@@ -1640,7 +1643,7 @@ export function curvePoint(x1: number, y1: number, x2: number, y2: number, t: nu
   };
 }
 
-export function curveYAt(x1: number, y1: number, x2: number, y2: number, targetX: number) {
+function curveYAt(x1: number, y1: number, x2: number, y2: number, targetX: number) {
   let best = 0;
   let bestErr = Infinity;
   for (let i = 0; i <= 600; i++) {

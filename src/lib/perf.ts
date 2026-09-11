@@ -531,11 +531,25 @@ export function motionAudit() {
     // The scanner reads its own pattern strings, so it excludes itself.
     willChangeSites: willChange.filter((f) => f.file !== "src/lib/perf.ts").slice(0, 12),
     transitions: { compositor, paint, layout, total: transitionDecls.reduce((a, f) => a + f.hits, 0) },
-    /** The demo module is where the heaviest scenes live; its size is the reason
-     *  the layer work matters. Counted, not estimated. */
+    /** The demo scenes are where the heaviest scenes live; their size is the
+     *  reason the layer work matters. Until batch 85 they were one 380 KB file,
+     *  and the count here was that file's lines. They are ten modules now — the
+     *  registry, the shared kit, seven scene sets and the section 17 file — so
+     *  the figure is the sum, which is still the question the page asks, plus
+     *  the number of modules it is spread over. Counted, not estimated. */
     demoLines: (() => {
       try {
-        return fs.readFileSync(path.join(ROOT, "src/components/demos/Demo.tsx"), "utf8").split("\n").length;
+        const dir = path.join(ROOT, "src/components/demos");
+        const sets = fs.readdirSync(path.join(dir, "scenes")).filter((f) => f.endsWith(".tsx"));
+        const files = ["Demo.tsx", "scene-kit.tsx", "scenes-17.tsx", ...sets.map((f) => `scenes/${f}`)];
+        return files.reduce((a, f) => a + fs.readFileSync(path.join(dir, f), "utf8").split("\n").length, 0);
+      } catch {
+        return 0;
+      }
+    })(),
+    demoModules: (() => {
+      try {
+        return fs.readdirSync(path.join(ROOT, "src/components/demos/scenes")).filter((f) => f.endsWith(".tsx")).length + 3;
       } catch {
         return 0;
       }

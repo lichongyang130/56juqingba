@@ -80,7 +80,8 @@ animation: spin 4s infinite → name recorded, properties unknown`}</pre>
         <div className="rounded-3xl border border-white/8 bg-panel p-6">
           <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">Why this matters for this library</p>
           <p className="mt-2 text-[11px] leading-relaxed text-ink-dim">
-            The demo module is {audit.demoLines.toLocaleString("en-US")} lines of scenes, and {audit.infiniteHits} of the
+            The demo scenes are {audit.demoLines.toLocaleString("en-US")} lines across {audit.demoModules} modules — they were one file until
+            batch 85 split them so a page loads only the set it renders — and {audit.infiniteHits} of the
             project&apos;s animations run forever by design — ambient loops, drifting gradients, marquees. Ambient motion that
             stays on the compositor costs almost nothing; ambient motion that repaints does it every frame, on every page it
             appears on, for as long as the tab is open. That is the entire reason the audit exists, and it is measurable in the

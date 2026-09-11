@@ -1,19 +1,19 @@
 {
-  "measuredAt": "2026-09-11T03:05:52.274Z",
-  "buildId": "_WVscLB38RTB9gDwwQPD0",
+  "measuredAt": "2026-09-11T03:46:36.961Z",
+  "buildId": "cHe0dd33CRGVBqvJuJ8ir",
   "command": "npm run build && npm run measure",
   "summary": {
     "routes": 141,
     "prerendered": 127,
     "onDemand": 14,
-    "jsFiles": 48,
-    "jsKb": 2387.6,
+    "jsFiles": 58,
+    "jsKb": 2791.2,
     "cssFiles": 2,
     "cssKb": 217.7,
     "fontFiles": 2,
     "fontKb": 80,
-    "htmlFiles": 290,
-    "htmlKb": 13907.6,
+    "htmlFiles": 291,
+    "htmlKb": 13879.6,
     "fallbackDocuments": 1
   },
   "fallbackDocuments": [
@@ -22,545 +22,369 @@
       "why": "Next's global error shell"
     }
   ],
-  "sharedJsKb": 446.2,
+  "sharedJsKb": 446.7,
   "baseline": {
     "url": "/brand/launch",
-    "jsKb": 446.2,
-    "note": "The lightest route's file set, used as the shell every other route adds to. In this build that is a page which renders no demo."
+    "jsKb": 446.7,
+    "routesSharing": 85,
+    "note": "The file set 85 of 141 routes share — the shell those routes start from. Owner: /brand/launch."
   },
   "routes": [
     {
       "url": "/components/[slug]",
-      "ownJsKb": 666.2,
-      "totalJsKb": 1112.4,
+      "ownJsKb": 250,
+      "totalJsKb": 696.7,
       "cssKb": 217.7,
       "htmlKb": 0,
       "prerendered": false,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/3abm2_cbomthj.js",
-        "static/chunks/3bf2g9xyc6n18.js",
+        "static/chunks/3arwq8vnvssgd.js",
         "static/chunks/2tqhp_5gnsd7n.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
+        "static/chunks/00axr_kx5ky68.js"
       ]
     },
     {
       "url": "/admin/moderation",
-      "ownJsKb": 565.2,
-      "totalJsKb": 977.2,
+      "ownJsKb": 177.8,
+      "totalJsKb": 590.3,
       "cssKb": 217.7,
-      "htmlKb": 38.9,
+      "htmlKb": 38.5,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/0pyvaxn2tl4e7.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/2c14sx7n98_mj.js"
       ]
     },
     {
       "url": "/admin/pipeline",
-      "ownJsKb": 536.6,
-      "totalJsKb": 948.6,
+      "ownJsKb": 149.2,
+      "totalJsKb": 561.7,
       "cssKb": 217.7,
-      "htmlKb": 35.3,
+      "htmlKb": 34.9,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/1b_jbmcx-m2q1.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/1z1p76fvy2e70.js"
       ]
     },
     {
       "url": "/admin/audit",
-      "ownJsKb": 531.6,
-      "totalJsKb": 943.6,
+      "ownJsKb": 144.2,
+      "totalJsKb": 556.7,
       "cssKb": 217.7,
-      "htmlKb": 30.4,
+      "htmlKb": 30,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/22qc4t1pvma3z.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/32rzhim83c593.js"
       ]
     },
     {
       "url": "/admin/content",
-      "ownJsKb": 531.6,
-      "totalJsKb": 943.6,
+      "ownJsKb": 144.2,
+      "totalJsKb": 556.7,
       "cssKb": 217.7,
-      "htmlKb": 41.1,
+      "htmlKb": 40.7,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/22qc4t1pvma3z.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/32rzhim83c593.js"
       ]
     },
     {
       "url": "/admin/schedule",
-      "ownJsKb": 531.6,
-      "totalJsKb": 943.6,
+      "ownJsKb": 144.2,
+      "totalJsKb": 556.7,
       "cssKb": 217.7,
-      "htmlKb": 39,
+      "htmlKb": 38.6,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/22qc4t1pvma3z.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/32rzhim83c593.js"
       ]
     },
     {
       "url": "/admin/search",
-      "ownJsKb": 531.6,
-      "totalJsKb": 943.6,
+      "ownJsKb": 144.2,
+      "totalJsKb": 556.7,
       "cssKb": 217.7,
-      "htmlKb": 31.3,
+      "htmlKb": 30.9,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/22qc4t1pvma3z.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/32rzhim83c593.js"
       ]
     },
     {
       "url": "/admin/duplicates",
-      "ownJsKb": 530.3,
-      "totalJsKb": 942.3,
+      "ownJsKb": 142.9,
+      "totalJsKb": 555.4,
       "cssKb": 217.7,
-      "htmlKb": 35.1,
+      "htmlKb": 34.8,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/2cu2tfo_a4l-j.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/3-jgfgrm1kei6.js"
       ]
     },
     {
       "url": "/admin/escalation",
-      "ownJsKb": 530.3,
-      "totalJsKb": 942.3,
+      "ownJsKb": 142.9,
+      "totalJsKb": 555.4,
       "cssKb": 217.7,
-      "htmlKb": 31.3,
+      "htmlKb": 30.9,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/2cu2tfo_a4l-j.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/3-jgfgrm1kei6.js"
       ]
     },
     {
       "url": "/admin/exports",
-      "ownJsKb": 530.3,
-      "totalJsKb": 942.3,
+      "ownJsKb": 142.9,
+      "totalJsKb": 555.4,
       "cssKb": 217.7,
-      "htmlKb": 37.5,
+      "htmlKb": 37.2,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/2cu2tfo_a4l-j.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/3-jgfgrm1kei6.js"
       ]
     },
     {
       "url": "/admin/stats",
-      "ownJsKb": 530.3,
-      "totalJsKb": 942.3,
+      "ownJsKb": 142.9,
+      "totalJsKb": 555.4,
       "cssKb": 217.7,
-      "htmlKb": 38.7,
+      "htmlKb": 38.4,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/2cu2tfo_a4l-j.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/3-jgfgrm1kei6.js"
       ]
     },
     {
       "url": "/admin/theme",
-      "ownJsKb": 530.3,
-      "totalJsKb": 942.3,
+      "ownJsKb": 142.9,
+      "totalJsKb": 555.4,
       "cssKb": 217.7,
-      "htmlKb": 41.7,
+      "htmlKb": 41.3,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/2cu2tfo_a4l-j.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
+        "static/chunks/3-jgfgrm1kei6.js"
       ]
     },
     {
       "url": "/admin/assets",
-      "ownJsKb": 510.8,
-      "totalJsKb": 922.8,
+      "ownJsKb": 112.1,
+      "totalJsKb": 524.6,
       "cssKb": 217.7,
-      "htmlKb": 140,
+      "htmlKb": 139.7,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
         "static/chunks/1c5-monoy4w0_.js"
       ]
     },
     {
-      "url": "/lab",
-      "ownJsKb": 509.5,
-      "totalJsKb": 955.7,
-      "cssKb": 217.7,
-      "htmlKb": 125.3,
-      "prerendered": true,
-      "jsFiles": 9,
-      "ownFiles": [
-        "static/chunks/2jbo8ei-wq6ur.js",
-        "static/chunks/3bf2g9xyc6n18.js",
-        "static/chunks/1rkbu9wiwr7dn.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
-      ]
-    },
-    {
       "url": "/admin/settings",
-      "ownJsKb": 509.1,
-      "totalJsKb": 921.1,
+      "ownJsKb": 110.4,
+      "totalJsKb": 522.9,
       "cssKb": 217.7,
-      "htmlKb": 33.9,
+      "htmlKb": 33.5,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
         "static/chunks/1urw1skb2cec1.js"
       ]
     },
     {
       "url": "/admin/prompts",
-      "ownJsKb": 507.6,
-      "totalJsKb": 919.6,
+      "ownJsKb": 108.9,
+      "totalJsKb": 521.4,
       "cssKb": 217.7,
-      "htmlKb": 184,
+      "htmlKb": 183.7,
       "prerendered": true,
-      "jsFiles": 9,
+      "jsFiles": 8,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js",
         "static/chunks/1_fdonwlkbrv6.js"
       ]
     },
     {
       "url": "/admin",
-      "ownJsKb": 503.5,
-      "totalJsKb": 915.5,
+      "ownJsKb": 104.8,
+      "totalJsKb": 517.3,
       "cssKb": 217.7,
-      "htmlKb": 52.9,
+      "htmlKb": 52.5,
       "prerendered": true,
-      "jsFiles": 8,
+      "jsFiles": 7,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js"
       ]
     },
     {
       "url": "/admin/billing",
-      "ownJsKb": 503.5,
-      "totalJsKb": 915.5,
+      "ownJsKb": 104.8,
+      "totalJsKb": 517.3,
       "cssKb": 217.7,
-      "htmlKb": 47.8,
+      "htmlKb": 47.4,
       "prerendered": true,
-      "jsFiles": 8,
+      "jsFiles": 7,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js"
       ]
     },
     {
       "url": "/admin/changelog",
-      "ownJsKb": 503.5,
-      "totalJsKb": 915.5,
+      "ownJsKb": 104.8,
+      "totalJsKb": 517.3,
       "cssKb": 217.7,
-      "htmlKb": 33.1,
+      "htmlKb": 33,
       "prerendered": true,
-      "jsFiles": 8,
+      "jsFiles": 7,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js"
       ]
     },
     {
       "url": "/admin/health",
-      "ownJsKb": 503.5,
-      "totalJsKb": 915.5,
+      "ownJsKb": 104.8,
+      "totalJsKb": 517.3,
       "cssKb": 217.7,
-      "htmlKb": 558.5,
+      "htmlKb": 558.1,
       "prerendered": true,
-      "jsFiles": 8,
+      "jsFiles": 7,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js"
       ]
     },
     {
       "url": "/admin/inspector",
-      "ownJsKb": 503.5,
-      "totalJsKb": 915.5,
+      "ownJsKb": 104.8,
+      "totalJsKb": 517.3,
       "cssKb": 217.7,
-      "htmlKb": 51.5,
+      "htmlKb": 51.1,
       "prerendered": true,
-      "jsFiles": 8,
+      "jsFiles": 7,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js"
       ]
     },
     {
       "url": "/admin/mobile",
-      "ownJsKb": 503.5,
-      "totalJsKb": 915.5,
+      "ownJsKb": 104.8,
+      "totalJsKb": 517.3,
       "cssKb": 217.7,
-      "htmlKb": 56.1,
+      "htmlKb": 55.7,
       "prerendered": true,
-      "jsFiles": 8,
+      "jsFiles": 7,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js"
       ]
     },
     {
       "url": "/admin/notifications",
-      "ownJsKb": 503.5,
-      "totalJsKb": 915.5,
+      "ownJsKb": 104.8,
+      "totalJsKb": 517.3,
       "cssKb": 217.7,
-      "htmlKb": 37.4,
+      "htmlKb": 37.1,
       "prerendered": true,
-      "jsFiles": 8,
+      "jsFiles": 7,
       "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js"
       ]
     },
     {
       "url": "/admin/rerun",
-      "ownJsKb": 503.5,
-      "totalJsKb": 915.5,
+      "ownJsKb": 104.8,
+      "totalJsKb": 517.3,
       "cssKb": 217.7,
-      "htmlKb": 39.7,
-      "prerendered": true,
-      "jsFiles": 8,
-      "ownFiles": [
-        "static/chunks/00ndd-5uetpmg.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/3vmr7pq4xg8-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
-      ]
-    },
-    {
-      "url": "/prompts/[slug]",
-      "ownJsKb": 485.5,
-      "totalJsKb": 931.7,
-      "cssKb": 217.7,
-      "htmlKb": 0,
-      "prerendered": false,
-      "jsFiles": 8,
-      "ownFiles": [
-        "static/chunks/40dhh9k0weuj7.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/3bf2g9xyc6n18.js"
-      ]
-    },
-    {
-      "url": "/search",
-      "ownJsKb": 474.9,
-      "totalJsKb": 921.1,
-      "cssKb": 217.7,
-      "htmlKb": 0,
-      "prerendered": false,
-      "jsFiles": 8,
-      "ownFiles": [
-        "static/chunks/2nyjv-s9k98-8.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/3bf2g9xyc6n18.js"
-      ]
-    },
-    {
-      "url": "/",
-      "ownJsKb": 469.8,
-      "totalJsKb": 916,
-      "cssKb": 217.7,
-      "htmlKb": 240.6,
-      "prerendered": true,
-      "jsFiles": 8,
-      "ownFiles": [
-        "static/chunks/2lk4ibu-iooz5.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/3bf2g9xyc6n18.js"
-      ]
-    },
-    {
-      "url": "/components",
-      "ownJsKb": 469.5,
-      "totalJsKb": 915.7,
-      "cssKb": 217.7,
-      "htmlKb": 0,
-      "prerendered": false,
-      "jsFiles": 8,
-      "ownFiles": [
-        "static/chunks/1eh-nsjh1wjze.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/3bf2g9xyc6n18.js"
-      ]
-    },
-    {
-      "url": "/prompts",
-      "ownJsKb": 457,
-      "totalJsKb": 903.2,
-      "cssKb": 217.7,
-      "htmlKb": 506.3,
-      "prerendered": true,
-      "jsFiles": 8,
-      "ownFiles": [
-        "static/chunks/40iaa864vtc99.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/3bf2g9xyc6n18.js"
-      ]
-    },
-    {
-      "url": "/backgrounds",
-      "ownJsKb": 455.6,
-      "totalJsKb": 901.8,
-      "cssKb": 217.7,
-      "htmlKb": 79.4,
-      "prerendered": true,
-      "jsFiles": 8,
-      "ownFiles": [
-        "static/chunks/3azp506m0oyd1.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/3bf2g9xyc6n18.js"
-      ]
-    },
-    {
-      "url": "/shuffle",
-      "ownJsKb": 455.4,
-      "totalJsKb": 901.6,
-      "cssKb": 217.7,
-      "htmlKb": 159.6,
-      "prerendered": true,
-      "jsFiles": 8,
-      "ownFiles": [
-        "static/chunks/3md00w6rtscu5.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/3bf2g9xyc6n18.js"
-      ]
-    },
-    {
-      "url": "/pricing",
-      "ownJsKb": 454.4,
-      "totalJsKb": 900.6,
-      "cssKb": 217.7,
-      "htmlKb": 185.1,
-      "prerendered": true,
-      "jsFiles": 8,
-      "ownFiles": [
-        "static/chunks/3rjil3-m0l802.js",
-        "static/chunks/2tyk3vnyrcfgh.js",
-        "static/chunks/3bf2g9xyc6n18.js"
-      ]
-    },
-    {
-      "url": "/embed/[slug]",
-      "ownJsKb": 454.2,
-      "totalJsKb": 866.2,
-      "cssKb": 217.7,
-      "htmlKb": 0,
-      "prerendered": false,
-      "jsFiles": 7,
-      "ownFiles": [
-        "static/chunks/0a2hp3636l2xu.js",
-        "static/chunks/1xuzqpm8o1f47.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
-      ]
-    },
-    {
-      "url": "/lab/layers",
-      "ownJsKb": 446,
-      "totalJsKb": 892.2,
-      "cssKb": 217.7,
-      "htmlKb": 68.4,
+      "htmlKb": 39.3,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
-        "static/chunks/1ues0kh1np90e.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
+        "static/chunks/049d9p6z1xwhm.js",
+        "static/chunks/1aqmvl59-vahh.js",
+        "static/chunks/01dz4e5hje0un.js"
       ]
     },
     {
-      "url": "/templates",
-      "ownJsKb": 441.1,
-      "totalJsKb": 887.3,
+      "url": "/lab",
+      "ownJsKb": 93.3,
+      "totalJsKb": 540,
       "cssKb": 217.7,
-      "htmlKb": 86.7,
+      "htmlKb": 123.4,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
-        "static/chunks/3kgo3g97khsu6.js",
-        "static/chunks/2tyk3vnyrcfgh.js"
+        "static/chunks/2-9jjpbx4sucl.js",
+        "static/chunks/1rkbu9wiwr7dn.js"
       ]
     },
     {
       "url": "/studio",
       "ownJsKb": 71.4,
-      "totalJsKb": 517.6,
+      "totalJsKb": 518.1,
       "cssKb": 217.7,
-      "htmlKb": 113.5,
+      "htmlKb": 114.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -568,11 +392,63 @@
       ]
     },
     {
+      "url": "/prompts/[slug]",
+      "ownJsKb": 69.4,
+      "totalJsKb": 516.1,
+      "cssKb": 217.7,
+      "htmlKb": 0,
+      "prerendered": false,
+      "jsFiles": 7,
+      "ownFiles": [
+        "static/chunks/0yrx2ege-l5yl.js",
+        "static/chunks/00axr_kx5ky68.js"
+      ]
+    },
+    {
+      "url": "/search",
+      "ownJsKb": 58.8,
+      "totalJsKb": 505.5,
+      "cssKb": 217.7,
+      "htmlKb": 0,
+      "prerendered": false,
+      "jsFiles": 7,
+      "ownFiles": [
+        "static/chunks/3arwq8vnvssgd.js",
+        "static/chunks/1s0f6o7un405_.js"
+      ]
+    },
+    {
+      "url": "/",
+      "ownJsKb": 53.6,
+      "totalJsKb": 500.3,
+      "cssKb": 217.7,
+      "htmlKb": 240.9,
+      "prerendered": true,
+      "jsFiles": 7,
+      "ownFiles": [
+        "static/chunks/3arwq8vnvssgd.js",
+        "static/chunks/30twrjckr1isl.js"
+      ]
+    },
+    {
+      "url": "/components",
+      "ownJsKb": 53.3,
+      "totalJsKb": 500,
+      "cssKb": 217.7,
+      "htmlKb": 0,
+      "prerendered": false,
+      "jsFiles": 7,
+      "ownFiles": [
+        "static/chunks/3arwq8vnvssgd.js",
+        "static/chunks/2tdnhz0dsl8py.js"
+      ]
+    },
+    {
       "url": "/saved",
       "ownJsKb": 42.7,
-      "totalJsKb": 488.9,
+      "totalJsKb": 489.4,
       "cssKb": 217.7,
-      "htmlKb": 48.5,
+      "htmlKb": 49.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -580,11 +456,24 @@
       ]
     },
     {
+      "url": "/prompts",
+      "ownJsKb": 40.9,
+      "totalJsKb": 487.6,
+      "cssKb": 217.7,
+      "htmlKb": 506.7,
+      "prerendered": true,
+      "jsFiles": 7,
+      "ownFiles": [
+        "static/chunks/3arwq8vnvssgd.js",
+        "static/chunks/17882-ohv0vsp.js"
+      ]
+    },
+    {
       "url": "/pro/api",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.1,
+      "totalJsKb": 486.6,
       "cssKb": 217.7,
-      "htmlKb": 55.5,
+      "htmlKb": 56.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -594,9 +483,9 @@
     {
       "url": "/pro/bundles",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.1,
+      "totalJsKb": 486.6,
       "cssKb": 217.7,
-      "htmlKb": 56.9,
+      "htmlKb": 57.5,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -606,9 +495,9 @@
     {
       "url": "/pro/cancel",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.1,
+      "totalJsKb": 486.6,
       "cssKb": 217.7,
-      "htmlKb": 57.7,
+      "htmlKb": 58.3,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -618,9 +507,9 @@
     {
       "url": "/pro/discounts",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.1,
+      "totalJsKb": 486.6,
       "cssKb": 217.7,
-      "htmlKb": 52.3,
+      "htmlKb": 52.9,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -630,9 +519,9 @@
     {
       "url": "/pro/referral",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.1,
+      "totalJsKb": 486.6,
       "cssKb": 217.7,
-      "htmlKb": 51.9,
+      "htmlKb": 52.5,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -642,9 +531,9 @@
     {
       "url": "/pro/teams",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.1,
+      "totalJsKb": 486.6,
       "cssKb": 217.7,
-      "htmlKb": 51.5,
+      "htmlKb": 52.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -654,9 +543,9 @@
     {
       "url": "/pro/trial",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.1,
+      "totalJsKb": 486.6,
       "cssKb": 217.7,
-      "htmlKb": 53.5,
+      "htmlKb": 54.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -664,11 +553,73 @@
       ]
     },
     {
+      "url": "/backgrounds",
+      "ownJsKb": 39.4,
+      "totalJsKb": 486.1,
+      "cssKb": 217.7,
+      "htmlKb": 79.7,
+      "prerendered": true,
+      "jsFiles": 7,
+      "ownFiles": [
+        "static/chunks/3arwq8vnvssgd.js",
+        "static/chunks/0m0hdtv-vsbxa.js"
+      ]
+    },
+    {
+      "url": "/shuffle",
+      "ownJsKb": 39.2,
+      "totalJsKb": 485.9,
+      "cssKb": 217.7,
+      "htmlKb": 160,
+      "prerendered": true,
+      "jsFiles": 7,
+      "ownFiles": [
+        "static/chunks/3arwq8vnvssgd.js",
+        "static/chunks/2m7r-vg7irmt9.js"
+      ]
+    },
+    {
+      "url": "/pricing",
+      "ownJsKb": 38.1,
+      "totalJsKb": 484.8,
+      "cssKb": 217.7,
+      "htmlKb": 185,
+      "prerendered": true,
+      "jsFiles": 6,
+      "ownFiles": [
+        "static/chunks/3lnh_sfanfg0p.js"
+      ]
+    },
+    {
+      "url": "/embed/[slug]",
+      "ownJsKb": 30.4,
+      "totalJsKb": 54.2,
+      "cssKb": 217.7,
+      "htmlKb": 0,
+      "prerendered": false,
+      "jsFiles": 3,
+      "ownFiles": [
+        "static/chunks/2csu48_qz6wsi.js"
+      ]
+    },
+    {
+      "url": "/lab/layers",
+      "ownJsKb": 29.9,
+      "totalJsKb": 476.6,
+      "cssKb": 217.7,
+      "htmlKb": 69,
+      "prerendered": true,
+      "jsFiles": 6,
+      "ownFiles": [
+        "static/chunks/34czu0vh6syqc.js"
+      ]
+    },
+    {
       "url": "/habits",
       "ownJsKb": 29.3,
-      "totalJsKb": 475.5,
+      "totalJsKb": 476,
       "cssKb": 217.7,
-      "htmlKb": 55.6,
+      "htmlKb": 56.2,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -676,11 +627,23 @@
       ]
     },
     {
+      "url": "/templates",
+      "ownJsKb": 25,
+      "totalJsKb": 471.7,
+      "cssKb": 217.7,
+      "htmlKb": 87,
+      "prerendered": true,
+      "jsFiles": 6,
+      "ownFiles": [
+        "static/chunks/2muj6av378_q6.js"
+      ]
+    },
+    {
       "url": "/community/loved",
       "ownJsKb": 20.6,
-      "totalJsKb": 466.8,
+      "totalJsKb": 467.3,
       "cssKb": 217.7,
-      "htmlKb": 60.8,
+      "htmlKb": 61.4,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -690,7 +653,7 @@
     {
       "url": "/community/re-run",
       "ownJsKb": 20.6,
-      "totalJsKb": 466.8,
+      "totalJsKb": 467.3,
       "cssKb": 217.7,
       "htmlKb": 0,
       "prerendered": false,
@@ -702,7 +665,7 @@
     {
       "url": "/community/submit",
       "ownJsKb": 20.6,
-      "totalJsKb": 466.8,
+      "totalJsKb": 467.3,
       "cssKb": 217.7,
       "htmlKb": 0,
       "prerendered": false,
@@ -714,9 +677,9 @@
     {
       "url": "/community/build-a-thon",
       "ownJsKb": 17.8,
-      "totalJsKb": 464,
+      "totalJsKb": 464.5,
       "cssKb": 217.7,
-      "htmlKb": 47.8,
+      "htmlKb": 48.4,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -726,9 +689,9 @@
     {
       "url": "/community/day",
       "ownJsKb": 17.8,
-      "totalJsKb": 464,
+      "totalJsKb": 464.5,
       "cssKb": 217.7,
-      "htmlKb": 45.4,
+      "htmlKb": 46.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -738,9 +701,9 @@
     {
       "url": "/learn/paths",
       "ownJsKb": 11.6,
-      "totalJsKb": 457.8,
+      "totalJsKb": 458.3,
       "cssKb": 217.7,
-      "htmlKb": 58.1,
+      "htmlKb": 58.7,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -750,9 +713,9 @@
     {
       "url": "/community/outcomes",
       "ownJsKb": 10.7,
-      "totalJsKb": 456.9,
+      "totalJsKb": 457.4,
       "cssKb": 217.7,
-      "htmlKb": 78.2,
+      "htmlKb": 78.8,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -762,9 +725,9 @@
     {
       "url": "/community/remixes",
       "ownJsKb": 10.7,
-      "totalJsKb": 456.9,
+      "totalJsKb": 457.4,
       "cssKb": 217.7,
-      "htmlKb": 58.4,
+      "htmlKb": 59,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -774,9 +737,9 @@
     {
       "url": "/community/requests",
       "ownJsKb": 10.7,
-      "totalJsKb": 456.9,
+      "totalJsKb": 457.4,
       "cssKb": 217.7,
-      "htmlKb": 56.2,
+      "htmlKb": 56.8,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -786,7 +749,7 @@
     {
       "url": "/learn/[slug]",
       "ownJsKb": 9.9,
-      "totalJsKb": 456.1,
+      "totalJsKb": 456.6,
       "cssKb": 217.7,
       "htmlKb": 0,
       "prerendered": false,
@@ -798,9 +761,9 @@
     {
       "url": "/integrations/bookmarklet",
       "ownJsKb": 1.7,
-      "totalJsKb": 447.9,
+      "totalJsKb": 448.4,
       "cssKb": 217.7,
-      "htmlKb": 57.1,
+      "htmlKb": 57.7,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -810,9 +773,9 @@
     {
       "url": "/brand/launch",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 67.1,
+      "htmlKb": 67.7,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -820,9 +783,9 @@
     {
       "url": "/brand/logo",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 85.4,
+      "htmlKb": 86,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -830,9 +793,9 @@
     {
       "url": "/brand/mascot",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 54.6,
+      "htmlKb": 55.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -840,9 +803,9 @@
     {
       "url": "/brand/notes",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 65.2,
+      "htmlKb": 67.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -850,9 +813,9 @@
     {
       "url": "/brand/proof",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 56.3,
+      "htmlKb": 56.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -860,9 +823,9 @@
     {
       "url": "/brand/thanks",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 50.4,
+      "htmlKb": 51,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -870,9 +833,9 @@
     {
       "url": "/brand/voice",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 63.6,
+      "htmlKb": 64.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -880,9 +843,9 @@
     {
       "url": "/brand/wallpapers",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 76.8,
+      "htmlKb": 77.4,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -890,9 +853,9 @@
     {
       "url": "/brand/watermark",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 52.4,
+      "htmlKb": 53.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -900,9 +863,9 @@
     {
       "url": "/changelog",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 71.5,
+      "htmlKb": 75.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -910,7 +873,7 @@
     {
       "url": "/changelog/[slug]",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
       "htmlKb": 0,
       "prerendered": false,
@@ -920,9 +883,9 @@
     {
       "url": "/collections",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 51,
+      "htmlKb": 51.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -930,7 +893,7 @@
     {
       "url": "/collections/[slug]",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
       "htmlKb": 0,
       "prerendered": false,
@@ -940,9 +903,9 @@
     {
       "url": "/community",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 78.4,
+      "htmlKb": 79,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -950,9 +913,9 @@
     {
       "url": "/community/attribution",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 52,
+      "htmlKb": 52.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -960,9 +923,9 @@
     {
       "url": "/community/badges",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 53.4,
+      "htmlKb": 54,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -970,9 +933,9 @@
     {
       "url": "/community/challenges",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 60.3,
+      "htmlKb": 60.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -980,9 +943,9 @@
     {
       "url": "/community/craft-talk",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 50,
+      "htmlKb": 50.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -990,9 +953,9 @@
     {
       "url": "/community/events",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 51.4,
+      "htmlKb": 52,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1000,9 +963,9 @@
     {
       "url": "/community/leaderboard",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 78.9,
+      "htmlKb": 79.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1010,9 +973,9 @@
     {
       "url": "/community/onboarding",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 56.3,
+      "htmlKb": 56.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1020,9 +983,9 @@
     {
       "url": "/community/picks",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 60.7,
+      "htmlKb": 61.3,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1030,9 +993,9 @@
     {
       "url": "/community/provenance",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 67,
+      "htmlKb": 67.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1040,9 +1003,9 @@
     {
       "url": "/community/recognition",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 58.2,
+      "htmlKb": 58.8,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1050,97 +1013,7 @@
     {
       "url": "/community/spotlight",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 57.6,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/community/teams",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 57.3,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/community/translations",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 112.5,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/compare",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 60.6,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/digest",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 83.5,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/digest/copy-of-the-week",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 52.3,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/es",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 47.5,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/glossary",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 70.5,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/integrations",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 75.5,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/integrations/badge",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
       "htmlKb": 58.2,
       "prerendered": true,
@@ -1148,11 +1021,101 @@
       "ownFiles": []
     },
     {
+      "url": "/community/teams",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 57.9,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/community/translations",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 113.1,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/compare",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 61.2,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/digest",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 86.1,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/digest/copy-of-the-week",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 52.9,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/es",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 48.1,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/glossary",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 71.1,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/integrations",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 76.1,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/integrations/badge",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 58.8,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
       "url": "/integrations/catalog",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 50.4,
+      "htmlKb": 51,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1160,9 +1123,9 @@
     {
       "url": "/integrations/cli",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 57,
+      "htmlKb": 57.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1170,9 +1133,9 @@
     {
       "url": "/integrations/codesandbox",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 51.4,
+      "htmlKb": 52,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1180,9 +1143,9 @@
     {
       "url": "/integrations/embed",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 50.5,
+      "htmlKb": 51.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1190,9 +1153,9 @@
     {
       "url": "/integrations/feed",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 48.5,
+      "htmlKb": 49.8,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1200,9 +1163,9 @@
     {
       "url": "/integrations/figma",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 63.8,
+      "htmlKb": 64.4,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1210,9 +1173,9 @@
     {
       "url": "/integrations/og",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 53.4,
+      "htmlKb": 54,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1220,9 +1183,9 @@
     {
       "url": "/integrations/print",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 49.1,
+      "htmlKb": 49.7,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1230,9 +1193,9 @@
     {
       "url": "/integrations/react",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 49,
+      "htmlKb": 49.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1240,9 +1203,9 @@
     {
       "url": "/integrations/single-file",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 52.1,
+      "htmlKb": 52.7,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1250,9 +1213,9 @@
     {
       "url": "/integrations/storybook",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 47.6,
+      "htmlKb": 48.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1260,9 +1223,9 @@
     {
       "url": "/integrations/tailwind",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 48.3,
+      "htmlKb": 48.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1270,9 +1233,9 @@
     {
       "url": "/integrations/tokens",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 61.7,
+      "htmlKb": 62.3,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1280,9 +1243,9 @@
     {
       "url": "/integrations/vscode",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 54.4,
+      "htmlKb": 55,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1290,9 +1253,9 @@
     {
       "url": "/learn",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 246.5,
+      "htmlKb": 247.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1300,9 +1263,9 @@
     {
       "url": "/learn/questions",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 96.6,
+      "htmlKb": 97.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1310,9 +1273,9 @@
     {
       "url": "/makers",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 62.5,
+      "htmlKb": 63.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1320,7 +1283,7 @@
     {
       "url": "/makers/[handle]",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
       "htmlKb": 0,
       "prerendered": false,
@@ -1330,207 +1293,7 @@
     {
       "url": "/metrics",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 53.4,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/mission",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 51.3,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 127.8,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/blur",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 63.1,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/build",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 58.9,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/caching",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 59.1,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/chunks",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 55.3,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/devices",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 55,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/fonts",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 55.6,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/mounting",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 52.9,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/no-images",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 52.9,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/no-js",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 62.1,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/prefetch",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 56.7,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/service-worker",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 55,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/perf/timers",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 66.9,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/pro",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 127.4,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/pro/changelog",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 63.1,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/pro/enterprise",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 60.5,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/pro/licence",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 58.6,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/pro/promise",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
-      "cssKb": 217.7,
-      "htmlKb": 56.6,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/pro/unlimited",
-      "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
       "htmlKb": 54,
       "prerendered": true,
@@ -1538,11 +1301,211 @@
       "ownFiles": []
     },
     {
+      "url": "/mission",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 51.9,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 128.7,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/blur",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 64,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/build",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 59.5,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/caching",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 59.7,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/chunks",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 55.9,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/devices",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 55.6,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/fonts",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 56.2,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/mounting",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 53.5,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/no-images",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 53.5,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/no-js",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 62.7,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/prefetch",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 57.3,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/service-worker",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 55.6,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/perf/timers",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 67.5,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/pro",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 128,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/pro/changelog",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 63.7,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/pro/enterprise",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 61.1,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/pro/licence",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 59.2,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/pro/promise",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 57.2,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/pro/unlimited",
+      "ownJsKb": 0,
+      "totalJsKb": 446.7,
+      "cssKb": 217.7,
+      "htmlKb": 54.6,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
       "url": "/quality",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 549.7,
+      "htmlKb": 550.3,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1550,7 +1513,7 @@
     {
       "url": "/quality/aria",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
       "htmlKb": 0,
       "prerendered": false,
@@ -1560,9 +1523,9 @@
     {
       "url": "/quality/craft",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 54.9,
+      "htmlKb": 55.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1570,9 +1533,9 @@
     {
       "url": "/quality/crawl",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 58.1,
+      "htmlKb": 58.7,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1580,9 +1543,9 @@
     {
       "url": "/quality/refreshed",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 196.5,
+      "htmlKb": 197.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1590,9 +1553,9 @@
     {
       "url": "/quality/schema",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 57.2,
+      "htmlKb": 57.8,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1600,9 +1563,9 @@
     {
       "url": "/quality/speed",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 85.5,
+      "htmlKb": 85.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1610,9 +1573,9 @@
     {
       "url": "/roadmap",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 89,
+      "htmlKb": 89.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1620,9 +1583,9 @@
     {
       "url": "/roadmap/embed",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 47.2,
+      "htmlKb": 47.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1630,9 +1593,9 @@
     {
       "url": "/samples",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 49.8,
+      "htmlKb": 50.4,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1640,7 +1603,7 @@
     {
       "url": "/samples/[slug]",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
       "htmlKb": 0,
       "prerendered": false,
@@ -1650,7 +1613,7 @@
     {
       "url": "/saved/stack",
       "ownJsKb": 0,
-      "totalJsKb": 446.2,
+      "totalJsKb": 446.7,
       "cssKb": 217.7,
       "htmlKb": 0,
       "prerendered": false,
@@ -1666,7 +1629,7 @@
         "subset": "latin",
         "kb": 47.1,
         "preloaded": true,
-        "pagesPreloading": 289
+        "pagesPreloading": 290
       },
       {
         "file": "sora_latin_wght_normal-s.p.2o7d_x-bmx02y.woff2",
@@ -1674,58 +1637,58 @@
         "subset": "latin",
         "kb": 32.9,
         "preloaded": true,
-        "pagesPreloading": 289
+        "pagesPreloading": 290
       }
     ],
     "totalKb": 80,
-    "pagesWithPreload": 289,
-    "pages": 290
+    "pagesWithPreload": 290,
+    "pages": 291
   },
   "heaviestHtml": [
     {
       "file": ".next/server/app/admin/health.html",
-      "kb": 558.5
+      "kb": 558.1
     },
     {
       "file": ".next/server/app/quality.html",
-      "kb": 549.7
+      "kb": 550.3
     },
     {
       "file": ".next/server/app/prompts.html",
-      "kb": 506.3
+      "kb": 506.7
     },
     {
       "file": ".next/server/app/learn.html",
-      "kb": 246.5
+      "kb": 247.1
     },
     {
       "file": ".next/server/app/index.html",
-      "kb": 240.6
+      "kb": 240.9
     },
     {
       "file": ".next/server/app/quality/refreshed.html",
-      "kb": 196.5
+      "kb": 197.1
     },
     {
       "file": ".next/server/app/pricing.html",
-      "kb": 185.1
+      "kb": 185
     },
     {
       "file": ".next/server/app/admin/prompts.html",
-      "kb": 184
+      "kb": 183.7
     }
   ],
   "jsOff": {
     "/components": null,
     "/backgrounds": {
-      "htmlKb": 79.4,
+      "htmlKb": 79.7,
       "pending": 33,
       "mounted": 0,
       "links": 53,
       "headings": 0
     },
     "/prompts": {
-      "htmlKb": 506.3,
+      "htmlKb": 506.7,
       "pending": 74,
       "mounted": 0,
       "links": 127,
@@ -1733,7 +1696,7 @@
     },
     "/components/combo-box": null,
     "/learn": {
-      "htmlKb": 246.5,
+      "htmlKb": 247.1,
       "pending": 0,
       "mounted": 0,
       "links": 115,

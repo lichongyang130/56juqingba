@@ -27,9 +27,18 @@ const ok = (name, condition, extra = "") => {
   console.log(`${condition ? "PASS" : "FAIL"}  ${name}${extra ? " — " + extra : ""}`);
 };
 
-const get = async (p) => {
-  const res = await fetch(base + p);
-  return { status: res.status, text: await res.text(), type: res.headers.get("content-type") || "" };
+const get = async (p, attempt = 1) => {
+  try {
+    const res = await fetch(base + p);
+    return { status: res.status, text: await res.text(), type: res.headers.get("content-type") || "" };
+  } catch (err) {
+    // A keep-alive socket the server has already closed surfaces here as a
+    // socket error rather than as a status code, and a perfectly healthy page
+    // then reports as a crash. One retry on a fresh connection; a second
+    // failure is real and is thrown.
+    if (attempt < 2) return get(p, attempt + 1);
+    throw err;
+  }
 };
 
 const EXPORT_FILES = [
@@ -245,7 +254,19 @@ function parseCheck(label, source) {
   // invented. The scenes now read the catalog, and the page says which half is
   // sample copy.
   {
-    const demoFiles = ["src/components/demos/Demo.tsx", "src/components/demos/scenes-17.tsx"];
+    // Every module that holds scene copy. The scenes used to live in one file;
+    // after the batch-85 split they live in the registry, the shared kit, seven
+    // sets and scenes-17.tsx, so a list that named only two of those would have
+    // left most of the copy this gate exists for unchecked.
+    const demoFiles = [
+      "src/components/demos/Demo.tsx",
+      "src/components/demos/scene-kit.tsx",
+      "src/components/demos/scenes-17.tsx",
+      ...fs
+        .readdirSync("src/components/demos/scenes")
+        .filter((f) => f.endsWith(".tsx"))
+        .map((f) => `src/components/demos/scenes/${f}`),
+    ];
     const offenders = [];
     for (const f of demoFiles) {
       const src = fs.readFileSync(f, "utf8");
@@ -787,7 +808,13 @@ function parseCheck(label, source) {
   );
 
   const rss = await get("/api/exports/changelog.xml");
-  ok("the feed carries every changelog entry", (rss.text.match(/<item>/g) || []).length === 12);
+  // The feed is generated from the same list the page renders, so the count is
+  // compared against the page rather than against a number here: a literal 12
+  // was correct until a thirteenth entry shipped, and then failed for the wrong
+  // reason.
+  const listed = new Set([...log.text.matchAll(/href="\/changelog\/([a-z0-9-]+)"/g)].map((m) => m[1])).size;
+  const fed = (rss.text.match(/<item>/g) || []).length;
+  ok("the feed carries every changelog entry", fed > 0 && fed === listed, `feed ${fed}, /changelog lists ${listed}`);
 
   /* ---------- the two served scripts ---------- */
 

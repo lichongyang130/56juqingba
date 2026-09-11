@@ -4,15 +4,23 @@
 // ever failed because of it. A number that nobody checks is a dashboard; this
 // module turns the same numbers into a ratchet.
 //
-// The unit is "own JS" — the JavaScript a route loads beyond the shared shell —
-// because that is the part a change to a page can move. Total JS is reported
-// next to it so the shell's own weight stays visible.
+// The unit is "own JS" — the JavaScript a route loads on top of the file set
+// the most other routes share — because that is the part a change to a page can
+// move. Total JS is reported next to it so the shell's own weight stays visible.
 //
-// Budgets are set from the measured build with roughly 10% headroom, so the
-// gate fails on an accident (an import that pulls a demo module onto 80 content
-// pages, which has happened on this project) rather than on ordinary work. When
-// a route legitimately needs more, the number here changes in the same commit
-// as the code, which is the point: the decision is visible in the diff.
+// Budgets are set from the measured build with roughly a third of headroom, so
+// the gate fails on an accident (an import that pulls a demo module onto 80
+// content pages, which has happened on this project) rather than on ordinary
+// work. When a route legitimately needs more, the number here changes in the
+// same commit as the code, which is the point: the decision is visible in the
+// diff.
+//
+// These limits were re-cut after the demo scenes moved into on-demand modules.
+// Until then a page that rendered one scene paid for all 162 of them, and the
+// limits had been set around that cost — a component page was allowed 730 KB
+// because it measured 666. It now measures 250 KB of own JS, so 730 would have
+// been a limit in name only. Every number below is the measured build of batch
+// 85 plus headroom.
 
 export interface RouteBudget {
   /** Route as printed in the build report, e.g. "/components/[slug]". */
@@ -28,42 +36,30 @@ export interface RouteBudget {
 export const ROUTE_BUDGETS: RouteBudget[] = [
   {
     route: "/components/[slug]",
-    ownJsKb: 730,
-    why: "the playground: a demo scene, the theme and property controls, and the read-next rail. The heaviest page on the site by design.",
+    ownJsKb: 330,
+    why: "the playground: a demo scene, the theme and property controls, the read-next rail and the scenes that rail previews. Still the heaviest page on the site by design.",
   },
-  { route: "/prompts/[slug]", ownJsKb: 560, why: "prompt viewer with the run log and the copy blocks." },
-  { route: "/templates/[slug]", ownJsKb: 560, why: "template page with a composed preview and the file bundle panel." },
-  { route: "/admin/*", ownJsKb: 620, why: "the demo consoles are the largest client surfaces; they are also noindex and never a first impression.", match: "prefix" },
-  { route: "/lab", ownJsKb: 560, why: "eight interactive tools on one page, each with its own controls." },
   {
-    route: "/lab/*",
-    ownJsKb: 500,
+    route: "/admin/*",
+    ownJsKb: 260,
+    why: "the demo consoles are the largest client surfaces; they are also noindex and never a first impression.",
     match: "prefix",
-    why: "the sub-page labs (layers, motion and the rest) each mount one interactive inspector.",
   },
-  {
-    route: "/pricing",
-    ownJsKb: 500,
-    why: "the plan comparison renders a live scene, and a live scene is the demo module — see the note on /quality/speed about why one file costs the same as all of them.",
-  },
-  {
-    route: "/shuffle",
-    ownJsKb: 500,
-    why: "the shuffle view previews scenes, so it pays the same demo-module cost.",
-  },
+  { route: "/lab", ownJsKb: 140, why: "eight interactive tools on one page, each with its own controls." },
   { route: "/studio", ownJsKb: 120, why: "the token editor mounts its panels lazily, so the route itself stays small." },
-  { route: "/search", ownJsKb: 520, why: "client-side search over the whole catalog; the index is the payload." },
-  { route: "/components", ownJsKb: 515, why: "catalog index with filters, sort and card previews." },
-  { route: "/prompts", ownJsKb: 500, why: "prompt catalog with its own filter set." },
-  { route: "/backgrounds", ownJsKb: 500, why: "background catalog with live previews per card." },
-  { route: "/templates", ownJsKb: 485, why: "template catalog, previews on demand." },
-  { route: "/", ownJsKb: 515, why: "the homepage carries scene previews and the stat band." },
-  { route: "/embed/[slug]", ownJsKb: 500, why: "one demo and nothing else — the embed must stay cheap because other sites pay for it." },
-  { route: "/admin", ownJsKb: 550, why: "the console index." },
+  { route: "/prompts/[slug]", ownJsKb: 110, why: "prompt viewer with the run log, the copy blocks and one preview scene." },
+  { route: "/search", ownJsKb: 95, why: "client-side search over the whole catalog; the index is the payload." },
+  { route: "/", ownJsKb: 95, why: "the homepage carries scene previews and the stat band." },
+  { route: "/components", ownJsKb: 95, why: "catalog index with filters, sort and lazy card previews." },
+  { route: "/prompts", ownJsKb: 80, why: "prompt catalog with its own filter set." },
+  { route: "/backgrounds", ownJsKb: 80, why: "background catalog with live previews per card." },
+  { route: "/shuffle", ownJsKb: 80, why: "the shuffle view previews scenes, so it pays for the scenes it shows and not for the rest." },
+  { route: "/pricing", ownJsKb: 80, why: "the plan comparison renders a live scene; that scene is now the only scene code it loads." },
+  { route: "/embed/[slug]", ownJsKb: 70, why: "one demo and nothing else — the embed must stay cheap because other sites pay for it." },
 ];
 
 /** Routes that are not matched by a rule above must stay under this. */
-export const DEFAULT_OWN_JS_KB = 90;
+export const DEFAULT_OWN_JS_KB = 70;
 
 export const DEFAULT_WHY =
   "content pages: markup, prose and links. Anything above this has pulled a client module onto pages that render no interactive surface.";

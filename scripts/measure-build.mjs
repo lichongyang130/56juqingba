@@ -129,17 +129,30 @@ const chunkKb = (rel) => {
   }
 };
 
-const totals = new Map(routeEntries.map((r) => [r.url, r.js.reduce((a, f) => a + chunkKb(f), 0)]));
+const routeKb = (r) => r.js.reduce((a, f) => a + chunkKb(f), 0);
+const totals = new Map(routeEntries.map((r) => [r.url, routeKb(r)]));
 
-// The baseline is the lightest route's file set — in this build a demo-less page
-// such as /quality. "Own" is then what a route adds on top of that shell, which
-// is the question a budget answers. An earlier version of this script defined
-// own as "page-level entry files minus layout entry files", and that attributed
-// almost nothing to /lab/layers even though the page pulls the 300 KB demo
-// module through an imported component: module attribution is not cost.
-const baselineUrl =
-  [...totals.entries()].sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0]))[0]?.[0] ?? "/";
-const baselineSet = new Set(routeEntries.find((r) => r.url === baselineUrl)?.js ?? []);
+// The baseline is the file set the most routes share, not the lightest route in
+// the build. Those were the same thing until the demo scenes were split into
+// on-demand chunks: an embed page then became the lightest route, and measuring
+// every other route against it billed /quality 422 KB of "own" JavaScript for a
+// shell it has always had. Sharing is counted from the manifests, so no route is
+// named by hand and a route that does load a demo still shows that cost — it is
+// just no longer confused with the shell.
+//
+// The alternative definition ("own = page entry files minus layout entry files")
+// was tried before this and attributed almost nothing to /lab/layers even though
+// the page pulls every demo scene through an imported component: module
+// attribution is not cost.
+const setKey = (r) => [...r.js].sort().join(" ");
+const sharedBy = new Map();
+for (const r of routeEntries) sharedBy.set(setKey(r), (sharedBy.get(setKey(r)) ?? 0) + 1);
+const baselineRoute = [...routeEntries].sort(
+  (a, b) => sharedBy.get(setKey(b)) - sharedBy.get(setKey(a)) || routeKb(a) - routeKb(b) || a.url.localeCompare(b.url),
+)[0];
+const baselineUrl = baselineRoute?.url ?? "/";
+const baselineSet = new Set(baselineRoute?.js ?? []);
+const baselineShares = sharedBy.get(setKey(baselineRoute)) ?? 1;
 
 const routes = routeEntries
   .map((r) => {
@@ -240,7 +253,8 @@ const report = {
   baseline: {
     url: baselineUrl,
     jsKb: Math.round(totals.get(baselineUrl) * 10) / 10,
-    note: "The lightest route's file set, used as the shell every other route adds to. In this build that is a page which renders no demo.",
+    routesSharing: baselineShares,
+    note: `The file set ${baselineShares} of ${routeEntries.length} routes share — the shell those routes start from. Owner: ${baselineUrl}.`,
   },
   routes,
   fonts: { files: fonts, totalKb: Math.round(fonts.reduce((a, f) => a + f.kb, 0) * 10) / 10, pagesWithPreload, pages: htmlFiles.length },
@@ -258,6 +272,15 @@ const sanity = report.summary.htmlFiles;
 const expected = existingHtmlCount();
 if (sanity < expected * 0.9) {
   fail(`refusing to write ${sanity} HTML files into the report when ${expected} exist on disk — the build looks incomplete, so run\n  next build\nand measure again. docs/build-report.json was left untouched.`);
+}
+
+// An empty output directory is the other way this script could publish zeros as
+// a measurement: a build that failed before prerendering leaves nothing to walk,
+// and "0 prerendered" then counts as complete because there is nothing to
+// compare it against. A report whose whole point is that its numbers were
+// measured must refuse to write one that was not.
+if (expected === 0) {
+  fail("no prerendered HTML on disk — the build produced nothing to measure. Run `npm run build` and measure again; docs/build-report.json was left untouched.");
 }
 
 fs.mkdirSync(path.dirname(OUT), { recursive: true });

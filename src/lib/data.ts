@@ -2772,6 +2772,12 @@ export const INDUSTRY_SAMPLE_FALLBACK = {
 
 export const CHANGELOG: ChangeLogEntry[] = [
   {
+    date: "2026-09-11", tag: "Platform",
+    title: "Each demo scene loads where it is used, not everywhere",
+    body: "Every scene lived in one 380,911-byte module, so a page that rendered a single demo paid for all 162 of them. The scenes are ten modules now, behind a loader map: a component detail page went from 1,112.4 KB of JavaScript to 696.2 KB, and an embed from 866.2 KB to 54.2 KB, both measured by the build report either side of the change. The per-route budgets were re-cut from the same measurement.",
+    perf: { deltaKb: -416.2, scope: "JS on a component detail page", build: "batch 85" },
+  },
+  {
     date: "2026-09-10", tag: "Platform",
     title: "The demo module leaves every page that does not render one",
     body: "A layout import pulled 7,392 lines of scenes onto all 82 routes, so pages with no demo paid for one. Split out; measured at 743.1 KB to 427.6 KB of JavaScript on those routes, and 261.4 KB to 80 KB of fonts, both from the build report.",
