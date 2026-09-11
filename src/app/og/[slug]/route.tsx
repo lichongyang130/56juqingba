@@ -1,46 +1,139 @@
 import { ImageResponse } from "next/og";
-import { COMPONENTS, accentHue } from "@/lib/data";
+import { BACKGROUNDS, COMPONENTS, PROMPTS, accentHue } from "@/lib/data";
+import { LEARN_ARTICLES } from "@/lib/learn";
 
-// #481 — an OG card per asset, generated from the record at build time.
+// #503–#506 — the share-card route, generalised to every family.
 //
-// The design is deliberately data-first: the numbers on the card are the same
-// numbers on the page (size, a11y, quality, copies), so a screenshot of a share
-// card cannot disagree with the asset it advertises. No logo lockup, no stock
-// imagery, no claim the detail page does not make.
+// /og/<slug> renders one card per component, prompt, guide and background from
+// that record's own numbers, and /og/default is the site-level fallback the
+// layout hands to any page without a bespoke card. Same rule as before: a card
+// may not say anything the page behind it does not say.
+//
+// A plain route handler rather than the opengraph-image convention, because the
+// convention's URL carries a build hash — useless for a URL written into
+// metadata by hand.
 
 export const dynamic = "force-static";
 
 const SIZE = { width: 1200, height: 630 };
 
 export function generateStaticParams() {
-  return COMPONENTS.map((c) => ({ slug: c.slug }));
+  return [
+    { slug: "default" },
+    ...COMPONENTS.map((c) => ({ slug: c.slug })),
+    ...PROMPTS.map((p) => ({ slug: p.slug })),
+    ...LEARN_ARTICLES.map((a) => ({ slug: a.slug })),
+    ...BACKGROUNDS.map((b) => ({ slug: b.slug })),
+  ];
 }
 
-/**
- * A plain route handler rather than the opengraph-image file convention.
- *
- * The convention works, but the URL it serves carries a build hash
- * (`/components/halo-button/opengraph-image-18nwr4`), which is fine for Next's
- * own metadata injection and useless for a URL that has to be written into
- * metadata by hand. A route handler with generateStaticParams and force-static
- * prerenders the same PNGs at build time and keeps the address predictable —
- * which is the whole point of a share card.
- */
-export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
-  return renderCard(params);
-}
-
-// Satori fetches a fallback font from the network when it meets a glyph its
-// bundled face lacks — and this sandbox has no egress, so the build logged a
-// failed fetch for every ⌘ and ✓ in a description. Stripping to printable
-// ASCII keeps the card deterministic and the build silent; the detail page
-// still shows the original punctuation.
+// Satori reaches for a network font when it meets a glyph its bundled face
+// lacks; this sandbox has no egress, so non-ASCII is stripped from the fields
+// that reach the card. The pages keep their punctuation.
 const ascii = (text: string) => text.replace(/[^\x20-\x7e]/g, "").replace(/\s+/g, " ").trim();
 
-async function renderCard(params: Promise<{ slug: string }>) {
+interface Card {
+  kicker: string;
+  title: string;
+  body: string;
+  chips: string[];
+  hue: number;
+  foot: string;
+}
+
+function cardFor(slug: string): Card | null {
+  const component = COMPONENTS.find((c) => c.slug === slug);
+  if (component) {
+    return {
+      kicker: `${component.kind} component`,
+      title: component.title,
+      body: component.description,
+      chips: [
+        `${component.bundleKb.toFixed(1)} KB`,
+        component.deps.length === 0 ? "zero dependencies" : `${component.deps.length} deps`,
+        `a11y ${component.a11yScore}`,
+        `quality ${component.qualityScore}`,
+        `${component.copies.toLocaleString()} copies`,
+        component.license,
+      ],
+      hue: accentHue(component.slug),
+      foot: "motif · component library",
+    };
+  }
+
+  const prompt = PROMPTS.find((p) => p.slug === slug);
+  if (prompt) {
+    return {
+      kicker: `${prompt.industry} prompt`,
+      title: prompt.title,
+      body: `${prompt.vibe}. ${prompt.blocks.length} sections specified, ${prompt.runs.length} recorded runs.`,
+      chips: [
+        `${prompt.avgFidelity}% fidelity`,
+        `best: ${prompt.bestModel}`,
+        `${prompt.runs.length} runs`,
+        ...prompt.stacks.slice(0, 2),
+      ],
+      hue: accentHue(prompt.industry),
+      foot: "motif · prompt library",
+    };
+  }
+
+  const guide = LEARN_ARTICLES.find((a) => a.slug === slug);
+  if (guide) {
+    return {
+      kicker: `${guide.kicker} guide`,
+      title: guide.title,
+      body: guide.deck,
+      chips: [`${guide.minutes} min read`, guide.level, ...guide.tags.slice(0, 2), `updated ${guide.updated}`],
+      hue: accentHue(guide.tags[0] ?? guide.slug),
+      foot: "motif · guides",
+    };
+  }
+
+  const bg = BACKGROUNDS.find((b) => b.slug === slug);
+  if (bg) {
+    return {
+      kicker: `${bg.category} background`,
+      title: bg.title,
+      body: bg.description,
+      chips: [
+        bg.tech.join(" / "),
+        `${bg.perf} perf tier`,
+        `${bg.bundleKb.toFixed(1)} KB`,
+        `${bg.copies.toLocaleString()} copies`,
+        bg.themeable ? "themeable" : "fixed palette",
+      ],
+      hue: accentHue(bg.category),
+      foot: "motif · backgrounds",
+    };
+  }
+
+  return null;
+}
+
+function defaultCard(): Card {
+  return {
+    kicker: "the open web-craft",
+    title: "Motif UI — copy less, ship more",
+    body: "Original animated components, AI website prompts with recorded test runs, backgrounds and guides. Every number on the site is read from the catalog at build time.",
+    chips: [
+      `${COMPONENTS.length} components`,
+      `${PROMPTS.length} prompts`,
+      `${LEARN_ARTICLES.length} guides`,
+      `${BACKGROUNDS.length} backgrounds`,
+      "MIT licensed",
+    ],
+    hue: 262,
+    foot: "motifui.dev",
+  };
+}
+
+export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const asset = COMPONENTS.find((c) => c.slug === slug) ?? COMPONENTS[0];
-  const hue = accentHue(asset.slug);
+  // An unknown slug falls back to the site card rather than emitting nothing:
+  // a broken image in a share preview is worse than a generic one.
+  const card = slug === "default" ? defaultCard() : (cardFor(slug) ?? defaultCard());
+  const hue = card.hue;
 
   return new ImageResponse(
     (
@@ -59,30 +152,23 @@ async function renderCard(params: Promise<{ slug: string }>) {
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 24 }}>
           <span style={{ letterSpacing: 6, textTransform: "uppercase", color: `hsl(${hue} 90% 72%)`, fontWeight: 700 }}>
-            {asset.kind}
+            {ascii(card.kicker)}
           </span>
-          <span style={{ color: "#8b90a6", fontFamily: "monospace" }}>motif · component library</span>
+          <span style={{ color: "#8b90a6", fontFamily: "monospace" }}>{card.foot}</span>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-          <div style={{ fontSize: 72, fontWeight: 800, lineHeight: 1.05, letterSpacing: -2 }}>{asset.title}</div>
-          <div style={{ fontSize: 28, color: "#a7abbe", lineHeight: 1.35, maxWidth: 980 }}>
+          <div style={{ fontSize: 68, fontWeight: 800, lineHeight: 1.05, letterSpacing: -2 }}>{ascii(card.title)}</div>
+          <div style={{ fontSize: 27, color: "#a7abbe", lineHeight: 1.35, maxWidth: 990 }}>
             {(() => {
-              const clean = ascii(asset.description);
+              const clean = ascii(card.body);
               return clean.length > 150 ? `${clean.slice(0, 149)}...` : clean;
             })()}
           </div>
         </div>
 
         <div style={{ display: "flex", gap: 16, fontSize: 24 }}>
-          {[
-            `${asset.bundleKb.toFixed(1)} KB`,
-            `${asset.deps.length === 0 ? "zero dependencies" : `${asset.deps.length} deps`}`,
-            `a11y ${asset.a11yScore}`,
-            `quality ${asset.qualityScore}`,
-            `${asset.copies.toLocaleString()} copies`,
-            asset.license,
-          ].map((chip) => (
+          {card.chips.map((chip) => (
             <span
               key={chip}
               style={{

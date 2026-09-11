@@ -414,9 +414,13 @@ function HeroAurora() {
         <span className="chip mb-4 border-violet-300/30 bg-violet-400/10 text-violet-200">
           ✦ New · 300 verified prompts
         </span>
-        <h1 className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
+        {/* #506 — a demo is a preview of somebody else's hero, not this page's
+            title. It was an <h1>, so every component page previewing this scene
+            (and every card previewing a template that contains it) shipped a
+            second, third and eleventh top-level heading. Same classes, no tag. */}
+        <div className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
           Ship pages that <span className="text-gradient">feel alive</span>
-        </h1>
+        </div>
         <p className="mt-3 max-w-sm text-sm text-white/70 md:text-base">
           Copy-ready components and AI prompts, tested before you paste.
         </p>

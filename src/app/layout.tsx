@@ -61,8 +61,12 @@ export const metadata: Metadata = {
     type: "website",
     siteName: SITE.name,
     url: SITE_URL,
+    // #506 — the site card. Any page without a bespoke card inherits this one,
+    // so a link preview is never an empty frame. Asset, prompt, guide and
+    // background pages override it with their own generated card.
+    images: [{ url: "/og/default", width: 1200, height: 630, alt: `${SITE.name} — ${SITE.tagline}` }],
   },
-  twitter: { card: "summary_large_image" },
+  twitter: { card: "summary_large_image", images: ["/og/default"] },
   // No `alternates` here on purpose. A canonical declared at the layout level
   // is inherited by every page that forgot to declare its own — which is how a
   // hundred pages end up pointing at "/". Canonicals, and the #475

@@ -36,6 +36,12 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || `https://${SITE.dom
 
 export const url = (path: string) => `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 
+/**
+ * Meta descriptions are clamped to 200 characters — roughly the window a
+ * search result or a chat unfurl actually shows. The page keeps the full text;
+ * only the snippet is shortened, and it is cut at a word boundary with an
+ * ellipsis so it never ends mid-word.
+ */
 const trim = (text: string, max: number) => {
   const clean = text.replace(/\s+/g, " ").trim();
   if (clean.length <= max) return clean;
@@ -49,7 +55,7 @@ export function assetMetadata(asset: ComponentAsset): Metadata {
   const path = `/components/${asset.slug}`;
   const description = trim(
     `${asset.description} ${asset.bundleKb.toFixed(1)} KB, ${asset.deps.length === 0 ? "zero dependencies" : `${asset.deps.length} dependencies`}, ${asset.stack.join(" / ")} — MIT licensed.`,
-    300,
+    200,
   );
   return {
     title: asset.title,
@@ -80,21 +86,28 @@ export function promptMetadata(prompt: PromptTemplateLike): Metadata {
   const path = `/prompts/${prompt.slug}`;
   const description = trim(
     `${prompt.industry} website prompt: ${prompt.vibe}. ${prompt.avgFidelity}% average fidelity across ${prompt.runs.length} recorded runs, best on ${prompt.bestModel}.`,
-    300,
+    200,
   );
   return {
     title: prompt.title,
     description,
     keywords: [prompt.industry.toLowerCase(), "website prompt", "ai prompt", ...prompt.blocks.slice(0, 4)],
     alternates: { canonical: path },
-    openGraph: { title: prompt.title, description, url: url(path), type: "article", siteName: SITE.name },
-    twitter: { card: "summary_large_image", title: prompt.title, description },
+    openGraph: {
+      title: prompt.title,
+      description,
+      url: url(path),
+      type: "article",
+      siteName: SITE.name,
+      images: [{ url: `/og/${prompt.slug}`, width: 1200, height: 630, alt: `${prompt.title} — prompt card` }],
+    },
+    twitter: { card: "summary_large_image", title: prompt.title, description, images: [`/og/${prompt.slug}`] },
   };
 }
 
 export function articleMetadata(article: LearnArticleLike): Metadata {
   const path = `/learn/${article.slug}`;
-  const description = trim(`${article.deck} ${article.minutes}-minute ${article.level.toLowerCase()} guide, updated ${article.updated}.`, 300);
+  const description = trim(`${article.deck} ${article.minutes}-minute ${article.level.toLowerCase()} guide, updated ${article.updated}.`, 200);
   return {
     title: article.title,
     description,
@@ -107,8 +120,9 @@ export function articleMetadata(article: LearnArticleLike): Metadata {
       type: "article",
       publishedTime: article.updated,
       siteName: SITE.name,
+      images: [{ url: `/og/${article.slug}`, width: 1200, height: 630, alt: `${article.title} — guide card` }],
     },
-    twitter: { card: "summary_large_image", title: article.title, description },
+    twitter: { card: "summary_large_image", title: article.title, description, images: [`/og/${article.slug}`] },
   };
 }
 
@@ -116,13 +130,20 @@ export function backgroundMetadata(bg: Background): Metadata {
   const path = `/backgrounds#${bg.slug}`;
   const description = trim(
     `${bg.description} — a ${bg.category} background (${bg.tech.join(" / ")}, ${bg.perf} performance tier) with ${bg.copies.toLocaleString()} copies.`,
-    300,
+    200,
   );
   return {
     title: bg.title,
     description,
     alternates: { canonical: path },
-    openGraph: { title: bg.title, description, url: url(path), siteName: SITE.name },
+    openGraph: {
+      title: bg.title,
+      description,
+      url: url(path),
+      siteName: SITE.name,
+      images: [{ url: `/og/${bg.slug}`, width: 1200, height: 630, alt: `${bg.title} — background card` }],
+    },
+    twitter: { card: "summary_large_image", title: bg.title, description, images: [`/og/${bg.slug}`] },
   };
 }
 

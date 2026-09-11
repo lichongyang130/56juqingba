@@ -2193,7 +2193,7 @@ export const PROMPTS: PromptTemplate[] = [
   },
   {
     slug: "translation-agency-pairs",
-    title: "Translation agency — pairs, checks, and a quote in plain figures",
+    title: "Translation agency — pairs, checks, plain figures",
     industry: "Translation", vibe: "precise, pair-first, jargon-light", stacks: ["HTML", "React"],
     blocks: ["Language pairs", "Quality checks", "Quote form", "Tribe rules"],
     status: "verified", avgFidelity: 89, bestModel: "Claude 4.6 Sonnet",
@@ -2277,7 +2277,7 @@ export const PROMPTS: PromptTemplate[] = [
   },
   {
     slug: "design-conference-schedule",
-    title: "Design conference — speakers, tracks, and the practical bits",
+    title: "Design conference — speakers, tracks, practical bits",
     industry: "Conference", vibe: "programme-first, track-clear, travel-kind", stacks: ["React", "HTML"],
     blocks: ["Speaker grid", "Schedule by track", "Travel tips", "Ticket honesty"],
     status: "verified", avgFidelity: 90, bestModel: "Claude 4.6 Sonnet",

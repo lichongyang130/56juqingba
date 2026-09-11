@@ -8,7 +8,7 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-<!-- ledger-extra-rows: 1 -->
+<!-- ledger-extra-rows: 6 (row 27 predates the programme; rows 502-506 are the post-programme audit repairs) -->
 _One row in the table below is not an idea from the bank: #27 upload progress ring
 (`/components/progress-ring`) shipped alongside the Section 1 batch and was never one of
 the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet count. The
@@ -520,6 +520,11 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 499 | Learn certificates | spec on [/roadmap#certificates](/roadmap) · paths and local progress exist; slice = an SVG certificate printed "self-issued, unverifiable" until a signed credential is possible; refusal = a badge that looks verified when it is not |
 | 500 | Desktop helper app | spec on [/roadmap#desktop-helper](/roadmap) · CLI and snippets already ship; slice = tray app wrapping the CLI for clipboard URLs; cost = signing on three platforms; refusal = bundling a catalog index that goes stale |
 | 501 | Open book | [/metrics](/metrics) + [/quality/craft](/quality/craft) + [/brand/notes](/brand/notes) + [/brand/launch](/brand/launch) · the playbook itself published with its numbers, plus the honest gap: the weekly measurement series is still open |
+| 502 | Site audit repair — headings | every page carries exactly one `<h1>`: the demo scene rendered inside component previews was an `<h1>`, which turned a template page into an eleven-heading document; it is a styled `<div>` now, and the harness fails if any sitemap page has 0 or 2+ |
+| 503 | Site audit repair — dead links | three links inside guide bodies pointed at routes that do not exist (`/learn/print-inspired-editorial`, `/prompts/easing-cheatsheet-deep-dive`, `/learn/motion-spec-only`); retargeted to the component/prompt pages that do exist, and the harness now fetches all 340 distinct internal links |
+| 504 | Site audit repair — metadata window | descriptions were clamped at 300 characters, which a search result truncates anyway: the clamp is 200 with a word-boundary ellipsis, two over-long prompt titles were shortened, and `/community` (no canonical — it inherited the homepage) now declares its own |
+| 505 | Share cards for every family | `/og/<slug>` covers prompts, guides and backgrounds in addition to components, each card built from that record's own numbers; a page without a bespoke card inherits the site card at `/og/default`, so no page unfurls as an empty frame |
+| 506 | Regression gates for the above | `check:exports` walks the sitemap (279 pages: status, single h1, own canonical, og:image, description length) and fetches every distinct internal link, plus one card check per family — the audit that found these problems is now the check that prevents them |
 
 ---
 

@@ -211,6 +211,82 @@ function parseCheck(label, source) {
   }
   ok("no forbidden schema type is emitted anywhere", offenders.length === 0, offenders.join(", "));
 
+  /* ---------- site-wide page audit (added after the 500-item programme) ---------- */
+
+  // Walks the sitemap: every page must answer 200 with one h1, its own
+  // canonical, an og:image and a description that fits a search result. Then it
+  // fetches every distinct internal link found on those pages. The audit that
+  // produced these rules found 3 dead links, 61 pages without a card and 130
+  // pages claiming the homepage as canonical; the checks exist so that cannot
+  // come back.
+  const decodeEntities = (s) =>
+    s.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'");
+  const sitemapXml = await (await fetch(`${base}/sitemap.xml`)).text();
+  const sitemapUrls = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  const ORIGIN = "https://motifui.dev";
+
+  const chunks = [];
+  for (let i = 0; i < sitemapUrls.length; i += 8) chunks.push(sitemapUrls.slice(i, i + 8));
+  const pageIssues = [];
+  const linkSet = new Set();
+  for (const chunk of chunks) {
+    const pages = await Promise.all(chunk.map(async (absUrl) => {
+      const route = absUrl.replace(ORIGIN, "") || "/";
+      const res = await fetch(base + route);
+      return { route, absUrl, status: res.status, html: res.status === 200 ? await res.text() : "" };
+    }));
+    for (const page of pages) {
+      if (page.status !== 200) {
+        pageIssues.push(`${page.status} ${page.route}`);
+        continue;
+      }
+      const html = page.html;
+      const head = html.split('<script>self.__next_f')[0];
+      const canonical = (html.match(/<link rel="canonical" href="([^"]*)"/) || [])[1] || "";
+      const desc = decodeEntities((html.match(/<meta name="description" content="([^"]*)"/) || [])[1] || "");
+      const h1s = (head.match(/<h1[\s>]/g) || []).length;
+      if (canonical !== page.absUrl) pageIssues.push(`canonical ${page.route} -> ${canonical || "none"}`);
+      if ((head.match(/<h1[\s>]/g) || []).length !== 1) pageIssues.push(`h1 x${h1s} ${page.route}`);
+      if (!/<meta property="og:image"/.test(html)) pageIssues.push(`no og:image ${page.route}`);
+      if (!desc) pageIssues.push(`no description ${page.route}`);
+      else if (desc.length > 200) pageIssues.push(`description ${desc.length} chars ${page.route}`);
+      for (const m of html.matchAll(/href="(\/[^"#?]*)(?:[#?][^"]*)?"/g)) {
+        const link = m[1].replace(/\/$/, "") || "/";
+        if (!link.startsWith("/api/") && !link.startsWith("/_next")) linkSet.add(link);
+      }
+    }
+  }
+  ok(
+    `every sitemap page has one h1, its own canonical, a card and a fitting description`,
+    sitemapUrls.length > 250 && pageIssues.length === 0,
+    `${sitemapUrls.length} pages${pageIssues.length ? ` · ${pageIssues.length} issues: ${pageIssues.slice(0, 5).join(" | ")}` : ""}`,
+  );
+
+  const linkList = [...linkSet];
+  const linkChunks = [];
+  for (let i = 0; i < linkList.length; i += 10) linkChunks.push(linkList.slice(i, i + 10));
+  const brokenLinks = [];
+  for (const chunk of linkChunks) {
+    const results = await Promise.all(chunk.map(async (link) => ({ link, status: (await fetch(base + link, { redirect: "manual" })).status })));
+    for (const r of results) if (r.status !== 200) brokenLinks.push(`${r.status} ${r.link}`);
+  }
+  ok(
+    "no internal link on any page is broken",
+    brokenLinks.length === 0,
+    `${linkSet.size} distinct links${brokenLinks.length ? ` · ${brokenLinks.slice(0, 6).join(" | ")}` : ""}`,
+  );
+
+  for (const [label, slug] of [
+    ["site default", "default"],
+    ["component", "halo-button"],
+    ["guide", "easing-cheatsheet-deep-dive"],
+    ["prompt", "translation-agency-pairs"],
+    ["background", "ink-aurora"],
+  ]) {
+    const card = await fetch(`${base}/og/${slug}`);
+    ok(`/og/<slug> renders the ${label} card`, card.status === 200 && (card.headers.get("content-type") || "").includes("image/png"), String(card.status));
+  }
+
   /* ---------- section 21 north-star bets ---------- */
 
   const roadmap = await get("/roadmap");

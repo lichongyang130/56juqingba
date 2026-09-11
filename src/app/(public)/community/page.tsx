@@ -6,9 +6,9 @@ import { CHALLENGES, COLLECTIONS, MODERATION_SEED, ROSTER, SPOTLIGHTS } from "@/
 
 export const metadata: Metadata = {
   title: "Community — Motif UI",
-  alternates: { types: { "application/rss+xml": "/community/rss.xml" } },
+  alternates: { canonical: "/community", types: { "application/rss+xml": "/community/rss.xml" } },
   description:
-    "Motif's community surfaces: saved lists, curated collections, community prompt re-runs, the copy leaderboard, maker pages and the remix submit flow — each labelled with exactly what is live and what is a browser-local demo.",
+    "Saved lists, curated collections, prompt re-runs, the copy leaderboard, maker pages and the remix flow — each labelled with what is live and what is browser-local.",
 };
 
 export default function CommunityHub() {
