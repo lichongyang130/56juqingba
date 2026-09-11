@@ -40,6 +40,11 @@ export const A11Y_FIXES = [
     pages: 4,
   },
   {
+    commit: "batch 83",
+    what: "a role=\"switch\" span in the admin settings demos and two demo scenes whose aria-controls pointed at a panel that only existed while open",
+    pages: 7,
+  },
+  {
     commit: "batch 82",
     what: "this pass counted a stale document from an earlier build as a page, and reported a missing lang attribute against a changelog slug that no longer existed",
     pages: 0,

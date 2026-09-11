@@ -398,6 +398,25 @@ function parseCheck(label, source) {
       `report ${report.summary.htmlFiles} vs pass ${documents} · fallbacks measured ${report.summary.fallbackDocuments}, present now ${fallbacks}`,
     );
 
+    // The disk pass covers everything the build prerendered. Pages rendered on
+    // demand have no HTML on disk between requests, so the same rules run again
+    // over the sitemap (plus the four server-rendered pages the sitemap cannot
+    // list) against the running server.
+    let servedOut = "";
+    let servedOk = true;
+    try {
+      servedOut = execFileSync("node", ["--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", "scripts/a11y-scan.mts", "--served", `--base=${base}`], { encoding: "utf8" });
+    } catch (err) {
+      servedOk = false;
+      servedOut = `${err.stdout ?? ""}${err.stderr ?? ""}`;
+    }
+    const servedDocs = Number((servedOut.match(/page documents: (\d+)/) || [])[1] ?? NaN);
+    ok(
+      "the same pass over the served pages finds nothing either",
+      servedOk && servedOut.includes("no findings") && servedDocs > 250,
+      `${servedDocs} served documents`,
+    );
+
     const ariaPage = await get("/quality/aria");
     ok(
       "/quality/aria documents the pass and its findings",

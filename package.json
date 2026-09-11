@@ -15,6 +15,7 @@
     "measure": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/measure-build.mjs",
     "check:exports": "node scripts/check-exports.mjs",
     "check:a11y": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/a11y-scan.mts",
+    "check:a11y:served": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/a11y-scan.mts --served",
     "check:demos": "node scripts/check-demos.mjs"
   },
   "dependencies": {

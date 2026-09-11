@@ -93,9 +93,11 @@ export default function AriaAuditPage() {
           ))}
         </ul>
         <p className="mt-4 text-[10px] leading-relaxed text-ink-faint">
-          A control that is inside a <span className="font-mono">aria-hidden</span> subtree is exempt (decorative mock controls are not interactive
-          for anybody), and a control with an explicit <span className="font-mono">&lt;label for&gt;</span> is satisfied by that association — the
-          pass implements the rule rather than a count of tags. This page reads the directory live, so the{" "}
+          A control that is inside a <span className="font-mono">aria-hidden</span> subtree is exempt from the name rules (decorative mock controls are
+          not interactive for anybody) — but being <em>focusable</em> inside one is a finding of its own: hidden from the accessibility tree and still in
+          the tab order fails both ways. A control with an explicit <span className="font-mono">&lt;label for&gt;</span> is satisfied by that
+          association, and a control inside a closed popup is exempt from “cannot take focus”, because a <span className="font-mono">hidden</span>{" "}
+          subtree is not rendered at all. The pass implements the rules, not a count of tags. This page reads the directory live, so the{" "}
           {fallbacks.length} document{fallbacks.length === 1 ? "" : "s"} it skipped here
           {fallbacks.length === 1 ? "is" : "are"} whatever Next had cached by the time you asked: {fallbacks.map((f) => f.file).join(", ") || "none right now"}.
           The measurement applies the same rule at build time and publishes the count it skipped, and probing a URL that does not exist is enough to add
@@ -158,6 +160,11 @@ export default function AriaAuditPage() {
             other people&apos;s pages and are exempt from the host document&apos;s outline by design.
           </li>
         </ul>
+        <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+          The rules also run a second time over HTTP. <span className="font-mono">npm run check:a11y:served</span> fetches every page the sitemap
+          lists — 283 URLs in this build, including the 133 component pages rendered on demand, which have no HTML on disk to scan — reports any URL
+          that did not answer instead of skipping it, and fails on the same findings. The counts above come from the disk pass.
+        </p>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
           The export harness and <span className="font-mono">npm run check:a11y</span> run the same rules from a separate process over the same
           files, and fail on any finding — so this page cannot report green while the served HTML is not. The three counted different documents

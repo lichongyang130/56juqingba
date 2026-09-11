@@ -1959,14 +1959,17 @@ function ComboBox() {
           <svg className="pointer-events-none absolute right-3 top-1/2 h-3 w-3 -translate-y-1/2 text-ink-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
             <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          {open && (
-            <ul
-              id="cb-list"
-              role="listbox"
-              aria-label="Components"
-              className="absolute inset-x-0 top-[calc(100%+6px)] z-10 overflow-hidden rounded-xl border border-white/10 bg-[#0d0f17] py-1 shadow-2xl"
-              style={{ animation: "mf-growin .14s ease-out both" }}
-            >
+          {/* The listbox stays in the document and is hidden when closed: an
+              aria-controls that points at an element which is not there is a
+              reference to nothing, and the markup pass fails on one. */}
+          <ul
+            id="cb-list"
+            role="listbox"
+            aria-label="Components"
+            hidden={!open}
+            className="absolute inset-x-0 top-[calc(100%+6px)] z-10 overflow-hidden rounded-xl border border-white/10 bg-[#0d0f17] py-1 shadow-2xl"
+            style={{ animation: "mf-growin .14s ease-out both" }}
+          >
               {list.length === 0 && <li className="px-3.5 py-3 text-xs text-ink-faint">No matches — try “aurora” or “card”.</li>}
               {list.map((o, i) => (
                 <li
@@ -1985,9 +1988,8 @@ function ComboBox() {
                   </span>
                   {sel === o.v && <span className="text-violet-300">✓</span>}
                 </li>
-              ))}
-            </ul>
-          )}
+            ))}
+          </ul>
         </div>
         <p className="mt-2 text-[11px] text-ink-faint">↑↓ move · ↵ choose · esc close · typed filtering with a no-match row</p>
       </div>
@@ -3168,17 +3170,19 @@ function DisclosureList() {
                     <path d="M12 5v14M5 12h14" />
                   </svg>
                 </button>
-                {open && (
-                  <div
-                    id={`faq-panel-${i}`}
-                    role="region"
-                    aria-label={row.q}
-                    className="px-4 pb-4 text-[12px] leading-relaxed text-ink-dim"
-                    style={{ animation: "mf-growin .16s ease-out both" }}
-                  >
-                    {row.a}
-                  </div>
-                )}
+                {/* Mounted and hidden rather than unmounted: the button's
+                    aria-controls has to point at an element that exists in
+                    both states, which is what a screen reader reads first. */}
+                <div
+                  id={`faq-panel-${i}`}
+                  role="region"
+                  aria-label={row.q}
+                  hidden={!open}
+                  className="px-4 pb-4 text-[12px] leading-relaxed text-ink-dim"
+                  style={{ animation: "mf-growin .16s ease-out both" }}
+                >
+                  {row.a}
+                </div>
               </div>
             );
           })}

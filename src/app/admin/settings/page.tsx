@@ -74,19 +74,32 @@ export default function AdminSettings() {
                 <div className="text-sm font-semibold">{f.label}</div>
                 <div className="font-mono text-[11px] text-ink-faint">{f.k}</div>
               </div>
-              <span
-                className={`flex h-6 w-11 cursor-pointer items-center rounded-full border px-0.5 transition-colors ${
-                  f.on || (f.k === "stripe_checkout" ? promoMode : false)
-                    ? "justify-end border-mint/40 bg-mint/50"
-                    : "justify-start border-white/15 bg-white/8"
-                }`}
-                role="switch" aria-checked={f.on}
-                onClick={() => {
-                  if (f.k === "stripe_checkout") setPromoMode((v) => !v);
-                }}
-              >
-              <span className="h-[18px] w-[18px] rounded-full bg-white shadow" />
-              </span>
+              {/* A switch has to be a control, not a span with a role: a span
+                  cannot be reached by Tab, so role="switch" on one is a promise
+                  the markup cannot keep. The one flag this demo actually wires
+                  (the checkout promo) is operable; the rest are shown disabled
+                  and say so. aria-checked reads the same value the colour does,
+                  so the announcement and the picture agree. */}
+              {(() => {
+                const wired = f.k === "stripe_checkout";
+                const on = wired ? promoMode : f.on;
+                return (
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={on}
+                    aria-label={f.label}
+                    disabled={!wired}
+                    title={wired ? "Toggles the promo banner in this demo" : "Not wired in this demo build — shown for layout"}
+                    onClick={() => setPromoMode((v) => !v)}
+                    className={`flex h-6 w-11 shrink-0 items-center rounded-full border px-0.5 transition-colors ${
+                      on ? "justify-end border-mint/40 bg-mint/50" : "justify-start border-white/15 bg-white/8"
+                    } ${wired ? "cursor-pointer" : "cursor-not-allowed opacity-60"}`}
+                  >
+                    <span className="h-[18px] w-[18px] rounded-full bg-white shadow" />
+                  </button>
+                );
+              })()}
             </div>
           ))}
         </div>
