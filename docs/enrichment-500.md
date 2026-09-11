@@ -15,7 +15,7 @@ the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet c
 harness reads the `ledger-extra-rows` marker above and allows that difference, which means
 the table ends at #501 on the day the headline reads 500 / 500._
 
-## Progress — 476 / 500 shipped (batches 1–69, in order) · Sections 1–18 complete ✅ · Section 19 in progress (11/15)
+## Progress — 480 / 500 shipped (batches 1–69, in order) · Sections 1–19 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -496,6 +496,10 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 475 | Multilingual title test | `/es` · the translated title/description now declares its relationship with the English home page both ways (`hreflang` en/es/x-default from each side); slugs stay English because one translated page is not a parallel site |
 | 476 | Comparable-free positioning | [/compare](/compare) · five approaches appraised on merit — generic kit, template marketplace, motion library, prompt gallery, playground — with what each is better at before what it costs; no competitor named, and every Motif claim links to the page that proves it |
 | 477 | Quality bar — audit scores published | [/quality](/quality) · Section 11's missing row: every asset's accessibility score is banded and published with the catalog distribution (92–100 range) and a per-asset audit sheet; the panel names what the score checks and what it does not — it is an automated audit of the source, not an axe-core run in a browser |
+| 478 | Learn as the SEO engine | [/learn/questions](/learn/questions) · 18 curated search-shaped questions, each paired with the guide that answers it and the component that proves it; the pairs are validated at build time and the FAQ markup is generated from the same rows, so a rename cannot leave a dead question |
+| 479 | Original-code bait | [/quality/craft](/quality/craft) · three verbatim excerpts from the repo (the global reduced-motion rule and why it uses 0.001ms, the FLIP measure that reads offsetTop instead of getBoundingClientRect, the rAF guard that stops a loop outliving its component) with the habits counted over all 133 assets |
+| 480 | Speed as SEO | [/quality/speed](/quality/speed) · the measured story — KB of JS/CSS/fonts read from docs/build-report.json, the split that took a no-demo route from 743.1 to 429.5 KB, the recorded changelog deltas, and an explicit block naming what is not claimed: no Lighthouse run, no field metrics, no comparison |
+| 481 | OG images per asset | `/og/<slug>` · 133 cards prerendered at build time with next/og from each asset's own record (kind, size, dependencies, a11y, quality, copies, licence); the route is a static handler rather than the file convention because the convention's URL carries a build hash |
 
 ---
 
@@ -1130,20 +1134,20 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 19. SEO & growth — 15 levers — 11/15 shipped, in progress
+## 19. SEO & growth — 15 levers — complete (15/15 shipped ✅)
 
 - **Per-asset meta**: unique titles/descriptions from the detail data (already templated — enrich). ✅
 - **FAQ schema on detail pages**: structured data for "what is a X component". ✅
-- **Learn as the SEO engine**: target "how to …" long-tail queries with the essays.
+- **Learn as the SEO engine**: target "how to …" long-tail queries with the essays. ✅
 - **Comparable-free positioning pages**: "Motif vs. generic UI kits" written on merit, no competitor copying. ✅
 - **Prompt glossary hub**: terms like "fidelity score", "run log", "concept render" explained and linked. ✅
 - **Changelog as content**: each entry is a small publishable news item. ✅
 - **Site search indexing**: make sure /search results pages are noindex while catalog pages index. ✅
 - **Sitemap by content type**: components, prompts, essays, backgrounds in one clean sitemap. ✅
-- **OG images per asset**: auto-generated poster cards for social shares (like prompt posters).
-- **Original-code bait**: every snippet page shows enough craft to earn links.
+- **OG images per asset**: auto-generated poster cards for social shares (like prompt posters). ✅
+- **Original-code bait**: every snippet page shows enough craft to earn links. ✅
 - **Internal-link spine**: every asset links 2 essays and 1 prompt, forming a crawlable graph. ✅
-- **Speed as SEO**: publish the Lighthouse story and let performance earn ranking.
+- **Speed as SEO**: publish the Lighthouse story and let performance earn ranking. ✅
 - **Multilingual titles**: page slugs stay English; add one translated title test later. ✅
 - **Evergreen refresh dates**: visible "updated" stamps (learn articles have them — reuse site-wide). ✅
 - **Honest schema**: avoid product/aggregate markup until the data truly exists. ✅

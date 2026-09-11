@@ -156,6 +156,23 @@ function parseCheck(label, source) {
     /hreflang="en"/i.test(esPage.text) && /hreflang="es"/i.test(esPage.text) && /hreflang="es"/i.test(enHome.text),
     `es ${(esPage.text.match(/hreflang="[a-z-]+"/gi) || []).length} tags, home ${(enHome.text.match(/hreflang="[a-z-]+"/gi) || []).length}`,
   );
+  const questions = await get("/learn/questions");
+  ok(
+    "/learn/questions pairs every question with an essay and an asset",
+    questions.status === 200 && (questions.text.match(/Read the guide/g) || []).length >= 18 && questions.text.includes("How do I stop a hero section from feeling static?"),
+    `${(questions.text.match(/Read the guide/g) || []).length} mentions of the guide link`,
+  );
+  const craft = await get("/quality/craft");
+  ok("/quality/craft quotes the code it praises", craft.status === 200 && craft.text.includes("prefers-reduced-motion") && craft.text.includes("Zero-dependency assets"));
+  const speed = await get("/quality/speed");
+  ok(
+    "/quality/speed reads its numbers and names what it does not claim",
+    speed.status === 200 && speed.text.includes("No Lighthouse score") && /\d+(\d)?(\.\d)? KB/.test(speed.text),
+    String(speed.status),
+  );
+  const og = await get("/og/halo-button");
+  ok("/og/<slug> serves a generated PNG", og.status === 200 && og.type.includes("image/png"), `${og.status} ${og.type}`);
+
   const compare = await get("/compare");
   ok(
     "/compare appraises five approaches",

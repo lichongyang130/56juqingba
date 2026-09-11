@@ -62,8 +62,17 @@ export function assetMetadata(asset: ComponentAsset): Metadata {
       url: url(path),
       type: "article",
       siteName: SITE.name,
+      // #481 — the generated card. Next does not attach a file-based OG image
+      // once metadata declares its own openGraph block, so the path is named
+      // here; the image itself is rendered from the asset record.
+      images: [{ url: `/og/${asset.slug}`, width: 1200, height: 630, alt: `${asset.title} — ${asset.kind} component card` }],
     },
-    twitter: { card: "summary_large_image", title: asset.title, description },
+    twitter: {
+      card: "summary_large_image",
+      title: asset.title,
+      description,
+      images: [`/og/${asset.slug}`],
+    },
   };
 }
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { COMPONENTS } from "@/lib/data";
 import { learnArticleOf } from "@/lib/learn";
+import { questionFor } from "@/lib/queries";
 import type { Asset } from "@/lib/types";
 
 /* essay → practice-asset matching: overlap article tags, then lesson keywords */
@@ -65,6 +66,19 @@ export default function LearnArticleView({ slug }: { slug: string }) {
           {article.title}
         </h1>
         <p className="mt-4 text-lg leading-relaxed text-ink-dim">{article.deck}</p>
+        {/* #478 — the essay states the question it answers, so a reader who
+            arrived from a search can confirm they are in the right place. */}
+        {(() => {
+          const asks = questionFor(article.slug);
+          if (!asks) return null;
+          return (
+            <p className="mt-4 rounded-2xl border border-emerald-300/25 bg-emerald-400/[.05] px-4 py-3 text-[12px] leading-relaxed text-emerald-100">
+              <span className="font-bold uppercase tracking-widest text-[10px] text-emerald-300">Answers</span>{" "}
+              <span className="font-semibold">{asks.question}</span>
+              <span className="mt-1 block text-[11px] text-ink-dim">{asks.because}</span>
+            </p>
+          );
+        })()}
         <div className="mt-5 flex flex-wrap items-center gap-2 text-xs text-ink-faint">
           <span className={`chip ${levelColor}`}>{article.level}</span>
           <span className="chip">{article.minutes} min read</span>
