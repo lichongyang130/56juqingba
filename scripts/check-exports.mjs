@@ -564,6 +564,8 @@ function parseCheck(label, source) {
   // layout, which no per-page rule can see.
   const pageTitles = [];
   const pageDescs = [];
+  // 521 — the preview card, read per page: og:url, og:title and the image URL.
+  const cards = [];
   for (const chunk of chunks) {
     const pages = await Promise.all(chunk.map(async (absUrl) => {
       const route = absUrl.replace(ORIGIN, "") || "/";
@@ -583,6 +585,13 @@ function parseCheck(label, source) {
       const h1s = (head.match(/<h1[\s>]/g) || []).length;
       pageTitles.push({ route: page.route, title });
       pageDescs.push({ route: page.route, desc });
+      cards.push({
+        route: page.route,
+        canonical,
+        ogUrl: decodeEntities((html.match(/<meta property="og:url" content="([^"]*)"/) || [])[1] || ""),
+        ogTitle: decodeEntities((html.match(/<meta property="og:title" content="([^"]*)"/) || [])[1] || ""),
+        ogImage: decodeEntities((html.match(/<meta property="og:image" content="([^"]*)"/) || [])[1] || ""),
+      });
       if (canonical !== page.absUrl) pageIssues.push(`canonical ${page.route} -> ${canonical || "none"}`);
       if ((head.match(/<h1[\s>]/g) || []).length !== 1) pageIssues.push(`h1 x${h1s} ${page.route}`);
       if (!/<meta property="og:image"/.test(html)) pageIssues.push(`no og:image ${page.route}`);
@@ -705,6 +714,46 @@ function parseCheck(label, source) {
   ok("no title is longer than 75 characters", longTitles.length === 0, longTitles.slice(0, 5).join(" | ") || "all within the window");
   ok("no two pages share a title", dupes(pageTitles, "title").length === 0, dupes(pageTitles, "title").slice(0, 4).join(" | ") || "all distinct");
   ok("no two pages share a description", dupes(pageDescs, "desc").length === 0, dupes(pageDescs, "desc").slice(0, 4).join(" | ") || "all distinct");
+
+  // The preview card used to be inherited whole: 101 pages advertised the
+  // homepage in og:url and the tagline in og:title, which no per-page rule can
+  // see (each of those pages had a canonical of its own and a description of
+  // its own). The layout no longer sets those three fields, and these two
+  // checks hold the line: a card that names a URL must name this page's, and a
+  // card that borrows the site tagline must be the homepage.
+  const siteSrc = fs.readFileSync("src/lib/site.ts", "utf8");
+  const siteName = (siteSrc.match(/name:\s*"([^"]+)"/) || [])[1];
+  const siteTagline = (siteSrc.match(/tagline:\s*"([^"]+)"/) || [])[1];
+  const DEFAULT_TITLE = `${siteName} — ${siteTagline}`;
+  const wrongCardUrl = cards.filter((c) => c.ogUrl && c.canonical && c.ogUrl.replace(/\/$/, "") !== c.canonical.replace(/\/$/, ""));
+  const borrowedTitle = cards.filter((c) => c.ogTitle === DEFAULT_TITLE && c.route !== "/");
+  ok(
+    "no page advertises another page's URL in its card",
+    siteName === "Motif UI" && wrongCardUrl.length === 0,
+    `${cards.filter((c) => c.ogUrl).length} cards name their own URL${wrongCardUrl.length ? ` · ${wrongCardUrl.length} wrong: ${wrongCardUrl.slice(0, 4).map((c) => c.route).join(", ")}` : ""}`,
+  );
+  ok(
+    "no page borrows the site tagline as its card title",
+    borrowedTitle.length === 0,
+    `${cards.filter((c) => c.ogTitle).length} cards carry a title${borrowedTitle.length ? ` · ${borrowedTitle.slice(0, 4).map((c) => c.route).join(", ")}` : ""}`,
+  );
+  // The image is the one part of the card every page inherits, so it has to
+  // resolve wherever it is inherited. Sampled across the walk: the site card,
+  // the first asset card, and a spread of the rest.
+  const imageUrls = [...new Set(cards.map((c) => c.ogImage).filter(Boolean))];
+  const cardSample = [imageUrls[0], imageUrls[1], imageUrls[Math.floor(imageUrls.length / 2)], imageUrls[imageUrls.length - 1]].filter(Boolean);
+  const imageIssues = [];
+  for (const src of cardSample) {
+    // The tag is absolute (https://motifui.dev/og/…) and this harness has no
+    // egress, so the check asks the same path on the server it is testing.
+    const res = await fetchRetry(base + src.replace(/^https?:\/\/[^/]+/, ""));
+    if (res.status !== 200 || !(res.headers.get("content-type") || "").startsWith("image/")) imageIssues.push(`${res.status} ${src}`);
+  }
+  ok(
+    "every sampled card image resolves to an image",
+    cardSample.length >= 3 && imageIssues.length === 0,
+    `${imageUrls.length} distinct images · checked ${cardSample.length}${imageIssues.length ? ` · ${imageIssues.join(", ")}` : ""}`,
+  );
 
   const linkList = [...linkSet];
   const linkChunks = [];

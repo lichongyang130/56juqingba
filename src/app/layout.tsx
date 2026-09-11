@@ -56,11 +56,16 @@ export const metadata: Metadata = {
     "css backgrounds", "easing lab", "react tailwind", "web design resources",
   ],
   openGraph: {
-    title: `${SITE.name} — ${SITE.tagline}`,
-    description: SITE.description,
+    // 521 — deliberately no title, description or url here. A page that did not
+    // declare its own openGraph inherited all three, so 101 pages shared a card
+    // that read "Motif UI — Copy less. Ship more." and linked to the homepage
+    // while their own canonical pointed at themselves. Type, site name and the
+    // fallback image are safe to inherit because they are not page-specific,
+    // and a missing og:url (platforms fall back to the canonical) beats a wrong
+    // one. The audit behind this found every one of the 101 while checking the
+    // 382 sitemap pages against their own metadata.
     type: "website",
     siteName: SITE.name,
-    url: SITE_URL,
     // #506 — the site card. Any page without a bespoke card inherits this one,
     // so a link preview is never an empty frame. Asset, prompt, guide and
     // background pages override it with their own generated card.
