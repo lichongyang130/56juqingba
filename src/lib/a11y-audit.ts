@@ -12,10 +12,11 @@
 import { COMPONENTS } from "./data";
 import { motionAudit } from "./motion-audit";
 
-// 523 — the reduced-motion item below claimed an automated half that did not
-// exist. It has one now, and it is the honest one: a count of the scenes that
-// animate and the scenes that branch on the preference, taken from the module
-// `check:demos` reads as well.
+// 523/525 — the reduced-motion item below claimed an automated half that did
+// not exist. It has one now, and it is the honest one: motion-audit.ts splits
+// the scenes that move into the ones CSS can stop (the stylesheet collapses
+// them site-wide) and the ones JavaScript drives, which must ask. Both the page
+// and `check:demos` read this count, so neither can drift.
 const motion = motionAudit();
 
 /** What the first run of this pass found, and what was changed. Kept in the
@@ -130,8 +131,11 @@ export const MANUAL_CHECKS: ManualCheck[] = [
     how:
       "Turn on the system preference and walk the animated half of the catalog. The part that moves has to stop or become instant; a scene that only slows down has not honoured it.",
     fails: "animation that keeps running, or content that disappears because it only ever appeared through animation.",
-    automated: `a count, not a pass: ${motion.guarded} of the ${motion.moving} scenes that animate name the preference, and check:demos fails if that number falls — the other ${motion.moving - motion.guarded} are still only checkable by hand`, 
-    where: [{ href: "/quality" }],
+    automated:
+      `every scene that drives motion from JavaScript names the preference — ${motion.jsGuarded} of ${motion.js.length}, ` +
+      `checked by check:demos — and the other ${motion.css.length} scenes move only through CSS, which the stylesheet ` +
+      `collapses site-wide (${motion.moving} scenes move in total)`.replace(/\s+/g, " "),
+    where: [{ href: "/components/orbit-deck" }, { href: "/components/pulse-loader" }, { href: "/components/text-cycle" }],
   },
   {
     title: "Zoom to 200% and use only touch-sized targets",

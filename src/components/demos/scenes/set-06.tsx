@@ -6,6 +6,7 @@
 // holds it (plus the shared kit), not the other 195 scenes. The registry in
 // ../Demo.tsx is the only thing that knows where each key lives.
 import { useEffect, useRef, useState } from "react";
+import { useSceneMotion } from "../scene-kit";
 import { COMPONENTS } from "@/lib/data";
 
 const FAQ_PAIRS = [
@@ -339,9 +340,13 @@ const SFR_ROWS = [
 export function SplitFeatureRows() {
   const ref = useRef<HTMLDivElement>(null);
   const [seen, setSeen] = useState(false);
+  // #31 — rows rise in on an observer, 140ms apart. Reduced: they are simply
+  // in place when the panel is on screen, with no delay and no fade.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (reduced) return;
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((en) => {
@@ -352,12 +357,13 @@ export function SplitFeatureRows() {
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [reduced]);
+  const shown = reduced || seen;
   return (
     <div className="flex h-full w-full flex-col bg-[#0a0c13]">
       <div className="flex items-center justify-between border-b border-white/6 px-4 py-2">
         <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-ink-faint">feature rows — scroll for the fade</span>
-        <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] text-ink-faint">{seen ? "revealed" : "waiting…"}</span>
+        <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] text-ink-faint">{shown ? "revealed" : "waiting…"}</span>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
         <div className="mx-auto max-w-sm space-y-6">
@@ -367,7 +373,7 @@ export function SplitFeatureRows() {
               <article
                 key={r.k}
                 className={`grid grid-cols-[110px_minmax(0,1fr)] gap-3 ${flip ? "direction-rtl" : ""}`}
-                style={{ animation: seen ? `mf-rise .5s ease-out ${i * 140}ms both` : undefined, opacity: seen ? undefined : 0 }}
+                style={{ animation: seen ? `mf-rise .5s ease-out ${reduced ? 0 : i * 140}ms both` : undefined, opacity: seen ? undefined : 0 }}
               >
                 <div
                   className="group relative flex h-28 items-center justify-center overflow-hidden rounded-xl border border-white/10"
@@ -622,10 +628,14 @@ const MF_CITIES = [
 
 export function MapFreeLocalBand() {
   const [now, setNow] = useState(() => new Date());
+  // #32 — a 30s clock for the "last updated" stamp. Reduced: it renders once
+  // on mount and stops, so the time is still true and the screen stops moving.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
+    if (reduced) return;
     const t = window.setInterval(() => setNow(new Date()), 30000);
     return () => window.clearInterval(t);
-  }, []);
+  }, [reduced]);
   const time = (tz: string) =>
     new Intl.DateTimeFormat("en", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(now);
   return (
@@ -976,10 +986,14 @@ export function TemplateWaitlist() {
     return d;
   });
   const [left, setLeft] = useState(() => target.getTime() - Date.now());
+  // #33 — the countdown keeps ticking under reduced motion: a number that
+  // stops counting down is wrong information, not calmer information. What the
+  // scene drops is the per-second flip, which it applies itself below.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
     const t = window.setInterval(() => setLeft(target.getTime() - Date.now()), 1000);
     return () => window.clearInterval(t);
-  }, [target]);
+  }, [target, reduced]);
   const seg = (ms: number) => Math.max(0, Math.floor(ms / 1000));
   const days = Math.floor(seg(left) / 86400);
   const hrs = Math.floor((seg(left) % 86400) / 3600);

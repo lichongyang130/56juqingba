@@ -6,7 +6,7 @@
 // holds it (plus the shared kit), not the other 191 scenes. The registry in
 // ../Demo.tsx is the only thing that knows where each key lives.
 import { useEffect, useRef, useState } from "react";
-import type { DemoProps } from "../scene-kit";
+import { useSceneMotion, type DemoProps } from "../scene-kit";
 import { COMPONENTS } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
 
@@ -180,11 +180,14 @@ export function QuantityStepper({ step = "1" }: DemoProps) {
   const [qty, setQty] = useState(3);
   const [hold, setHold] = useState<1 | -1 | null>(null);
   const clamp = (n: number) => Math.max(1, Math.min(24, n));
+  // #25 — press-and-hold repeats on a 110ms interval. Reduced: one step per
+  // press, no repeat while the button is held, which is also easier to control.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
-    if (hold === null) return;
+    if (hold === null || reduced) return;
     const t = setInterval(() => setQty((p) => clamp(p + hold * st)), 110);
     return () => clearInterval(t);
-  }, [hold, st]);
+  }, [hold, st, reduced]);
   const stepBtn = (d: 1 | -1) => (
     <button
       type="button"
@@ -412,8 +415,13 @@ export function FileDropZone() {
   const [pct, setPct] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const started = useRef(false);
+  // #26 — the upload progress bar advances on a 90ms interval. Reduced: the
+  // bar goes to done in one step, because the crawl is the animation.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
-    if (phase !== "busy") return;
+    // Reduced motion never reaches "busy": `accept` decides that, so this effect
+    // only ever runs for the animated path.
+    if (phase !== "busy" || reduced) return;
     started.current = true;
     const t = setInterval(() => {
       setPct((p) => {
@@ -427,13 +435,17 @@ export function FileDropZone() {
       });
     }, 90);
     return () => clearInterval(t);
-  }, [phase]);
+  }, [phase, reduced]);
   const accept = (f?: File | null) => {
     const name = f?.name ?? "motif-build-spec.json";
     const size = f ? `${(f.size / 1024 / 1024).toFixed(1)} MB` : "1.2 MB";
     setFile({ name, size });
     setPct(0);
-    setPhase("busy");
+    // #26 — the crawl is the animation, so under reduced motion the upload is
+    // simply complete: decided here, where the work starts, rather than by an
+    // effect correcting the state a frame later.
+    setPhase(reduced ? "done" : "busy");
+    if (reduced) setPct(100);
   };
   const reset = () => { setPhase("idle"); setFile(null); setPct(0); started.current = false; };
   return (
@@ -831,12 +843,15 @@ const TOC_PARAS = [
 
 export function TocSpine() {
   const scroller = useRef<HTMLDivElement>(null);
+  // #27 — a JS `behavior: "smooth"` overrides the stylesheet's
+  // `scroll-behavior: auto`, so the jump has to read the preference itself.
+  const { reduced } = useSceneMotion();
   const [active, setActive] = useState("s-intro");
   const jump = (id: string) => {
     const el = scroller.current;
     if (!el) return;
     const target = el.querySelector<HTMLElement>(`[data-sec="${id}"]`);
-    if (target) el.scrollTo({ top: target.offsetTop - el.offsetTop - 8, behavior: "smooth" });
+    if (target) el.scrollTo({ top: target.offsetTop - el.offsetTop - 8, behavior: reduced ? "auto" : "smooth" });
   };
   const onScroll = () => {
     const el = scroller.current;
@@ -963,12 +978,15 @@ const STICKY_SECS = [
 
 export function StickySubNav() {
   const scroller = useRef<HTMLDivElement>(null);
+  // #27 — a JS `behavior: "smooth"` overrides the stylesheet's
+  // `scroll-behavior: auto`, so the jump has to read the preference itself.
+  const { reduced } = useSceneMotion();
   const [active, setActive] = useState("st-hero");
   const jump = (id: string) => {
     const el = scroller.current;
     if (!el) return;
     const target = el.querySelector<HTMLElement>(`[data-sec="${id}"]`);
-    if (target) el.scrollTo({ top: target.offsetTop - el.offsetTop - 44, behavior: "smooth" });
+    if (target) el.scrollTo({ top: target.offsetTop - el.offsetTop - 44, behavior: reduced ? "auto" : "smooth" });
   };
   const onScroll = () => {
     const el = scroller.current;
@@ -1028,13 +1046,16 @@ export function StickySubNav() {
 
 export function BackToTop() {
   const scroller = useRef<HTMLDivElement>(null);
+  // #27 — a JS `behavior: "smooth"` overrides the stylesheet's
+  // `scroll-behavior: auto`, so the jump has to read the preference itself.
+  const { reduced } = useSceneMotion();
   const [show, setShow] = useState(false);
   const onScroll = () => {
     const el = scroller.current;
     if (!el) return;
     setShow(el.scrollTop > 130);
   };
-  const toTop = () => scroller.current?.scrollTo({ top: 0, behavior: "smooth" });
+  const toTop = () => scroller.current?.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#0a0c13]">
       <div ref={scroller} onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto px-5 py-4">

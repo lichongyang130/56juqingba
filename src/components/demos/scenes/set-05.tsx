@@ -6,6 +6,7 @@
 // holds it (plus the shared kit), not the other 192 scenes. The registry in
 // ../Demo.tsx is the only thing that knows where each key lives.
 import { useEffect, useRef, useState } from "react";
+import { useSceneMotion } from "../scene-kit";
 import { COMPONENTS, PROMPTS } from "@/lib/data";
 
 const KB_FRAMES = [
@@ -1028,9 +1029,13 @@ export function StatsBand() {
   const ref = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
   const [vals, setVals] = useState<number[]>([0, 0, 0, 0]);
+  // #30 — count-up on view, driven by rAF. Reduced: the final numbers are
+  // printed straight away, no roll.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (reduced) return;
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((en) => {
@@ -1041,9 +1046,10 @@ export function StatsBand() {
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [reduced]);
   useEffect(() => {
     if (!started) return;
+    if (reduced) return;
     const t0 = performance.now();
     let raf = 0;
     const tick = (now: number) => {
@@ -1054,7 +1060,8 @@ export function StatsBand() {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [started]);
+  }, [started, reduced]);
+  const shown = reduced ? STATS_TARGETS : vals;
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-[#0a0c13] px-6">
       <div ref={ref} className="w-full max-w-md rounded-2xl border border-white/8 bg-white/3 px-5 py-6">
@@ -1063,7 +1070,7 @@ export function StatsBand() {
           {STATS_ROWS.map((r, i) => (
             <div key={r.label}>
               <p className="font-mono text-2xl font-black tracking-tight text-white">
-                {vals[i]}
+                {shown[i]}
                 <span className="text-sm text-emerald-300">{r.suffix}</span>
               </p>
               <p className="mt-0.5 text-[10px] font-bold text-ink-dim">{r.label}</p>

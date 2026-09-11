@@ -260,30 +260,45 @@ const NEW_SCENES = [
     );
   }
 
-  // 523 — the reduced-motion claim /quality/aria used to make ("the demo
-  // harness checks that each scene declares a reduced-motion branch") was not
-  // true: nothing read the scenes for it. This is the checkable version — how
-  // many of the scenes that animate name the preference — measured by the same
-  // module the page reads, with the count as a floor so it can only rise.
+  // 523/525 — the reduced-motion question, asked properly. Batch 91 counted
+  // "scenes with a literal branch" (39 of 102) and that number was true but the
+  // rule behind it was not: globals.css already collapses every CSS animation
+  // and transition under the preference, so the scenes that matter are the ones
+  // JavaScript drives, where a media query has no say. motion-audit.ts splits
+  // them, /quality/aria and the checklist print the split, and this gate is
+  // what makes the sentence true.
   try {
-    const { motionAudit } = await import("../src/lib/motion-audit.ts");
+    const { motionAudit, reducedMotionPolicyInCss } = await import("../src/lib/motion-audit.ts");
     const audit = motionAudit();
-    const FLOOR = 39; // measured at batch 91; raise it when scenes gain a branch
     ok(
       "the motion audit reads the scene modules",
-      audit.scenes === keys.length && audit.moving > 50,
-      `${audit.scenes} scenes · ${audit.moving} animate · ${audit.guarded} declare a branch`,
+      audit.scenes === keys.length && audit.moving > 100,
+      `${audit.scenes} scenes · ${audit.moving} move · ${audit.css.length} CSS · ${audit.js.length} JavaScript`,
     );
     ok(
-      "no scene that animates lost its reduced-motion branch",
-      audit.guarded >= FLOOR,
-      `${audit.guarded} of ${audit.moving} (floor ${FLOOR})`,
+      "every scene that drives motion from JavaScript names the preference",
+      audit.unguarded.length === 0,
+      audit.unguarded.length ? `${audit.unguarded.length} without a branch: ${audit.unguarded.slice(0, 5).map((u) => u.id).join(", ")}` : `${audit.jsGuarded} of ${audit.js.length}`,
+    );
+    const policy = reducedMotionPolicyInCss();
+    ok(
+      "the built stylesheet carries the site-wide reduced-motion policy",
+      policy.found,
+      policy.file || "no built CSS with the rule",
     );
     const aria = await get("/quality/aria");
+    const ariaText = aria.text.replace(/<!-- -->/g, "");
     ok(
-      "/quality/aria prints the reduced-motion count the audit measured",
-      aria.status === 200 && aria.text.includes(`${audit.guarded} of the ${audit.moving} scenes that animate`),
-      `expected "${audit.guarded} of the ${audit.moving} scenes that animate"`,
+      "/quality/aria prints the split the audit measured",
+      aria.status === 200 &&
+        ariaText.includes(`${audit.js.length} from JavaScript`) &&
+        ariaText.includes(`${audit.css.length} through CSS`),
+      `expected "${audit.css.length} through CSS" and "${audit.js.length} from JavaScript"`,
+    );
+    ok(
+      "the reduced-motion checklist item reports the JavaScript count as covered",
+      ariaText.includes(`every scene that drives motion from JavaScript names the preference — ${audit.jsGuarded} of ${audit.js.length}`),
+      `expected "${audit.jsGuarded} of ${audit.js.length}"`,
     );
   } catch (err) {
     ok("the motion audit module loads", false, String(err && err.message ? err.message : err));

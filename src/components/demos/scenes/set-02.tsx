@@ -6,7 +6,7 @@
 // holds it (plus the shared kit), not the other 191 scenes. The registry in
 // ../Demo.tsx is the only thing that knows where each key lives.
 import { useEffect, useRef, useState } from "react";
-import type { DemoProps } from "../scene-kit";
+import { useSceneMotion, type DemoProps } from "../scene-kit";
 import { COMPONENTS, PROMPTS } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
 
@@ -52,15 +52,20 @@ export function ChartCard({ bars = 12 }: DemoProps) {
   const heights = [38, 62, 45, 78, 58, 92, 66, 84, 50, 72, 96, 88, 54, 70, 61, 90].slice(0, n);
   const ref = useRef<HTMLDivElement>(null);
   const [on, setOn] = useState(false);
+  // #21 — the bars grow on entry, driven by an observer that sets a CSS
+  // transition. Reduced: the chart is drawn at full height with no growth.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (reduced) return;
     const obs = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) { setOn(true); obs.disconnect(); }
     }, { threshold: 0.35 });
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [reduced]);
+  const visible = reduced || on;
   return (
     <div ref={ref} className="flex h-full w-full items-center justify-center bg-[radial-gradient(80%_100%_at_50%_0%,rgba(52,211,153,0.13),transparent_60%),#0a0c12] px-8">
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/4 p-5 shadow-2xl backdrop-blur-sm">
@@ -77,9 +82,9 @@ export function ChartCard({ bars = 12 }: DemoProps) {
               key={i}
               className="flex-1 rounded-t-md"
               style={{
-                height: on ? `${h}%` : "4%",
+                height: visible ? `${h}%` : "4%",
                 background: i % 3 === 2 ? "linear-gradient(180deg,#34d399,#0d9488)" : "linear-gradient(180deg,#a78bfa,#5b21b6)",
-                transition: `height .9s cubic-bezier(.3,1,.4,1) ${i * 60}ms`,
+                transition: `height .9s cubic-bezier(.3,1,.4,1) ${reduced ? 0 : i * 60}ms`,
                 opacity: 0.45 + (h / 110),
               }}
             />
@@ -615,11 +620,15 @@ const QUOTES = [
 export function TestimonialRotator({ speed = 5 }: DemoProps) {
   const sp = typeof speed === "number" ? Math.max(2, Math.min(14, speed)) * 1000 : 5000;
   const [i, setI] = useState(0);
+  // #22 — one quote, held. Reduced: the rotation stops on the first quote
+  // instead of advancing every ${sp}ms.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
+    if (reduced) return;
     const t = setInterval(() => setI((v) => (v + 1) % QUOTES.length), sp);
     return () => clearInterval(t);
-  }, [sp]);
-  const q = QUOTES[i];
+  }, [sp, reduced]);
+  const q = QUOTES[reduced ? 0 : i];
   return (
     <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(167,139,250,0.15),transparent_60%),#080a11] px-6">
       <div className="w-full max-w-md text-center">
@@ -673,6 +682,11 @@ const COUNTDOWN_ENDS_AT = Date.now() + COUNTDOWN_TOTAL_S * 1000;
 
 export function CountdownDrop() {
   const [left, setLeft] = useState(COUNTDOWN_TOTAL_S);
+  // #23 — a countdown is information, not decoration, so the numbers keep
+  // ticking under reduced motion; what stops is the per-digit flip, which the
+  // stylesheet would collapse anyway. The scene says so where the reader can
+  // see it, rather than leaving the choice to a global rule they cannot see.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
     const t = setInterval(() => {
       const rem = Math.max(0, Math.round((COUNTDOWN_ENDS_AT - Date.now()) / 1000));
@@ -698,7 +712,11 @@ export function CountdownDrop() {
         {cells.map((c, idx) => (
           <div key={c.l} className="flex items-center gap-2 md:gap-3">
             <div className="relative flex h-16 w-16 flex-col items-center justify-center overflow-hidden rounded-2xl border border-white/12 bg-white/5 backdrop-blur-md md:h-20 md:w-20" style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,.15)" }}>
-              <span key={c.v} className="text-2xl font-black tabular-nums text-white md:text-4xl" style={{ animation: "mf-flipin .4s cubic-bezier(.16,1,.3,1) both" }}>
+              <span
+                key={c.v}
+                className="text-2xl font-black tabular-nums text-white md:text-4xl"
+                style={{ animation: reduced ? undefined : "mf-flipin .4s cubic-bezier(.16,1,.3,1) both" }}
+              >
                 {String(c.v).padStart(2, "0")}
               </span>
               <style>{`@keyframes mf-flipin { from { opacity: 0; transform: translateY(-10px) } }`}</style>
@@ -995,20 +1013,26 @@ export function OdometerCounter({ target = 18624 }: DemoProps) {
   const goal = typeof target === "number" ? Math.max(100, Math.min(999999, Math.round(target))) : 18624;
   const [v, setV] = useState(0);
   const done = v >= goal;
+  // #24 — the odometer rolls to its target on a 42ms interval. Reduced: the
+  // target is printed immediately, which is also what the roll ends on.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
-    if (done) return;
+    // Reduced: no roll at all — the target is derived at render instead of
+    // being counted up into state.
+    if (done || reduced) return;
     const per = Math.max(1, Math.round(goal / 110));
     const t = setInterval(
       () => setV((p) => { const n = p + per + Math.round(Math.random() * 3); return n >= goal ? goal : n; }),
       42,
     );
     return () => clearInterval(t);
-  }, [done, goal]);
-  const cells = String(v).padStart(6, "0").split("");
+  }, [done, goal, reduced]);
+  const shown = reduced ? goal : v;
+  const cells = String(shown).padStart(6, "0").split("");
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-6 bg-[radial-gradient(60%_90%_at_50%_100%,rgba(52,211,153,0.13),transparent_62%),#08090f] px-6">
       <div className="chip !border-mint/25 !bg-mint/10 !text-mint">RUN 07 · copies this month</div>
-      <div className="flex items-center gap-1.5" role="img" aria-label={`${v.toLocaleString("en-US")} copies`}>
+      <div className="flex items-center gap-1.5" role="img" aria-label={`${shown.toLocaleString("en-US")} copies`}>
         {cells.map((d, i) => (
           <span
             key={i}

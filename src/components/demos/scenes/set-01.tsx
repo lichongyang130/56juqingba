@@ -6,7 +6,7 @@
 // holds it (plus the shared kit), not the other 188 scenes. The registry in
 // ../Demo.tsx is the only thing that knows where each key lives.
 import { useEffect, useRef, useState } from "react";
-import type { DemoProps } from "../scene-kit";
+import { useSceneMotion, type DemoProps } from "../scene-kit";
 import { PROMPTS } from "@/lib/data";
 
 const VERIFIED_PROMPTS = PROMPTS.filter((p) => p.status === "verified" || p.status === "featured").length;
@@ -183,6 +183,9 @@ export function HaloTrail({ count = 18, size = 140, glow = 0.8 }: DemoProps) {
   const maxSize = typeof size === "number" ? size : 140;
   const gl = typeof glow === "number" ? glow : 0.8;
   const boxRef = useRef<HTMLDivElement>(null);
+  // #1 — the trail is written by a pointer listener and a rAF: the stylesheet
+  // cannot reach it, so the scene asks for itself and simply never trails.
+  const { reduced } = useSceneMotion();
   const [halos, setHalos] = useState<{ id: number; x: number; y: number }[]>([]);
   const idRef = useRef(0);
   useEffect(() => {
@@ -201,12 +204,13 @@ export function HaloTrail({ count = 18, size = 140, glow = 0.8 }: DemoProps) {
         setHalos((prev) => prev.filter((h) => h.id > id - n));
       });
     };
+    if (reduced) return;
     box.addEventListener("pointermove", onMove);
     return () => {
       box.removeEventListener("pointermove", onMove);
       cancelAnimationFrame(raf);
     };
-  }, [n]);
+  }, [n, reduced]);
   return (
     <div
       ref={boxRef}
@@ -335,7 +339,11 @@ export function ScrambleText({ speed = 55, charset = 2 }: DemoProps) {
   const rich = typeof charset === "number" ? charset : 2;
   const [hover, setHover] = useState(false);
   const frame = useRef(0);
+  // #2 — the scramble is a rAF loop writing state, which the stylesheet cannot
+  // reach. Reduced: the sentence is printed in full and never reshuffles.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
+    if (reduced) return;
     let raf: number;
     let progress = 0;
     const len = target.length;
@@ -354,13 +362,13 @@ export function ScrambleText({ speed = 55, charset = 2 }: DemoProps) {
     raf = requestAnimationFrame(tick);
     frame.current = raf;
     return () => cancelAnimationFrame(raf);
-  }, [sp, rich, hover]);
+  }, [sp, rich, hover, reduced]);
   return (
     <div
       className="flex h-full w-full items-center justify-center px-6 text-center"
       onMouseEnter={() => setHover((v) => !v)}
     >
-      <span className="font-mono text-xl font-bold tracking-wide text-ink md:text-2xl">{out}</span>
+      <span className="font-mono text-xl font-bold tracking-wide text-ink md:text-2xl">{reduced ? target : out}</span>
     </div>
   );
 }
@@ -827,6 +835,7 @@ export function CounterStats({ duration = 1400 }: DemoProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
   const [vals, setVals] = useState([0, 0, 0, 0]);
+  const { reduced } = useSceneMotion();
   useEffect(() => {
     const el = ref.current;
     if (!el || started) return;
@@ -844,6 +853,10 @@ export function CounterStats({ duration = 1400 }: DemoProps) {
   }, [started]);
   useEffect(() => {
     if (!started) return;
+    // #3 — the count-up is a rAF loop. Reduced: the numbers are simply there,
+    // at their final values, when the block enters view — derived at render,
+    // not copied into state.
+    if (reduced) return;
     const t0 = performance.now();
     let raf: number;
     const tick = (now: number) => {
@@ -854,7 +867,8 @@ export function CounterStats({ duration = 1400 }: DemoProps) {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [started, dur]);
+  }, [started, dur, reduced]);
+  const shown = reduced ? COUNTER_TARGETS : vals;
   const labels = ["Sites shipped", "Verified prompts", "Avg fidelity %", "Copies (30d)"];
   const fmt = (v: number, i: number) => (i === 3 ? `${(v / 1000).toFixed(1)}k` : v.toLocaleString());
   return (
@@ -864,7 +878,7 @@ export function CounterStats({ duration = 1400 }: DemoProps) {
         {COUNTER_TARGETS.map((t, i) => (
           <div key={labels[i]} className="px-3 first:pl-0">
             <div className="text-lg font-black tabular-nums tracking-tight text-white md:text-3xl">
-              {fmt(vals[i], i)}
+              {fmt(shown[i], i)}
               {i === 2 && <span className="text-mint">%</span>}
             </div>
             <div className="mt-1.5 text-[9px] font-semibold uppercase tracking-widest text-ink-faint">{labels[i]}</div>
@@ -967,10 +981,15 @@ export function TextCycle() {
   const words = ["ship faster.", "feel alive.", "convert better.", "stand apart."];
   const [i, setI] = useState(0);
   const total = words.length;
+  // #4 — this scene's caption said "reduced-motion safe" while a 2.6s interval
+  // rotated the headline for everyone. Reduced: the first line stays put and
+  // the caption says which version is on screen.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
+    if (reduced) return;
     const t = setInterval(() => setI((v) => (v + 1) % total), 2600);
     return () => clearInterval(t);
-  }, [total]);
+  }, [total, reduced]);
   return (
     <div className="flex h-full w-full flex-col justify-center bg-[radial-gradient(70%_90%_at_50%_0%,rgba(34,211,238,0.16),transparent_60%),#07080d] px-7">
       <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-200/60">Headline rotation</div>
@@ -980,7 +999,7 @@ export function TextCycle() {
       <div className="relative mt-1 h-[1.4em] overflow-hidden" aria-live="polite">
         <span
           className="text-gradient block text-3xl font-black leading-[1.35] tracking-tight md:text-5xl"
-          style={{ transform: `translateY(-${i * 100}%)`, transition: "transform 0.5s cubic-bezier(.65,0,.25,1)" }}
+          style={{ transform: `translateY(-${(reduced ? 0 : i) * 100}%)`, transition: "transform 0.5s cubic-bezier(.65,0,.25,1)" }}
         >
           {words.map((w) => (
             <span key={w} className="block">{w}</span>
@@ -989,9 +1008,11 @@ export function TextCycle() {
       </div>
       <div className="mt-3 flex items-center gap-1.5">
         {words.map((_, d) => (
-          <span key={d} className="h-1 rounded-full bg-white/20 transition-all" style={{ width: d === i ? 22 : 8, background: d === i ? "linear-gradient(90deg,#8b5cf6,#22d3ee)" : undefined }} />
+          <span key={d} className="h-1 rounded-full bg-white/20 transition-all" style={{ width: d === (reduced ? 0 : i) ? 22 : 8, background: d === (reduced ? 0 : i) ? "linear-gradient(90deg,#8b5cf6,#22d3ee)" : undefined }} />
         ))}
-        <span className="ml-2 text-[10px] text-ink-faint">word swap · 2.6s cadence · reduced-motion safe</span>
+        <span className="ml-2 text-[10px] text-ink-faint">
+          {reduced ? "word swap · paused: reduced motion is on" : "word swap · 2.6s cadence"}
+        </span>
       </div>
     </div>
   );

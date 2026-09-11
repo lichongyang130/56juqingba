@@ -6,7 +6,7 @@
 // holds it (plus the shared kit), not the other 195 scenes. The registry in
 // ../Demo.tsx is the only thing that knows where each key lives.
 import { useEffect, useRef, useState } from "react";
-import type { DemoProps } from "../scene-kit";
+import { useSceneMotion, type DemoProps } from "../scene-kit";
 import { BACKGROUNDS, COMPONENTS, PROMPTS } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
 
@@ -272,6 +272,11 @@ export function ProgressRing() {
   const [phase, setPhase] = useState<"idle" | "run" | "stalled" | "done">("idle");
   const R = 40;
   const C = 2 * Math.PI * R;
+  // #28 — the bar crawls on a 130ms interval and even stalls part-way. Under
+  // reduced motion it still runs, because a progress bar is feedback about
+  // work, but it steps through without the travelling animation between
+  // values: `pct` jumps to the next sample instead of easing to it.
+  const { reduced } = useSceneMotion();
   useEffect(() => {
     if (phase !== "run") return;
     const t = setInterval(() => {
@@ -291,7 +296,7 @@ export function ProgressRing() {
       });
     }, 130);
     return () => clearInterval(t);
-  }, [phase]);
+  }, [phase, reduced]);
   const start = () => { setPct(0); setPhase("run"); };
   const cancel = () => { setPct(0); setPhase("idle"); };
   const retry = () => { setPct(0); setPhase("run"); };
@@ -986,9 +991,15 @@ export function StaggeredListEntrance() {
   const sentinel = useRef<HTMLDivElement>(null);
   const [seen, setSeen] = useState(false);
   const [run, setRun] = useState(0);
+  // #29 — rows stagger in through an observer plus per-row delay. Reduced:
+  // the list is simply present, no stagger and no per-row delay. `shown` is
+  // derived rather than written, so no effect has to correct state after paint.
+  const { reduced } = useSceneMotion();
+  const shown = reduced || seen;
   useEffect(() => {
     const el = sentinel.current;
     if (!el) return;
+    if (reduced) return;
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((en) => {
@@ -999,7 +1010,7 @@ export function StaggeredListEntrance() {
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [reduced]);
   const rows = [
     { name: "surface-aurora.svg", meta: "48KB · vector", dot: "#c4b5fd" },
     { name: "readme-quickstart.mdx", meta: "12KB · docs", dot: "#67e8f9" },
@@ -1034,19 +1045,19 @@ export function StaggeredListEntrance() {
           <div style={{ height: 420 }} aria-hidden />
           <div ref={sentinel} className="h-px" aria-hidden />
           <div className="space-y-2">
-            {seen &&
+            {shown &&
               rows.map((r, i) => (
                 <div
                   key={`${run}-${r.name}`}
                   className="flex items-center gap-3 rounded-xl border border-white/6 bg-white/3 px-3.5 py-2.5"
-                  style={{ animation: `mf-rise .5s cubic-bezier(.22,.68,.32,1) ${i * 70}ms both` }}
+                  style={{ animation: `mf-rise .5s cubic-bezier(.22,.68,.32,1) ${reduced ? 0 : i * 70}ms both` }}
                 >
                   <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: r.dot }} />
                   <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-ink">{r.name}</span>
                   <span className="shrink-0 text-[9px] text-ink-faint">{r.meta}</span>
                 </div>
               ))}
-            {seen && (
+            {shown && (
               <p className="pt-1 text-center text-[9px] text-ink-faint">
                 {rows.length} rows · 70ms cascade · played {run > 0 ? `${run + 1}×` : "once"}
               </p>

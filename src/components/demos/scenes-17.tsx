@@ -2606,11 +2606,16 @@ export function ReadingDots() {
     setRead((prev) => (prev.includes(index) ? prev : [...prev, index].sort((a, b) => a - b)));
   };
 
+  // #34 — `scrollIntoView({ behavior: "smooth" })` is JavaScript-driven, so the
+  // stylesheet's `scroll-behavior: auto` does not apply. The jump reads the
+  // preference itself and lands instantly when the reader has asked for less.
+  const reduced = useReducedMotion();
+
   const jump = (index: number) => {
     const clamped = Math.max(0, Math.min(READING_SECTIONS.length - 1, index));
     mark(clamped);
     const el = articleRef.current?.querySelector<HTMLElement>(`[data-section="${clamped}"]`);
-    el?.scrollIntoView({ block: "start", behavior: "smooth" });
+    el?.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
   };
 
   const progress = Math.round((read.length / READING_SECTIONS.length) * 100);

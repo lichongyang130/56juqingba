@@ -162,9 +162,10 @@ export default function AriaAuditPage() {
         <ul className="mt-3 space-y-2 text-[11px] leading-relaxed text-ink-dim">
           <li>
             <strong>Focus order and keyboard reachability.</strong> Deciding whether Tab reaches every control, and in a sensible order, needs a
-            running browser. The scenes that name <span className="font-mono">prefers-reduced-motion</span> are counted rather than tested — {motion.guarded} of
-            the {motion.moving} scenes that animate name the preference, read from the scene modules by <span className="font-mono">check:demos</span> — and
-            what the branch does at runtime is a hand check like everything else on this list.
+            running browser. {motion.moving} scenes move at all: {motion.css.length} through CSS, which the stylesheet collapses site-wide, and{" "}
+            {motion.js.length} from JavaScript, which no stylesheet can reach — every one of those {motion.js.length} now names the preference and{" "}
+            <span className="font-mono">check:demos</span> fails if any stops. What a branch <em>does</em> at runtime is still a hand check like everything
+            else on this list.
           </li>
           <li>
             <strong>Contrast in context.</strong> Token-level contrast is computed on /quality from the real colour pairs, but whether a specific
