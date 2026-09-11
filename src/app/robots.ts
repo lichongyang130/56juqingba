@@ -5,19 +5,15 @@
 // list so the decision is visible instead of buried in a config.
 
 import type { MetadataRoute } from "next";
+import { CRAWL_EXCLUDES } from "@/lib/crawl";
 import { SITE_URL } from "@/lib/seo";
 
-/** Kept in sync with the table on /quality/crawl by the export harness. */
-export const CRAWL_EXCLUDES = [
-  "/admin",
-  "/search",
-  "/saved",
-  "/saved/stack",
-  "/habits",
-  "/embed/",
-  "/api/exports/",
-  "/digest",
-];
+// 519 — the list moved to lib/crawl.ts so the rule the sitemap follows, the
+// rule this file enforces and the table on /quality/crawl are one list. Each
+// excluded route also carries `robots: { index: false }`, because a Disallow
+// rule is a request not to fetch, not a request to forget: the harness checks
+// both halves.
+export { CRAWL_EXCLUDES };
 
 export default function robots(): MetadataRoute.Robots {
   return {

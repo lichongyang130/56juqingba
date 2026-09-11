@@ -7,6 +7,9 @@ import { LibraryFitness, StackRecipe } from "@/components/retention-ui";
 export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
+  // 519 — robots.txt only asks a crawler not to fetch this page; the noindex
+  // is what keeps an empty browser-local surface out of the index itself.
+  robots: { index: false },
   alternates: { canonical: "/saved" },
   title: "Your saved list — Motif UI",
   description: "Star Motif components and prompts into a saved list that lives in your browser — no account, no upload, and an honest note about what that means.",

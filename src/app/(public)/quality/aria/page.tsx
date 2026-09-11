@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import path from "node:path";
 import { A11Y_FIXES, MANUAL_CHECKS, a11yBands } from "@/lib/a11y-audit";
-import { MARKUP_CHECKS, scanBuiltHtml } from "@/lib/markup-a11y";
+import { MARKUP_CHECKS, SERVED_EXTRAS, scanBuiltHtml } from "@/lib/markup-a11y";
+import sitemap from "@/app/sitemap";
+import { COMPONENTS } from "@/lib/data";
+import { SITE_URL } from "@/lib/seo";
 
 // Rendered per request rather than prerendered: the pass reads the built HTML
 // from disk, and a page prerendered mid-build would report a partial count
@@ -11,6 +14,9 @@ import { MARKUP_CHECKS, scanBuiltHtml } from "@/lib/markup-a11y";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
+  // 519 — the page had no canonical, so the sitemap walk could not tell it
+  // apart from a page pointing at the homepage.
+  alternates: { canonical: "/quality/aria" },
   title: "ARIA and markup audit — the automated half — Motif UI",
   description:
     "A build-time pass over every page's HTML: images without alt, controls without names, duplicate ids, heading-order skips and missing lang attributes — with the current counts and what was fixed.",
@@ -29,6 +35,13 @@ export const metadata: Metadata = {
 const ROOT = path.join(process.cwd(), ".next", "server", "app");
 
 export default function AriaAuditPage() {
+  // 519 — this sentence used to print a typed-in "283 URLs" and was wrong the
+  // moment the sitemap grew. It is derived now, with the same
+  // de-duplication the pass does: a page that is both listed and an extra is
+  // walked once.
+  const entries = sitemap();
+  const listedPaths = new Set(entries.map((e) => e.url.replace(SITE_URL, "") || "/"));
+  const served = entries.length + SERVED_EXTRAS.filter((e) => !listedPaths.has(e)).length;
   // Same rules as `npm run check:a11y` and the export harness, from one module.
   // No `.next` directory (a dev server, a fresh clone) means the pass has
   // nothing to read — the page says so instead of printing a fake zero.
@@ -164,8 +177,9 @@ export default function AriaAuditPage() {
         </ul>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
           The rules also run a second time over HTTP. <span className="font-mono">npm run check:a11y:served</span> fetches every page the sitemap
-          lists — 283 URLs in this build, including the 133 component pages rendered on demand, which have no HTML on disk to scan — reports any URL
-          that did not answer instead of skipping it, and fails on the same findings. The counts above come from the disk pass.
+          lists plus the {SERVED_EXTRAS.length} server-rendered pages the sitemap cannot list — {served} URLs in this build, including the{" "}
+          {COMPONENTS.length} component pages rendered on demand, which have no HTML on disk to scan — reports any URL that did not answer instead of
+          skipping it, and fails on the same findings. The counts above come from the disk pass.
         </p>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
           The export harness and <span className="font-mono">npm run check:a11y</span> run the same rules from a separate process over the same

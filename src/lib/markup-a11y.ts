@@ -301,6 +301,14 @@ export function scanBuiltHtml(root: string): MarkupScan {
  * localStorage — have no HTML in `.next` between requests. Reading them over
  * HTTP is the only way to apply the rules to what a visitor is actually sent.
  */
+/**
+ * Server-rendered pages the sitemap deliberately does not list — a query
+ * surface, two submission forms and a share link — but which the served pass
+ * still has to read. One list, because /quality/aria prints the pass's size and
+ * a second copy of these four strings would let that number drift.
+ */
+export const SERVED_EXTRAS = ["/search", "/community/re-run", "/community/submit", "/saved/stack"];
+
 export async function scanServedSitemap(base: string): Promise<MarkupScan> {
   const origin = base.replace(/\/+$/, "");
   const xml = await (await fetch(`${origin}/sitemap.xml`)).text();
@@ -308,7 +316,7 @@ export async function scanServedSitemap(base: string): Promise<MarkupScan> {
   // Pages that are server-rendered and deliberately absent from the sitemap:
   // fetching them here is the only way the rules ever see them (they have no
   // HTML on disk between requests either).
-  for (const extra of ["/search", "/community/re-run", "/community/submit", "/saved/stack"]) {
+  for (const extra of SERVED_EXTRAS) {
     if (!urls.includes(extra)) urls.push(extra);
   }
   const issues: MarkupIssue[] = [];

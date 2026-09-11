@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BACKGROUNDS, COMPONENTS, PROMPTS } from "@/lib/data";
+import sitemap from "@/app/sitemap";
+import { CRAWL_EXCLUSIONS } from "@/lib/crawl";
+import { SITEMAP_EXTRA_PATHS } from "@/lib/crawl";
+import { BACKGROUNDS, CHANGELOG, COMPONENTS, PROMPTS } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
-import { CRAWL_EXCLUDES } from "@/app/robots";
+import { changeLogSlug } from "@/lib/spine";
 
 export const metadata: Metadata = {
   title: "Crawl inventory — what is indexed and what is not — Motif UI",
@@ -11,26 +14,23 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
+// 519 — the numbers here used to be prose: “{4 families} indexable assets across
+// four groups, plus the hub and marketing pages”, while the sitemap only had the
+// four groups and the build had 103 more indexable pages. The total below is now
+// the length of the sitemap function itself, and check:exports compares it with
+// the served /sitemap.xml, so the sentence cannot describe a different site than
+// the file.
 export default function CrawlPage() {
   const groups = [
-    { label: "Components", count: COMPONENTS.length, sample: `/components/${COMPONENTS[0].slug}`, index: true },
-    { label: "Prompts", count: PROMPTS.length, sample: `/prompts/${PROMPTS[0].slug}`, index: true },
-    { label: "Essays", count: LEARN_ARTICLES.length, sample: `/learn/${LEARN_ARTICLES[0].slug}`, index: true },
-    { label: "Backgrounds", count: BACKGROUNDS.length, sample: "/backgrounds", index: true, note: "one page, one anchor per background" },
+    { label: "Components", count: COMPONENTS.length, sample: `/components/${COMPONENTS[0].slug}`, note: "one URL per asset, dated from its published field" },
+    { label: "Prompts", count: PROMPTS.length, sample: `/prompts/${PROMPTS[0].slug}`, note: "one URL per asset, dated from its published field" },
+    { label: "Essays", count: LEARN_ARTICLES.length, sample: `/learn/${LEARN_ARTICLES[0].slug}`, note: "one URL per guide, dated from updated" },
+    { label: "Backgrounds", count: 1, sample: "/backgrounds", note: `one page, one anchor each — ${BACKGROUNDS.length} backgrounds` },
+    { label: "Studio log", count: CHANGELOG.length, sample: `/changelog/${changeLogSlug(CHANGELOG[0])}`, note: "one URL per entry, dated from the entry" },
+    { label: "Everything else", count: SITEMAP_EXTRA_PATHS.length, sample: SITEMAP_EXTRA_PATHS[0], note: "hub, brand, perf, pro, integrations, community and tool pages" },
   ];
 
-  const total = groups.reduce((a, g) => a + g.count, 0);
-
-  const excluded = [
-    { path: "/admin", why: "A local demo console. Nothing there is content, and an indexed admin would be an invitation." },
-    { path: "/search", why: "Result pages are queries, not pages: thousands of near-identical permutations with no standalone value." },
-    { path: "/saved", why: "Your saved list is browser-local — a crawler would index an empty page and call it content." },
-    { path: "/saved/stack", why: "A recipe link is meant to be shared between people, not harvested; the route is noindex as well." },
-    { path: "/habits", why: "Streaks and check-ins are empty without local storage." },
-    { path: "/embed/", why: "Embeds are for other people's iframes, and would compete with the real detail pages." },
-    { path: "/api/exports/", why: "Files and JSON are for tools, not for the index." },
-    { path: "/digest", why: "The weekly digest is dated and duplicated by the components and prompts it points at." },
-  ];
+  const total = sitemap().length;
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12 lg:px-8">
@@ -50,9 +50,9 @@ export default function CrawlPage() {
         <p className="text-xs font-bold uppercase tracking-[0.22em] text-cyan-300">SEO · what gets indexed</p>
         <h1 className="mt-2 text-4xl font-extrabold tracking-tight md:text-5xl">The crawl surface</h1>
         <p className="mt-3 text-sm leading-relaxed text-ink-dim">
-          One sitemap, grouped by content type, generated from the same data the pages render. {total} indexable assets across four groups, plus
-          the hub and marketing pages. Eight surfaces are kept out, and this page lists them with a reason instead of hiding the rule in a config
-          file.
+          One sitemap, grouped by content type, generated from the same data the pages render — {total} URLs in this build, one per catalog record,
+          one per studio-log entry, and the hub pages that are neither. {CRAWL_EXCLUSIONS.length} surfaces are kept out, and this page lists them
+          with a reason instead of hiding the rule in a config file.
         </p>
       </div>
 
@@ -83,28 +83,33 @@ export default function CrawlPage() {
                       {g.sample}
                     </Link>
                   </td>
-                  <td className="px-4 py-2 text-ink-faint">{g.note ?? "one URL per asset, dated from its published field"}</td>
+                  <td className="px-4 py-2 text-ink-faint">{g.note}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+          The catalog groups and the studio log are derived from the records themselves, so publishing an asset adds its URL without anyone editing
+          a file here. The last row is the list in <span className="font-mono">src/lib/crawl.ts</span> — the pages a stranger can land on that are not
+          a catalog record.
+        </p>
       </section>
 
       <section className="mt-10">
         <h2 className="text-xs font-bold uppercase tracking-[0.24em] text-amber-200">Kept out of the index</h2>
         <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-faint">
-          The same list is compiled into <span className="font-mono">robots.txt</span> from{" "}
-          <span className="font-mono">src/app/robots.ts</span>; the harness checks the two agree, so this table cannot drift from the rule.
+          Each row is excluded twice, and the two halves do different jobs: a{" "}
+          <span className="font-mono">Disallow</span> rule in <span className="font-mono">robots.txt</span> asks a crawler not to fetch the URL, and a{" "}
+          <span className="font-mono">robots: index: false</span> tag on the page itself is what keeps it out of the index. Until this batch the second
+          half was missing on five of these surfaces, which is the trap the table exists to expose.
         </p>
         <div className="mt-4 space-y-3">
-          {excluded.map((row, i) => (
+          {CRAWL_EXCLUSIONS.map((row) => (
             <div key={row.path} className="flex flex-wrap items-start gap-3 rounded-2xl border border-white/8 bg-panel p-4">
               <span className="font-mono text-[11px] text-amber-100">{row.path}</span>
-              <span className="chip !text-[9px] uppercase">noindex</span>
-              <span className="text-[10px] text-ink-faint">
-                {CRAWL_EXCLUDES[i] === row.path.replace(/\/$/, "") || CRAWL_EXCLUDES.includes(row.path) ? "in robots.txt" : ""}
-              </span>
+              <span className="chip !text-[9px] uppercase">robots.txt</span>
+              <span className="chip !text-[9px] uppercase">{row.path.endsWith("/") ? "prefix rule" : "noindex"}</span>
               <p className="w-full text-[11px] leading-relaxed text-ink-dim">{row.why}</p>
             </div>
           ))}
@@ -114,9 +119,12 @@ export default function CrawlPage() {
       <section className="mt-10 rounded-3xl border border-white/8 bg-panel p-6">
         <h2 className="text-sm font-extrabold tracking-tight">Why publish the exclusion list</h2>
         <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
-          A noindex rule is invisible by design, which makes it easy to apply too broadly and never notice. Printing the list next to the reason
-          turns it into a decision someone can disagree with — and the counts above make it obvious when a group is missing entirely, which is the
-          failure mode that actually costs traffic.
+          A noindex rule is invisible by design, which makes it easy to apply too broadly and never notice. Printing the list next to the reason turns
+          it into a decision someone can disagree with — and the counts above make it obvious when a group is missing entirely, which is the failure
+          mode that actually costs traffic. That is not hypothetical here: the audit that produced this batch found the studio log, the brand pages,
+          /perf/*, /pro/*, /integrations/*, /community/* and two tool pages rendered indexable and absent from the sitemap, because the sitemap was
+          written by hand and nothing compared it with the build. The harness now walks every built page and fails if an indexable one is unlisted, or
+          if an excluded one has no noindex tag.
         </p>
         <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-faint">
           Structured data has its own register on{" "}

@@ -7,6 +7,9 @@ import { localDay } from "@/lib/retention";
 export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
+  // 519 — robots.txt only asks a crawler not to fetch this page; the noindex
+  // is what keeps an empty browser-local surface out of the index itself.
+  robots: { index: false },
   alternates: { canonical: "/digest/copy-of-the-week" },
   title: "Copy of the week — a previewable digest email",
   description:

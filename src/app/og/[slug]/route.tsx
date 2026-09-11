@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
-import { BACKGROUNDS, COMPONENTS, PROMPTS, accentHue } from "@/lib/data";
+import { BACKGROUNDS, CHANGELOG, COMPONENTS, PROMPTS, accentHue } from "@/lib/data";
 import { LEARN_ARTICLES } from "@/lib/learn";
+import { changeLogSlug } from "@/lib/spine";
 
 // #503–#506 — the share-card route, generalised to every family.
 //
@@ -12,6 +13,10 @@ import { LEARN_ARTICLES } from "@/lib/learn";
 // A plain route handler rather than the opengraph-image convention, because the
 // convention's URL carries a build hash — useless for a URL written into
 // metadata by hand.
+//
+// 519 — the studio log joined as a fifth family: an entry can be linked and
+// quoted on its own, so it can be shared on its own, with its date and tag on
+// the card instead of the site fallback.
 
 export const dynamic = "force-static";
 
@@ -24,6 +29,7 @@ export function generateStaticParams() {
     ...PROMPTS.map((p) => ({ slug: p.slug })),
     ...LEARN_ARTICLES.map((a) => ({ slug: a.slug })),
     ...BACKGROUNDS.map((b) => ({ slug: b.slug })),
+    ...CHANGELOG.map((e) => ({ slug: changeLogSlug(e) })),
   ];
 }
 
@@ -87,6 +93,18 @@ function cardFor(slug: string): Card | null {
       chips: [`${guide.minutes} min read`, guide.level, ...guide.tags.slice(0, 2), `updated ${guide.updated}`],
       hue: accentHue(guide.tags[0] ?? guide.slug),
       foot: "motif · guides",
+    };
+  }
+
+  const entry = CHANGELOG.find((e) => changeLogSlug(e) === slug);
+  if (entry) {
+    return {
+      kicker: `studio log · ${entry.tag}`,
+      title: entry.title,
+      body: entry.body,
+      chips: [entry.date, entry.perf ? `${entry.perf.deltaKb.toFixed(1)} KB measured` : "no size figure recorded", entry.perf?.build ?? "written entry"],
+      hue: accentHue(entry.tag),
+      foot: "motif · studio log",
     };
   }
 

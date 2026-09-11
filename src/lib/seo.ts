@@ -6,6 +6,7 @@
 // a rating, a review count or a price.
 
 import type { Metadata } from "next";
+import type { ChangeLogEntry } from "./data";
 import { SITE } from "./site";
 import type { Asset, BackgroundAsset, PromptTemplate } from "./types";
 
@@ -123,6 +124,36 @@ export function articleMetadata(article: LearnArticleLike): Metadata {
       images: [{ url: `/og/${article.slug}`, width: 1200, height: 630, alt: `${article.title} — guide card` }],
     },
     twitter: { card: "summary_large_image", title: article.title, description, images: [`/og/${article.slug}`] },
+  };
+}
+
+/**
+ * 519 — a studio-log entry's metadata.
+ *
+ * The entry pages shipped in #474 with a raw 280-character slice of the body as
+ * their description and an `openGraph` block with no image, which meant a page
+ * that exists to be quoted had no card and a snippet twice the length a search
+ * result shows. Both now come from the same rules as the rest of the site: the
+ * description is clamped by `trim`, and the card is the entry's own /og image.
+ */
+export function changelogEntryMetadata(entry: ChangeLogEntry, slug: string): Metadata {
+  const path = `/changelog/${slug}`;
+  const description = trim(`${entry.body} Filed under ${entry.tag}, ${entry.date}.`, 200);
+  const title = `${entry.title} — studio log`;
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title,
+      description,
+      url: url(path),
+      type: "article",
+      publishedTime: entry.date,
+      siteName: SITE.name,
+      images: [{ url: `/og/${slug}`, width: 1200, height: 630, alt: `${entry.title} — studio log entry` }],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [`/og/${slug}`] },
   };
 }
 

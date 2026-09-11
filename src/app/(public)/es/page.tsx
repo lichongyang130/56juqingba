@@ -29,6 +29,10 @@ export const metadata = {
     description: "Una página traducida, declarada como tal: los slugs siguen en inglés y sólo el título y el texto cambian.",
     locale: "es_ES",
     alternateLocale: ["en_US"],
+    // 519 — a page-level openGraph block replaces the layout's, images
+    // included, so this page shipped with no share card at all. It points at
+    // the site card rather than pretending to have one of its own.
+    images: [{ url: "/og/default", width: 1200, height: 630, alt: "Motif UI — tarjeta del sitio" }],
   },
 };
 

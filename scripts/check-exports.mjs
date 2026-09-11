@@ -506,6 +506,20 @@ function parseCheck(label, source) {
       ariaPage.text.includes(`Documents scanned`) && ariaPage.text.includes(`>${documents}<`),
       `expected ${documents}`,
     );
+    // The served half of that page printed a typed-in "283 URLs" until the
+    // sitemap grew past it. It is derived now, and this compares it with the
+    // walk the pass above actually made — the run that just happened, not a
+    // second copy of its arithmetic.
+    const walked = Number((servedOut.match(/markup pass over \d+ of (\d+) served pages/) || [])[1] ?? NaN);
+    const ariaServed = ariaPage.text
+      .replace(/<!--[\s\S]*?-->/g, "")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ");
+    ok(
+      "/quality/aria prints the served URL count the pass walks",
+      walked > 250 && ariaServed.includes(`${walked} URLs in this build`),
+      `the pass walked ${walked}`,
+    );
   }
 
   /* ---------- site-wide page audit (added after the 500-item programme) ---------- */
@@ -559,18 +573,123 @@ function parseCheck(label, source) {
     `${sitemapUrls.length} pages${pageIssues.length ? ` · ${pageIssues.length} issues: ${pageIssues.slice(0, 5).join(" | ")}` : ""}`,
   );
 
+  // 519 — the sitemap was written by hand in src/app/sitemap.ts while pages were
+  // created elsewhere, and nothing compared the two: the audit found 103
+  // indexable pages missing from it (the whole studio log, /brand/*, /perf/*,
+  // /pro/*, /integrations/*, /community/*, /lab/layers, /studio), and five
+  // surfaces /quality/crawl called "kept out of the index" that were only
+  // disallowed in robots.txt — which asks a crawler not to fetch, not to
+  // forget. Two rules now, both read from the one list in src/lib/crawl.ts.
+  {
+    const crawlSrc = fs.readFileSync("src/lib/crawl.ts", "utf8");
+    const block = crawlSrc.slice(crawlSrc.indexOf("CRAWL_EXCLUSIONS: CrawlExclusion[] = ["), crawlSrc.indexOf("export const CRAWL_EXCLUDES"));
+    const excludes = [...block.matchAll(/path:\s*"([^"]+)"/g)].map((m) => m[1]);
+    const isExcluded = (route) => excludes.some((p) => (p.endsWith("/") ? route.startsWith(p) : route === p || route.startsWith(`${p}/`)));
+
+    const listed = new Set(sitemapUrls);
+    const missingFromSitemap = [];
+    const excludedWithoutNoindex = [];
+    const builtFiles = [];
+    const walkBuilt = (dir) => {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) walkBuilt(full);
+        else if (entry.name.endsWith(".html")) builtFiles.push(full);
+      }
+    };
+    if (fs.existsSync(".next/server/app")) walkBuilt(".next/server/app");
+    for (const file of builtFiles) {
+      const html = fs.readFileSync(file, "utf8");
+      const canonical = (html.match(/<link rel="canonical" href="([^"]*)"/) || [])[1] || "";
+      // A page with no canonical is still a page: fall back to its path on disk
+      // so the excluded admin console cannot slip past by omitting the tag.
+      const fromDisk = `/${file.replace(".next/server/app/", "").replace(/\.html$/, "").replace(/^\(public\)\//, "").replace(/\/index$/, "").replace(/^index$/, "")}`;
+      const route = canonical ? canonical.replace(ORIGIN, "") || "/" : fromDisk;
+      const noindex = /<meta name="robots" content="[^"]*noindex/.test(html);
+      if (isExcluded(route)) {
+        if (!noindex) excludedWithoutNoindex.push(route);
+      } else if (canonical && !listed.has(canonical)) {
+        missingFromSitemap.push(route);
+      }
+    }
+    ok("the crawl exclusions are readable", excludes.length >= 8 && builtFiles.length > 250, `${excludes.length} rules · ${builtFiles.length} built documents`);
+    ok(
+      "every indexable built page is in the sitemap",
+      missingFromSitemap.length === 0,
+      `${missingFromSitemap.length} missing${missingFromSitemap.length ? `: ${missingFromSitemap.slice(0, 5).join(", ")}` : ""}`,
+    );
+    ok(
+      "every excluded surface carries a noindex, not only a robots rule",
+      excludedWithoutNoindex.length === 0,
+      `${excludedWithoutNoindex.length} without${excludedWithoutNoindex.length ? `: ${excludedWithoutNoindex.slice(0, 5).join(", ")}` : ""}`,
+    );
+
+    // The disk walk above cannot see a page rendered on demand — /quality/aria,
+    // /roadmap and the two /community form pages have no HTML in .next between
+    // requests, and five of them were indexable and unlisted. So the second half
+    // reads the build's own route manifest and asks every static route the same
+    // question, over HTTP: indexable pages must be listed, noindex pages must
+    // not be.
+    const routeManifest = JSON.parse(fs.readFileSync(".next/routes-manifest.json", "utf8"));
+    const staticRoutes = routeManifest.staticRoutes
+      .map((r) => r.page)
+      .filter((r) => !r.includes("[") && !r.startsWith("/_") && !/\.[a-z0-9]+$/.test(r) && !r.startsWith("/api/"));
+    const twoWayIssues = [];
+    for (const route of staticRoutes) {
+      const res = await fetch(base + route);
+      const html = res.status === 200 ? await res.text() : "";
+      const noindex = /<meta name="robots" content="[^"]*noindex/.test(html);
+      const listedRoute = listed.has(`${ORIGIN}${route === "/" ? "" : route}`);
+      if (noindex && listedRoute) twoWayIssues.push(`listed but noindex ${route}`);
+      if (!noindex && !listedRoute) twoWayIssues.push(`${res.status} indexable but unlisted ${route}`);
+    }
+    ok(
+      "every static route is either listed or noindex — both ways",
+      staticRoutes.length > 120 && twoWayIssues.length === 0,
+      `${staticRoutes.length} routes${twoWayIssues.length ? ` · ${twoWayIssues.slice(0, 5).join(", ")}` : ""}`,
+    );
+
+    // The page's own sentence is compared with the file a crawler gets, the way
+    // /brand/voice's demo figure is: the count is derived, but a derived count
+    // printed on a page still has to match what is served.
+    const crawlPage = await get("/quality/crawl");
+    const crawlText = crawlPage.text.replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+    ok(
+      "/quality/crawl prints the sitemap count it is describing",
+      crawlPage.status === 200 &&
+        crawlText.includes(`${sitemapUrls.length} URLs in this build`) &&
+        crawlText.includes(`${excludes.length} surfaces are kept out`),
+      `sitemap ${sitemapUrls.length} · exclusions ${excludes.length}`,
+    );
+  }
+
   const linkList = [...linkSet];
   const linkChunks = [];
   for (let i = 0; i < linkList.length; i += 10) linkChunks.push(linkList.slice(i, i + 10));
+  // One deliberate exception, named by the page that documents it: /brand/mascot
+  // links to a URL that does not exist, because a live 404 is how it shows the
+  // mascot on the not-found route. It is asserted 404 below, so the exception
+  // cannot quietly hide a link that stopped working — and the walk only sees it
+  // at all now that /brand/* is in the sitemap.
+  const DELIBERATE_DEAD_LINKS = new Set(["/this-page-does-not-exist"]);
   const brokenLinks = [];
+  const deadLinkStatus = new Map();
   for (const chunk of linkChunks) {
     const results = await Promise.all(chunk.map(async (link) => ({ link, status: (await fetch(base + link, { redirect: "manual" })).status })));
-    for (const r of results) if (r.status !== 200) brokenLinks.push(`${r.status} ${r.link}`);
+    for (const r of results) {
+      if (DELIBERATE_DEAD_LINKS.has(r.link)) deadLinkStatus.set(r.link, r.status);
+      else if (r.status !== 200) brokenLinks.push(`${r.status} ${r.link}`);
+    }
   }
   ok(
     "no internal link on any page is broken",
     brokenLinks.length === 0,
     `${linkSet.size} distinct links${brokenLinks.length ? ` · ${brokenLinks.slice(0, 6).join(" | ")}` : ""}`,
+  );
+  ok(
+    "the one deliberate dead link still 404s",
+    deadLinkStatus.size === 1 && deadLinkStatus.get("/this-page-does-not-exist") === 404,
+    [...deadLinkStatus].map(([l, s]) => `${s} ${l}`).join(", ") || "not linked anywhere",
   );
 
   for (const [label, slug] of [

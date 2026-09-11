@@ -3,6 +3,9 @@ import SearchExplorer, { type Scope } from "./search-client";
 export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
+  // 519 — robots.txt only asks a crawler not to fetch this page; the noindex
+  // is what keeps an empty browser-local surface out of the index itself.
+  robots: { index: false },
   alternates: { canonical: "/search" }, title: "Search the library — Motif UI" };
 
 const SCOPES: Scope[] = ["all", "components", "prompts", "backgrounds", "guides"];

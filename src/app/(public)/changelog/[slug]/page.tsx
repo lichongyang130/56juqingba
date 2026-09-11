@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CHANGELOG, COMPONENTS, PROMPTS } from "@/lib/data";
 import { changeLogSlug } from "@/lib/spine";
-import { jsonLd, url } from "@/lib/seo";
+import { changelogEntryMetadata, jsonLd, url } from "@/lib/seo";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -17,18 +17,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const entry = CHANGELOG.find((e) => changeLogSlug(e) === slug);
   if (!entry) return { title: "Not found" };
-  return {
-    title: `${entry.title} — studio log`,
-    description: entry.body.slice(0, 280),
-    alternates: { canonical: `/changelog/${slug}` },
-    openGraph: {
-      title: entry.title,
-      description: entry.body.slice(0, 280),
-      url: url(`/changelog/${slug}`),
-      type: "article",
-      publishedTime: entry.date,
-    },
-  };
+  // 519 — description and card come from lib/seo.ts like every catalog page.
+  return changelogEntryMetadata(entry, slug);
 }
 
 /**

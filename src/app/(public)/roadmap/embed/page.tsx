@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
+  // 519 — the page had no canonical, so the sitemap walk could not tell it
+  // apart from a page pointing at the homepage.
+  alternates: { canonical: "/roadmap/embed" },
   title: "Embed SDK — one script tag — Motif UI",
   description:
     "A 1 KB script with one job: turn a placeholder div into a live Motif demo. No dependencies, no analytics, no backlink injection — and the page below runs it.",
