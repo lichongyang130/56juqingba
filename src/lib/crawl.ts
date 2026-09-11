@@ -144,4 +144,6 @@ export const SITEMAP_EXTRA_PATHS: string[] = [
   "/shuffle",
   "/studio",
   "/sitemap",
+  "/gaps",
+  "/accessibility",
 ];

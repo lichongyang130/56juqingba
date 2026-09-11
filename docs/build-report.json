@@ -1,19 +1,19 @@
 {
-  "measuredAt": "2026-09-11T06:41:45.503Z",
-  "buildId": "YUpZbk_NR6oc-n5V1rMQP",
+  "measuredAt": "2026-09-11T06:44:15.710Z",
+  "buildId": "RvQVx0J7WM1fOD83GoXsx",
   "command": "npm run build && npm run measure",
   "summary": {
-    "routes": 142,
-    "prerendered": 128,
+    "routes": 144,
+    "prerendered": 130,
     "onDemand": 14,
     "jsFiles": 59,
-    "jsKb": 2794.9,
+    "jsKb": 2795,
     "cssFiles": 2,
     "cssKb": 218.2,
     "fontFiles": 2,
     "fontKb": 80,
-    "htmlFiles": 292,
-    "htmlKb": 14143.4,
+    "htmlFiles": 294,
+    "htmlKb": 14295.6,
     "fallbackDocuments": 1
   },
   "fallbackDocuments": [
@@ -22,18 +22,18 @@
       "why": "Next's global error shell"
     }
   ],
-  "sharedJsKb": 446.7,
+  "sharedJsKb": 446.8,
   "baseline": {
-    "url": "/brand/launch",
-    "jsKb": 446.7,
-    "routesSharing": 86,
-    "note": "The file set 86 of 142 routes share — the shell those routes start from. Owner: /brand/launch."
+    "url": "/accessibility",
+    "jsKb": 446.8,
+    "routesSharing": 88,
+    "note": "The file set 88 of 144 routes share — the shell those routes start from. Owner: /accessibility."
   },
   "routes": [
     {
       "url": "/components/[slug]",
       "ownJsKb": 250.2,
-      "totalJsKb": 696.9,
+      "totalJsKb": 697,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -369,9 +369,9 @@
     {
       "url": "/lab",
       "ownJsKb": 93.4,
-      "totalJsKb": 540.1,
+      "totalJsKb": 540.2,
       "cssKb": 218.2,
-      "htmlKb": 123.5,
+      "htmlKb": 123.7,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
@@ -382,9 +382,9 @@
     {
       "url": "/studio",
       "ownJsKb": 71.4,
-      "totalJsKb": 518.1,
+      "totalJsKb": 518.2,
       "cssKb": 218.2,
-      "htmlKb": 114,
+      "htmlKb": 114.2,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -394,7 +394,7 @@
     {
       "url": "/prompts/[slug]",
       "ownJsKb": 69.5,
-      "totalJsKb": 516.2,
+      "totalJsKb": 516.3,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -407,7 +407,7 @@
     {
       "url": "/search",
       "ownJsKb": 59,
-      "totalJsKb": 505.7,
+      "totalJsKb": 505.8,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -420,9 +420,9 @@
     {
       "url": "/",
       "ownJsKb": 53.8,
-      "totalJsKb": 500.5,
+      "totalJsKb": 500.6,
       "cssKb": 218.2,
-      "htmlKb": 240.7,
+      "htmlKb": 240.9,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
@@ -433,7 +433,7 @@
     {
       "url": "/components",
       "ownJsKb": 53.5,
-      "totalJsKb": 500.2,
+      "totalJsKb": 500.3,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -446,9 +446,9 @@
     {
       "url": "/saved",
       "ownJsKb": 42.7,
-      "totalJsKb": 489.4,
+      "totalJsKb": 489.5,
       "cssKb": 218.2,
-      "htmlKb": 49,
+      "htmlKb": 49.2,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -458,9 +458,9 @@
     {
       "url": "/prompts",
       "ownJsKb": 41.1,
-      "totalJsKb": 487.8,
+      "totalJsKb": 487.9,
       "cssKb": 218.2,
-      "htmlKb": 506.6,
+      "htmlKb": 506.8,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
@@ -471,9 +471,9 @@
     {
       "url": "/pro/api",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.6,
+      "totalJsKb": 486.7,
       "cssKb": 218.2,
-      "htmlKb": 55.9,
+      "htmlKb": 56.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -483,9 +483,9 @@
     {
       "url": "/pro/bundles",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.6,
+      "totalJsKb": 486.7,
       "cssKb": 218.2,
-      "htmlKb": 57.1,
+      "htmlKb": 57.3,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -495,9 +495,9 @@
     {
       "url": "/pro/cancel",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.6,
+      "totalJsKb": 486.7,
       "cssKb": 218.2,
-      "htmlKb": 58,
+      "htmlKb": 58.2,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -507,9 +507,9 @@
     {
       "url": "/pro/discounts",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.6,
+      "totalJsKb": 486.7,
       "cssKb": 218.2,
-      "htmlKb": 52.6,
+      "htmlKb": 52.8,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -519,9 +519,9 @@
     {
       "url": "/pro/referral",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.6,
+      "totalJsKb": 486.7,
       "cssKb": 218.2,
-      "htmlKb": 52.2,
+      "htmlKb": 52.4,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -531,9 +531,9 @@
     {
       "url": "/pro/teams",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.6,
+      "totalJsKb": 486.7,
       "cssKb": 218.2,
-      "htmlKb": 51.6,
+      "htmlKb": 51.8,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -543,9 +543,9 @@
     {
       "url": "/pro/trial",
       "ownJsKb": 39.9,
-      "totalJsKb": 486.6,
+      "totalJsKb": 486.7,
       "cssKb": 218.2,
-      "htmlKb": 53.8,
+      "htmlKb": 54,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -555,9 +555,9 @@
     {
       "url": "/backgrounds",
       "ownJsKb": 39.6,
-      "totalJsKb": 486.3,
+      "totalJsKb": 486.4,
       "cssKb": 218.2,
-      "htmlKb": 79.7,
+      "htmlKb": 79.9,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
@@ -568,9 +568,9 @@
     {
       "url": "/shuffle",
       "ownJsKb": 39.4,
-      "totalJsKb": 486.1,
+      "totalJsKb": 486.2,
       "cssKb": 218.2,
-      "htmlKb": 159.9,
+      "htmlKb": 160.1,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
@@ -581,9 +581,9 @@
     {
       "url": "/pricing",
       "ownJsKb": 38.3,
-      "totalJsKb": 485,
+      "totalJsKb": 485.1,
       "cssKb": 218.2,
-      "htmlKb": 184.9,
+      "htmlKb": 185.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -605,9 +605,9 @@
     {
       "url": "/lab/layers",
       "ownJsKb": 30,
-      "totalJsKb": 476.7,
+      "totalJsKb": 476.8,
       "cssKb": 218.2,
-      "htmlKb": 68.8,
+      "htmlKb": 69.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -617,9 +617,9 @@
     {
       "url": "/habits",
       "ownJsKb": 29.3,
-      "totalJsKb": 476,
+      "totalJsKb": 476.1,
       "cssKb": 218.2,
-      "htmlKb": 56.1,
+      "htmlKb": 56.3,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -629,9 +629,9 @@
     {
       "url": "/templates",
       "ownJsKb": 25.1,
-      "totalJsKb": 471.8,
+      "totalJsKb": 471.9,
       "cssKb": 218.2,
-      "htmlKb": 86.9,
+      "htmlKb": 87.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -641,9 +641,9 @@
     {
       "url": "/community/loved",
       "ownJsKb": 20.6,
-      "totalJsKb": 467.3,
+      "totalJsKb": 467.4,
       "cssKb": 218.2,
-      "htmlKb": 61.1,
+      "htmlKb": 61.3,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -653,7 +653,7 @@
     {
       "url": "/community/re-run",
       "ownJsKb": 20.6,
-      "totalJsKb": 467.3,
+      "totalJsKb": 467.4,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -665,7 +665,7 @@
     {
       "url": "/community/submit",
       "ownJsKb": 20.6,
-      "totalJsKb": 467.3,
+      "totalJsKb": 467.4,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -677,9 +677,9 @@
     {
       "url": "/community/build-a-thon",
       "ownJsKb": 17.8,
-      "totalJsKb": 464.5,
+      "totalJsKb": 464.6,
       "cssKb": 218.2,
-      "htmlKb": 48.2,
+      "htmlKb": 48.4,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -689,9 +689,9 @@
     {
       "url": "/community/day",
       "ownJsKb": 17.8,
-      "totalJsKb": 464.5,
+      "totalJsKb": 464.6,
       "cssKb": 218.2,
-      "htmlKb": 45.9,
+      "htmlKb": 46.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -701,9 +701,9 @@
     {
       "url": "/learn/paths",
       "ownJsKb": 11.6,
-      "totalJsKb": 458.3,
+      "totalJsKb": 458.4,
       "cssKb": 218.2,
-      "htmlKb": 58.5,
+      "htmlKb": 58.7,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -713,9 +713,9 @@
     {
       "url": "/community/outcomes",
       "ownJsKb": 10.7,
-      "totalJsKb": 457.4,
+      "totalJsKb": 457.5,
       "cssKb": 218.2,
-      "htmlKb": 78.7,
+      "htmlKb": 78.9,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -725,9 +725,9 @@
     {
       "url": "/community/remixes",
       "ownJsKb": 10.7,
-      "totalJsKb": 457.4,
+      "totalJsKb": 457.5,
       "cssKb": 218.2,
-      "htmlKb": 58.7,
+      "htmlKb": 59,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -737,9 +737,9 @@
     {
       "url": "/community/requests",
       "ownJsKb": 10.7,
-      "totalJsKb": 457.4,
+      "totalJsKb": 457.5,
       "cssKb": 218.2,
-      "htmlKb": 56.6,
+      "htmlKb": 56.8,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -749,7 +749,7 @@
     {
       "url": "/learn/[slug]",
       "ownJsKb": 9.9,
-      "totalJsKb": 456.6,
+      "totalJsKb": 456.7,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -761,9 +761,9 @@
     {
       "url": "/integrations/bookmarklet",
       "ownJsKb": 1.7,
-      "totalJsKb": 448.4,
+      "totalJsKb": 448.5,
       "cssKb": 218.2,
-      "htmlKb": 57.4,
+      "htmlKb": 57.7,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -771,11 +771,21 @@
       ]
     },
     {
+      "url": "/accessibility",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 55.7,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
       "url": "/brand/launch",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 67.6,
+      "htmlKb": 67.8,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -783,9 +793,9 @@
     {
       "url": "/brand/logo",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 85.9,
+      "htmlKb": 86.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -793,9 +803,9 @@
     {
       "url": "/brand/mascot",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 55.1,
+      "htmlKb": 55.3,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -803,9 +813,9 @@
     {
       "url": "/brand/notes",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 67.5,
+      "htmlKb": 67.7,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -813,9 +823,9 @@
     {
       "url": "/brand/proof",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 56.9,
+      "htmlKb": 57.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -823,9 +833,9 @@
     {
       "url": "/brand/thanks",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 50.9,
+      "htmlKb": 51.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -833,9 +843,9 @@
     {
       "url": "/brand/voice",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 64.1,
+      "htmlKb": 64.3,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -843,9 +853,9 @@
     {
       "url": "/brand/wallpapers",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 77.3,
+      "htmlKb": 77.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -853,9 +863,9 @@
     {
       "url": "/brand/watermark",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 53,
+      "htmlKb": 53.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -863,9 +873,9 @@
     {
       "url": "/changelog",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 75,
+      "htmlKb": 75.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -873,7 +883,7 @@
     {
       "url": "/changelog/[slug]",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -883,9 +893,9 @@
     {
       "url": "/collections",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 51.4,
+      "htmlKb": 51.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -893,7 +903,7 @@
     {
       "url": "/collections/[slug]",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -903,9 +913,9 @@
     {
       "url": "/community",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 78.8,
+      "htmlKb": 79,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -913,9 +923,9 @@
     {
       "url": "/community/attribution",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 52.4,
+      "htmlKb": 52.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -923,9 +933,9 @@
     {
       "url": "/community/badges",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 53.8,
+      "htmlKb": 54,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -933,9 +943,9 @@
     {
       "url": "/community/challenges",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 60.7,
+      "htmlKb": 60.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -943,9 +953,9 @@
     {
       "url": "/community/craft-talk",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 50.4,
+      "htmlKb": 50.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -953,9 +963,9 @@
     {
       "url": "/community/events",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 51.9,
+      "htmlKb": 52.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -963,9 +973,9 @@
     {
       "url": "/community/leaderboard",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 79.3,
+      "htmlKb": 79.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -973,157 +983,7 @@
     {
       "url": "/community/onboarding",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 56.9,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/community/picks",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 61.1,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/community/provenance",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 67.6,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/community/recognition",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 58.8,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/community/spotlight",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 58.1,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/community/teams",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 57.8,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/community/translations",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 113,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/compare",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 61.1,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/digest",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 86.9,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/digest/copy-of-the-week",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 52.9,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/es",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 48.6,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/glossary",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 71,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/integrations",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 76.7,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/integrations/badge",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 58.3,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/integrations/catalog",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
-      "cssKb": 218.2,
-      "htmlKb": 50.7,
-      "prerendered": true,
-      "jsFiles": 5,
-      "ownFiles": []
-    },
-    {
-      "url": "/integrations/cli",
-      "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
       "htmlKb": 57.1,
       "prerendered": true,
@@ -1131,11 +991,171 @@
       "ownFiles": []
     },
     {
+      "url": "/community/picks",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 61.3,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/community/provenance",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 67.8,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/community/recognition",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 59,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/community/spotlight",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 58.3,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/community/teams",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 58,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/community/translations",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 113.2,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/compare",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 61.3,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/digest",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 87.1,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/digest/copy-of-the-week",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 53.1,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/es",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 48.8,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/gaps",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 67.9,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/glossary",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 71.2,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/integrations",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 76.9,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/integrations/badge",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 58.5,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/integrations/catalog",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 50.9,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
+      "url": "/integrations/cli",
+      "ownJsKb": 0,
+      "totalJsKb": 446.8,
+      "cssKb": 218.2,
+      "htmlKb": 57.3,
+      "prerendered": true,
+      "jsFiles": 5,
+      "ownFiles": []
+    },
+    {
       "url": "/integrations/codesandbox",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 51.7,
+      "htmlKb": 51.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1143,9 +1163,9 @@
     {
       "url": "/integrations/embed",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 50.8,
+      "htmlKb": 51,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1153,9 +1173,9 @@
     {
       "url": "/integrations/feed",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 49.4,
+      "htmlKb": 49.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1163,9 +1183,9 @@
     {
       "url": "/integrations/figma",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 64.1,
+      "htmlKb": 64.3,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1173,9 +1193,9 @@
     {
       "url": "/integrations/og",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 53.5,
+      "htmlKb": 53.7,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1183,9 +1203,9 @@
     {
       "url": "/integrations/print",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 49.4,
+      "htmlKb": 49.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1193,9 +1213,9 @@
     {
       "url": "/integrations/react",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 49.2,
+      "htmlKb": 49.4,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1203,9 +1223,9 @@
     {
       "url": "/integrations/single-file",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 52.3,
+      "htmlKb": 52.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1213,9 +1233,9 @@
     {
       "url": "/integrations/storybook",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 47.9,
+      "htmlKb": 48.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1223,9 +1243,9 @@
     {
       "url": "/integrations/tailwind",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 48.6,
+      "htmlKb": 48.8,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1233,9 +1253,9 @@
     {
       "url": "/integrations/tokens",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 61.9,
+      "htmlKb": 62.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1243,9 +1263,9 @@
     {
       "url": "/integrations/vscode",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 54.7,
+      "htmlKb": 54.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1253,9 +1273,9 @@
     {
       "url": "/learn",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 247.1,
+      "htmlKb": 247.3,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1263,9 +1283,9 @@
     {
       "url": "/learn/questions",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 97.1,
+      "htmlKb": 97.3,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1273,9 +1293,9 @@
     {
       "url": "/makers",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 62.9,
+      "htmlKb": 63.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1283,7 +1303,7 @@
     {
       "url": "/makers/[handle]",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -1293,9 +1313,9 @@
     {
       "url": "/metrics",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 54.6,
+      "htmlKb": 54.8,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1303,9 +1323,9 @@
     {
       "url": "/mission",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 51.7,
+      "htmlKb": 52,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1313,9 +1333,9 @@
     {
       "url": "/perf",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 128.3,
+      "htmlKb": 128.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1323,9 +1343,9 @@
     {
       "url": "/perf/blur",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 63.6,
+      "htmlKb": 63.8,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1333,9 +1353,9 @@
     {
       "url": "/perf/build",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 59.1,
+      "htmlKb": 59.3,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1343,9 +1363,9 @@
     {
       "url": "/perf/caching",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 66.5,
+      "htmlKb": 66.7,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1353,9 +1373,9 @@
     {
       "url": "/perf/chunks",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 56,
+      "htmlKb": 56.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1363,9 +1383,9 @@
     {
       "url": "/perf/devices",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 55.3,
+      "htmlKb": 55.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1373,9 +1393,9 @@
     {
       "url": "/perf/fonts",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 55.9,
+      "htmlKb": 56.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1383,9 +1403,9 @@
     {
       "url": "/perf/mounting",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 53.3,
+      "htmlKb": 53.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1393,9 +1413,9 @@
     {
       "url": "/perf/no-images",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 53.2,
+      "htmlKb": 53.4,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1403,9 +1423,9 @@
     {
       "url": "/perf/no-js",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 62.4,
+      "htmlKb": 62.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1413,9 +1433,9 @@
     {
       "url": "/perf/prefetch",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 57,
+      "htmlKb": 57.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1423,9 +1443,9 @@
     {
       "url": "/perf/service-worker",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 55.3,
+      "htmlKb": 55.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1433,9 +1453,9 @@
     {
       "url": "/perf/timers",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 67.2,
+      "htmlKb": 67.4,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1443,9 +1463,9 @@
     {
       "url": "/pro",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 127.7,
+      "htmlKb": 127.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1453,9 +1473,9 @@
     {
       "url": "/pro/changelog",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 63.3,
+      "htmlKb": 63.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1463,9 +1483,9 @@
     {
       "url": "/pro/enterprise",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 60.8,
+      "htmlKb": 61,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1473,9 +1493,9 @@
     {
       "url": "/pro/licence",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 59,
+      "htmlKb": 59.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1483,9 +1503,9 @@
     {
       "url": "/pro/promise",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 56.9,
+      "htmlKb": 57.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1493,9 +1513,9 @@
     {
       "url": "/pro/unlimited",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 54.4,
+      "htmlKb": 54.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1503,9 +1523,9 @@
     {
       "url": "/quality",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 550.1,
+      "htmlKb": 550.3,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1513,7 +1533,7 @@
     {
       "url": "/quality/aria",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -1523,9 +1543,9 @@
     {
       "url": "/quality/craft",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 55.4,
+      "htmlKb": 55.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1533,9 +1553,9 @@
     {
       "url": "/quality/crawl",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 62.9,
+      "htmlKb": 63.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1543,9 +1563,9 @@
     {
       "url": "/quality/refreshed",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 197.2,
+      "htmlKb": 197.4,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1553,9 +1573,9 @@
     {
       "url": "/quality/schema",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 57.7,
+      "htmlKb": 57.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1563,9 +1583,9 @@
     {
       "url": "/quality/speed",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 85.8,
+      "htmlKb": 86,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1573,9 +1593,9 @@
     {
       "url": "/roadmap",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 89.8,
+      "htmlKb": 90,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1583,9 +1603,9 @@
     {
       "url": "/roadmap/embed",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 47.9,
+      "htmlKb": 48.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1593,9 +1613,9 @@
     {
       "url": "/samples",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 50.4,
+      "htmlKb": 50.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1603,7 +1623,7 @@
     {
       "url": "/samples/[slug]",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -1613,7 +1633,7 @@
     {
       "url": "/saved/stack",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
       "htmlKb": 0,
       "prerendered": false,
@@ -1623,9 +1643,9 @@
     {
       "url": "/sitemap",
       "ownJsKb": 0,
-      "totalJsKb": 446.7,
+      "totalJsKb": 446.8,
       "cssKb": 218.2,
-      "htmlKb": 263.7,
+      "htmlKb": 264.8,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1639,7 +1659,7 @@
         "subset": "latin",
         "kb": 47.1,
         "preloaded": true,
-        "pagesPreloading": 291
+        "pagesPreloading": 293
       },
       {
         "file": "sora_latin_wght_normal-s.p.2o7d_x-bmx02y.woff2",
@@ -1647,12 +1667,12 @@
         "subset": "latin",
         "kb": 32.9,
         "preloaded": true,
-        "pagesPreloading": 291
+        "pagesPreloading": 293
       }
     ],
     "totalKb": 80,
-    "pagesWithPreload": 291,
-    "pages": 292
+    "pagesWithPreload": 293,
+    "pages": 294
   },
   "heaviestHtml": [
     {
@@ -1661,55 +1681,55 @@
     },
     {
       "file": ".next/server/app/quality.html",
-      "kb": 550.1
+      "kb": 550.3
     },
     {
       "file": ".next/server/app/prompts.html",
-      "kb": 506.6
+      "kb": 506.8
     },
     {
       "file": ".next/server/app/sitemap.html",
-      "kb": 263.7
+      "kb": 264.8
     },
     {
       "file": ".next/server/app/learn.html",
-      "kb": 247.1
+      "kb": 247.3
     },
     {
       "file": ".next/server/app/index.html",
-      "kb": 240.7
+      "kb": 240.9
     },
     {
       "file": ".next/server/app/quality/refreshed.html",
-      "kb": 197.2
+      "kb": 197.4
     },
     {
       "file": ".next/server/app/pricing.html",
-      "kb": 184.9
+      "kb": 185.1
     }
   ],
   "jsOff": {
     "/components": null,
     "/backgrounds": {
-      "htmlKb": 79.7,
+      "htmlKb": 79.9,
       "pending": 33,
       "mounted": 0,
-      "links": 53,
+      "links": 55,
       "headings": 0
     },
     "/prompts": {
-      "htmlKb": 506.6,
+      "htmlKb": 506.8,
       "pending": 74,
       "mounted": 0,
-      "links": 127,
+      "links": 129,
       "headings": 0
     },
     "/components/combo-box": null,
     "/learn": {
-      "htmlKb": 247.1,
+      "htmlKb": 247.3,
       "pending": 0,
       "mounted": 0,
-      "links": 115,
+      "links": 117,
       "headings": 0
     }
   }

@@ -108,6 +108,12 @@ export const CLAIMS: Claim[] = [
     in: "check:exports",
   },
   {
+    file: "src/app/(public)/gaps/page.tsx",
+    says: "Absolute-URL round trips from the harness",
+    checkedBy: "every route the ledger registers still answers",
+    in: "check:exports",
+  },
+  {
     file: "src/app/(public)/metrics/page.tsx",
     says: "the catalog total against the figure",
     checkedBy: "catalog carries every component, and /quality agrees",

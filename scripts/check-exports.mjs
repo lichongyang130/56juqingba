@@ -613,6 +613,53 @@ function parseCheck(label, source) {
     `${sitemapUrls.length} pages${pageIssues.length ? ` · ${pageIssues.length} issues: ${pageIssues.slice(0, 5).join(" | ")}` : ""}`,
   );
 
+  // #17/#91 — the two honesty pages. Both publish what is missing, which makes
+  // them the pages most able to rot: a bet that goes live, a count that moves, a
+  // claim that stops being true. Each is checked against the data it renders.
+  {
+    // Titles carry ampersands and em dashes, which React escapes in the HTML.
+    // Decoding before comparing is the difference between checking the page and
+    // checking the escaping.
+    const decode = (t) =>
+      t
+        .replace(/<!-- -->/g, "")
+        .replace(/&amp;/g, "&")
+        .replace(/&#x27;|&#39;|&apos;/g, "'")
+        .replace(/&quot;/g, '"')
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">");
+    const gaps = decode((await get("/gaps")).text);
+    const a11yPage = decode((await get("/accessibility")).text);
+    const { BETS } = await import("../src/lib/roadmap.ts");
+    // Read the checklist out of its source rather than importing it: a11y-audit
+    // pulls in ./data, whose extensionless imports Node's ESM loader cannot
+    // resolve outside the bundler. The titles are the contract either way.
+    const a11ySrc = fs.readFileSync("src/lib/a11y-audit.ts", "utf8");
+    const checklistBlock = a11ySrc.slice(a11ySrc.indexOf("export const MANUAL_CHECKS"));
+    const MANUAL_CHECKS = [...checklistBlock.matchAll(/^\s{4}title:\s*"([^"]+)"/gm)].map((m) => ({ title: m[1] }));
+    const blocked = BETS.filter((b) => b.status !== "live");
+    ok(
+      "/gaps lists every bet that is not live, and no live one",
+      gaps.includes(`A · Infrastructure-blocked`) &&
+        blocked.every((b) => gaps.includes(b.title)) &&
+        BETS.filter((b) => b.status === "live").every((b) => !gaps.includes(b.title)),
+      `${blocked.length} blocked of ${BETS.length} bets`,
+    );
+    ok(
+      "/gaps names the environment it cannot measure here",
+      gaps.includes("Environment-blocked") && gaps.includes("CodeSandbox") && gaps.includes("Lighthouse"),
+    );
+    ok(
+      "/accessibility prints every manual check the audit lists",
+      MANUAL_CHECKS.every((c) => a11yPage.includes(c.title)) && a11yPage.includes("none of them has been run in a browser"),
+      `${MANUAL_CHECKS.length} checks`,
+    );
+    // The two pages have to be reachable, not just correct: a statement nobody
+    // links to is a statement nobody reads.
+    const home = (await get("/")).text;
+    ok("the footer reaches both honesty pages", home.includes('href="/gaps"') && home.includes('href="/accessibility"'));
+  }
+
   // #34 — the claim map. Batch 91 fixed four sentences that described checks
   // that did not exist; this is the rule that keeps a fifth from shipping. Every
   // entry names the file, the sentence and the check that backs it, and three

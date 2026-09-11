@@ -249,7 +249,7 @@ export function Footer({ counts }: { counts: SiteCounts }) {
     ["Library", ["Elements", "Animated", "Sections", "Templates", "Backgrounds"]],
     ["AI Prompts", ["All prompts", "Verified only", "Prompt builder", "Scoreboard"]],
     ["Lab & Learn", ["Easing Lab", "Spring Lab", "Theme Studio", "Guides & Blog"]],
-    ["Company", ["Pricing", "About", "Community", "Quality bar", "Glossary", "Integrations", "License", "API docs", "Status", "Roadmap"]],
+    ["Company", ["Pricing", "About", "Community", "Quality bar", "Accessibility", "Gaps", "Glossary", "Integrations", "License", "API docs", "Status", "Roadmap"]],
     ["Brand", ["Logo system", "Voice guide", "Launch checklist", "Proof shelf", "Mascot", "Wallpapers", "Watermark", "Open metrics", "Build notes"]],
   ];
   return (
@@ -391,6 +391,8 @@ export function Footer({ counts }: { counts: SiteCounts }) {
                     Community: "/community",
                     "Quality bar": "/quality",
                     Glossary: "/glossary",
+                    Accessibility: "/accessibility",
+                    Gaps: "/gaps",
                     Roadmap: "/roadmap",
                     Integrations: "/integrations",
                     License: "/pro/licence",
