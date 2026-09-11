@@ -54,6 +54,21 @@ export const CACHE_RULES: CacheRule[] = [
     why: "A feed that changes when an entry is written: the browser revalidates every time, the edge holds it for an hour.",
   },
   {
+    source: "/community/feed.xml",
+    value: "public, max-age=0, s-maxage=3600",
+    why: "The same feed under its second name (the route re-exports the one above), so both addresses answer with the same policy rather than the second one falling through to the HTML rule.",
+  },
+  {
+    source: "/learn/feed.xml",
+    value: "public, max-age=0, s-maxage=3600",
+    why: "The guides feed added with the rest of the text surfaces: same shape as the catalog feed, same reasoning — revalidate in the browser, hold an hour at the edge.",
+  },
+  {
+    source: "/changelog/feed.xml",
+    value: "public, max-age=0, s-maxage=3600",
+    why: "The studio log feed. It links each item to its own permalink instead of the homepage anchor, which is the one thing the export copy of this feed cannot do.",
+  },
+  {
     source: "/api/brand/:path*",
     value: "public, max-age=3600",
     why: "Brand JSON and downloadable marks, rebuilt with the site rather than fingerprinted.",

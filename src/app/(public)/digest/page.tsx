@@ -83,6 +83,13 @@ export default function DigestPage() {
         Every thing that landed in the last seven days: new library assets, the week&apos;s most-copied builds and the
         studio log. Each digest is a snapshot — earlier weeks stay in the changelog as the archive grows.
       </p>
+      <p className="mt-3 max-w-2xl text-[11px] leading-relaxed text-ink-faint">
+        The digest also exists as a designed email, rendered as a page:{" "}
+        <Link href="/digest/copy-of-the-week" className="font-semibold text-emerald-300 hover:text-emerald-200">
+          copy of the week
+        </Link>
+        . It is the same content in send-ready shape, with the parts a real send would need listed rather than faked.
+      </p>
 
       {/* headline numbers */}
       <div className="mt-8 grid gap-3 sm:grid-cols-3">

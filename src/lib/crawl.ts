@@ -143,4 +143,5 @@ export const SITEMAP_EXTRA_PATHS: string[] = [
   "/samples",
   "/shuffle",
   "/studio",
+  "/sitemap",
 ];

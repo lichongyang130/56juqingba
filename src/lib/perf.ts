@@ -394,7 +394,7 @@ export const MEASURED = {
   /** Lines in src/components/keyframes.tsx (batch 92). The split panel used to
    *  print "41 lines" as a literal and the file had become 40 — check:exports
    *  now compares this number with the file, so the count cannot drift again. */
-  keyframesLines: 40,
+  keyframesLines: 42,
   /** Batch 55 build, before lazy mounting and the keyframes split. */
   before: {
     build: "batch 55 (commit 1fb5142)",

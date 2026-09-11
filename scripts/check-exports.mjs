@@ -613,6 +613,59 @@ function parseCheck(label, source) {
     `${sitemapUrls.length} pages${pageIssues.length ? ` · ${pageIssues.length} issues: ${pageIssues.slice(0, 5).join(" | ")}` : ""}`,
   );
 
+  // 526 — the text surfaces. #50 was a real gap: every dated family on the site
+  // published a feed except the 60 guides, and the studio log's feed existed
+  // only as an export copy under /api/exports. Each feed is fetched here and
+  // asked for the items its own source holds — the count comes out of the page
+  // or the data, never typed in.
+  {
+    const learnFeed = await get("/learn/feed.xml");
+    const learnItems = (learnFeed.text.match(/<item>/g) || []).length;
+    const learnPage = await get("/learn");
+    const learnListed = new Set([...learnPage.text.matchAll(/href="\/learn\/([a-z0-9-]+)"/g)].map((m) => m[1])).size;
+    ok(
+      "/learn/feed.xml carries every guide the hub links",
+      learnFeed.status === 200 && learnItems > 0 && learnItems >= learnListed,
+      `feed ${learnItems}, /learn links ${learnListed}`,
+    );
+
+    const logFeed = await get("/changelog/feed.xml");
+    const logItems = (logFeed.text.match(/<item>/g) || []).length;
+    const logPage = (await get("/changelog")).text;
+    const logListed = (logPage.match(/href="\/changelog\/[a-z0-9-]+"/g) || []).length;
+    ok(
+      "/changelog/feed.xml carries every entry the log lists",
+      logFeed.status === 200 && logItems === logListed,
+      `feed ${logItems}, /changelog lists ${logListed}`,
+    );
+    // The one thing this feed does that the export copy cannot: link the entry
+    // permalink rather than the homepage anchor.
+    ok(
+      "the studio log feed links each entry's own permalink",
+      /<link>[^<]*\/changelog\/\d{4}-\d{2}-\d{2}-[a-z0-9-]+<\/link>/.test(logFeed.text) && !/\/#changelog/.test(logFeed.text),
+    );
+
+    // #63 — the human sitemap is the crawler sitemap. Both counts come from the
+    // same function, so this is a check that the page rendered it, not that two
+    // numbers were typed in twice.
+    const xmlLocs = (sitemapXml.match(/<loc>/g) || []).length;
+    const human = (await get("/sitemap")).text.replace(/<!-- -->/g, "");
+    const printed = Number((human.match(/(\d+) pages,/) || [])[1]);
+    ok("the human sitemap prints the URL count the XML carries", printed === xmlLocs, `page ${printed}, sitemap.xml ${xmlLocs}`);
+    ok(
+      "the human sitemap shows the excluded surfaces too",
+      human.includes("Not in the index") && human.includes("/quality/crawl"),
+    );
+
+    // #61 — the orphan. /digest/copy-of-the-week had a canonical and was linked
+    // from nowhere; a page no sitemap page mentions is a page a reader cannot
+    // reach, which no canonical can fix.
+    const digestPage = (await get("/digest")).text;
+    ok("the digest page links its email edition", digestPage.includes('href="/digest/copy-of-the-week"'));
+    const homePage = (await get("/")).text;
+    ok("and so does the homepage", homePage.includes('href="/digest"'));
+  }
+
   // 524 — the split panel's before/after figures are recorded measurements from
   // named builds, and the module length beside them was a literal that had gone
   // stale ("41 lines" for a 40-line file). The numbers stay recorded — a past
@@ -1158,6 +1211,9 @@ function parseCheck(label, source) {
       "/_next/image": "/_next/image?url=%2Fog%2Fdefault&w=64&q=75",
       "/embed.js": "/embed.js",
       "/community/rss.xml": "/community/rss.xml",
+      "/community/feed.xml": "/community/feed.xml",
+      "/learn/feed.xml": "/learn/feed.xml",
+      "/changelog/feed.xml": "/changelog/feed.xml",
       "/api/brand/:path*": `/api/brand/${catalog.components[0].slug}`,
       "/og/:path*": `/og/${catalog.components[0].slug}`,
     };

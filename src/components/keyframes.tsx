@@ -1,14 +1,16 @@
 // The animation keyframes every demo shares.
 //
-// This lives in its own module because of a measured problem: the public layout
+// This lives in its own module because of a measured problem. The public layout
 // needs <KeyframesStyle />, and it used to import it from cards.tsx, which
-// imports the 7,416-line demo module. Every route in the (public) group — the
-// guide pages, the community pages, the audit pages — therefore shipped the
-// whole of Demo.tsx in its client bundle whether or not it rendered a demo.
-// The budget report put it at ~485 KB of JavaScript on pages with no demos.
+// imported the single demo module of the time — one 7,416-line file holding
+// every scene. All 80 public routes then shipped that file in their client
+// bundle whether or not they rendered a demo, which the budget report put at
+// ~485 KB of JavaScript on pages with no demos.
 //
-// Keeping the keyframes here means a page pays for the demos only when it
-// actually renders one.
+// Two things have changed since and neither weakens the reason. The scenes are
+// ten modules now (batch 85), so a page that renders one demo downloads a set
+// rather than everything; and the keyframes still live here, so a page that
+// renders no demo pays for none of it.
 
 const KEYFRAMES = `
   @keyframes mf-dot { 0%,100% { transform: scale(0.55); opacity:.35 } 40% { transform: scale(1); opacity:1 } }

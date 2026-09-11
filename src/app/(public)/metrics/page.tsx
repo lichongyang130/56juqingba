@@ -56,8 +56,11 @@ export default function MetricsOfPage() {
         <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">Trust · open metrics</p>
         <h1 className="mt-2 text-4xl font-extrabold tracking-tight md:text-5xl">Everything we can measure</h1>
         <p className="mt-3 text-sm leading-relaxed text-ink-dim">
-          Every figure below is recomputed from this repository at build time — the data file, the prompt run logs and the build report. If a number
-          here disagrees with a page elsewhere on the site, one of them is a bug, and the harness will usually find it first.
+          Every figure below is recomputed from this repository at build time — the data file, the prompt run logs and the build report. The
+          harness compares the ones that also appear elsewhere rather than promising to notice: the catalog total against the figure{" "}
+          <span className="font-mono">/quality</span> prints, the component count against the sitemap and the catalog endpoint, the changelog total
+          against the feed&rsquo;s item count, and every per-asset score against the badge route. A number that only appears here is not compared
+          with anything, and this page does not claim otherwise.
         </p>
       </div>
 
