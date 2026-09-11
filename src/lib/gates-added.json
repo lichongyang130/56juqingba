@@ -717,6 +717,26 @@
       "s": "Batch 90: the cache rules are the rules the server sends",
       "d": "2026-09-11"
     },
+    "check:exports|the check index admits which names are composed at run time": {
+      "c": "0730278",
+      "s": "Suggestion 35: /quality/gates, the index of the checks",
+      "d": "2026-09-11"
+    },
+    "check:exports|the check index names the checks no command runs": {
+      "c": "0730278",
+      "s": "Suggestion 35: /quality/gates, the index of the checks",
+      "d": "2026-09-11"
+    },
+    "check:exports|the check index prints every check the scripts announce": {
+      "c": "0730278",
+      "s": "Suggestion 35: /quality/gates, the index of the checks",
+      "d": "2026-09-11"
+    },
+    "check:exports|the check index prints the counts it derived": {
+      "c": "0730278",
+      "s": "Suggestion 35: /quality/gates, the index of the checks",
+      "d": "2026-09-11"
+    },
     "check:exports|the component page labels preview copy and answers the question": {
       "c": "2c4591c",
       "s": "Batch 81: demo copy vs catalog data, and per-route JavaScript budgets",
@@ -750,6 +770,11 @@
     "check:exports|the forbidden-type list is readable": {
       "c": "e1160ce",
       "s": "Batch 72: Section 19 opens — metadata, FAQ schema, sitemap, glossary, schema register",
+      "d": "2026-09-11"
+    },
+    "check:exports|the gate index matches the scripts it was generated from": {
+      "c": "0730278",
+      "s": "Suggestion 35: /quality/gates, the index of the checks",
       "d": "2026-09-11"
     },
     "check:exports|the home feed opens with the newest batch": {
