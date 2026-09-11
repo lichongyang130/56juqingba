@@ -197,8 +197,8 @@ to be a different problem than the one they were written for._
 | 50 | `/learn/feed.xml` (60 guides) and `/changelog/feed.xml` (13 entries, permalinks included) | `9fd1ec3` | `check:exports`: both counts derived from the pages they mirror |
 | 61 | `/digest/copy-of-the-week` was linked from zero pages; `/digest` links it now | `9fd1ec3` | `check:exports` |
 | 63 | `/sitemap` — the crawler sitemap for a person, importing `sitemap()` rather than re-listing it | `9fd1ec3` | `check:exports`: page count equals `<loc>` count |
-| 17 | `/accessibility` — the statement, distinct from the engineering record: what is verified on every build, what a build cannot see (all 7 manual checks named), and how to report a problem | see below | `check:exports`: every checklist title printed, "none has been run in a browser" present, footer link exists |
-| 91 | `/gaps` — the two registers in one page: **6 infrastructure-blocked bets** (derived from `BETS`, so a bet going live leaves this page in the same commit) and **8 environment-blocked numbers**, each naming what exists instead | see below | `check:exports`: every non-live bet present, no live bet named, the environment rows, footer link |
+| 17 | `/accessibility` — the statement, distinct from the engineering record: what is verified on every build, what a build cannot see (all 7 manual checks named), and how to report a problem | `efdb100` | `check:exports`: every checklist title printed, "none has been run in a browser" present, footer link exists |
+| 91 | `/gaps` — the two registers in one page: **6 infrastructure-blocked bets** (derived from `BETS`, so a bet going live leaves this page in the same commit) and **8 environment-blocked numbers**, each naming what exists instead | `efdb100` | `check:exports`: every non-live bet present, no live bet named, the environment rows, footer link |
 
 **Open, and worth saying so:** items 8, 9, 10 and everything not in the table above. The
 motion section's remaining work (a per-module table on `/quality/aria`, the motion
