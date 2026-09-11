@@ -37,7 +37,10 @@ export default function LabPage() {
 
       {/* lab additions — batch 1 */}
       <div className="mt-16">
-        <h2 className="text-2xl font-extrabold tracking-tight">New this week</h2>
+        {/* #510 — this section is a set of tools that shipped together, not a
+            weekly drop; the label said "this week" with nothing recording when
+            they landed. */}
+        <h2 className="text-2xl font-extrabold tracking-tight">Also in the Lab</h2>
         <p className="mt-1 text-sm text-ink-dim">Smaller tools for the decisions that surround motion: stagger math, radius shapes, shadow stacks, filter checks.</p>
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <TimingComposer />

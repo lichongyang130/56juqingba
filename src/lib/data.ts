@@ -1,7 +1,6 @@
 import type {
   Asset,
   BackgroundAsset,
-  CommunityStat,
   LabTool,
   PromptTemplate,
 } from "./types";
@@ -2630,13 +2629,6 @@ export const LAB_TOOLS: LabTool[] = [
   { slug: "themes", title: "Theme Studio", description: "Design your brand tokens once and remap every Motif component to them live.", outputs: ["CSS vars", "Tailwind"], free: false, accent: "#a78bfa" },
   { slug: "palette", title: "Palette Engine", description: "Generate harmonious palettes with an accessibility-first picker (contrast pre-checked live).", outputs: ["HEX/OKLCH"], free: true, accent: "#67e8f9" },
   { slug: "a11y", title: "Contrast Sentinel", description: "Paste any two colours (or a whole token file) and get WCAG AA/AAA verdicts per usage size.", outputs: ["Report"], free: true, accent: "#fb7185" },
-];
-
-export const COMMUNITY_STATS: CommunityStat[] = [
-  { label: "Assets in library", value: "612", delta: "+31 this week", up: true },
-  { label: "Verified AI prompts", value: "318", delta: "+12 this week", up: true },
-  { label: "Copies this month", value: "148.2k", delta: "+12.4%", up: true },
-  { label: "Avg. copy-to-run success", value: "94%", delta: "+2.1 pt", up: true },
 ];
 
 export const VERIFIED_BADGE = {

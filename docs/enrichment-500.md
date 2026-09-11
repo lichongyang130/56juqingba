@@ -8,14 +8,14 @@ How to read this: pick any section, take the three ideas that make you say "that
 would be fun to build", and ship them as a batch. Ideas are deliberately concrete —
 names, behaviours and where they plug into the existing pages.
 
-<!-- ledger-extra-rows: 9 (row 27 predates the programme; rows 502-509 are post-programme audit repairs) -->
+<!-- ledger-extra-rows: 10 (row 27 predates the programme; rows 502-510 are post-programme audit repairs) -->
 _One row in the table below is not an idea from the bank: #27 upload progress ring
 (`/components/progress-ring`) shipped alongside the Section 1 batch and was never one of
 the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet count. The
 harness reads the `ledger-extra-rows` marker above and allows that difference, which means
 the table ends at #501 on the day the headline reads 500 / 500._
 
-## Progress — 500 / 500 shipped (batches 1–69, in order) · Sections 1–21 complete ✅
+## Progress — 500 / 500 shipped (batches 1–79, in order) · Sections 1–21 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -528,6 +528,7 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 507 | Markup accessibility repair | the automated half of a11y, run over every built document: fixed 134 pages whose logo gradient carried the same id three times per document (header, footer, press kit), every mock heading inside demo scenes and card previews, six panel titles that rendered as h3 directly under a page h1, four unlabeled lab/palette controls, and the badge page's per-card SVG ids |
 | 508 | /quality/aria — the audit page | the seven decidable checks (alt text, control names, label association, duplicate ids, heading order, document language) with live counts, the real findings from the first two runs and the repairs they caused, and an explicit list of what markup alone cannot decide (focus order, contrast in context, screen-reader output) |
 | 509 | Markup gate in the export harness | the same seven checks run from outside the build over all 291 documents and fail on any finding, so /quality/aria cannot report green while the served HTML is not; the page renders on demand precisely so its count is the finished build rather than a mid-build slice |
+| 510 | Invented movement removed from the homepage | the hero stat band printed "+8 this drop", "+2 this week", "+0.6 pt" and "+12.4%" as literals, and the trending list printed `+{((copies * 7) % 13) + 5}%` — a percentage manufactured from the copy count by an arbitrary formula; nothing in the repository records a change over time, so both were invention, not measurement. Each tile now carries a fact derived from the same data as its number (MIT count, models per prompt, recorded runs, dependency count and size), the copies tile says "catalog counter, all time — not a 30-day measurement", and the dead `COMMUNITY_STATS` block (612 assets / 318 prompts, contradicting the 133 / 74 catalog) is deleted |
 
 ---
 

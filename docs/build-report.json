@@ -1,6 +1,6 @@
 {
-  "measuredAt": "2026-09-11T02:12:37.228Z",
-  "buildId": "c57edXNkcQtgyDcmo_F-N",
+  "measuredAt": "2026-09-11T02:23:10.174Z",
+  "buildId": "FcUPH6RbvmevrdhfKtVIm",
   "command": "npm run build && npm run measure",
   "summary": {
     "routes": 141,
@@ -12,8 +12,8 @@
     "cssKb": 217.6,
     "fontFiles": 2,
     "fontKb": 80,
-    "htmlFiles": 291,
-    "htmlKb": 13859.9
+    "htmlFiles": 292,
+    "htmlKb": 13883.5
   },
   "sharedJsKb": 446.2,
   "baseline": {
@@ -429,7 +429,7 @@
       "ownJsKb": 469.4,
       "totalJsKb": 915.6,
       "cssKb": 217.6,
-      "htmlKb": 240.2,
+      "htmlKb": 240.6,
       "prerendered": true,
       "jsFiles": 8,
       "ownFiles": [
@@ -1672,7 +1672,7 @@
     ],
     "totalKb": 80,
     "pagesWithPreload": 289,
-    "pages": 291
+    "pages": 292
   },
   "heaviestHtml": [
     {
@@ -1693,7 +1693,7 @@
     },
     {
       "file": ".next/server/app/index.html",
-      "kb": 240.2
+      "kb": 240.6
     },
     {
       "file": ".next/server/app/quality/refreshed.html",

@@ -211,6 +211,39 @@ function parseCheck(label, source) {
   }
   ok("no forbidden schema type is emitted anywhere", offenders.length === 0, offenders.join(", "));
 
+  /* ---------- no invented movement ---------- */
+
+  // Nothing in this repository records a change over time for the catalog, so a
+  // "+12.4%" or an arrow next to a count can only be invention. The homepage
+  // shipped four such figures plus a percentage manufactured from the copy
+  // count; they were removed in #510 and this keeps them out.
+  {
+    const publicSrc = [];
+    const walkSrc = (dir) => {
+      for (const e of fs.readdirSync(dir)) {
+        const p = path.join(dir, e);
+        if (fs.statSync(p).isDirectory()) {
+          if (!p.includes("demos") && !p.includes("admin")) walkSrc(p);
+        } else if (e.endsWith(".tsx")) publicSrc.push(p);
+      }
+    };
+    walkSrc(path.join("src", "app", "(public)"));
+    const hardcodedDeltas = publicSrc.filter((f) => /delta: "/.test(fs.readFileSync(f, "utf8")));
+    ok(
+      "no public page hard-codes a growth figure",
+      hardcodedDeltas.length === 0,
+      `${publicSrc.length} files scanned${hardcodedDeltas.length ? ` · ${hardcodedDeltas.join(", ")}` : ""}`,
+    );
+
+    const homeHtml = (await get("/")).text;
+    const markers = ["this drop", "+8 this", "+2 this", "+0.6 pt", "+12.4%", "Trending this week"].filter((m) => homeHtml.includes(m));
+    ok(
+      "the homepage prints no movement it cannot measure",
+      markers.length === 0,
+      markers.length ? `found: ${markers.join(", ")}` : "clean",
+    );
+  }
+
   /* ---------- markup accessibility pass ---------- */
 
   // The seven checks /quality/aria documents, run from outside the build so the

@@ -95,9 +95,3 @@ export interface LabTool {
   interactive?: boolean; // has a working inline demo in the MVP
 }
 
-export interface CommunityStat {
-  label: string;
-  value: string;
-  delta: string;
-  up: boolean;
-}

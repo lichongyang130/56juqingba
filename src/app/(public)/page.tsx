@@ -88,11 +88,19 @@ export default function HomePage() {
   const topPrompt = [...PROMPTS].sort((a, b) => b.avgFidelity - a.avgFidelity)[0];
   const verifiedPrompts = PROMPTS.filter((p) => p.status === "verified" || p.status === "featured").length;
   const copiesTotal = COMPONENTS.reduce((s, c) => s + c.copies, 0);
+  // #510 — these four tiles used to print invented movement ("+8 this drop",
+  // "+12.4%"). Nothing in the repository records a change over time, so an
+  // arrow and a percentage could only ever be made up. Each tile now carries a
+  // fact read from the same data as the number above it; where a change-over-
+  // time figure is genuinely missing, the tile says what the counter is instead
+  // of implying a trend.
+  const totalRunsForStats = PROMPTS.reduce((s, p) => s + p.runs.length, 0);
+  const avgModelsForStats = (totalRunsForStats / Math.max(1, PROMPTS.length)).toFixed(1);
   const heroStats = [
-    { label: "Original assets", value: String(COMPONENTS.length), delta: "+8 this drop", up: true, href: "/components" },
-    { label: "Verified prompts", value: String(verifiedPrompts), delta: "+2 this week", up: true, href: "/prompts" },
-    { label: "Avg prompt fidelity", value: `${Math.round(PROMPTS.reduce((s, p) => s + p.avgFidelity, 0) / Math.max(1, PROMPTS.length))}%`, delta: "+0.6 pt", up: true, href: "/prompts" },
-    { label: "Copies (30d)", value: `${(copiesTotal / 1000).toFixed(1)}k`, delta: "+12.4%", up: true, href: "/search?type=components" },
+    { label: "Original assets", value: String(COMPONENTS.length), note: `${COMPONENTS.filter((c) => c.license === "MIT").length} MIT licensed`, href: "/components" },
+    { label: "Verified prompts", value: String(verifiedPrompts), note: `re-run on ${avgModelsForStats} models each`, href: "/prompts" },
+    { label: "Avg prompt fidelity", value: `${Math.round(PROMPTS.reduce((s, p) => s + p.avgFidelity, 0) / Math.max(1, PROMPTS.length))}%`, note: `${totalRunsForStats} recorded runs`, href: "/prompts" },
+    { label: "Copies logged", value: `${(copiesTotal / 1000).toFixed(1)}k`, note: "catalog counter, all time — not a 30-day measurement", href: "/search?type=components" },
   ];
   /* feature-math + homepage marketing internals (#281-#285) */
   const avgModels = (PROMPTS.reduce((sum, p) => sum + p.runs.length, 0) / Math.max(1, PROMPTS.length)).toFixed(1);
@@ -173,7 +181,7 @@ export default function HomePage() {
                   <span className="translate-x-0 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" aria-hidden>↗</span>
                 </dt>
                 <dd className="text-2xl font-extrabold tracking-tight text-ink">{s.value}</dd>
-                <dd className="mt-0.5 text-[11px] font-semibold text-mint">{s.delta}</dd>
+                <dd className="mt-0.5 text-[11px] font-medium text-ink-faint">{s.note}</dd>
               </Link>
             ))}
           </dl>
@@ -350,7 +358,10 @@ export default function HomePage() {
           {/* trending rail */}
           <div className="rounded-3xl border border-white/8 bg-panel p-5">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-ink-faint">Trending this week</h3>
+              {/* #510 — "Trending this week" claimed a window that is not
+                  measured: the ranking is by the catalog's copy counter, which
+                  has no time dimension. The label now says what the sort is. */}
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-ink-faint">Most copied</h3>
               <span className="chip !text-[9px] uppercase text-mint">▲ by copies</span>
             </div>
             <ul className="mt-4">
@@ -370,7 +381,14 @@ export default function HomePage() {
                     </span>
                     <span className="shrink-0 text-right">
                       <span className="block text-sm font-extrabold tabular-nums text-ink">{a.copies >= 1000 ? `${(a.copies / 1000).toFixed(1)}k` : a.copies}</span>
-                      <span className="block text-[10px] font-bold text-mint">+{((a.copies * 7) % 13) + 5}%</span>
+                      {/* #510 — this line used to read `+{((a.copies * 7) % 13) + 5}%`,
+                          a percentage manufactured from the copy count by an arbitrary
+                          formula. It looked like measurement and was arithmetic. The
+                          ranking is by copies, so the second line now says what the
+                          asset is instead of inventing how fast it is growing. */}
+                      <span className="block text-[10px] font-medium text-ink-faint">
+                        {a.deps.length === 0 ? "zero deps" : `${a.deps.length} deps`} · {a.bundleKb.toFixed(1)} KB
+                      </span>
                     </span>
                   </Link>
                   {i < trending.length - 1 && <div className="mx-2 border-t border-white/5" />}
