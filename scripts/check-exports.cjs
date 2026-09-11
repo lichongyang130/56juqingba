@@ -211,6 +211,117 @@ function parseCheck(label, source) {
   }
   ok("no forbidden schema type is emitted anywhere", offenders.length === 0, offenders.join(", "));
 
+  /* ---------- section 20 brand & launch ---------- */
+
+  const brandLogo = await get("/brand/logo");
+  ok(
+    "/brand/logo redraws the header's mark",
+    brandLogo.status === 200 && brandLogo.text.includes('x="19" y="19"') && brandLogo.text.includes("#6366f1"),
+    String(brandLogo.status),
+  );
+  const chromeSrc = fs.readFileSync(path.join("src", "components", "chrome.tsx"), "utf8");
+  ok(
+    "the logo geometry agrees between page and header",
+    chromeSrc.includes('x="19" y="19"') && chromeSrc.includes("#6366f1") && chromeSrc.includes('x="19" y="7"'),
+  );
+
+  const brandVoice = await get("/brand/voice");
+  ok(
+    "/brand/voice prints the live tone scan",
+    brandVoice.status === 200 && brandVoice.text.includes("live hits"),
+    String(brandVoice.status),
+  );
+  // The tone rule itself, enforced: read the dictionary and the negation
+  // pattern out of the module the site uses, then apply them to the same files
+  // the page scans. A live hit (a banned word not near a negation) fails.
+  const qualitySrc = fs.readFileSync(path.join("src", "lib", "quality-utils.ts"), "utf8");
+  const dictBlock = (qualitySrc.match(/OVERCLAIM_DICTIONARY = \[([\s\S]*?)\]/) || [])[1] || "";
+  const dictionary = [...dictBlock.matchAll(/"([a-z-]+)"/g)].map((m) => m[1]);
+  const negSource = (qualitySrc.match(/const neg = (\/.*?\/i)\.test/) || [])[1];
+  const negation = negSource ? new RegExp(negSource.slice(1, -2), "i") : null;
+  const proseFiles = [];
+  const walkProse = (dir) => {
+    for (const e of fs.readdirSync(dir)) {
+      const p = path.join(dir, e);
+      if (fs.statSync(p).isDirectory()) walkProse(p);
+      else if (e.endsWith(".tsx")) proseFiles.push(p);
+    }
+  };
+  walkProse(path.join("src", "app", "(public)"));
+  proseFiles.push(path.join("src", "components", "chrome.tsx"), path.join("src", "app", "not-found.tsx"));
+  let toneHits = 0;
+  let toneCleared = 0;
+  const liveHits = [];
+  if (dictionary.length >= 15 && negation) {
+    for (const f of proseFiles) {
+      const text = fs.readFileSync(f, "utf8");
+      for (const term of dictionary) {
+        const re = new RegExp(term, "gi");
+        let m;
+        while ((m = re.exec(text))) {
+          const before = text.slice(Math.max(0, m.index - 90), m.index);
+          toneHits++;
+          if (negation.test(before)) toneCleared++;
+          else liveHits.push(`${f}:${text.slice(0, m.index).split("\n").length} ${m[0]}`);
+        }
+      }
+    }
+  }
+  ok(
+    "no banned overclaim term survives the context rule",
+    dictionary.length >= 15 && negation !== null && liveHits.length === 0,
+    `${dictionary.length} terms · ${proseFiles.length} files · ${toneHits} hits · ${toneCleared} cleared${liveHits.length ? ` · live: ${liveHits.join(", ")}` : ""}`,
+  );
+
+  const launch = await get("/brand/launch");
+  ok(
+    "/brand/launch separates shipped from left-out",
+    launch.status === 200 && launch.text.includes("Left out on purpose") && launch.text.includes("Still open"),
+    String(launch.status),
+  );
+  const proof = await get("/brand/proof");
+  ok(
+    "/brand/proof labels the quotes as invented",
+    proof.status === 200 && proof.text.includes("invented handle"),
+    String(proof.status),
+  );
+  const notes = await get("/brand/notes");
+  ok(
+    "/brand/notes derives its lines from the changelog",
+    notes.status === 200 && (notes.text.match(/the full entry/g) || []).length >= 12,
+    `${(notes.text.match(/the full entry/g) || []).length} entry links`,
+  );
+  const metrics = await get("/metrics");
+  ok(
+    "/metrics names the numbers it does not have",
+    metrics.status === 200 && metrics.text.includes("counts visitors"),
+    String(metrics.status),
+  );
+  const mascot = await get("/brand/mascot");
+  ok("/brand/mascot shows three poses", mascot.status === 200 && (mascot.text.match(/mascot-body/g) || []).length >= 3, String(mascot.status));
+  const notFound = await get("/definitely-not-a-route");
+  ok("the 404 page renders the mascot", notFound.status === 404 && notFound.text.includes("mascot-body"));
+  const walls = await get("/brand/wallpapers");
+  ok("/brand/wallpapers links three downloads", walls.status === 200 && (walls.text.match(/\/api\/brand\//g) || []).length >= 3, String(walls.status));
+  for (const slug of ["dots-4k", "ribbon-light", "type-quiet", "badge"]) {
+    const art = await fetch(base + `/api/brand/${slug}`);
+    const body = await art.text();
+    ok(`/api/brand/${slug} serves SVG`, art.status === 200 && (art.headers.get("content-type") || "").includes("svg") && body.startsWith("<svg"), `${art.status}`);
+  }
+  const watermark = await get("/brand/watermark");
+  ok("/brand/watermark prints the snippet", watermark.status === 200 && watermark.text.includes("Made with Motif"));
+  const thanks = await get("/brand/thanks");
+  // The step number is an interpolated text node, so it never appears as one
+  // string in the HTML — assert the three step titles instead.
+  ok(
+    "/brand/thanks lists the three first steps",
+    thanks.status === 200 &&
+      ["Copy one component you already need", "Run the keyboard walk on your own page", "Pick a prompt with its failures attached"].every((s) =>
+        thanks.text.includes(s),
+      ),
+    String(thanks.status),
+  );
+
   /* ---------- section 18 retention surfaces ---------- */
 
   const paths = await get("/learn/paths");

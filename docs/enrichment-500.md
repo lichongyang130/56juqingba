@@ -15,7 +15,7 @@ the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet c
 harness reads the `ledger-extra-rows` marker above and allows that difference, which means
 the table ends at #501 on the day the headline reads 500 / 500._
 
-## Progress — 480 / 500 shipped (batches 1–69, in order) · Sections 1–19 complete ✅
+## Progress — 490 / 500 shipped (batches 1–69, in order) · Sections 1–20 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -500,6 +500,16 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 479 | Original-code bait | [/quality/craft](/quality/craft) · three verbatim excerpts from the repo (the global reduced-motion rule and why it uses 0.001ms, the FLIP measure that reads offsetTop instead of getBoundingClientRect, the rAF guard that stops a loop outliving its component) with the habits counted over all 133 assets |
 | 480 | Speed as SEO | [/quality/speed](/quality/speed) · the measured story — KB of JS/CSS/fonts read from docs/build-report.json, the split that took a no-demo route from 743.1 to 429.5 KB, the recorded changelog deltas, and an explicit block naming what is not claimed: no Lighthouse run, no field metrics, no comparison |
 | 481 | OG images per asset | `/og/<slug>` · 133 cards prerendered at build time with next/og from each asset's own record (kind, size, dependencies, a11y, quality, copies, licence); the route is a static handler rather than the file convention because the convention's URL carries a build hash |
+| 482 | Logo system page | [/brand/logo](/brand/logo) · the mark redrawn from chrome.tsx's geometry (frame r9, four 6×6 dots, diagonal pair full / off-pair 55%, three-stop gradient), six sizes, a clear-space rule of one dot (18.75%), five rendered misuse cases and the verbatim SVG; the harness compares the page against the header source |
+| 483 | Voice guide | [/brand/voice](/brand/voice) · ten say/never-say pairs, the full 18-term banned list imported from the module the scanner reads, and the live tone-scan figures; the export harness now asserts zero live overclaim hits across 112 prose files (this page's own wording moved to clear it) |
+| 484 | Launch checklist page | [/brand/launch](/brand/launch) · 12 real items labelled shipped / left out on purpose / still open — including the three deliberate omissions (no accounts, no analytics, no paid tier) and the two still-open measurements; each shipped row links to the surface that proves it |
+| 485 | Social proof shelf | [/brand/proof](/brand/proof) · the three demo-persona build stories from `samples.ts`, presented with their label first (invented handles, sample-file weights, not third-party measurements) and the three-part rule for replacing them with real quotes |
+| 486 | Build notes as posts | [/brand/notes](/brand/notes) · each of the 12 changelog entries assembled into a post-sized line carrying its own figure, with a character count and an explicit note when a line needs an edit before it fits |
+| 487 | Open metrics page | [/metrics](/metrics) · every counter the repository holds, recomputed at build time (catalog totals, prompt runs and average fidelity, routes, JS/CSS, the 743.1→429.5 KB no-demo delta) plus the four numbers that are missing on purpose — visitors, signups, per-asset downloads, revenue |
+| 488 | Mascot concept | `src/components/mascot.tsx` + [/brand/mascot](/brand/mascot) · the logo's dot escaped the frame: three poses (lost / found / idle) in one 64-unit geometry, drawn once and shipped live on the 404 route |
+| 489 | Wallpaper downloads | [/brand/wallpapers](/brand/wallpapers) · three hand-written SVG posters (dot field, gradient ribbon, quiet type) generated from `src/lib/brand.ts`, downloadable at 2560×1440 through `/api/brand/<slug>`, with a one-line licence |
+| 490 | Thank-you page design | [/brand/thanks](/brand/thanks) · the post-signup page designed before a signup exists: three ordered first steps, plus the four things the page must never do (second ask, unkeepable promise, countdown, looping mascot) |
+| 491 | "Made with Motif" badge | [/brand/watermark](/brand/watermark) · a 190×40 optional badge served from `/api/brand/badge`, shown on light and dark grounds, with the rule set including "remove it any time, nothing is gated by it" |
 
 ---
 
@@ -1154,18 +1164,18 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 20. Brand, social proof & launch — 10 moves
+## 20. Brand, social proof & launch — 10 moves — complete (10/10 shipped ✅)
 
-- **Logo system page**: the mark, wordmark, clear-space and misuse examples (all original).
-- **Voice guide**: 10 "we say / we never say" lines that keep copy consistent.
-- **Launch checklist page**: the actual pre-launch list Motif used — content and culture.
-- **Social proof shelf**: quote three real-feeling builders (fictional-but-labelled demo makers).
-- **Build notes on X/threads**: the ticker copy as shareable one-liners.
-- **Open metrics page**: page views, copies, model runs as a public dashboard (trust play).
-- **Mascot concept**: a tiny original character for 404s and empty states (not a stock meme).
-- **Wallpaper/poster downloads**: brand-palette wallpapers for fans (original art).
-- **Thank-you page design**: after a mock signup, show the library's best first steps.
-- **"Made by Motif" watermarks**: optional badge for builds that used the library.
+- **Logo system page**: the mark, wordmark, clear-space and misuse examples (all original). ✅
+- **Voice guide**: 10 "we say / we never say" lines that keep copy consistent. ✅
+- **Launch checklist page**: the actual pre-launch list Motif used — content and culture. ✅
+- **Social proof shelf**: quote three real-feeling builders (fictional-but-labelled demo makers). ✅
+- **Build notes on X/threads**: the ticker copy as shareable one-liners. ✅
+- **Open metrics page**: page views, copies, model runs as a public dashboard (trust play). ✅
+- **Mascot concept**: a tiny original character for 404s and empty states (not a stock meme). ✅
+- **Wallpaper/poster downloads**: brand-palette wallpapers for fans (original art). ✅
+- **Thank-you page design**: after a mock signup, show the library's best first steps. ✅
+- **"Made by Motif" watermarks**: optional badge for builds that used the library. ✅
 
 ---
 

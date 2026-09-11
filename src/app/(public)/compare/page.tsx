@@ -59,7 +59,7 @@ export default function ComparePage() {
     },
     {
       approach: "A CodePen-style playground",
-      good: "Perfect for trying one idea with zero setup, and unbeatable for sharing a two-file experiment.",
+      good: "Unmatched for trying one idea with zero setup, and the shortest path from idea to a shareable two-file experiment.",
       cost: "Nothing carries across into a real project: the snippet, the tokens and the accessibility story all stop at the demo.",
       motif:
         "This site is the static opposite: the demo is on the page, the source is copyable, the tokens are exportable, and every panel says what it cannot do — including that its admin console is a demo.",

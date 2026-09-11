@@ -241,10 +241,11 @@ export function Footer({ counts }: { counts: SiteCounts }) {
     ["AI Prompts", ["All prompts", "Verified only", "Prompt builder", "Scoreboard"]],
     ["Lab & Learn", ["Easing Lab", "Spring Lab", "Theme Studio", "Guides & Blog"]],
     ["Company", ["Pricing", "About", "Community", "Quality bar", "Glossary", "Integrations", "License", "API docs", "Status"]],
+    ["Brand", ["Logo system", "Voice guide", "Launch checklist", "Proof shelf", "Mascot", "Wallpapers", "Watermark", "Open metrics", "Build notes"]],
   ];
   return (
     <footer className="mt-24 border-t border-white/6">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-[1.4fr_repeat(4,1fr)] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-[1.4fr_repeat(5,1fr)] lg:px-8">
         <div>
           <div className="flex items-center gap-2.5">
             <LogoMark size={22} />
@@ -368,6 +369,15 @@ export function Footer({ counts }: { counts: SiteCounts }) {
                 const href: string | null =
                   {
                     About: "/mission",
+                    "Logo system": "/brand/logo",
+                    "Voice guide": "/brand/voice",
+                    "Launch checklist": "/brand/launch",
+                    "Proof shelf": "/brand/proof",
+                    Mascot: "/brand/mascot",
+                    Wallpapers: "/brand/wallpapers",
+                    Watermark: "/brand/watermark",
+                    "Open metrics": "/metrics",
+                    "Build notes": "/brand/notes",
                     Pricing: "/pricing",
                     Community: "/community",
                     "Quality bar": "/quality",
