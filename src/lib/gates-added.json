@@ -12,6 +12,11 @@
       "s": "Batch 69: close Section 17 (preloader handoff, ripple dots, tilted CTA, success burst)",
       "d": "2026-09-10"
     },
+    "check:demos|/perf/timers publishes the named timer registry": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
     "check:demos|/quality/aria labels target size as a candidate, not a measurement": {
       "c": "e5e862d",
       "s": "A11y past the static pass: focus ring, forced-colors, behaviour evidence, name fixtures, RTL dry run",
@@ -202,6 +207,11 @@
       "s": "Batch 91: the harness claims the harness backs",
       "d": "2026-09-11"
     },
+    "check:demos|the timer-registry module loads": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
     "check:demos|§… claims complete and has every bullet ticked": {
       "c": "d45b595",
       "s": "Batch 70: Section 18 opens (returning strip, learning paths, stack recipe, fitness meter)",
@@ -387,6 +397,36 @@
       "s": "Batch 74: close Section 19 (question map, craft page, speed story, OG cards)",
       "d": "2026-09-11"
     },
+    "check:exports|/perf/build publishes the share-card cap": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
+    "check:exports|/perf/build publishes the shared-shell budget": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
+    "check:exports|/perf/chunks names the modules inside each route's largest chunk": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
+    "check:exports|/perf/fonts prints the missing-arrow finding": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
+    "check:exports|/perf/prefetch publishes the prefetch distribution": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
+    "check:exports|/perf/service-worker writes the decision down with a measured cost": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
     "check:exports|/quality/aria carries the manual checklist, with the runs it has not done": {
       "c": "93119b7",
       "s": "Batch 84: the manual checklist, where the automation stops",
@@ -435,6 +475,11 @@
     "check:exports|/quality/schema names the absent types": {
       "c": "e1160ce",
       "s": "Batch 72: Section 19 opens — metadata, FAQ schema, sitemap, glossary, schema register",
+      "d": "2026-09-11"
+    },
+    "check:exports|/quality/speed publishes the CSS budget it is held to": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
       "d": "2026-09-11"
     },
     "check:exports|/quality/speed publishes the budgets it is held to": {
@@ -572,6 +617,11 @@
       "s": "batch 60 (#428-430): bookmarklet, CLI and a badge that means something",
       "d": "2026-09-10"
     },
+    "check:exports|every cache rule has a copy-paste curl block": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
     "check:exports|every documented Cache-Control rule is the one the server sends": {
       "c": "9edc3cf",
       "s": "Batch 90: the cache rules are the rules the server sends",
@@ -617,6 +667,11 @@
       "s": "Suggestions 33-39, 100: the claim map, the ledger check, and the register",
       "d": "2026-09-11"
     },
+    "check:exports|every route is within its CSS budget": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
     "check:exports|every route is within its JavaScript budget": {
       "c": "2c4591c",
       "s": "Batch 81: demo copy vs catalog data, and per-route JavaScript budgets",
@@ -635,6 +690,11 @@
     "check:exports|every sampled card image resolves to an image": {
       "c": "33c93d1",
       "s": "Batch 89: the social card stops pretending to be the homepage",
+      "d": "2026-09-11"
+    },
+    "check:exports|every share card stays under the recorded weight cap": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
       "d": "2026-09-11"
     },
     "check:exports|every sitemap page has one h1, its own canonical, a card and a fitting description": {
@@ -685,6 +745,11 @@
     "check:exports|no banned overclaim term survives the context rule": {
       "c": "926c92c",
       "s": "Batch 75: close Section 20 (brand, proof, launch, mascot, downloads, metrics)",
+      "d": "2026-09-11"
+    },
+    "check:exports|no built document emits a static prefetch link": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
       "d": "2026-09-11"
     },
     "check:exports|no demo scene hard-codes a catalog count": {
@@ -852,6 +917,11 @@
       "s": "Batch 87: the crawl surface matches the rule it states",
       "d": "2026-09-11"
     },
+    "check:exports|the determinism gate is wired as an opt-in command": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
+      "d": "2026-09-11"
+    },
     "check:exports|the digest page links its email edition": {
       "c": "9fd1ec3",
       "s": "Suggestions 31-63: the missing feeds, the orphan page, and the promises that had no referent",
@@ -880,6 +950,11 @@
     "check:exports|the gate index matches the scripts it was generated from": {
       "c": "0730278",
       "s": "Suggestion 35: /quality/gates, the index of the checks",
+      "d": "2026-09-11"
+    },
+    "check:exports|the glyph report matches the woff2 cmap on disk": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
       "d": "2026-09-11"
     },
     "check:exports|the home feed opens with the newest batch": {
@@ -940,6 +1015,11 @@
     "check:exports|the share-card route marks animated demos as stills": {
       "c": "201bf62",
       "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
+      "d": "2026-09-11"
+    },
+    "check:exports|the shared shell stays under its recorded budget": {
+      "c": "2898519",
+      "s": "Perf items 21–30: CSS budgets, a determinism gate, chunk attribution, a prefetch budget, a named timer registry, font glyph coverage, an OG card weight cap, per-rule curl blocks, a written service-worker decision, and a shared-JS ratchet",
       "d": "2026-09-11"
     },
     "check:exports|the spine rail links two essays and a prompt": {
