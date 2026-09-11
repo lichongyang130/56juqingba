@@ -12,6 +12,11 @@ export { KeyframesStyle };
 
 export type DemoProps = Record<string, number | string | boolean>;
 
+/** #511 — "verified" means the same thing here as on the front page: a prompt
+ *  whose status passed its recorded runs. Demo copy that mentions the catalog
+ *  reads these constants instead of its own numbers. */
+const VERIFIED_PROMPTS = PROMPTS.filter((p) => p.status === "verified" || p.status === "featured").length;
+
 /* ------------------------------ ELEMENTS ------------------------------ */
 
 function PrismSwitch({ size = 42, hueSpeed = 1.4 }: DemoProps) {
@@ -412,7 +417,7 @@ function HeroAurora() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(6,7,11,0.9)_100%)]" />
       <div className="relative z-10 mx-auto flex h-full max-w-lg flex-col items-center justify-center px-8 text-center">
         <span className="chip mb-4 border-violet-300/30 bg-violet-400/10 text-violet-200">
-          ✦ New · 300 verified prompts
+          ✦ New · {VERIFIED_PROMPTS} verified prompts
         </span>
         {/* #506/#507 — a demo is a preview of somebody else's page: none of its
             mock titles are headings. Every <h1>…<h6> in this file is a <div>
@@ -1280,7 +1285,7 @@ const TOAST_POOL: { text: string; tone: number; kind: "ok" | "undo" | "info" }[]
   { text: "Wipe Reveal copied to clipboard", tone: 262, kind: "info" },
   { text: "Changed 3 theme tokens — undo?", tone: 32, kind: "undo" },
   { text: "New run log: 3/3 models clean", tone: 152, kind: "ok" },
-  { text: "Theme applied to 62 assets", tone: 262, kind: "info" },
+  { text: `Theme applied to ${COMPONENTS.length} assets`, tone: 262, kind: "info" },
 ];
 
 interface ToastItem {
@@ -1924,7 +1929,7 @@ function ComboBox() {
       <div className="w-full max-w-sm">
         <div className="mb-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.24em] text-violet-300/70">
           <span>Add to build</span>
-          <span className="normal-case tracking-normal text-ink-faint">6 components</span>
+          <span className="normal-case tracking-normal text-ink-faint">{list.length} components</span>
         </div>
         <div className="relative">
           <svg className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
@@ -2296,7 +2301,7 @@ function QuantityStepper({ step = "1" }: DemoProps) {
 }
 
 const PLAN_POOL = [
-  { n: "Starter", p: 0, d: "Community licence · MIT assets", f: ["39 components", "10 Learn guides", "Community prompts"] },
+  { n: "Starter", p: 0, d: "Community licence · MIT assets", f: [`${COMPONENTS.length} components`, `${LEARN_ARTICLES.length} Learn guides`, "Community prompts"] },
   { n: "Studio", p: 19, d: "For one solo builder shipping daily", f: ["Everything in Starter", "Prompt run logs + retries", "All Lab exports"] },
   { n: "Team", p: 49, d: "Up to 5 seats, shared library", f: ["Everything in Studio", "Team licence", "Private collections"] },
   { n: "Scale", p: 99, d: "Unlimited seats + component API", f: ["Everything in Team", "Component API", "Token-sync endpoints"] },
@@ -3526,7 +3531,7 @@ function SpinnerStatus() {
 const EMPTY_TRIPLES = [
   { id: "inbox", glyph: "▣", t: "No alerts yet", verb: "Set your first alert", step: "Pick a component and we will watch it for changes.", hatch: "or watch a whole collection", tone: "text-violet-300", ring: "from-violet-400/20" },
   { id: "dash", glyph: "◔", t: "Your dashboard is bare", verb: "Add a first metric", step: "Copies, views or model runs — one tile and it starts counting.", hatch: "or import last month's report", tone: "text-cyan-300", ring: "from-cyan-400/20" },
-  { id: "board", glyph: "▤", t: "Nothing saved yet", verb: "Save your first stack", step: "Collect 3 assets and the stack becomes a shareable recipe.", hatch: "or browse the library first", tone: "text-mint", ring: "from-mint/20" },
+  { id: "board", glyph: "▤", t: "Nothing saved yet", verb: "Save your first stack", step: "Collect a few assets and the stack becomes a shareable recipe.", hatch: "or browse the library first", tone: "text-mint", ring: "from-mint/20" },
 ];
 
 function EmptyStateTrio() {
@@ -5111,12 +5116,27 @@ function PricingTableThree() {
   );
 }
 
-const STATS_TARGETS = [128, 98.6, 4.2, 1.9];
+// #511 — this scene used to announce "motif by the numbers" over four figures
+// that did not exist: 128 assets (the catalog has 133), a 4.2k-star launch week
+// nobody recorded, "300+ teams", and a 1.9s demo load that was never measured.
+// Every figure below is now read from the catalog, and the notes say what each
+// one actually is.
+const median = (xs: number[]) => {
+  const s = [...xs].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : Math.round(((s[m - 1] + s[m]) / 2) * 10) / 10;
+};
+const STATS_TARGETS = [
+  COMPONENTS.length,
+  median(COMPONENTS.map((c) => c.a11yScore)),
+  PROMPTS.reduce((n, p) => n + p.runs.length, 0),
+  median(COMPONENTS.map((c) => c.bundleKb)),
+];
 const STATS_ROWS = [
-  { label: "assets shipped", note: "and counting — every one original", suffix: "" },
-  { label: "a11y score median", note: "tested with real screen readers", suffix: "%" },
-  { label: "stars after launch week", note: "from 300+ teams", suffix: "k" },
-  { label: "s average demo load", note: "no runtime, no tax", suffix: "s" },
+  { label: "original assets", note: "every one with a published audit", suffix: "" },
+  { label: "a11y score median", note: "editorial audit, bands on /quality", suffix: "" },
+  { label: "recorded prompt runs", note: "run logs kept, failures included", suffix: "" },
+  { label: "KB median asset size", note: "read from the catalog", suffix: "" },
 ];
 
 function StatsBand() {

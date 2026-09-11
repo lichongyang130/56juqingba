@@ -211,6 +211,100 @@ function parseCheck(label, source) {
   }
   ok("no forbidden schema type is emitted anywhere", offenders.length === 0, offenders.join(", "));
 
+  /* ---------- demo copy vs catalog data ---------- */
+
+  // #511 — demo scenes used to print numbers about this catalog as string
+  // literals: "300 verified prompts" beside a catalog of 74, "62 assets" beside
+  // 133, "39 components", and a "motif by the numbers" band whose four figures
+  // (128 assets, a 4.2k-star launch week, "300+ teams", a 1.9s load) were all
+  // invented. The scenes now read the catalog, and the page says which half is
+  // sample copy.
+  {
+    const demoFiles = ["src/components/demos/Demo.tsx", "src/components/demos/scenes-17.tsx"];
+    const catalogWords = /(verified prompts|components?|assets|guides|prompt runs|stars|teams|users)/i;
+    const offenders = [];
+    for (const f of demoFiles) {
+      const src = fs.readFileSync(f, "utf8");
+      src.split("\n").forEach((line, i) => {
+        if (line.trim().startsWith("//") || line.trim().startsWith("*")) return;
+        // widget metadata is not copy: `aria-valuetext="4 out of 5 stars"` is a
+        // rating component describing its own scale.
+        if (/aria-(valuetext|label|describedby)/.test(line)) return;
+        // a bare number immediately before a catalog noun, e.g. "62 assets"
+        if (/\b\d[\d,.]*\+?\s+(verified prompts|components?|assets|guides|prompt runs)\b/i.test(line) && !/\$\{/.test(line)) {
+          offenders.push(`${f}:${i + 1}`);
+        }
+        if (/\b\d[\d,.]*\+?\s+(stars|teams|developers|users)\b/i.test(line)) offenders.push(`${f}:${i + 1} (social proof figure)`);
+      });
+    }
+    ok(
+      "no demo scene hard-codes a catalog count",
+      offenders.length === 0,
+      offenders.length ? offenders.slice(0, 5).join(", ") : `${demoFiles.length} scene files scanned`,
+    );
+
+    const halo = await get("/components/halo-button");
+    ok(
+      "the component page labels preview copy and answers the question",
+      halo.text.includes("sample copy") && halo.text.includes("Are the numbers inside the demo real?"),
+      String(halo.status),
+    );
+    const embed = await get("/embed/halo-button");
+    ok("the embed states that preview copy is sample content", embed.text.includes("Preview copy is sample content"));
+  }
+
+  /* ---------- per-route JavaScript budgets ---------- */
+
+  // #512 — the build report has always printed every route's weight and nothing
+  // ever failed because of it. The budgets live in src/lib/budgets.ts, the same
+  // module /quality/speed renders, so the published rules and the gate cannot
+  // disagree.
+  {
+    const reportPath = path.join("docs", "build-report.json");
+    let report = null;
+    try {
+      report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
+    } catch {
+      report = null;
+    }
+    if (!report || !Array.isArray(report.routes)) {
+      ok("per-route budgets are checked against a build report", false, "docs/build-report.json is missing or has no routes");
+    } else {
+      const budgetsSrc = fs.readFileSync(path.join("src", "lib", "budgets.ts"), "utf8");
+      // Entries are written both one-per-line and compactly, so the parse is
+      // whitespace-tolerant: route then ownJsKb, with `match: "prefix"` anywhere
+      // after them in the same entry.
+      const entries = [...budgetsSrc.matchAll(/route: "([^"]+)",\s*ownJsKb: (\d+)([\s\S]{0,200}?)\{/g)];
+      const rules = entries
+        .filter((m) => /match: "prefix"/.test(m[3]))
+        .map((m) => ({ route: m[1].replace(/\/\*$/, ""), limit: Number(m[2]), prefix: true }));
+      const exact = entries
+        .filter((m) => !/match: "prefix"/.test(m[3]) && !m[1].endsWith("/*"))
+        .map((m) => ({ route: m[1], limit: Number(m[2]), prefix: false }));
+      const defaultLimit = Number((budgetsSrc.match(/DEFAULT_OWN_JS_KB = (\d+)/) || [])[1] || 90);
+      const limitFor = (url) => {
+        for (const r of [...exact, ...rules]) {
+          if (r.prefix ? url === r.route || url.startsWith(`${r.route}/`) : url === r.route) return { limit: r.limit, rule: r.route };
+        }
+        return { limit: defaultLimit, rule: null };
+      };
+      const over = report.routes
+        .map((r) => ({ url: r.url, own: r.ownJsKb || 0, ...limitFor(r.url) }))
+        .filter((r) => r.own > r.limit);
+      ok(
+        "every route is within its JavaScript budget",
+        over.length === 0 && report.routes.length > 100,
+        `${report.routes.length} routes${over.length ? ` · over: ${over.slice(0, 4).map((o) => `${o.url} ${o.own}KB > ${o.limit}`).join(", ")}` : ` · default limit ${defaultLimit} KB`}`,
+      );
+      const speed = await get("/quality/speed");
+      ok(
+        "/quality/speed publishes the budgets it is held to",
+        speed.status === 200 && speed.text.includes("JavaScript budget") && speed.text.includes(`${defaultLimit} KB`),
+        String(speed.status),
+      );
+    }
+  }
+
   /* ---------- no invented movement ---------- */
 
   // Nothing in this repository records a change over time for the catalog, so a

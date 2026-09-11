@@ -2494,6 +2494,12 @@ export default function AssetDetail({ asset }: { asset: Asset }) {
                   {copied === "link copied" ? "link copied ✓" : "🔗 share link"}
                 </button>
                 <span className="chip !text-[10px]">sandboxed preview</span>
+              {/* #511 — the figures in a preview are derived from the catalog;
+                  the surrounding product copy belongs to the sample page. Said
+                  once here, in the chrome, rather than in 133 scenes. */}
+              <span className="chip !text-[10px]" title="Catalog figures in a preview are read from the catalog at build time; the rest of the text belongs to the sample page the component demonstrates.">
+                sample copy
+              </span>
               </span>
             </div>
             <Stage className="rounded-2xl">

@@ -42,6 +42,7 @@ export default async function EmbedPage({ params }: { params: Promise<{ slug: st
         <DemoView demo={asset.demo} props={{}} />
       </div>
       <p className="text-[10px] text-ink-faint">
+        Preview copy is sample content; catalog figures are read from the catalog. ·{" "}
         {asset.title} ·{" "}
         <Link href={`/components/${asset.slug}`} target="_top" className="underline decoration-dotted">
           Motif UI

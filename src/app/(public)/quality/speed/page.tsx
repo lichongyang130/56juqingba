@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CHANGELOG } from "@/lib/data";
 import { MEASURED } from "@/lib/perf";
 import report from "../../../../../docs/build-report.json";
+import { DEFAULT_OWN_JS_KB, DEFAULT_WHY, ROUTE_BUDGETS, applyBudgets, budgetFor } from "@/lib/budgets";
 
 export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
@@ -159,6 +160,69 @@ export default function SpeedPage() {
         </div>
       </section>
 
+      <section className="mt-10 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">JavaScript budget per route</h2>
+        <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-ink-dim">
+          A weight nobody checks is a dashboard. These are the limits the export harness enforces on every build: the unit is{" "}
+          <strong className="text-ink">own JS</strong> — the JavaScript a route adds beyond the shared shell — because that is the part a change to
+          a page can move. Budgets sit about 10% above the measured build, so they fail on an accident rather than on ordinary work, and raising one
+          means editing this table in the same commit as the code.
+        </p>
+        <div className="mt-4 grid gap-4 lg:grid-cols-[1.3fr,1fr]">
+          <ul className="space-y-2">
+            {ROUTE_BUDGETS.map((b) => (
+              <li key={b.route} className="flex items-baseline justify-between gap-4 border-b border-white/6 pb-2 last:border-0">
+                <span className="min-w-0">
+                  <span className="font-mono text-[11px] text-ink">{b.route}</span>
+                  <span className="ml-2 text-[10.5px] leading-relaxed text-ink-faint">{b.why}</span>
+                </span>
+                <span className="shrink-0 font-mono text-[11px] tabular-nums text-ink-dim">{`${b.ownJsKb} KB`}</span>
+              </li>
+            ))}
+            <li className="flex items-baseline justify-between gap-4 pt-1">
+              <span className="min-w-0">
+                <span className="font-mono text-[11px] text-ink">everything else</span>
+                <span className="ml-2 text-[10.5px] leading-relaxed text-ink-faint">{DEFAULT_WHY}</span>
+              </span>
+              <span className="shrink-0 font-mono text-[11px] tabular-nums text-ink-dim">{`${DEFAULT_OWN_JS_KB} KB`}</span>
+            </li>
+          </ul>
+          <div className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">Heaviest routes in this build</p>
+            <ul className="mt-2 space-y-1.5 font-mono text-[10.5px]">
+              {applyBudgets(report.routes as { url: string; ownJsKb?: number }[]).heaviest.map((h) => (
+                <li key={h.route} className="flex items-center justify-between gap-3">
+                  <span className="truncate text-ink-dim">{h.route}</span>
+                  <span className="shrink-0 tabular-nums text-ink-faint">{`${h.own.toFixed(1)} / ${h.limit}`}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+              {applyBudgets(report.routes as { url: string; ownJsKb?: number }[]).over.length === 0
+                ? "No route is over budget at this commit."
+                : `${applyBudgets(report.routes as { url: string; ownJsKb?: number }[]).over.length} routes over budget.`}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-2xl border border-amber-300/25 bg-amber-400/[.04] p-4">
+          <p className="text-[11px] font-extrabold text-amber-100">The one structural cost these budgets expose</p>
+          <p className="mt-1.5 text-[11px] leading-relaxed text-ink-dim">
+            Three routes needed their own line in the table for one reason: `src/components/demos/Demo.tsx` is a single {Math.round(379.8)} KB
+            module holding every scene, so a page that renders <em>one</em> demo pays for all of them. A component detail page, a pricing page with
+            a live sample and the shuffle view therefore all carry roughly the same weight. Splitting the module scene-by-scene would be the
+            largest remaining win on this site, and it is the open item below rather than a claim: the demo harness checks that all 99 scenes
+            render, so the split has to keep every one of them working.
+          </p>
+          <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
+            Budgets for those three routes:{" "}
+            {["/pricing", "/shuffle", "/lab/layers"]
+              .map((r) => `${r} ${budgetFor(r).limit} KB`)
+              .join(" · ")}
+          </p>
+        </div>
+      </section>
+
       <section className="mt-10 rounded-3xl border border-dashed border-amber-300/30 bg-amber-400/[.04] p-6">
         <h2 className="text-sm font-extrabold tracking-tight text-amber-100">What this page does not claim</h2>
         <ul className="mt-3 space-y-2 text-[11px] leading-relaxed text-ink-dim">
@@ -173,6 +237,10 @@ export default function SpeedPage() {
           </li>
           <li>
             <strong>No comparative claim.</strong> These numbers describe this build; they are not a statement about anybody else&apos;s.
+          </li>
+          <li>
+            <strong>No per-route split of the demo module yet.</strong> Every page that shows one demo loads all {Math.round(379.8)} KB of scene
+            code; the budgets above are set around that cost rather than pretending it is not there.
           </li>
         </ul>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">

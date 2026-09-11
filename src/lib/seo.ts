@@ -175,6 +175,15 @@ export function assetFaq(asset: ComponentAsset): QA[] {
       a: `It scores ${asset.a11yScore}/100 on this site's automated audit, which checks keyboard reach, focus visibility, label text and reduced-motion handling. The audit is a check, not a certificate: it cannot see your page.`,
     },
     {
+      // #511 — the question a preview raises. Answered with the rule the build
+      // actually follows: catalog figures in demo copy are derived from the
+      // catalog (a scene used to announce "300 verified prompts" beside a
+      // catalog of 74), and everything else inside a preview is the sample
+      // product's own copy, not a claim about this site.
+      q: "Are the numbers inside the demo real?",
+      a: `Any figure in the preview that describes this catalog — assets, prompts, guides, recorded runs, scores, sizes — is read from the catalog data at build time, not typed into the scene. The rest of the copy inside a preview belongs to the sample page the component is demonstrating: a hero demo has to say something, and what it says is sample content rather than a claim about Motif. The record above the preview is the authoritative version of this asset.`,
+    },
+    {
       q: `How do I use ${asset.title}?`,
       a: `Copy the snippet from the page (React, HTML/CSS or Vue view) or run \`npx motifui add ${asset.slug}\`. The copied code is a single file with no build step beyond your existing ${asset.stack[0]} setup.`,
     },
