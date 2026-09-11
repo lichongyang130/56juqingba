@@ -10,14 +10,28 @@ export interface CacheRule {
   why: string;
 }
 
-// Order matters: Next applies matching rules in order and a later rule wins for
-// the same header, so the catch-all is listed last. The first version of this
-// file had it first, which silently served fingerprinted assets the HTML policy.
+// 522 — order is load-bearing, and the measurement disagrees with what this
+// file used to say. Next applies every matching rule and the *last* one wins
+// for the same header. This file used to list the catch-all last, on the
+// theory that a later rule wins: the effect was that the catch-all won for
+// everything. Measured on the batch-86 build:
+//
+//   /_next/static/chunks/<file>.js  → public, max-age=0, s-maxage=300, …
+//   /embed.js                       → public, max-age=0, s-maxage=300, …   (route sets 3600)
+//   /community/rss.xml              → public, max-age=0, s-maxage=300, …   (route sets s-maxage=3600)
+//   /api/brand/<slug>               → public, max-age=0, s-maxage=300, …   (route sets 3600)
+//
+// So none of the 58 fingerprinted chunk files were immutable, and three route
+// handlers lost the header they set for themselves. The catch-all is first now
+// and every path that carries its own policy has a rule after it. The route
+// handlers still set their own headers (they answer correctly on their own
+// terms), and the rules below repeat the same values so that one readable list
+// describes what the server actually sends.
 export const CACHE_RULES: CacheRule[] = [
   {
-    source: "/_next/image",
-    value: "public, max-age=86400, stale-while-revalidate=604800",
-    why: "The optimizer is not used by any page in this build (0 <img> tags), so this rule exists for the day it is.",
+    source: "/:path*",
+    value: "public, max-age=0, s-maxage=300, stale-while-revalidate=86400",
+    why: "HTML: the browser revalidates every time and the edge holds it for five minutes, serving stale for up to a day while it refreshes. A correction ships within five minutes without stampeding the origin.",
   },
   {
     source: "/_next/static/:path*",
@@ -25,14 +39,34 @@ export const CACHE_RULES: CacheRule[] = [
     why: "Every file under it carries a content hash in its name, so a changed file is a changed URL. Immutable is safe here and only here.",
   },
   {
-    source: "/:path*",
-    value: "public, max-age=0, s-maxage=300, stale-while-revalidate=86400",
-    why: "HTML: the browser revalidates every time and the edge holds it for five minutes, serving stale for up to a day while it refreshes. A correction ships within five minutes without stampeding the origin.",
+    source: "/_next/image",
+    value: "public, max-age=14400, must-revalidate",
+    why: "The optimizer sets this one itself (14400 is its default) and a config rule does not override it; the row is here because the table claims to list what the server sends. No page in this build uses it — there are 0 <img> tags.",
+  },
+  {
+    source: "/embed.js",
+    value: "public, max-age=3600",
+    why: "The one script tag a third-party site installs. An hour stops it being re-fetched per page view and still lets a fix reach existing embeds the same day.",
+  },
+  {
+    source: "/community/rss.xml",
+    value: "public, max-age=0, s-maxage=3600",
+    why: "A feed that changes when an entry is written: the browser revalidates every time, the edge holds it for an hour.",
+  },
+  {
+    source: "/api/brand/:path*",
+    value: "public, max-age=3600",
+    why: "Brand JSON and downloadable marks, rebuilt with the site rather than fingerprinted.",
+  },
+  {
+    source: "/og/:path*",
+    value: "public, max-age=3600",
+    why: "Share cards are generated per slug at build time, so an hour rather than immutability — a card changes when the page behind it does.",
   },
 ];
 
 export const CACHE_PLAN = {
-  shipped: "These three rules run in this build; /perf/caching prints them and the harness reads the same module the config imports.",
+  shipped: "These rules run in this build, in this order; /perf/caching prints them, next.config.ts imports them, and the harness reads a sample of the served headers so a rule that stops winning fails the batch.",
   notConfigured: [
     "No CDN is attached in this build, so s-maxage only has meaning behind whichever proxy is in front of it.",
     "There is no purge API to call, because there is no cache to purge from inside a static build.",

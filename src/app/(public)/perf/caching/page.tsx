@@ -7,7 +7,7 @@ export const metadata = {
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/perf/caching" },
   title: "Cache headers",
-  description: "The three Cache-Control rules this build serves, why immutable is safe for fingerprinted assets, and the CMS invalidation plan.",
+  description: "Every Cache-Control rule this build serves, why immutable is safe for fingerprinted assets only, and the CMS invalidation plan.",
 };
 
 export default function PerfCachingPage() {

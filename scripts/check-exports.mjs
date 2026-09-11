@@ -1107,6 +1107,63 @@ function parseCheck(label, source) {
   const embedHeaders = await fetch(base + "/embed/tilt-card");
   ok("embed route sends frame-ancestors and noindex", embedHeaders.headers.get("content-security-policy") === "frame-ancestors *" && embedHeaders.headers.get("x-robots-tag") === "noindex");
 
+  /* ---------- cache headers (522) ---------- */
+
+  // /perf/caching tells the reader that "the build harness runs the same two
+  // checks against the running server for every batch, so a config edit that
+  // drops a header fails the batch rather than shipping quietly." It did not,
+  // and the rule table had drifted from the wire: the catch-all was listed last,
+  // so it won for every path — 0 of the 58 fingerprinted chunks were immutable,
+  // and /embed.js, /community/rss.xml and /api/brand/* lost the Cache-Control
+  // their own route handlers set. The rules are read out of src/lib/cache-rules.ts
+  // and every one of them is asked for over HTTP, so the table, the config and
+  // the responses are the same statement.
+  {
+    const rulesSrc = fs.readFileSync("src/lib/cache-rules.ts", "utf8");
+    const block = rulesSrc.slice(rulesSrc.indexOf("export const CACHE_RULES"), rulesSrc.indexOf("export const CACHE_PLAN"));
+    const rules = [...block.matchAll(/source:\s*"([^"]+)",\s*\n\s*value:\s*"([^"]+)"/g)].map((m) => ({ source: m[1], value: m[2] }));
+    // The config speaks in path patterns; a harness has to name a URL. One
+    // sample per rule, and the sample is the rule's own path wherever it is a
+    // real one.
+    const homeHtml = (await get("/")).text;
+    const anyChunk = (homeHtml.match(/\/_next\/static\/chunks\/[^"]+\.js/) || [])[0];
+    const samples = {
+      "/:path*": "/pricing",
+      "/_next/static/:path*": anyChunk,
+      "/_next/image": "/_next/image?url=%2Fog%2Fdefault&w=64&q=75",
+      "/embed.js": "/embed.js",
+      "/community/rss.xml": "/community/rss.xml",
+      "/api/brand/:path*": `/api/brand/${catalog.components[0].slug}`,
+      "/og/:path*": `/og/${catalog.components[0].slug}`,
+    };
+    const unknownRules = rules.filter((r) => !samples[r.source]).map((r) => r.source);
+    const wrong = [];
+    let checked = 0;
+    for (const rule of rules) {
+      const url = samples[rule.source];
+      if (!url) continue;
+      const res = await fetchRetry(base + url);
+      const served = res.headers.get("cache-control");
+      checked++;
+      if (served !== rule.value) wrong.push(`${url} → ${served}`);
+    }
+    ok("the cache-rule list is readable", rules.length >= 5 && unknownRules.length === 0, `${rules.length} rules · ${unknownRules.length ? `no sample for ${unknownRules.join(", ")}` : "every rule has a sample"}`);
+    ok(
+      "every documented Cache-Control rule is the one the server sends",
+      checked === rules.length && wrong.length === 0,
+      `${checked}/${rules.length} paths${wrong.length ? ` · ${wrong.slice(0, 4).join(" | ")}` : ""}`,
+    );
+    // The rule table is a table of winners, so the catch-all has to lose to the
+    // paths that declare their own policy — that is the bug this check was born
+    // from, and no header comparison above can see it if the order flips back.
+    const order = rules.map((r) => r.source);
+    ok(
+      "the catch-all is first, so every specific rule wins over it",
+      order[0] === "/:path*" && order.filter((s) => s === "/:path*").length === 1,
+      order.join(" → "),
+    );
+  }
+
   /* ---------- the pages ---------- */
 
   for (const p of DOC_PAGES) {

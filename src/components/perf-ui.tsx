@@ -30,7 +30,7 @@ export const PERF_ROUTES: { href: string; label: string; item: string; blurb: st
   { href: "/perf/no-js", label: "Zero-JS showcase", item: "#402", blurb: "What the site looks like with JavaScript switched off, read from its own HTML." },
   { href: "/perf/mounting", label: "Lazy mounting", item: "#403", blurb: "Demos mount when you scroll near them, and the trade-off that creates." },
   { href: "/perf/no-images", label: "No images", item: "#404", blurb: "Why there is no image pipeline, and what would break the rule." },
-  { href: "/perf/caching", label: "Cache headers", item: "#405", blurb: "The three rules this build serves, plus the invalidation plan for a CMS." },
+  { href: "/perf/caching", label: "Cache headers", item: "#405", blurb: "Every rule this build serves, in order, plus the invalidation plan for a CMS." },
   { href: "/perf/chunks", label: "Bundle splitting", item: "#406", blurb: "What ships where, and the layout import that put 485 KB on every page." },
   { href: "/perf/blur", label: "Blur budget", item: "#407", blurb: "Every backdrop-blur in the project, classified by how much surface it covers." },
   { href: "/lab/layers", label: "Layer inspector", item: "#408", blurb: "Mount a demo and read every property it animates, classified by what the compositor can take." },
