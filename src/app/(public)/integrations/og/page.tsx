@@ -7,7 +7,7 @@ export const metadata = {
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/integrations/og" },
   title: "Open Graph helper",
-  description: "Copy-paste OG markup for any asset, and the reason this site ships no preview image.",
+  description: "Copy-paste OG markup for any asset — image-free by design — and where this site's own share cards live.",
 };
 
 export default function IntegrationsOgPage() {
@@ -25,8 +25,12 @@ export default function IntegrationsOgPage() {
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-ink-dim">
           If you write about an asset — a blog post, a changelog, a launch note — the markup below gives the link a correct title
-          and a description built from the asset&apos;s own stored facts. It deliberately contains no image reference, and the
-          reason is on this page rather than left to be discovered in a preview.
+          and a description built from the asset&apos;s own stored facts. The block itself deliberately contains no image reference,
+          for the reason stated below. This site&apos;s own share cards are a different thing: they are generated PNGs served at{" "}
+          <Link href="/og/halo-button" className="font-mono text-violet-300 hover:text-violet-200">
+            /og/&lt;slug&gt;
+          </Link>
+          .
         </p>
       </div>
 
@@ -63,8 +67,10 @@ export default function IntegrationsOgPage() {
           <p className="text-xs font-bold uppercase tracking-widest text-ink-faint">How the previews resolve</p>
           <p className="mt-2 text-[11px] leading-relaxed text-ink-dim">
             With <span className="font-mono">twitter:card = summary</span> and no image, a shared link shows the title and the
-            description as text. That is a smaller preview than a card image and it is the honest one: generating a preview image
-            means rasterising on the server, which is the first image pipeline this site would own.
+            description as text. The block stays image-free because it is markup you paste onto a page you control, and this helper
+            cannot rasterise for it — a real preview image is a server pipeline, not a snippet. The site&apos;s own cards, by
+            contrast, are generated at <span className="font-mono">/og/&lt;slug&gt;</span>: every asset has a PNG, and a scene that
+            animates says so on the card rather than pretending the still is the motion.
           </p>
         </div>
         <div className="rounded-3xl border border-dashed border-amber-300/25 bg-amber-300/[.04] p-6">

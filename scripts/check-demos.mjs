@@ -351,6 +351,106 @@ const NEW_SCENES = [
     ok("the motion audit module loads", false, String(err && err.message ? err.message : err));
   }
 
+  // #11–#20 — the part of accessibility that sits between the static markup
+  // pass and the hand-check list: things that are decidable from source or the
+  // built CSS, and now have a gate each instead of a shrug.
+  try {
+    const {
+      ANNOUNCED,
+      behaviorEvidence,
+      fixedHeightInventory,
+      focusRingSurfaces,
+      forcedColorsInCss,
+      rtlDryRun,
+      targetSizeCandidates,
+      visualOrderUsages,
+    } = await import("../src/lib/a11y-deep.ts");
+    const { NAME_FIXTURES, fixtureDrift } = await import("../src/lib/name-fixtures.ts");
+
+    // 11 — the focus ring against the flat surfaces it can sit on.
+    const rings = focusRingSurfaces();
+    ok(
+      "the focus ring clears 3:1 on every flat surface it sits on",
+      rings.length > 0 && rings.every((r) => r.pass),
+      rings.map((r) => `${r.label} ${r.ratio}`).join(" · "),
+    );
+
+    // 12 — the forced-colors block survives into the built stylesheet.
+    const fc = forcedColorsInCss();
+    ok("the built stylesheet carries the forced-colors block", fc.found, fc.file || "no built CSS with the block");
+
+    // 13 — target-size candidates exist and are labelled as candidates.
+    const targets = targetSizeCandidates();
+    ok("/quality/aria lists target-size candidates, labelled as candidates", targets.length > 0, `${targets.length} candidates`);
+
+    // 14 — a declared behaviour has the code to back it.
+    const evidence = behaviorEvidence(catalog.components);
+    const kbMissing = evidence.filter((e) => e.behavior === "keyboard" && !e.found);
+    const dgMissing = evidence.filter((e) => e.behavior === "drag" && !e.found);
+    ok(
+      "every keyboard declaration has code evidence",
+      kbMissing.length === 0,
+      kbMissing.length ? kbMissing.map((m) => m.slug).join(", ") : `${evidence.filter((e) => e.behavior === "keyboard").length} declared`,
+    );
+    ok(
+      "every drag declaration has code evidence",
+      dgMissing.length === 0,
+      dgMissing.length ? dgMissing.map((m) => m.slug).join(", ") : `${evidence.filter((e) => e.behavior === "drag").length} declared`,
+    );
+
+    // 15 — accessible-name fixtures match the built markup.
+    const drift = fixtureDrift();
+    ok(
+      "accessible-name fixtures match the built markup",
+      drift.fixtures === NAME_FIXTURES.length && drift.drift.length === 0,
+      drift.drift.length ? drift.drift.map((d) => d.slug).join(", ") : `${drift.fixtures} fixtures`,
+    );
+
+    // 16 — a scene that reorders visually explains its reading order.
+    const order = visualOrderUsages();
+    ok(
+      "no scene reorders visually without explaining its reading order",
+      order.every((u) => u.explained),
+      order.filter((u) => !u.explained).map((u) => u.cls).join(", ") || `${order.length} uses`,
+    );
+
+    // 18/19/20 + the page side of 11–16 — read once, asserted together.
+    const deepAria = await get("/quality/aria");
+    const deepText = deepAria.text.replace(/<!-- -->/g, "");
+    ok(
+      "/quality/aria prints the focus-ring ratios",
+      deepText.includes("Focus ring against the surfaces") && rings.every((r) => deepText.includes(r.label)),
+      rings.map((r) => r.label).join(" · "),
+    );
+    ok("/quality/aria says whether the forced-colors block shipped", deepText.includes("forced-colors: active"), fc.found ? fc.file : "missing");
+    ok(
+      "/quality/aria labels target size as a candidate, not a measurement",
+      deepText.includes("Target size") && deepText.includes("candidates, not measurements"),
+      `${targets.length} candidates`,
+    );
+    ok(
+      "/quality/aria prints the announced sentences for both live regions",
+      ANNOUNCED.toast.every((s) => deepText.includes(s)) && ANNOUNCED.liveRegion.every((s) => deepText.includes(s)),
+      `${ANNOUNCED.toast.length} + ${ANNOUNCED.liveRegion.length} strings`,
+    );
+    const fixed = fixedHeightInventory();
+    ok(
+      "/quality/aria prints the fixed-height inventory",
+      fixed.length > 0 && fixed.every((f) => deepText.includes(f.value)),
+      fixed.map((f) => f.value).join(" · "),
+    );
+    const rtl = rtlDryRun();
+    ok(
+      "/quality/aria publishes the RTL dry run and names the untested remainder",
+      deepText.includes("dry run") &&
+        rtl.scenes.every((s) => deepText.includes(s.key)) &&
+        deepText.includes(`${rtl.untested} scenes are untested`),
+      `${rtl.scenes.map((s) => s.key).join(", ")} · ${rtl.untested} untested`,
+    );
+  } catch (err) {
+    ok("the a11y-deep module loads", false, String(err && err.message ? err.message : err));
+  }
+
   console.log(`\n${fail === 0 ? "ALL PASS" : "FAILURES"} — ${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
 })();

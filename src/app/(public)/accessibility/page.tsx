@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MANUAL_CHECKS } from "@/lib/a11y-audit";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Accessibility — what is verified and what is not",
@@ -101,7 +102,7 @@ export default function AccessibilityPage() {
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <a
-            href="https://github.com/lichongyang130/56juqingba/issues"
+            href={`${SITE.repo}/issues`}
             className="btn btn-ghost !px-3.5 !py-2 text-xs"
             rel="noopener noreferrer"
           >

@@ -4,9 +4,21 @@ import path from "node:path";
 import { A11Y_FIXES, MANUAL_CHECKS, a11yBands } from "@/lib/a11y-audit";
 import { MARKUP_CHECKS, SERVED_EXTRAS, scanBuiltHtml } from "@/lib/markup-a11y";
 import { motionAudit, motionByModule } from "@/lib/motion-audit";
+import {
+  ANNOUNCED,
+  behaviorEvidence,
+  fixedHeightInventory,
+  focusRingSurfaces,
+  forcedColorsInCss,
+  rtlDryRun,
+  targetSizeCandidates,
+  visualOrderUsages,
+} from "@/lib/a11y-deep";
+import { NAME_FIXTURES, fixtureDrift } from "@/lib/name-fixtures";
 import sitemap from "@/app/sitemap";
 import { COMPONENTS } from "@/lib/data";
 import { SITE_URL } from "@/lib/seo";
+import { SITE } from "@/lib/site";
 
 // Rendered per request rather than prerendered: the pass reads the built HTML
 // from disk, and a page prerendered mid-build would report a partial count
@@ -57,6 +69,22 @@ export default function AriaAuditPage() {
   const { documents: pages, fallbacks, issues, byKind } = scanBuiltHtml(ROOT);
   const bands = a11yBands();
   const total = Object.values(bands).reduce((a, b) => a + b, 0);
+  // #11–#20 — the parts between the machine and the browser, given a home
+  // instead of a shrug. Everything below is recomputed from the same source the
+  // gates read, so the page and the check cannot drift apart.
+  const ring = focusRingSurfaces();
+  const forced = forcedColorsInCss();
+  const targets = targetSizeCandidates();
+  const evidence = behaviorEvidence(COMPONENTS);
+  const keyboardDeclared = evidence.filter((e) => e.behavior === "keyboard");
+  const keyboardMissing = keyboardDeclared.filter((e) => !e.found);
+  const dragDeclared = evidence.filter((e) => e.behavior === "drag");
+  const dragMissing = dragDeclared.filter((e) => !e.found);
+  const order = visualOrderUsages();
+  const orderUnexplained = order.filter((u) => !u.explained);
+  const fixtures = fixtureDrift();
+  const fixed = fixedHeightInventory();
+  const rtl = rtlDryRun();
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12 lg:px-8">
@@ -189,7 +217,7 @@ export default function AriaAuditPage() {
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
           The stylesheet rule itself is asserted in the built CSS by check:exports. The contract is{" "}
           <a
-            href="https://github.com/lichongyang130/56juqingba/blob/main/docs/motion-contract.md"
+            href={`${SITE.repo}/blob/main/docs/motion-contract.md`}
             target="_blank"
             rel="noreferrer"
             className="font-mono text-emerald-300 hover:text-emerald-200"
@@ -198,7 +226,7 @@ export default function AriaAuditPage() {
           </a>
           , and the template every scene imports from is{" "}
           <a
-            href="https://github.com/lichongyang130/56juqingba/blob/main/src/components/demos/scene-kit.tsx"
+            href={`${SITE.repo}/blob/main/src/components/demos/scene-kit.tsx`}
             target="_blank"
             rel="noreferrer"
             className="font-mono text-emerald-300 hover:text-emerald-200"
@@ -207,6 +235,214 @@ export default function AriaAuditPage() {
           </a>
           .
         </p>
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">Focus ring against the surfaces it sits on</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          The ring <span className="font-mono">globals.css</span> draws is <span className="font-mono">rgba(139,92,246,.9)</span>.
+          Against each flat surface it can sit on, that ring blends to a colour whose contrast against the surface is computed here.
+          The 3:1 line is the non-text contrast a focus indicator should clear. Glass panels and gradients are a rendering question, not
+          a token, so they stay on the hand-check list rather than pretending a flat average is the glass.
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[420px] text-left text-[11px]">
+            <thead>
+              <tr className="border-b border-white/10 text-[10px] uppercase tracking-widest text-ink-faint">
+                <th className="py-2 pr-4 font-bold">surface</th>
+                <th className="py-2 pr-4 font-bold">ring · surface ratio</th>
+                <th className="py-2 font-bold">clears 3:1</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ring.map((r) => (
+                <tr key={r.label} className="border-b border-white/6 last:border-0">
+                  <td className="py-2 pr-4 text-ink-dim">{r.label}</td>
+                  <td className={`py-2 pr-4 font-mono tabular-nums ${r.pass ? "text-emerald-200" : "text-rose-200"}`}>{r.ratio}:1</td>
+                  <td className="py-2 font-mono">{r.pass ? "yes" : "no"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">Forced-colors mode</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          Windows high contrast replaces the palette, so the theme&apos;s translucent violet can vanish against a forced background.
+          <span className="font-mono">globals.css</span> now carries a <span className="font-mono">@media (forced-colors: active)</span>{" "}
+          block that hands the focus ring to <span className="font-mono">Highlight</span> and the primary chrome to{" "}
+          <span className="font-mono">CanvasText</span>. This page reads the built stylesheet, not the source file, so the sentence below
+          is about what actually shipped:{" "}
+          {forced.found ? (
+            <span className="text-emerald-200">present in {forced.file}</span>
+          ) : (
+            <span className="text-rose-200">not found in the build — the block did not survive the build</span>
+          )}
+          .
+        </p>
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">Target size — candidates, not measurements</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          A class name is not a measurement. <span className="font-mono">{targets.length}</span> interactive controls in the scene
+          source carry no <span className="font-mono">min-height</span>/<span className="font-mono">min-width</span>/
+          <span className="font-mono">size</span> utility, so they are <em>candidates for the hand check</em>, not failures. The hand
+          check decides whether the control is actually below the touch-target line at 200% zoom; this list is where that check starts.
+        </p>
+        {targets.length > 0 && (
+          <ul className="mt-4 grid gap-1.5 font-mono text-[10px] text-ink-dim md:grid-cols-2">
+            {targets.slice(0, 24).map((t, i) => (
+              <li key={i} className="truncate">
+                {t.file.replace(/^src\/components\/demos\//, "")} · {t.control}
+              </li>
+            ))}
+            {targets.length > 24 && <li className="text-ink-faint">… and {targets.length - 24} more</li>}
+          </ul>
+        )}
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">Behaviour declarations, and the code behind them</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          A catalog record that declares a behaviour now has to have the code. <span className="font-mono">keyboard</span> means a key
+          or focus handler, or a native control that is keyboard-operable without one; <span className="font-mono">drag</span> means a
+          pointer, mouse or touch handler, or a native range thumb.{" "}
+          <span className="font-mono">{keyboardDeclared.length}</span> records declare <span className="font-mono">keyboard</span>{" "}
+          ({keyboardMissing.length === 0 ? "all with evidence" : `${keyboardMissing.length} without`}) and{" "}
+          <span className="font-mono">{dragDeclared.length}</span> declare <span className="font-mono">drag</span>{" "}
+          ({dragMissing.length === 0 ? "all with evidence" : `${dragMissing.length} without`}).{" "}
+          <span className="font-mono">check:demos</span> fails the moment a declaration loses its handler.
+        </p>
+        {keyboardMissing.length + dragMissing.length > 0 && (
+          <ul className="mt-3 space-y-1 font-mono text-[10.5px] text-rose-200">
+            {[...keyboardMissing, ...dragMissing].map((m) => (
+              <li key={`${m.slug}-${m.behavior}`}>
+                {m.slug} declares {m.behavior} with no evidence in {m.where}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">Accessible-name fixtures</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          A name passes a linter if it exists; these fixtures assert it is the <em>right</em> name.{" "}
+          <span className="font-mono">{NAME_FIXTURES.length}</span> of the most interactive scenes store the accessible name their
+          primary control should have, and the built embed markup is compared against it —{" "}
+          <span className="font-mono">check:demos</span> fails on drift.{" "}
+          {fixtures.drift.length === 0 ? (
+            <span className="text-emerald-200">All {fixtures.fixtures} match the built markup.</span>
+          ) : (
+            <span className="text-rose-200">
+              {fixtures.drift.length} drifted: {fixtures.drift.map((d) => d.slug).join(", ")}
+            </span>
+          )}
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[520px] text-left text-[10.5px]">
+            <thead>
+              <tr className="border-b border-white/10 text-[10px] uppercase tracking-widest text-ink-faint">
+                <th className="py-2 pr-4 font-bold">scene</th>
+                <th className="py-2 font-bold">expected accessible name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {NAME_FIXTURES.map((f) => (
+                <tr key={f.slug} className="border-b border-white/6 last:border-0">
+                  <td className="py-1.5 pr-4 font-mono text-ink-dim">{f.slug}</td>
+                  <td className="py-1.5 text-ink-dim">{f.name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">DOM order vs visual order</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          Scene source is scanned for the utilities that reorder visually — <span className="font-mono">order-*</span>,{" "}
+          <span className="font-mono">flex-row-reverse</span> and the rest — and a scene that uses one must explain its reading order in
+          its own body. <span className="font-mono">{order.length}</span> use{order.length === 1 ? "" : "s"} found,{" "}
+          <span className="font-mono">{orderUnexplained.length}</span> without an explanation.
+        </p>
+        {order.length > 0 && (
+          <ul className="mt-3 space-y-1 font-mono text-[10.5px] text-ink-dim">
+            {order.map((u, i) => (
+              <li key={i}>
+                {u.file} · {u.cls} · {u.explained ? "reading order explained" : "no explanation"}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">The sentences the live regions announce</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          So the hand check knows what it is listening for. The toast scene announces these in an{" "}
+          <span className="font-mono">aria-live=&quot;polite&quot;</span> region, and the live-region lab announces these through{" "}
+          <span className="font-mono">role=&quot;status&quot;</span> / <span className="font-mono">role=&quot;alert&quot;</span>.
+        </p>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">toast scene</p>
+            <ul className="mt-2 space-y-1 font-mono text-[10px] text-ink-dim">
+              {ANNOUNCED.toast.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">live-region lab</p>
+            <ul className="mt-2 space-y-1 font-mono text-[10px] text-ink-dim">
+              {ANNOUNCED.liveRegion.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">Fixed-height inventory for the 200% zoom check</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          The preview frames reserve fixed pixel heights, so a 200% zoom check starts from a list rather than a blank page:
+        </p>
+        <ul className="mt-3 space-y-1 font-mono text-[10.5px] text-ink-dim">
+          {fixed.map((f, i) => (
+            <li key={i}>
+              {f.where} · {f.value}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-white/8 bg-panel p-6">
+        <h2 className="text-sm font-extrabold tracking-tight">RTL: a dry run on two scenes</h2>
+        <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-ink-dim">
+          No browser exists in this build, so this is a source scan, not a render: two scenes were chosen and their physical-direction
+          tokens listed. Those tokens will not mirror under <span className="font-mono">dir=&quot;rtl&quot;</span> — the logical
+          equivalents are <span className="font-mono">-start</span>/<span className="font-mono">-end</span>,{" "}
+          <span className="font-mono">text-start</span>, <span className="font-mono">rounded-s</span>/<span className="font-mono">e</span>.
+          The other {rtl.untested} scenes are untested in RTL.
+        </p>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          {rtl.scenes.map((s) => (
+            <div key={s.key} className="rounded-2xl border border-white/8 bg-white/[.02] p-4">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-ink-faint">
+                {s.key} · {s.component}
+              </p>
+              <p className="mt-2 font-mono text-[10px] leading-relaxed text-ink-dim">
+                {s.hazards.length > 0 ? s.hazards.join(" · ") : "no physical-direction tokens found"}
+              </p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {issues.length > 0 && (

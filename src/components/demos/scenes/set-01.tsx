@@ -248,45 +248,84 @@ export function OrbitDeck({ radius = 190, orbit = 14 }: DemoProps) {
   const o = typeof orbit === "number" ? orbit : 14;
   const items = ["◐", "✦", "◍", "❋", "✺", "◈"].map((g, i) => ({ g, hue: 200 + i * 30 }));
   const [paused, setPaused] = useState(false);
+  // The catalog says "tilt with drag" — this is the drag. Pointer handlers
+  // (not a rAF loop), so the motion audit still counts the ambient spin as
+  // CSS-driven; the tilt only moves while the pointer does.
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const last = useRef<{ x: number; y: number } | null>(null);
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    last.current = { x: e.clientX, y: e.clientY };
+    setDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!last.current) return;
+    const dx = e.clientX - last.current.x;
+    const dy = e.clientY - last.current.y;
+    setTilt((t) => ({
+      x: Math.max(-22, Math.min(22, t.x + dy * 0.1)),
+      y: Math.max(-22, Math.min(22, t.y + dx * 0.1)),
+    }));
+    last.current = { x: e.clientX, y: e.clientY };
+  };
+  const endDrag = () => {
+    last.current = null;
+    setDragging(false);
+    setTilt({ x: 0, y: 0 });
+  };
   return (
     <div
       className="relative flex h-full w-full items-center justify-center overflow-hidden"
+      style={{ perspective: 900 }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
     >
       <div
-        className="absolute h-20 w-20 rounded-2xl border border-white/20 bg-gradient-to-br from-violet-500/80 to-cyan-400/70 shadow-[0_0_60px_rgba(139,92,246,0.55)] backdrop-blur"
-      />
-      <div
-        className="absolute"
+        className="absolute inset-0 flex items-center justify-center"
         style={{
-          width: 0,
-          height: 0,
-          animation: `mf-spin ${o}s linear infinite`,
-          animationPlayState: paused ? "paused" : "running",
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transition: dragging ? "none" : "transform .35s ease-out",
         }}
       >
-        {items.map((it, i) => {
-          const a = (i / items.length) * Math.PI * 2;
-          return (
-            <span
-              key={i}
-              className="absolute flex items-center justify-center rounded-xl border border-white/15 bg-white/10 font-semibold text-white/80 backdrop-blur-sm"
-              style={{
-                width: 64,
-                height: 64,
-                left: Math.cos(a) * r - 32,
-                top: Math.sin(a) * r - 32,
-                fontSize: 22,
-                color: `hsl(${it.hue} 95% 72%)`,
-                transform: `rotate(${(a * 180) / Math.PI}deg) translateX(${r}px) rotate(${(-a * 180) / Math.PI}deg)`,
-                animation: `mf-bob ${3 + (i % 3)}s ease-in-out infinite`,
-              }}
-            >
-              {it.g}
-            </span>
-          );
-        })}
+        <div
+          className="absolute h-20 w-20 rounded-2xl border border-white/20 bg-gradient-to-br from-violet-500/80 to-cyan-400/70 shadow-[0_0_60px_rgba(139,92,246,0.55)] backdrop-blur"
+        />
+        <div
+          className="absolute"
+          style={{
+            width: 0,
+            height: 0,
+            animation: `mf-spin ${o}s linear infinite`,
+            animationPlayState: paused ? "paused" : "running",
+          }}
+        >
+          {items.map((it, i) => {
+            const a = (i / items.length) * Math.PI * 2;
+            return (
+              <span
+                key={i}
+                className="absolute flex items-center justify-center rounded-xl border border-white/15 bg-white/10 font-semibold text-white/80 backdrop-blur-sm"
+                style={{
+                  width: 64,
+                  height: 64,
+                  left: Math.cos(a) * r - 32,
+                  top: Math.sin(a) * r - 32,
+                  fontSize: 22,
+                  color: `hsl(${it.hue} 95% 72%)`,
+                  transform: `rotate(${(a * 180) / Math.PI}deg) translateX(${r}px) rotate(${(-a * 180) / Math.PI}deg)`,
+                  animation: `mf-bob ${3 + (i % 3)}s ease-in-out infinite`,
+                }}
+              >
+                {it.g}
+              </span>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

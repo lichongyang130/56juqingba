@@ -118,6 +118,25 @@ textarea:focus-visible,
   outline-offset: 2px;
 }
 
+/* Forced-colors mode: hand the focus ring and chrome to the system palette
+   instead of the theme's translucent violet, which can vanish against a
+   forced background. */
+@media (forced-colors: active) {
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+  .btn-primary,
+  .btn {
+    border: 1px solid CanvasText;
+  }
+}
+
 /* Hide scrollbars for swipeable chip rows while keeping them scrollable. */
 .no-scrollbar {
   scrollbar-width: none;
