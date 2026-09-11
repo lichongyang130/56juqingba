@@ -1,19 +1,19 @@
 {
-  "measuredAt": "2026-09-11T08:15:55.219Z",
-  "buildId": "H2pRBFBOUt6dLyGBOjl4Y",
+  "measuredAt": "2026-09-11T09:08:54.750Z",
+  "buildId": "oY_SrYnpU6hiJwZyB7BRC",
   "command": "npm run build && npm run measure",
   "summary": {
     "routes": 145,
     "prerendered": 130,
     "onDemand": 15,
     "jsFiles": 59,
-    "jsKb": 2802.6,
+    "jsKb": 2803.1,
     "cssFiles": 2,
     "cssKb": 218.7,
     "fontFiles": 2,
     "fontKb": 80,
     "htmlFiles": 294,
-    "htmlKb": 14064,
+    "htmlKb": 14096.8,
     "fallbackDocuments": 1
   },
   "fallbackDocuments": [
@@ -592,14 +592,14 @@
     },
     {
       "url": "/embed/[slug]",
-      "ownJsKb": 30.5,
-      "totalJsKb": 54.3,
+      "ownJsKb": 31,
+      "totalJsKb": 54.8,
       "cssKb": 218.7,
       "htmlKb": 0,
       "prerendered": false,
       "jsFiles": 3,
       "ownFiles": [
-        "static/chunks/03nnrjntn3qr1.js"
+        "static/chunks/11u_zlseiypt3.js"
       ]
     },
     {
@@ -1165,7 +1165,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.8,
       "cssKb": 218.7,
-      "htmlKb": 51,
+      "htmlKb": 52.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
