@@ -186,7 +186,7 @@ to be a different problem than the one they were written for._
 
 | items | what shipped | commit | kept true by |
 | --- | --- | --- | --- |
-| 1–3, 5–7 | The measured version of the motion gap: 88 scenes are covered by the site-wide CSS policy and **32 that drive motion from JavaScript** now branch — all 32 of them, re-derived rather than written from an effect. The old count (63 without a branch) measured the wrong thing | `f91c610` | `check:demos`: the split, the 32-of-32, the stylesheet policy, and the served page printing both numbers |
+| 1–3, 5, 7 | The measured version of the motion gap: 88 scenes are covered by the site-wide CSS policy and **32 that drive motion from JavaScript** now branch — all 32 of them, re-derived rather than written from an effect. The old count (63 without a branch) measured the wrong thing | `f91c610` | `check:demos`: the split, the 32-of-32, the stylesheet policy, and the served page printing both numbers |
 | 4 | `useReducedMotion()` / `useSceneMotion()` in `scene-kit.tsx` — one hook, not sixteen copies | `f91c610` | the 32 call sites |
 | 31 | `/metrics` names the four numbers the harness actually compares instead of promising it "will usually find" a disagreement | `9fd1ec3` | claim map entry |
 | 32 | `keyframes.tsx`'s header describes the ten-module reality it has had since batch 85 | `9fd1ec3` | claim map entry |
@@ -199,11 +199,15 @@ to be a different problem than the one they were written for._
 | 63 | `/sitemap` — the crawler sitemap for a person, importing `sitemap()` rather than re-listing it | `9fd1ec3` | `check:exports`: page count equals `<loc>` count |
 | 17 | `/accessibility` — the statement, distinct from the engineering record: what is verified on every build, what a build cannot see (all 7 manual checks named), and how to report a problem | `efdb100` | `check:exports`: every checklist title printed, "none has been run in a browser" present, footer link exists |
 | 91 | `/gaps` — the two registers in one page: **6 infrastructure-blocked bets** (derived from `BETS`, so a bet going live leaves this page in the same commit) and **8 environment-blocked numbers**, each naming what exists instead | `efdb100` | `check:exports`: every non-live bet present, no live bet named, the environment rows, footer link |
-| 35 | `/quality/gates` — the index of the checks, generated from the scripts rather than typed: 172 named checks parsed out of their `ok(…)` calls with the condition each asserts, the commit that last wrote each line (a `git blame` index, refreshed by `npm run gates:index` and gated for freshness), the 12 markup rules with the failure each prevents, and the 7 checks no command runs | `0730278` | `check:exports`: every name printed, the derived counts, the run-time-composed names admitted, the manual checks named, the index fresh |
-**Open, and worth saying so:** items 8, 9, 10 and everything not in the table above. The
-motion section's remaining work (a per-module table on `/quality/aria`, the motion
-contract, the embed shell passing the preference through, the still poster for animated
-cards) is unstarted, not done-in-passing.
+| 35 | `/quality/gates` — the index of the checks, generated from the scripts rather than typed: 181 named checks parsed out of their `ok(…)` calls with the condition each asserts, the commit that last wrote each line (a `git blame` index, refreshed by `npm run gates:index` and gated for freshness), the 12 markup rules with the failure each prevents, and the 7 checks no command runs | `0730278` | `check:exports`: every name printed, the derived counts, the run-time-composed names admitted, the manual checks named, the index fresh |
+| 6 | `/quality/aria` prints the motion split per module — module · scenes · animate · guarded · first unguarded, generated from the same audit the gate reads rather than typed | `201bf62` | `check:demos`: the heading, the column shape, every module name, and the summary counts |
+| 8 | `docs/motion-contract.md` — the three rules a scene promises (a loop declares a branch; reduced motion never removes content only animation revealed; the branch is named in the scene's own body), linked from `/quality/aria` and the `scene-kit.tsx` template | `201bf62` | `check:exports`: the file and its three sentences; `check:demos`: the page links it and quotes the rules |
+| 9 | `/embed/<slug>` honours `prefers-reduced-motion` — an `EmbedShell` reads the media query and reflects it on the frame, and `/integrations/embed` says so | `201bf62` | `check:demos`: the served marker, the media-query read in the shell's source, and the docs sentence |
+| 10 | Animated demos get a still label on their share card — `/og/<slug>` appends "demo animates · this card is a still" for any component or background whose live scene moves; no scene rasteriser exists, so every card is a still by construction and the animated ones say so | `201bf62` | `check:exports`: the route reads `movingDemoKeys` and prints the chip, every moving demo key is a catalog demo, and a moving and a still asset both serve PNG cards |
+**Open, and worth saying so:** items 11–16, 18–30, 36–37, 40–49, 51–60, 62, 64–70,
+71–80, 81–90, 92–100 and everything not in the table above. Those are the ones that
+still need a browser, a second person, or an afternoon of work each — none of them
+shipped in passing.
 
 ---
 

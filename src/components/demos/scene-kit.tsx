@@ -4,6 +4,11 @@
 // than one scene needs. Split out of Demo.tsx when the scenes moved to their own
 // modules (batch 85) — a helper used by two sets lives here rather than being
 // duplicated into both.
+//
+// This is the template a scene is built from. The rules a scene promises —
+// a loop declares a branch, reduced motion never removes content, the branch
+// is named in the scene's own body — are written in docs/motion-contract.md,
+// and the hooks below are the shared way a scene keeps them.
 
 import { useEffect, useState } from "react";
 

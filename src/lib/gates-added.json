@@ -12,6 +12,16 @@
       "s": "Batch 69: close Section 17 (preloader handoff, ripple dots, tilted CTA, success burst)",
       "d": "2026-09-10"
     },
+    "check:demos|/quality/aria links the motion contract and names its three rules": {
+      "c": "201bf62",
+      "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
+      "d": "2026-09-11"
+    },
+    "check:demos|/quality/aria prints the motion split per module": {
+      "c": "201bf62",
+      "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
+      "d": "2026-09-11"
+    },
     "check:demos|/quality/aria prints the split the audit measured": {
       "c": "f91c610",
       "s": "Suggestions 1-5: 32 scenes that move in JavaScript now ask first",
@@ -81,6 +91,16 @@
       "c": "33f937b",
       "s": "batch 61 (#431-433): Section 17 opens with three scenes that move",
       "d": "2026-09-10"
+    },
+    "check:demos|the embed docs say the frame honours the preference": {
+      "c": "201bf62",
+      "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
+      "d": "2026-09-11"
+    },
+    "check:demos|the embed shell honours prefers-reduced-motion": {
+      "c": "201bf62",
+      "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
+      "d": "2026-09-11"
     },
     "check:demos|the ledger table matches its headline": {
       "c": "eb99f24",
@@ -397,6 +417,11 @@
       "s": "Batch 72: Section 19 opens — metadata, FAQ schema, sitemap, glossary, schema register",
       "d": "2026-09-11"
     },
+    "check:exports|a moving and a still asset both serve cards": {
+      "c": "201bf62",
+      "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
+      "d": "2026-09-11"
+    },
     "check:exports|an essay carries Article markup": {
       "c": "e1160ce",
       "s": "Batch 72: Section 19 opens — metadata, FAQ schema, sitemap, glossary, schema register",
@@ -497,6 +522,11 @@
       "s": "Batch 87: the crawl surface matches the rule it states",
       "d": "2026-09-11"
     },
+    "check:exports|every loader line resolves to a demo key": {
+      "c": "201bf62",
+      "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
+      "d": "2026-09-11"
+    },
     "check:exports|every mapped check is one a harness announces": {
       "c": "f6d7c2e",
       "s": "Suggestions 33-39, 100: the claim map, the ledger check, and the register",
@@ -505,6 +535,11 @@
     "check:exports|every mapped claim still exists in its file": {
       "c": "f6d7c2e",
       "s": "Suggestions 33-39, 100: the claim map, the ledger check, and the register",
+      "d": "2026-09-11"
+    },
+    "check:exports|every moving demo key is a demo the catalog ships": {
+      "c": "201bf62",
+      "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
       "d": "2026-09-11"
     },
     "check:exports|every named line count matches the file it names": {
@@ -812,6 +847,11 @@
       "s": "Batch 79: the automated half of accessibility — repaired, documented, gated",
       "d": "2026-09-11"
     },
+    "check:exports|the motion contract states the three rules": {
+      "c": "201bf62",
+      "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
+      "d": "2026-09-11"
+    },
     "check:exports|the multilingual title test declares both directions": {
       "c": "25fc76a",
       "s": "Batch 73: Section 19 to 11/15 (spine, refresh dates, changelog permalinks, i18n title, positioning)",
@@ -825,6 +865,11 @@
     "check:exports|the same pass over the served pages finds nothing either": {
       "c": "cb7c02e",
       "s": "Batch 83: the demo scenes, checked against their own wiring",
+      "d": "2026-09-11"
+    },
+    "check:exports|the share-card route marks animated demos as stills": {
+      "c": "201bf62",
+      "s": "Close the next-hundred open items: motion contract, per-module table, embed preference, still cards",
       "d": "2026-09-11"
     },
     "check:exports|the spine rail links two essays and a prompt": {
