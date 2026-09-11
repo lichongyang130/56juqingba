@@ -423,8 +423,10 @@ export function PromptCard({ prompt }: { prompt: PromptTemplate }) {
         <div className="mt-auto flex items-center justify-between gap-2 pt-3.5">
           <div className="flex flex-wrap items-center gap-1 overflow-hidden">
             {/* the poster's status badge is decorative now, so the card states
-                the status itself — same label, and it is real text */}
-            <span className={`chip border !text-[9px] ${statusMeta.cls}`} aria-hidden>{statusMeta.label}</span>
+                the status itself — same label, and it is real text. Deliberately
+                not aria-hidden: the poster is hidden, so this is the only place
+                a screen reader can learn the status */}
+            <span className={`chip border !text-[9px] ${statusMeta.cls}`}>{statusMeta.label}</span>
             {prompt.stacks.map((s) => (
               <span key={s} className="chip !text-[9px]">{s}</span>
             ))}
