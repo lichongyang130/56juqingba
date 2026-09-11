@@ -8,7 +8,7 @@ import { LEARN_ARTICLES } from "@/lib/learn";
 import { changeLogSlug } from "@/lib/spine";
 
 export const metadata: Metadata = {
-  title: "Crawl inventory — what is indexed and what is not — Motif UI",
+  title: "Crawl inventory — what is indexed and what is not",
   description:
     "The sitemap by content type, the surfaces kept out of the index with a reason for each, and the counts behind both lists.",
   robots: { index: false },

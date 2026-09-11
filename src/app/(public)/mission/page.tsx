@@ -4,7 +4,10 @@ import { accentCss, COMPONENTS, PROMPTS } from "@/lib/data";
 export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
-  alternates: { canonical: "/mission" }, title: "Mission — Motif UI" };
+  alternates: { canonical: "/mission" }, title: "Mission",
+  description:
+    "The publishing standard behind the library: original assets, audited scores, measured performance figures and an explicit list of what the project has not done.",
+};
 
 const PRINCIPLES = [
   {

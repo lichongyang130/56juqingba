@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/quality" },
-  title: "Quality bar — Motif UI",
+  title: "Quality bar",
   // 519 — this description ran 288 characters, past the ~200 a result shows.
   description:
     "The quality, accessibility and testing bar in the open: score distributions, contrast pairs, reduced-motion fallback, size budgets and the dependency ledger — recomputed from the catalog.",

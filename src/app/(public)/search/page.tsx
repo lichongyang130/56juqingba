@@ -6,7 +6,7 @@ export const metadata = {
   // 519 — robots.txt only asks a crawler not to fetch this page; the noindex
   // is what keeps an empty browser-local surface out of the index itself.
   robots: { index: false },
-  alternates: { canonical: "/search" }, title: "Search the library — Motif UI" };
+  alternates: { canonical: "/search" }, title: "Search the library" };
 
 const SCOPES: Scope[] = ["all", "components", "prompts", "backgrounds", "guides"];
 

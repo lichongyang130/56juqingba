@@ -5,7 +5,10 @@ import { SAMPLE_BUILDS } from "@/lib/samples";
 export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
-  alternates: { canonical: "/samples" }, title: "Made with Motif — case studies" };
+  alternates: { canonical: "/samples" }, title: "Made with Motif — case studies",
+  description:
+    "Three sample builds told the way a case study should be: the challenge, the assets used and the measured result, with the gaps named where a number does not exist.",
+};
 
 export default function SamplesIndexPage() {
   return (

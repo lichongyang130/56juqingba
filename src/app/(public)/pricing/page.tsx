@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   // The layout deliberately sets no canonical: a page that inherits "/" lies
   // about where it lives. This one declares its own.
   alternates: { canonical: "/pricing" },
+  title: "Pricing",
+  description:
+    "The library is free to copy with no account; Pro covers verified test reports, template packs and the tools that save hours. The code is never the paid part.",
 };
 
 const FAQ = [

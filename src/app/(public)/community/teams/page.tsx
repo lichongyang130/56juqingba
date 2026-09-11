@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/community/teams" },
-  title: "Teams & licensing — Motif UI",
+  title: "Teams & licensing",
   description: "How teams use Motif together: a shared design baseline, what MIT and CC BY 4.0 let your organisation do, and the licensing questions teams actually ask before shipping.",
 };
 

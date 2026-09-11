@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/changelog" },
-  title: "Studio log — every entry, addressable — Motif UI",
+  title: "Studio log — every entry, addressable",
   description:
     "The full changelog with a permalink per entry: what changed, when, and the measured size effect where one was recorded.",
 };

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/brand/watermark" },
-  title: "\"Made with Motif\" badge — optional, honest, removable — Motif UI",
+  title: "\"Made with Motif\" badge — optional, honest, removable",
   description:
     "A 190×40 badge for sites built with the library. One rule attached: it may only be shown where it is true, and removing it is never punished.",
 };

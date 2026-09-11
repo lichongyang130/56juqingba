@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/brand/wallpapers" },
-  title: "Wallpapers — three original posters — Motif UI",
+  title: "Wallpapers — three original posters",
   description:
     "Three wallpapers drawn in this repository's own geometry, downloadable as SVG at 2560×1440. Free to use, no attribution required, no stock art.",
 };

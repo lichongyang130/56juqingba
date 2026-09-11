@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   // The layout deliberately sets no canonical: a page that inherits "/" lies
   // about where it lives. This one declares its own.
   alternates: { canonical: "/learn" },
+  title: "Guides",
+  description:
+    "Short, opinionated guides to the craft behind the library, written by the people who audit the components: layout, motion, colour and the decisions that make an interface feel expensive.",
 };
 
 const LEVEL_STYLE: Record<string, string> = {

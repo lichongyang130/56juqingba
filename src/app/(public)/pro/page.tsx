@@ -6,7 +6,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/pro" },
-  title: "Pro, itemised — Motif UI",
+  title: "Pro, itemised",
   description: "Every Pro promise with its state in this build, the free path beside it, and the plan copy audited line by line.",
 };
 

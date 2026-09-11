@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   // is what keeps an empty browser-local surface out of the index itself.
   robots: { index: false },
   alternates: { canonical: "/saved" },
-  title: "Your saved list — Motif UI",
+  title: "Your saved list",
   description: "Star Motif components and prompts into a saved list that lives in your browser — no account, no upload, and an honest note about what that means.",
 };
 

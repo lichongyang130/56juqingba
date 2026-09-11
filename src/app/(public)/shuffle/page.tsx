@@ -5,7 +5,10 @@ import { COMPONENTS } from "@/lib/data";
 export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
-  alternates: { canonical: "/shuffle" }, title: "Get inspired — Motif UI shuffle" };
+  alternates: { canonical: "/shuffle" }, title: "Shuffle the library",
+  description:
+    "A one-click moodboard over the catalog: shuffle a deck of six original assets, each a live component rather than a screenshot, and browse until something sparks.",
+};
 
 export default function ShufflePage() {
   return (

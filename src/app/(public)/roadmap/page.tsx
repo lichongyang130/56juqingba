@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   // 519 — the page had no canonical, so the sitemap walk could not tell it
   // apart from a page pointing at the homepage.
   alternates: { canonical: "/roadmap" },
-  title: "Roadmap — ten bets with their real status — Motif UI",
+  title: "Roadmap — ten bets with their real status",
   description:
     "The ten north-star bets from the idea bank, each with what exists today, the first real slice, what it would cost and the line it must not cross. Four are live in this build.",
 };

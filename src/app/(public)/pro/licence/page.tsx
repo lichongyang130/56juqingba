@@ -6,7 +6,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/pro/licence" },
-  title: "Licence clarity — Motif UI",
+  title: "Licence clarity",
   description: "Free is MIT for the components, Pro is a service licence, and the two rows that are policy rather than stored data are labelled.",
 };
 

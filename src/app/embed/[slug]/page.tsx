@@ -23,7 +23,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const asset = COMPONENTS.find((c) => c.slug === slug);
-  if (!asset) return { title: "Not found — Motif UI" };
+  if (!asset) return { title: "Not found" };
   return {
     title: `${asset.title} — embedded demo`,
     description: asset.description,

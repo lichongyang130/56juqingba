@@ -5,7 +5,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/integrations/cli" },
-  title: "CLI — Motif UI",
+  title: "CLI",
   description: "A runnable command that reads this deployment's own export endpoints, and why it is not on npm.",
 };
 

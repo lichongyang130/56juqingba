@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/brand/logo" },
-  title: "Logo system — Motif UI",
+  title: "Logo system",
   description:
     "The Motif mark: geometry, clear space, sizes, wordmark pairing, misuse examples and the SVG source. Original, and printed here so it can be checked rather than trusted.",
 };

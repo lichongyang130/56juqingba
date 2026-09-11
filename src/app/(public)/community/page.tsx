@@ -5,7 +5,7 @@ import { LEARN_ARTICLES } from "@/lib/learn";
 import { CHALLENGES, COLLECTIONS, MODERATION_SEED, ROSTER, SPOTLIGHTS } from "@/lib/community";
 
 export const metadata: Metadata = {
-  title: "Community — Motif UI",
+  title: "Community",
   alternates: { canonical: "/community", types: { "application/rss+xml": "/community/rss.xml" } },
   description:
     "Saved lists, curated collections, prompt re-runs, the copy leaderboard, maker pages and the remix flow — each labelled with what is live and what is browser-local.",

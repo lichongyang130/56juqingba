@@ -1,6 +1,6 @@
 {
-  "measuredAt": "2026-09-11T04:09:46.993Z",
-  "buildId": "JbiNpdyp-WLZn7z0i18k7",
+  "measuredAt": "2026-09-11T04:19:06.697Z",
+  "buildId": "8OWCpMhEpBELKQSGEyZMF",
   "command": "npm run build && npm run measure",
   "summary": {
     "routes": 141,
@@ -13,7 +13,7 @@
     "fontFiles": 2,
     "fontKb": 80,
     "htmlFiles": 291,
-    "htmlKb": 13903.1,
+    "htmlKb": 13899.4,
     "fallbackDocuments": 1
   },
   "fallbackDocuments": [
@@ -64,7 +64,7 @@
       "ownJsKb": 149.2,
       "totalJsKb": 561.7,
       "cssKb": 217.7,
-      "htmlKb": 35.1,
+      "htmlKb": 35,
       "prerendered": true,
       "jsFiles": 8,
       "ownFiles": [
@@ -79,7 +79,7 @@
       "ownJsKb": 144.2,
       "totalJsKb": 556.7,
       "cssKb": 217.7,
-      "htmlKb": 30.2,
+      "htmlKb": 30.1,
       "prerendered": true,
       "jsFiles": 8,
       "ownFiles": [
@@ -94,7 +94,7 @@
       "ownJsKb": 144.2,
       "totalJsKb": 556.7,
       "cssKb": 217.7,
-      "htmlKb": 40.9,
+      "htmlKb": 40.8,
       "prerendered": true,
       "jsFiles": 8,
       "ownFiles": [
@@ -124,7 +124,7 @@
       "ownJsKb": 144.2,
       "totalJsKb": 556.7,
       "cssKb": 217.7,
-      "htmlKb": 31.1,
+      "htmlKb": 31,
       "prerendered": true,
       "jsFiles": 8,
       "ownFiles": [
@@ -229,7 +229,7 @@
       "ownJsKb": 110.4,
       "totalJsKb": 522.9,
       "cssKb": 217.7,
-      "htmlKb": 33.7,
+      "htmlKb": 33.6,
       "prerendered": true,
       "jsFiles": 8,
       "ownFiles": [
@@ -301,7 +301,7 @@
       "ownJsKb": 104.8,
       "totalJsKb": 517.3,
       "cssKb": 217.7,
-      "htmlKb": 558.3,
+      "htmlKb": 558.2,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
@@ -329,7 +329,7 @@
       "ownJsKb": 104.8,
       "totalJsKb": 517.3,
       "cssKb": 217.7,
-      "htmlKb": 55.9,
+      "htmlKb": 55.8,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
@@ -371,7 +371,7 @@
       "ownJsKb": 93.3,
       "totalJsKb": 540,
       "cssKb": 217.7,
-      "htmlKb": 123.4,
+      "htmlKb": 123.5,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
@@ -485,7 +485,7 @@
       "ownJsKb": 39.9,
       "totalJsKb": 486.6,
       "cssKb": 217.7,
-      "htmlKb": 57.5,
+      "htmlKb": 57.4,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -533,7 +533,7 @@
       "ownJsKb": 39.9,
       "totalJsKb": 486.6,
       "cssKb": 217.7,
-      "htmlKb": 52.1,
+      "htmlKb": 52,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -557,7 +557,7 @@
       "ownJsKb": 39.4,
       "totalJsKb": 486.1,
       "cssKb": 217.7,
-      "htmlKb": 79.7,
+      "htmlKb": 79.8,
       "prerendered": true,
       "jsFiles": 7,
       "ownFiles": [
@@ -607,7 +607,7 @@
       "ownJsKb": 29.9,
       "totalJsKb": 476.6,
       "cssKb": 217.7,
-      "htmlKb": 69.2,
+      "htmlKb": 69.1,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -679,7 +679,7 @@
       "ownJsKb": 17.8,
       "totalJsKb": 464.5,
       "cssKb": 217.7,
-      "htmlKb": 48.4,
+      "htmlKb": 48.3,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -691,7 +691,7 @@
       "ownJsKb": 17.8,
       "totalJsKb": 464.5,
       "cssKb": 217.7,
-      "htmlKb": 46.1,
+      "htmlKb": 46,
       "prerendered": true,
       "jsFiles": 6,
       "ownFiles": [
@@ -805,7 +805,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 67.6,
+      "htmlKb": 67.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -815,7 +815,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 56.9,
+      "htmlKb": 56.8,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -835,7 +835,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 64.2,
+      "htmlKb": 64.1,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -855,7 +855,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 53.1,
+      "htmlKb": 53,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -905,7 +905,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 79,
+      "htmlKb": 78.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1105,7 +1105,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 58.8,
+      "htmlKb": 58.7,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1125,7 +1125,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 57.6,
+      "htmlKb": 57.5,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1145,7 +1145,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 51.1,
+      "htmlKb": 51,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1175,7 +1175,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 54,
+      "htmlKb": 53.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1255,7 +1255,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 247.1,
+      "htmlKb": 247.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1295,7 +1295,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 54,
+      "htmlKb": 53.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1325,7 +1325,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 64,
+      "htmlKb": 63.9,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1335,7 +1335,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 59.5,
+      "htmlKb": 59.4,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1415,7 +1415,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 57.3,
+      "htmlKb": 57.2,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1455,7 +1455,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 63.7,
+      "htmlKb": 63.6,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1465,7 +1465,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 61.1,
+      "htmlKb": 61,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1525,7 +1525,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 55.5,
+      "htmlKb": 55.4,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1535,7 +1535,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 63.1,
+      "htmlKb": 63,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1565,7 +1565,7 @@
       "ownJsKb": 0,
       "totalJsKb": 446.7,
       "cssKb": 217.7,
-      "htmlKb": 85.6,
+      "htmlKb": 85.8,
       "prerendered": true,
       "jsFiles": 5,
       "ownFiles": []
@@ -1647,7 +1647,7 @@
   "heaviestHtml": [
     {
       "file": ".next/server/app/admin/health.html",
-      "kb": 558.3
+      "kb": 558.2
     },
     {
       "file": ".next/server/app/quality.html",
@@ -1659,7 +1659,7 @@
     },
     {
       "file": ".next/server/app/learn.html",
-      "kb": 247.1
+      "kb": 247.2
     },
     {
       "file": ".next/server/app/index.html",
@@ -1681,7 +1681,7 @@
   "jsOff": {
     "/components": null,
     "/backgrounds": {
-      "htmlKb": 79.7,
+      "htmlKb": 79.8,
       "pending": 33,
       "mounted": 0,
       "links": 53,
@@ -1696,7 +1696,7 @@
     },
     "/components/combo-box": null,
     "/learn": {
-      "htmlKb": 247.1,
+      "htmlKb": 247.2,
       "pending": 0,
       "mounted": 0,
       "links": 115,

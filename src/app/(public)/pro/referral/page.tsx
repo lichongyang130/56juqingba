@@ -7,7 +7,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/pro/referral" },
-  title: "Referral credit — Motif UI",
+  title: "Referral credit",
   description: "One month each, capped at six a year, with the uncapped maths printed rather than the marketing version.",
 };
 

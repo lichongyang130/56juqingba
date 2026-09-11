@@ -6,7 +6,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/integrations/bookmarklet" },
-  title: "Palette bookmarklet — Motif UI",
+  title: "Palette bookmarklet",
   description: "Drag one link to your bookmarks bar to read any page's colour custom properties, without sending anything anywhere.",
 };
 

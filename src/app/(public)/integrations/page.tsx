@@ -6,7 +6,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/integrations" },
-  title: "Integrations & exports — Motif UI",
+  title: "Integrations & exports",
   description: "Every export and integration this build serves, generated from the site's own tokens and catalog data, with the gaps it will not paper over.",
 };
 

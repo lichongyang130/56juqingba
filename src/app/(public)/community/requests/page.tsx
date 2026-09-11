@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/community/requests" },
-  title: "Requests board — Motif UI",
+  title: "Requests board",
   description: "Ask for the component, template, prompt or guide you are missing. Every request carries a coverage number measured from the live catalog, not a wish.",
 };
 

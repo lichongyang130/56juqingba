@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/compare" },
-  title: "Choosing a UI kit, honestly — Motif UI",
+  title: "Choosing a UI kit, honestly",
   description:
     "When a generic component kit is the right choice, when a template marketplace is, and what Motif does instead — written without naming or copying a competitor.",
 };

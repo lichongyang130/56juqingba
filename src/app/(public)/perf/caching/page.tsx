@@ -6,7 +6,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/perf/caching" },
-  title: "Cache headers — Motif UI",
+  title: "Cache headers",
   description: "The three Cache-Control rules this build serves, why immutable is safe for fingerprinted assets, and the CMS invalidation plan.",
 };
 

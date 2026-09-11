@@ -5,7 +5,7 @@ import { LEARN_ARTICLES } from "@/lib/learn";
 import { REVIEW_CYCLE_DAYS, ageInDays, daysUntil, reviewDue } from "@/lib/freshness";
 
 export const metadata: Metadata = {
-  title: "Refresh dates — what is stamped and what is scheduled — Motif UI",
+  title: "Refresh dates — what is stamped and what is scheduled",
   description:
     "The rule behind every date on the site: 'added' and 'updated' are facts from the records, 'review due' is a computed schedule, and the distinction is printed.",
   robots: { index: false },

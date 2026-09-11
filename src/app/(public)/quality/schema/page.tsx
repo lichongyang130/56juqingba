@@ -6,7 +6,7 @@ import { ASSET_FAQ_QUESTIONS } from "@/lib/schema-map";
 import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Structured data — what ships and what does not — Motif UI",
+  title: "Structured data — what ships and what does not",
   description:
     "The exact schema.org types this site emits, the ones it deliberately omits and why, plus the origin every canonical resolves against.",
   robots: { index: false },

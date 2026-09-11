@@ -3,7 +3,7 @@ import Link from "next/link";
 import { COMPONENTS, PROMPTS, accentCss } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Shared stack — Motif UI",
+  title: "Shared stack",
   description:
     "A saved list passed in the URL. The page renders the stack from the catalog, names anything that is missing, and stores nothing.",
   robots: { index: false },

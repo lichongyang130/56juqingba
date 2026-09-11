@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/community/recognition" },
-  title: "Recognition tiers — Motif UI",
+  title: "Recognition tiers",
   description: "What Motif actually gives contributors at each milestone — badges, maker pages, spotlights and challenge wins that exist today, and the merch we deliberately do not pretend to have.",
 };
 

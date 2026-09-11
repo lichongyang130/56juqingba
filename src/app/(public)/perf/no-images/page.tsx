@@ -8,7 +8,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/perf/no-images" },
-  title: "No images — Motif UI",
+  title: "No images",
   description: "Why this site ships no photography or illustration, what it uses instead, and the rule that would break the policy.",
 };
 

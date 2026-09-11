@@ -6,7 +6,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/pro/unlimited" },
-  title: "What unlimited means — Motif UI",
+  title: "What unlimited means",
   description: "The word 'unlimited' measured against what this build actually does: unlimited copies, yes; unlimited API calls, no API.",
 };
 

@@ -27,9 +27,26 @@ const ok = (name, condition, extra = "") => {
   console.log(`${condition ? "PASS" : "FAIL"}  ${name}${extra ? " — " + extra : ""}`);
 };
 
+/**
+ * fetch with one retry on a socket error.
+ *
+ * The walk fetches hundreds of pages through a keep-alive pool; when the local
+ * server closes an idle socket the next request can fail with "other side
+ * closed" instead of a status code. That is the transport, not the page, so a
+ * second attempt is made on a fresh connection. A second failure is thrown.
+ */
+const fetchRetry = async (url, init, attempt = 1) => {
+  try {
+    return await fetch(url, init);
+  } catch (err) {
+    if (attempt < 2) return fetchRetry(url, init, attempt + 1);
+    throw err;
+  }
+};
+
 const get = async (p, attempt = 1) => {
   try {
-    const res = await fetch(base + p);
+    const res = await fetchRetry(base + p);
     return { status: res.status, text: await res.text(), type: res.headers.get("content-type") || "" };
   } catch (err) {
     // A keep-alive socket the server has already closed surfaces here as a
@@ -532,7 +549,7 @@ function parseCheck(label, source) {
   // come back.
   const decodeEntities = (s) =>
     s.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'");
-  const sitemapXml = await (await fetch(`${base}/sitemap.xml`)).text();
+  const sitemapXml = await (await fetchRetry(`${base}/sitemap.xml`)).text();
   const sitemapUrls = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
   const ORIGIN = "https://motifui.dev";
 
@@ -540,10 +557,17 @@ function parseCheck(label, source) {
   for (let i = 0; i < sitemapUrls.length; i += 8) chunks.push(sitemapUrls.slice(i, i + 8));
   const pageIssues = [];
   const linkSet = new Set();
+  // 520 — a page's own title and description. The walk below used to check that
+  // a description existed at all; 93 pages shipped the brand twice in the title
+  // ("… — Motif UI · Motif UI" — the page wrote the suffix the layout template
+  // already appends) and twelve shared one description inherited from the
+  // layout, which no per-page rule can see.
+  const pageTitles = [];
+  const pageDescs = [];
   for (const chunk of chunks) {
     const pages = await Promise.all(chunk.map(async (absUrl) => {
       const route = absUrl.replace(ORIGIN, "") || "/";
-      const res = await fetch(base + route);
+      const res = await fetchRetry(base + route);
       return { route, absUrl, status: res.status, html: res.status === 200 ? await res.text() : "" };
     }));
     for (const page of pages) {
@@ -555,7 +579,10 @@ function parseCheck(label, source) {
       const head = html.split('<script>self.__next_f')[0];
       const canonical = (html.match(/<link rel="canonical" href="([^"]*)"/) || [])[1] || "";
       const desc = decodeEntities((html.match(/<meta name="description" content="([^"]*)"/) || [])[1] || "");
+      const title = decodeEntities((html.match(/<title>([^<]*)<\/title>/) || [])[1] || "");
       const h1s = (head.match(/<h1[\s>]/g) || []).length;
+      pageTitles.push({ route: page.route, title });
+      pageDescs.push({ route: page.route, desc });
       if (canonical !== page.absUrl) pageIssues.push(`canonical ${page.route} -> ${canonical || "none"}`);
       if ((head.match(/<h1[\s>]/g) || []).length !== 1) pageIssues.push(`h1 x${h1s} ${page.route}`);
       if (!/<meta property="og:image"/.test(html)) pageIssues.push(`no og:image ${page.route}`);
@@ -636,7 +663,7 @@ function parseCheck(label, source) {
       .filter((r) => !r.includes("[") && !r.startsWith("/_") && !/\.[a-z0-9]+$/.test(r) && !r.startsWith("/api/"));
     const twoWayIssues = [];
     for (const route of staticRoutes) {
-      const res = await fetch(base + route);
+      const res = await fetchRetry(base + route);
       const html = res.status === 200 ? await res.text() : "";
       const noindex = /<meta name="robots" content="[^"]*noindex/.test(html);
       const listedRoute = listed.has(`${ORIGIN}${route === "/" ? "" : route}`);
@@ -663,6 +690,22 @@ function parseCheck(label, source) {
     );
   }
 
+  const dupes = (rows, field) => {
+    const by = new Map();
+    for (const r of rows) if (r[field]) by.set(r[field], [...(by.get(r[field]) || []), r.route]);
+    return [...by].filter(([, routes]) => routes.length > 1).map(([value, routes]) => `${routes.slice(0, 3).join(" = ")} → ${value.slice(0, 40)}`);
+  };
+  const doubleBrand = pageTitles.filter((t) => (t.title.match(/Motif UI/g) || []).length > 1).map((t) => t.route);
+  const longTitles = pageTitles.filter((t) => t.title.length > 75).map((t) => `${t.title.length} ${t.route}`);
+  ok(
+    "no page title carries the brand twice",
+    doubleBrand.length === 0,
+    `${pageTitles.length} titles${doubleBrand.length ? ` · ${doubleBrand.slice(0, 5).join(", ")}` : ""}`,
+  );
+  ok("no title is longer than 75 characters", longTitles.length === 0, longTitles.slice(0, 5).join(" | ") || "all within the window");
+  ok("no two pages share a title", dupes(pageTitles, "title").length === 0, dupes(pageTitles, "title").slice(0, 4).join(" | ") || "all distinct");
+  ok("no two pages share a description", dupes(pageDescs, "desc").length === 0, dupes(pageDescs, "desc").slice(0, 4).join(" | ") || "all distinct");
+
   const linkList = [...linkSet];
   const linkChunks = [];
   for (let i = 0; i < linkList.length; i += 10) linkChunks.push(linkList.slice(i, i + 10));
@@ -675,7 +718,7 @@ function parseCheck(label, source) {
   const brokenLinks = [];
   const deadLinkStatus = new Map();
   for (const chunk of linkChunks) {
-    const results = await Promise.all(chunk.map(async (link) => ({ link, status: (await fetch(base + link, { redirect: "manual" })).status })));
+    const results = await Promise.all(chunk.map(async (link) => ({ link, status: (await fetchRetry(base + link, { redirect: "manual" })).status })));
     for (const r of results) {
       if (DELIBERATE_DEAD_LINKS.has(r.link)) deadLinkStatus.set(r.link, r.status);
       else if (r.status !== 200) brokenLinks.push(`${r.status} ${r.link}`);

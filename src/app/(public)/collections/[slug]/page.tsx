@@ -11,7 +11,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const c = collectionOf(slug);
-  if (!c) return { title: "Collection — Motif UI" };
+  if (!c) return { title: "Collection" };
   return { title: `${c.title} — Motif UI collection`, description: c.blurb };
 }
 

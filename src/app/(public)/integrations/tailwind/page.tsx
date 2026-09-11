@@ -5,7 +5,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/integrations/tailwind" },
-  title: "Tailwind preset export — Motif UI",
+  title: "Tailwind preset export",
   description: "A CommonJS Tailwind preset built from the tokens this site compiles, with what it deliberately leaves out.",
 };
 

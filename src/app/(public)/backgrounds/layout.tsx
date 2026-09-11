@@ -6,6 +6,9 @@ import type { Metadata } from "next";
 // pages, which declare their own through generateMetadata.
 export const metadata: Metadata = {
   alternates: { canonical: "/backgrounds" },
+  title: "Backgrounds & textures",
+  description:
+    "Animated fields, gradients, grain and glass. Each background ships with a performance tier, a fallback strategy and more than one implementation view.",
 };
 
 export default function SegmentLayout({ children }: { children: React.ReactNode }) {

@@ -6,7 +6,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/integrations/catalog" },
-  title: "Catalog metadata export — Motif UI",
+  title: "Catalog metadata export",
   description: "Every component and prompt with its stored scores, as data — and the field the catalog deliberately does not hold.",
 };
 

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/community/spotlight" },
-  title: "Spotlight interviews — Motif UI",
+  title: "Spotlight interviews",
   description: "One maker a month, interviewed about the work in the queue — sample roster personas, clearly labelled, with the Q&A written from their own submissions.",
 };
 

@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   // The layout deliberately sets no canonical: a page that inherits "/" lies
   // about where it lives. This one declares its own.
   alternates: { canonical: "/lab" },
+  title: "The Lab — motion and colour tools",
+  description:
+    "Interactive playgrounds that run in your browser: tune a spring, sketch a scroll sequence, forge a gradient, then export production-ready output. Nothing is uploaded.",
 };
 
 export default function LabPage() {

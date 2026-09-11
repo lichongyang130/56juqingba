@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   // 519 — the page had no canonical, so the sitemap walk could not tell it
   // apart from a page pointing at the homepage.
   alternates: { canonical: "/quality/aria" },
-  title: "ARIA and markup audit — the automated half — Motif UI",
+  title: "ARIA and markup audit — the automated half",
   description:
     "A build-time pass over every page's HTML: images without alt, controls without names, duplicate ids, heading-order skips and missing lang attributes — with the current counts and what was fixed.",
 };

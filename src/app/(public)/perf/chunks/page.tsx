@@ -5,7 +5,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/perf/chunks" },
-  title: "Bundle splitting — Motif UI",
+  title: "Bundle splitting",
   description: "What ships on /components versus /learn, and the single layout import that put 485 KB of demo code on every page.",
 };
 

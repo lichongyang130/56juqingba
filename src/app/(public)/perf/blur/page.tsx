@@ -6,7 +6,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/perf/blur" },
-  title: "Blur budget — Motif UI",
+  title: "Blur budget",
   description: "Every backdrop-blur in the project classified by the surface it covers, so the polish does not become the lag.",
 };
 

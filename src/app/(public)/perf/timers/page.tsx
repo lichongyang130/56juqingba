@@ -5,7 +5,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/perf/timers" },
-  title: "Timers & listeners — Motif UI",
+  title: "Timers & listeners",
   description: "Every setInterval, animation frame and event listener in the project, with its cleanup, counted from the source.",
 };
 

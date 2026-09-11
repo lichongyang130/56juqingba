@@ -5,7 +5,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/integrations/tokens" },
-  title: "Design tokens export — Motif UI",
+  title: "Design tokens export",
   description: "The site's tokens as a W3C design-token file, parsed from the stylesheet it compiles.",
 };
 

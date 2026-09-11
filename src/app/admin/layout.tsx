@@ -6,7 +6,7 @@ import { AdminMobileNav, AdminSidebar, AdminTopbar } from "@/components/admin-ui
 // nothing but demo state, so the metadata says so directly, at the layout so
 // every console route inherits it.
 export const metadata: Metadata = {
-  title: "Admin console — Motif UI",
+  title: "Admin console",
   robots: { index: false, follow: false },
 };
 

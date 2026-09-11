@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/quality/craft" },
-  title: "Code worth reading — the craft markers — Motif UI",
+  title: "Code worth reading — the craft markers",
   description:
     "Three annotated excerpts from the library, the rules they follow, and the machine check that keeps the rules from decaying into a style guide nobody reads.",
 };

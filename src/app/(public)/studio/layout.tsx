@@ -6,6 +6,9 @@ import type { Metadata } from "next";
 // pages, which declare their own through generateMetadata.
 export const metadata: Metadata = {
   alternates: { canonical: "/studio" },
+  title: "Theme Studio — design tokens",
+  description:
+    "The live token editor behind the catalog: accent, saturation, radius and mode, with a code diff for every tweak, hand-made presets and honest tooling notes.",
 };
 
 export default function SegmentLayout({ children }: { children: React.ReactNode }) {

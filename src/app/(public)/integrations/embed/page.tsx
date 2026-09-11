@@ -6,7 +6,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/integrations/embed" },
-  title: "Framer-style code embed — Motif UI",
+  title: "Framer-style code embed",
   description: "A real embed route that renders one demo, the markup that points at it, and the restriction a static build cannot enforce.",
 };
 

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/community/challenges" },
-  title: "Challenges — Motif UI",
+  title: "Challenges",
   description: "Monthly build challenges with published constraints and a winner rule applied by code: every gate pass, then the highest score. One brief is open now.",
 };
 

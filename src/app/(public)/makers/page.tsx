@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/makers" },
-  title: "Makers — Motif UI",
+  title: "Makers",
   description: "Minimal maker pages for the contributors in Motif's moderation demo: their submissions, audit scores and review notes. Sample roster — labelled as such.",
 };
 

@@ -6,6 +6,11 @@ import type { Metadata } from "next";
 // pages, which declare their own through generateMetadata.
 export const metadata: Metadata = {
   alternates: { canonical: "/prompts" },
+  // 520 — the index was inheriting the layout's default title and description,
+  // and so shared a search result with six other pages.
+  title: "Prompt library",
+  description:
+    "Prompts run against Claude, Codex and GLM, scored for fidelity and published with screenshots, run logs and failure notes attached — re-run on 3.0-class models.",
 };
 
 export default function SegmentLayout({ children }: { children: React.ReactNode }) {

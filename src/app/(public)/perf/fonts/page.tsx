@@ -5,7 +5,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/perf/fonts" },
-  title: "Font loading — Motif UI",
+  title: "Font loading",
   description: "Two latin subsets instead of nine files, both preloaded, with the before and after measured on real builds.",
 };
 

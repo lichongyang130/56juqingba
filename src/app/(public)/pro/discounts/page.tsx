@@ -7,7 +7,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/pro/discounts" },
-  title: "Discount lanes — Motif UI",
+  title: "Discount lanes",
   description: "Four discount lanes, including one that asks for nothing, priced live against the shared plan table.",
 };
 

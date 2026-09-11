@@ -11,7 +11,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }): Promise<Metadata> {
   const { handle } = await params;
   const m = makerOf(handle);
-  return m ? { title: `${m.name} (@${m.handle}) — Motif UI`, description: m.note } : { title: "Maker — Motif UI" };
+  return m ? { title: `${m.name} (@${m.handle}) — Motif UI`, description: m.note } : { title: "Maker" };
 }
 
 const KIND_LABEL: Record<string, string> = { element: "element", section: "section", animated: "animated", prompt: "prompt" };

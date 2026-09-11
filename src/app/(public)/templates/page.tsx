@@ -6,7 +6,10 @@ import type { Asset } from "@/lib/types";
 export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
-  alternates: { canonical: "/templates" }, title: "Templates — Motif UI" };
+  alternates: { canonical: "/templates" }, title: "Templates",
+  description:
+    "Full template builds composed from the library: filter by mood and stack, preview inline, then copy, re-theme and assemble — provenance and audits attached.",
+};
 
 export default function TemplatesPage() {
   const templates: Asset[] = COMPONENTS.filter(

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/learn/paths" },
-  title: "Learning paths — Motif UI",
+  title: "Learning paths",
   description:
     "Three short sequences through the Motif guides and components — motion starter, springs, scroll — with progress dots stored in your browser.",
 };

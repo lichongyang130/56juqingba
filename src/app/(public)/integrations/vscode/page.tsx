@@ -6,7 +6,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/integrations/vscode" },
-  title: "VS Code snippet pack — Motif UI",
+  title: "VS Code snippet pack",
   description: "Five editor snippets for the layout patterns this site repeats, using its real utility classes.",
 };
 

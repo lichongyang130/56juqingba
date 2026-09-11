@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   // is what keeps an empty browser-local surface out of the index itself.
   robots: { index: false },
   alternates: { canonical: "/habits" },
-  title: "Maker habits — Motif UI",
+  title: "Maker habits",
   description:
     "Three optional, browser-local habits: a copy streak, a one-tap did-this-ship check-in, and a reminder that can only ever be one line on a visit.",
 };

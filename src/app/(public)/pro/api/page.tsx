@@ -7,7 +7,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/pro/api" },
-  title: "API token demo — Motif UI",
+  title: "API token demo",
   description: "Mint a prefixed demo API key with scopes, see the request it would make, and read exactly what a real implementation still needs.",
 };
 

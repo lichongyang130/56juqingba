@@ -7,7 +7,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/pro/cancel" },
-  title: "The cancel path — Motif UI",
+  title: "The cancel path",
   description: "A three-step cancellation you can click through, and the dark patterns the flow refuses to contain.",
 };
 

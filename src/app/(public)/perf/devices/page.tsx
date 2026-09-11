@@ -5,7 +5,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/perf/devices" },
-  title: "Device matrix — Motif UI",
+  title: "Device matrix",
   description: "The three device classes this site is tested against, what each one measures, and the results that have not been run.",
 };
 

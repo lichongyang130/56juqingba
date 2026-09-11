@@ -139,7 +139,10 @@ export function articleMetadata(article: LearnArticleLike): Metadata {
 export function changelogEntryMetadata(entry: ChangeLogEntry, slug: string): Metadata {
   const path = `/changelog/${slug}`;
   const description = trim(`${entry.body} Filed under ${entry.tag}, ${entry.date}.`, 200);
-  const title = `${entry.title} — studio log`;
+  // 520 — "… — studio log" pushed four of these titles past 75 characters
+  // once the layout template adds "· Motif UI". The entry title is the
+  // headline; the page itself says where it sits.
+  const title = entry.title;
   return {
     title,
     description,

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/community/badges" },
-  title: "Badges — Motif UI",
+  title: "Badges",
   description: "Four contributor badges, each awarded by a published rule that runs against live catalog and gate data — earned, never granted by hand.",
 };
 

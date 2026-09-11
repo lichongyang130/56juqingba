@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/community/craft-talk" },
-  title: "Craft talk — Motif UI",
+  title: "Craft talk",
   description: "There is no Motif chat server yet. Here is the panel we would rather ship than an empty Discord: what the conversation is, and where it already happens today.",
 };
 

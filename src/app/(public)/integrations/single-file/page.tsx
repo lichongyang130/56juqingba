@@ -5,7 +5,7 @@ export const metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/integrations/single-file" },
-  title: "Single-file HTML starter — Motif UI",
+  title: "Single-file HTML starter",
   description: "One self-contained page built from the tokens: no requests, no framework, no script.",
 };
 

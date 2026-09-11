@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   // canonical per page — the layout no longer sets one, so a page that
   // forgot its own would emit nothing rather than point at the homepage.
   alternates: { canonical: "/quality/speed" },
-  title: "Speed — the measured story — Motif UI",
+  title: "Speed — the measured story",
   description:
     "The performance numbers this site can actually measure: JavaScript per route, font weight, the split that halved both, and an explicit note on the scores it does not claim.",
 };
@@ -230,9 +230,9 @@ export default function SpeedPage() {
             ))}
           </ul>
           <p className="mt-2 text-[10px] leading-relaxed text-ink-faint">
-            Total JavaScript per route, from the build report either side of the change. The scene sets are chunks of their own now — ten more chunk
-            files in the build than before the split — so a route that renders no scene never downloads one, and the routes above lost 416–812 KB
-            each.
+            Total JavaScript per route in the two builds either side of the split, read from the build report. The scene sets are chunks of their own
+            now — ten more chunk files than before it — so a route that renders no scene never downloads one, and the routes above lost 416–812 KB
+            each. These are the figures measured when the split shipped; the report from the current build sits beside this page.
           </p>
         </div>
       </section>
