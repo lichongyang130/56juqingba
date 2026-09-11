@@ -211,6 +211,42 @@ function parseCheck(label, source) {
   }
   ok("no forbidden schema type is emitted anywhere", offenders.length === 0, offenders.join(", "));
 
+  /* ---------- section 21 north-star bets ---------- */
+
+  const roadmap = await get("/roadmap");
+  ok(
+    "/roadmap labels every bet's status",
+    roadmap.status === 200 &&
+      (roadmap.text.match(/Live in this build/g) || []).length >= 4 &&
+      (roadmap.text.match(/Spec only — no code yet/g) || []).length >= 5,
+    `${(roadmap.text.match(/Live in this build/g) || []).length} live · ${(roadmap.text.match(/Spec only — no code yet/g) || []).length} spec`,
+  );
+  const compApi = await get("/api/v1/components/halo-button");
+  ok(
+    "/api/v1/components/<slug> serves the asset as data",
+    compApi.status === 200 && compApi.text.includes('"apiVersion":"v1"') && compApi.text.includes('"a11y"'),
+    `${compApi.status} ${compApi.type}`,
+  );
+  const missingApi = await get("/api/v1/components/no-such-asset");
+  ok("/api/v1/components/<slug> 404s an unknown asset", missingApi.status === 404);
+  const auditApi = await get("/api/v1/audit");
+  ok(
+    "/api/v1/audit serves every asset's scores",
+    auditApi.status === 200 && (auditApi.text.match(/"slug":/g) || []).length === 133 && auditApi.text.includes('"bands"'),
+    `${(auditApi.text.match(/"slug":/g) || []).length} assets`,
+  );
+  const sdk = await get("/embed.js");
+  ok(
+    "/embed.js ships the one-tag SDK",
+    sdk.status === 200 && sdk.text.includes("data-motif-embed") && sdk.text.includes("window.MotifEmbed") && sdk.type.includes("javascript"),
+    `${sdk.status} ${sdk.type}`,
+  );
+  const sdkDoc = await get("/roadmap/embed");
+  ok(
+    "the SDK page runs the script it documents",
+    sdkDoc.status === 200 && sdkDoc.text.includes('src="/embed.js"') && sdkDoc.text.includes('data-motif-embed="halo-button"'),
+  );
+
   /* ---------- canonicals ---------- */
 
   // The layout sets no canonical on purpose: a page-level canonical inherited

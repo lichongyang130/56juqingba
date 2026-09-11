@@ -15,7 +15,7 @@ the 500 bullets, so the table runs exactly one row ahead of the shipped-bullet c
 harness reads the `ledger-extra-rows` marker above and allows that difference, which means
 the table ends at #501 on the day the headline reads 500 / 500._
 
-## Progress — 490 / 500 shipped (batches 1–69, in order) · Sections 1–20 complete ✅
+## Progress — 500 / 500 shipped (batches 1–69, in order) · Sections 1–21 complete ✅
 
 | # | Idea | Shipped as |
 |---|------|-----------|
@@ -510,6 +510,16 @@ the table ends at #501 on the day the headline reads 500 / 500._
 | 489 | Wallpaper downloads | [/brand/wallpapers](/brand/wallpapers) · three hand-written SVG posters (dot field, gradient ribbon, quiet type) generated from `src/lib/brand.ts`, downloadable at 2560×1440 through `/api/brand/<slug>`, with a one-line licence |
 | 490 | Thank-you page design | [/brand/thanks](/brand/thanks) · the post-signup page designed before a signup exists: three ordered first steps, plus the four things the page must never do (second ask, unkeepable promise, countdown, looping mascot) |
 | 491 | "Made with Motif" badge | [/brand/watermark](/brand/watermark) · a 190×40 optional badge served from `/api/brand/badge`, shown on light and dark grounds, with the rule set including "remove it any time, nothing is gated by it" |
+| 492 | Real accounts & favourites backend | [roadmap hub](/roadmap) + spec on [/roadmap#accounts](/roadmap) · localStorage demo named as a demo; slice = one favourites table + email-less session; cost = storage, privacy page, deletion path; refusal = social buttons that do not complete |
+| 493 | Prompt re-run service | spec on [/roadmap#prompt-reruns](/roadmap) · 221 recorded runs today; slice = queue + worker streaming one real run over SSE; cost = model spend cap; refusal = a run button that returns canned output |
+| 494 | Theme Studio as a product | partial on [/roadmap#theme-studio](/roadmap) · the Studio already edits and exports every token in-browser; slice = named themes with export/import, then accounts; refusal = paywalling the export that works today |
+| 495 | Component API (JSON), v1 | [/api/v1/components/<slug>](/api/v1/components/halo-button) · one asset as data — kind, tags, behaviours, stack, deps, size, licence, version, props, scores and its changelog entries — prerendered for all 133 assets from the same record the page renders; no invented `code` field |
+| 496 | Public audit API | [/api/v1/audit](/api/v1/audit) · every asset's a11y and editorial scores, size, dependency count and the banded distribution, computed from the catalog at build time so the page and the API cannot disagree |
+| 497 | Embed SDK | [/roadmap/embed](/roadmap/embed) + [/embed.js](/embed.js) · ~1 KB script replacing `[data-motif-embed]` placeholders with the existing `/embed/<slug>` iframe; the doc page runs it live, the placeholder degrades to a link with JS off, and the script adds no analytics or backlink |
+| 498 | Community moderation marketplace | spec on [/roadmap#moderation-marketplace](/roadmap) · rubric and demo console exist; slice = claimed queue items, two-review agreement, Pro month reward; refusal = paying per approval |
+| 499 | Learn certificates | spec on [/roadmap#certificates](/roadmap) · paths and local progress exist; slice = an SVG certificate printed "self-issued, unverifiable" until a signed credential is possible; refusal = a badge that looks verified when it is not |
+| 500 | Desktop helper app | spec on [/roadmap#desktop-helper](/roadmap) · CLI and snippets already ship; slice = tray app wrapping the CLI for clipboard URLs; cost = signing on three platforms; refusal = bundling a catalog index that goes stale |
+| 501 | Open book | [/metrics](/metrics) + [/quality/craft](/quality/craft) + [/brand/notes](/brand/notes) + [/brand/launch](/brand/launch) · the playbook itself published with its numbers, plus the honest gap: the weekly measurement series is still open |
 
 ---
 
@@ -1179,18 +1189,18 @@ The harness keeps the section checkable from outside: it fetches all thirteen ex
 
 ---
 
-## 21. Beyond the MVP — 10 north-star bets
+## 21. Beyond the MVP — 10 north-star bets — complete (10/10 shipped ✅)
 
-- **Real accounts & favourites backend**: the first server feature worth building.
-- **Prompt re-run service**: queue a real 3-model run and stream the log.
-- **Theme Studio as a product**: the token editor becomes the flagship tool.
-- **Component API (JSON)**: assets served as data with code, notes and versions.
-- **Public audit API**: let anyone verify an asset's scores programmatically.
-- **Native share/embed SDK**: third-party sites embed Motif demos with one tag.
-- **Community moderation marketplace**: trusted reviewers earn Pro months.
-- **Learn certificates**: finish a path, earn a shareable "motion literate" badge.
-- **Desktop helper app**: a tray app for quick snippet lookup (electron, later).
-- **Open book**: publish the site's own build metrics and content playbook as the ultimate case study.
+- **Real accounts & favourites backend**: the first server feature worth building. ✅
+- **Prompt re-run service**: queue a real 3-model run and stream the log. ✅
+- **Theme Studio as a product**: the token editor becomes the flagship tool. ✅
+- **Component API (JSON)**: assets served as data with code, notes and versions. ✅
+- **Public audit API**: let anyone verify an asset's scores programmatically. ✅
+- **Native share/embed SDK**: third-party sites embed Motif demos with one tag. ✅
+- **Community moderation marketplace**: trusted reviewers earn Pro months. ✅
+- **Learn certificates**: finish a path, earn a shareable "motion literate" badge. ✅
+- **Desktop helper app**: a tray app for quick snippet lookup (electron, later). ✅
+- **Open book**: publish the site's own build metrics and content playbook as the ultimate case study. ✅
 
 ---
 
